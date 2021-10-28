@@ -9,6 +9,7 @@ import android.view.View;
 import com.company.iendo.R;
 import com.company.iendo.aop.SingleClick;
 import com.company.iendo.app.TitleBarFragment;
+import com.company.iendo.mineui.activity.ProgramActivity;
 import com.company.iendo.ui.activity.AboutActivity;
 import com.company.iendo.ui.activity.BrowserActivity;
 import com.company.iendo.ui.activity.DialogActivity;
@@ -72,8 +73,10 @@ public final class MineFragment extends TitleBarFragment<HomeActivity> {
             startActivity(DialogActivity.class);
 
         } else if (viewId == R.id.btn_mine_hint) {
+//            测试方案选择
 
-            startActivity(StatusActivity.class);
+            startActivity(ProgramActivity.class);
+//            startActivity(StatusActivity.class);
 
         } else if (viewId == R.id.btn_mine_login) {
 

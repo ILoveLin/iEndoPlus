@@ -255,4 +255,19 @@
     <string name="camera_launch_fail">无法启动相机</string>
     <string name="camera_image_error">目标地址错误</string>
 
+
+<!--    iEndoPlus-->
+<!--  方案选择界面  -->
+    <string name="tip_drag">长按编辑,拖拽排序</string>
+    <string name="my_cahnnel">我的设备</string>
+    <!--    <string name="my_cahnnel">我的频道</string>-->
+    <string name="other_channel">其他设备</string>
+    <!--    <string name="other_channel">其他频道</string>-->
+    <string name="edit">编辑</string>
+    <string name="finish">完成</string>
+
+
+
+
+
 </resources>

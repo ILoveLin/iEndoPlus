@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- 清单文件合并指引：https://developer.android.google.cn/studio/build/manifest-merge?hl=zh-cn -->
+<?xml version="1.0" encoding="utf-8"?><!-- 清单文件合并指引：https://developer.android.google.cn/studio/build/manifest-merge?hl=zh-cn -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.company.iendo">
@@ -11,7 +10,9 @@
 
     <!-- 外部存储 -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" tools:ignore="ScopedStorage" />
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
 
     <!-- 拍照权限 -->
     <uses-permission android:name="android.permission.CAMERA" />
@@ -57,6 +58,29 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
+
+        <!-- iEndoPlus界面 -->
+        <!-- 方案界面 -->
+        <activity
+            android:name=".mineui.activity.ProgramActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <!-- 方案选择界面 -->
+        <activity
+            android:name=".mineui.activity.ChoiceProgramActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+
+
+
+
+
+
+
+
+
+
+
 
         <!-- 闪屏页 -->
         <activity
