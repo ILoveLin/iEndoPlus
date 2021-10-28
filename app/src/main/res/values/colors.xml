@@ -22,6 +22,7 @@
     <!-- 对话框取消按钮的文本颜色 -->
     <color name="common_cancel_text_color">#F44336</color>
 
+    <color name="color_999999">#999999</color>
 
 
 

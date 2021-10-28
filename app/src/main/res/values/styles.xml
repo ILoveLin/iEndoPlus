@@ -111,5 +111,15 @@
         <item name="android:textColor">@drawable/countdown_color_selector</item>
         <item name="android:textSize">@dimen/sp_12</item>
     </style>
-
+    <style name="ButtonStyleCancle" parent="Widget.AppCompat.Button.Borderless">
+        <item name="android:paddingStart">@dimen/dp_20</item>
+        <item name="android:paddingEnd">@dimen/dp_20</item>
+        <item name="android:paddingTop">@dimen/dp_2</item>
+        <item name="android:paddingBottom">@dimen/dp_2</item>
+        <item name="android:textSize">@dimen/sp_14</item>
+        <item name="android:textColor">@color/white50</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@color/white</item>
+        <item name="android:foreground">@null</item>
+    </style>
 </resources>

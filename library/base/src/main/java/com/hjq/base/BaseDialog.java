@@ -727,7 +727,7 @@ public class BaseDialog extends AppCompatDialog implements LifecycleOwner,
         /**
          * 添加取消监听
          */
-        public B addOnCancelListener(@NonNull BaseDialog.OnCancelListener listener) {
+        public B addOnCancelListener(int btn_dialog_custom_ok, @NonNull OnCancelListener listener) {
             mCancelListeners.add(listener);
             return (B) this;
         }

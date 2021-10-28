@@ -11,7 +11,7 @@ import androidx.lifecycle.LifecycleOwner;
 import com.google.gson.JsonSyntaxException;
 import com.company.iendo.R;
 import com.company.iendo.manager.ActivityManager;
-import com.company.iendo.ui.activity.LoginActivity;
+import com.company.iendo.mineui.activity.login.LoginActivity;
 import com.hjq.gson.factory.GsonFactory;
 import com.hjq.http.EasyLog;
 import com.hjq.http.config.IRequestApi;

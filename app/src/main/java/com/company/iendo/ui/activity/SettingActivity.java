@@ -3,6 +3,7 @@ package com.company.iendo.ui.activity;
 import android.view.Gravity;
 import android.view.View;
 
+import com.company.iendo.mineui.activity.login.LoginActivity;
 import com.hjq.base.BaseDialog;
 import com.company.iendo.R;
 import com.company.iendo.aop.SingleClick;

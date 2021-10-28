@@ -1,4 +1,4 @@
-package com.company.iendo.ui.activity;
+package com.company.iendo.mineui.activity.login;
 
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
@@ -16,8 +16,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
+import com.company.iendo.ui.activity.HomeActivity;
 import com.gyf.immersionbar.ImmersionBar;
 import com.company.iendo.R;
 import com.company.iendo.aop.Log;
@@ -29,12 +29,10 @@ import com.company.iendo.http.model.HttpData;
 import com.company.iendo.manager.InputTextManager;
 import com.company.iendo.other.KeyboardWatcher;
 import com.company.iendo.ui.fragment.MineFragment;
-import com.company.iendo.wxapi.WXEntryActivity;
 import com.hjq.http.EasyConfig;
 import com.hjq.http.EasyHttp;
 import com.hjq.http.listener.HttpCallback;
 import com.hjq.umeng.Platform;
-import com.hjq.umeng.UmengClient;
 import com.hjq.umeng.UmengLogin;
 import com.hjq.widget.view.SubmitButton;
 
@@ -71,12 +69,8 @@ public final class LoginActivity extends AppActivity
     private EditText mPhoneView;
     private EditText mPasswordView;
 
-    private View mForgetView;
     private SubmitButton mCommitView;
 
-    private View mOtherView;
-    private View mQQView;
-    private View mWeChatView;
 
     /** logo 缩放比例 */
     private final float mLogoScale = 0.8f;
@@ -85,7 +79,7 @@ public final class LoginActivity extends AppActivity
 
     @Override
     protected int getLayoutId() {
-        return R.layout.login_activity;
+        return R.layout.activity_login;
     }
 
     @Override
@@ -94,13 +88,9 @@ public final class LoginActivity extends AppActivity
         mBodyLayout = findViewById(R.id.ll_login_body);
         mPhoneView = findViewById(R.id.et_login_phone);
         mPasswordView = findViewById(R.id.et_login_password);
-        mForgetView = findViewById(R.id.tv_login_forget);
         mCommitView = findViewById(R.id.btn_login_commit);
-        mOtherView = findViewById(R.id.ll_login_other);
-        mQQView = findViewById(R.id.iv_login_qq);
-        mWeChatView = findViewById(R.id.iv_login_wechat);
 
-        setOnClickListener(mForgetView, mCommitView, mQQView, mWeChatView);
+        setOnClickListener( mCommitView);
 
         mPasswordView.setOnEditorActionListener(this);
 
@@ -118,136 +108,85 @@ public final class LoginActivity extends AppActivity
                     .setListener(LoginActivity.this);
         }, 500);
 
-        // 判断用户当前有没有安装 QQ
-        if (!UmengClient.isAppInstalled(this, Platform.QQ)) {
-            mQQView.setVisibility(View.GONE);
-        }
-
-        // 判断用户当前有没有安装微信
-        if (!UmengClient.isAppInstalled(this, Platform.WECHAT)) {
-            mWeChatView.setVisibility(View.GONE);
-        }
-
-        // 如果这两个都没有安装就隐藏提示
-        if (mQQView.getVisibility() == View.GONE && mWeChatView.getVisibility() == View.GONE) {
-            mOtherView.setVisibility(View.GONE);
-        }
 
         // 自动填充手机号和密码
         mPhoneView.setText(getString(INTENT_KEY_IN_PHONE));
         mPasswordView.setText(getString(INTENT_KEY_IN_PASSWORD));
     }
 
-    @Override
-    public void onRightClick(View view) {
-        // 跳转到注册界面
-        RegisterActivity.start(this, mPhoneView.getText().toString(),
-                mPasswordView.getText().toString(), (phone, password) -> {
-            // 如果已经注册成功，就执行登录操作
-            mPhoneView.setText(phone);
-            mPasswordView.setText(password);
-            mPasswordView.requestFocus();
-            mPasswordView.setSelection(mPasswordView.getText().length());
-            onClick(mCommitView);
-        });
-    }
+
 
     @SingleClick
     @Override
     public void onClick(View view) {
-        if (view == mForgetView) {
-            startActivity(PasswordForgetActivity.class);
-            return;
-        }
-
         if (view == mCommitView) {
-            if (mPhoneView.getText().toString().length() != 11) {
-                mPhoneView.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.shake_anim));
-                mCommitView.showError(3000);
-                toast(R.string.common_phone_input_error);
-                return;
-            }
+//            if (mPhoneView.getText().toString().length() != 11) {
+//                mPhoneView.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.shake_anim));
+//                mCommitView.showError(3000);
+//                toast(R.string.common_phone_input_error);
+//                return;
+//            }
 
             // 隐藏软键盘
             hideKeyboard(getCurrentFocus());
 
-            if (true) {
-                mCommitView.showProgress();
-                postDelayed(() -> {
-                    mCommitView.showSucceed();
-                    postDelayed(() -> {
-                        HomeActivity.start(getContext(), MineFragment.class);
-                        finish();
-                    }, 1000);
-                }, 2000);
-                return;
-            }
+//            if (true) {
+//                mCommitView.showProgress();
+//                postDelayed(() -> {
+//                    mCommitView.showSucceed();
+//                    postDelayed(() -> {
+//                        HomeActivity.start(getContext(), MineFragment.class);
+//                        finish();
+//                    }, 1000);
+//                }, 2000);
+//                return;
+//            }
 
-            EasyHttp.post(this)
-                    .api(new LoginApi()
-                            .setPhone(mPhoneView.getText().toString())
-                            .setPassword(mPasswordView.getText().toString()))
-                    .request(new HttpCallback<HttpData<LoginApi.Bean>>(this) {
-
-                        @Override
-                        public void onStart(Call call) {
-                            mCommitView.showProgress();
-                        }
-
-                        @Override
-                        public void onEnd(Call call) {}
-
-                        @Override
-                        public void onSucceed(HttpData<LoginApi.Bean> data) {
-                            // 更新 Token
-                            EasyConfig.getInstance()
-                                    .addParam("token", data.getData().getToken());
-                            postDelayed(() -> {
-                                mCommitView.showSucceed();
-                                postDelayed(() -> {
-                                    // 跳转到首页
-                                    HomeActivity.start(getContext(), MineFragment.class);
-                                    finish();
-                                }, 1000);
-                            }, 1000);
-                        }
-
-                        @Override
-                        public void onFail(Exception e) {
-                            super.onFail(e);
-                            postDelayed(() -> {
-                                mCommitView.showError(3000);
-                            }, 1000);
-                        }
-                    });
+//            EasyHttp.post(this)
+//                    .api(new LoginApi()
+//                            .setPhone(mPhoneView.getText().toString())
+//                            .setPassword(mPasswordView.getText().toString()))
+//                    .request(new HttpCallback<HttpData<LoginApi.Bean>>(this) {
+//
+//                        @Override
+//                        public void onStart(Call call) {
+//                            mCommitView.showProgress();
+//                        }
+//
+//                        @Override
+//                        public void onEnd(Call call) {}
+//
+//                        @Override
+//                        public void onSucceed(HttpData<LoginApi.Bean> data) {
+//                            // 更新 Token
+//                            EasyConfig.getInstance()
+//                                    .addParam("token", data.getData().getToken());
+//                            postDelayed(() -> {
+//                                mCommitView.showSucceed();
+//                                postDelayed(() -> {
+//                                    // 跳转到首页
+//                                    HomeActivity.start(getContext(), MineFragment.class);
+//                                    finish();
+//                                }, 1000);
+//                            }, 1000);
+//                        }
+//
+//                        @Override
+//                        public void onFail(Exception e) {
+//                            super.onFail(e);
+//                            postDelayed(() -> {
+//                                mCommitView.showError(3000);
+//                            }, 1000);
+//                        }
+//                    });
             return;
         }
 
-        if (view == mQQView || view == mWeChatView) {
-            toast("记得改好第三方 AppID 和 Secret，否则会调不起来哦");
-            Platform platform;
-            if (view == mQQView) {
-                platform = Platform.QQ;
-            } else if (view == mWeChatView) {
-                platform = Platform.WECHAT;
-                toast("也别忘了改微信 " + WXEntryActivity.class.getSimpleName() + " 类所在的包名哦");
-            } else {
-                throw new IllegalStateException("are you ok?");
-            }
-            UmengClient.login(this, platform, this);
-        }
+
+
+
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        // 友盟回调
-        UmengClient.onActivityResult(this, requestCode, resultCode, data);
-    }
-
-    /**
-     * {@link UmengLogin.OnLoginListener}
-     */
 
     /**
      * 授权成功的回调
@@ -257,20 +196,6 @@ public final class LoginActivity extends AppActivity
      */
     @Override
     public void onSucceed(Platform platform, UmengLogin.LoginData data) {
-        if (isFinishing() || isDestroyed()) {
-            // Glide：You cannot start a load for a destroyed activity
-            return;
-        }
-
-        // 判断第三方登录的平台
-        switch (platform) {
-            case QQ:
-                break;
-            case WECHAT:
-                break;
-            default:
-                break;
-        }
 
         GlideApp.with(this)
                 .load(data.getAvatar())

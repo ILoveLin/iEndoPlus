@@ -70,21 +70,26 @@
             android:name=".mineui.activity.ChoiceProgramActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
-
-
-
-
-
-
-
-
-
-
-
-
-        <!-- 闪屏页 -->
+        <!-- 设备选择界面 -->
         <activity
-            android:name="com.company.iendo.ui.activity.SplashActivity"
+            android:name=".mineui.activity.login.DeviceChoiceActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <!-- 引导页 -->
+        <activity
+            android:name="com.company.iendo.mineui.activity.login.GuideActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <!-- 登录页 -->
+        <activity
+            android:name="com.company.iendo.mineui.activity.login.LoginActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" />
+
+        <!-- Splash界面 -->
+        <activity
+            android:name=".mineui.activity.login.SplashActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/SplashTheme">
@@ -99,25 +104,25 @@
 
         </activity>
 
-        <!-- 引导页 -->
-        <activity
-            android:name="com.company.iendo.ui.activity.GuideActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait" />
 
         <!-- 首页 -->
         <activity
-            android:name="com.company.iendo.ui.activity.HomeActivity"
+            android:name=".mineui.activity.MainActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
 
-        <!-- 登录页 -->
-        <activity
-            android:name="com.company.iendo.ui.activity.LoginActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden" />
+
+        <!--   已下是中台界面     -->
+        <!--   已下是中台界面     -->
+        <!--   已下是中台界面     -->
+        <!--   已下是中台界面     -->
+        <!--   已下是中台界面     -->
+        <!--   已下是中台界面     -->
+        <!--   已下是中台界面     -->
+        <!--   已下是中台界面     -->
+
+
 
         <!-- 注册页 -->
         <activity

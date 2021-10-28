@@ -481,7 +481,7 @@ public final class DialogActivity extends AppActivity {
                     .setOnClickListener(R.id.btn_dialog_custom_ok, (BaseDialog.OnClickListener<Button>) (dialog, button) -> dialog.dismiss())
                     .setOnCreateListener(dialog -> toast("Dialog 创建了"))
                     .addOnShowListener(dialog -> toast("Dialog 显示了"))
-                    .addOnCancelListener(dialog -> toast("Dialog 取消了"))
+                    .addOnCancelListener(R.id.btn_dialog_custom_ok, dialog -> toast("Dialog 取消了"))
                     .addOnDismissListener(dialog -> toast("Dialog 销毁了"))
                     .setOnKeyListener((dialog, event) -> {
                         toast("按键代码：" + event.getKeyCode());
