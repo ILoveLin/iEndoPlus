@@ -65,7 +65,6 @@ public final class HomeActivity extends AppActivity
     protected void initView() {
         mViewPager = findViewById(R.id.vp_home_pager);
         mNavigationView = findViewById(R.id.rv_home_navigation);
-
         mNavigationAdapter = new NavigationAdapter(this);
         mNavigationAdapter.addItem(new NavigationAdapter.MenuItem(getString(R.string.home_nav_index),
                 ContextCompat.getDrawable(this, R.drawable.home_home_selector)));

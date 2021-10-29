@@ -17,6 +17,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
+import com.company.iendo.mineui.activity.MainActivity;
+import com.company.iendo.mineui.fragment.AFragment;
 import com.company.iendo.ui.activity.HomeActivity;
 import com.gyf.immersionbar.ImmersionBar;
 import com.company.iendo.R;
@@ -29,9 +31,12 @@ import com.company.iendo.http.model.HttpData;
 import com.company.iendo.manager.InputTextManager;
 import com.company.iendo.other.KeyboardWatcher;
 import com.company.iendo.ui.fragment.MineFragment;
+import com.hjq.bar.OnTitleBarListener;
+import com.hjq.bar.TitleBar;
 import com.hjq.http.EasyConfig;
 import com.hjq.http.EasyHttp;
 import com.hjq.http.listener.HttpCallback;
+import com.hjq.toast.ToastUtils;
 import com.hjq.umeng.Platform;
 import com.hjq.umeng.UmengLogin;
 import com.hjq.widget.view.SubmitButton;
@@ -39,10 +44,10 @@ import com.hjq.widget.view.SubmitButton;
 import okhttp3.Call;
 
 /**
- *    author : Android 轮子哥
- *    github : https://github.com/getActivity/AndroidProject
- *    time   : 2018/10/18
- *    desc   : 登录界面
+ * author : Android 轮子哥
+ * github : https://github.com/getActivity/AndroidProject
+ * time   : 2018/10/18
+ * desc   : 登录界面
  */
 public final class LoginActivity extends AppActivity
         implements UmengLogin.OnLoginListener,
@@ -51,6 +56,7 @@ public final class LoginActivity extends AppActivity
 
     private static final String INTENT_KEY_IN_PHONE = "phone";
     private static final String INTENT_KEY_IN_PASSWORD = "password";
+    private TitleBar mTitleBar;
 
     @Log
     public static void start(Context context, String phone, String password) {
@@ -72,9 +78,13 @@ public final class LoginActivity extends AppActivity
     private SubmitButton mCommitView;
 
 
-    /** logo 缩放比例 */
+    /**
+     * logo 缩放比例
+     */
     private final float mLogoScale = 0.8f;
-    /** 动画时间 */
+    /**
+     * 动画时间
+     */
     private final int mAnimTime = 300;
 
     @Override
@@ -89,8 +99,9 @@ public final class LoginActivity extends AppActivity
         mPhoneView = findViewById(R.id.et_login_phone);
         mPasswordView = findViewById(R.id.et_login_password);
         mCommitView = findViewById(R.id.btn_login_commit);
+        mTitleBar = findViewById(R.id.mtitlebar);
 
-        setOnClickListener( mCommitView);
+        setOnClickListener(mCommitView);
 
         mPasswordView.setOnEditorActionListener(this);
 
@@ -115,7 +126,6 @@ public final class LoginActivity extends AppActivity
     }
 
 
-
     @SingleClick
     @Override
     public void onClick(View view) {
@@ -130,17 +140,17 @@ public final class LoginActivity extends AppActivity
             // 隐藏软键盘
             hideKeyboard(getCurrentFocus());
 
-//            if (true) {
-//                mCommitView.showProgress();
-//                postDelayed(() -> {
-//                    mCommitView.showSucceed();
-//                    postDelayed(() -> {
-//                        HomeActivity.start(getContext(), MineFragment.class);
-//                        finish();
-//                    }, 1000);
-//                }, 2000);
-//                return;
-//            }
+            if (true) {
+                mCommitView.showProgress();
+                postDelayed(() -> {
+                    mCommitView.showSucceed();
+                    postDelayed(() -> {
+                        MainActivity.start(getContext(), AFragment.class);
+                        finish();
+                    }, 1000);
+                }, 2000);
+                return;
+            }
 
 //            EasyHttp.post(this)
 //                    .api(new LoginApi()
@@ -183,7 +193,21 @@ public final class LoginActivity extends AppActivity
         }
 
 
+        mTitleBar.setOnTitleBarListener(new OnTitleBarListener() {
 
+            @Override
+            public void onLeftClick(View view) {
+                finish();
+            }
+
+            @Override
+            public void onTitleClick(View view) {
+            }
+
+            @Override
+            public void onRightClick(View view) {
+            }
+        });
 
     }
 
@@ -191,8 +215,8 @@ public final class LoginActivity extends AppActivity
     /**
      * 授权成功的回调
      *
-     * @param platform      平台名称
-     * @param data          用户资料返回
+     * @param platform 平台名称
+     * @param data     用户资料返回
      */
     @Override
     public void onSucceed(Platform platform, UmengLogin.LoginData data) {
@@ -211,8 +235,8 @@ public final class LoginActivity extends AppActivity
     /**
      * 授权失败的回调
      *
-     * @param platform      平台名称
-     * @param t             错误原因
+     * @param platform 平台名称
+     * @param t        错误原因
      */
     @Override
     public void onError(Platform platform, Throwable t) {

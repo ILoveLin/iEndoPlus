@@ -10,7 +10,7 @@ import com.hjq.shape.view.ShapeTextView;
  * author : Android 轮子哥
  * github : https://github.com/getActivity/AndroidProject
  * time   : 2018/10/18
- * desc   : 可进行拷贝的副本
+ * desc   : 设备选择界面
  */
 public final class DeviceChoiceActivity extends AppActivity {
 
@@ -37,6 +37,7 @@ public final class DeviceChoiceActivity extends AppActivity {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.stv_device:
+                startActivity(LoginActivity.class);
                 break;
         }
     }

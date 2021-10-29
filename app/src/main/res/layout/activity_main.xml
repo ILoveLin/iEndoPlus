@@ -7,45 +7,23 @@
     android:orientation="vertical"
     tools:context="com.company.iendo.ui.activity.CopyActivity">
 
-    <com.hjq.bar.TitleBar
+    <com.hjq.widget.layout.NoScrollViewPager
+        android:id="@+id/vp_home_pager"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:title="设备选择界面" />
+        android:layout_height="0px"
+        android:layout_weight="1" />
 
-    <com.hjq.shape.view.ShapeTextView
-        android:id="@+id/stv_device"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_home_navigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/dp_20"
-        android:layout_marginTop="@dimen/dp_10"
-        android:layout_marginEnd="@dimen/dp_20"
-        android:gravity="center"
-        android:paddingTop="@dimen/dp_30"
-        android:paddingBottom="@dimen/dp_30"
-        android:text="主界面"
-        android:textColor="@android:color/black"
-        android:textSize="@dimen/sp_14"
-        app:shape="rectangle"
-        app:shape_radius="@dimen/dp_10"
-        app:shape_shadowColor="@color/black10"
-        app:shape_shadowSize="@dimen/dp_10"
-        app:shape_solidColor="@color/white" />
-    <com.hjq.shape.view.ShapeTextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/dp_20"
-        android:layout_marginTop="@dimen/dp_10"
-        android:layout_marginEnd="@dimen/dp_20"
-        android:gravity="center"
-        android:paddingTop="@dimen/dp_30"
-        android:paddingBottom="@dimen/dp_30"
-        android:text="主界面"
-        android:textColor="@android:color/black"
-        android:textSize="@dimen/sp_14"
-        app:shape="rectangle"
-        app:shape_radius="@dimen/dp_10"
-        app:shape_shadowColor="@color/black10"
-        app:shape_shadowSize="@dimen/dp_10"
-        app:shape_solidColor="@color/white" />
+        android:background="@color/white"
+        android:elevation="@dimen/dp_10"
+        android:orientation="vertical"
+        app:spanCount="3"
+        tools:itemCount="3"
+        tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        tools:listitem="@layout/home_navigation_item" />
+
 
 </LinearLayout>
