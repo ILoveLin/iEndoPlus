@@ -1,4 +1,4 @@
-package com.company.iendo.mineui.activity;
+package com.company.iendo.mineui.activity.choice;
 
 import android.content.Intent;
 import android.view.View;
@@ -7,9 +7,6 @@ import android.widget.TextView;
 import com.company.iendo.R;
 import com.company.iendo.app.AppActivity;
 import com.company.iendo.mineui.bean.ProgramEntity;
-import com.company.iendo.mineui.bean.event.ProgramDataEvent;
-
-import org.greenrobot.eventbus.EventBus;
 
 import java.io.Serializable;
 import java.util.ArrayList;

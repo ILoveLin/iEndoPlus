@@ -1,4 +1,4 @@
-package com.company.iendo.mineui.fragment;
+package com.company.iendo.mineui.fragment.setting;
 
 import com.company.iendo.R;
 import com.company.iendo.app.TitleBarFragment;
@@ -10,15 +10,15 @@ import com.company.iendo.mineui.activity.MainActivity;
  * time：2021/10/29 13:55
  * desc：第3个tab-fragment
  */
-public class BFragment extends TitleBarFragment<MainActivity> {
+public class SettingFragment extends TitleBarFragment<MainActivity> {
 
-    public static BFragment newInstance(){
-        return new BFragment();
+    public static SettingFragment newInstance(){
+        return new SettingFragment();
     }
 
     @Override
     protected int getLayoutId() {
-        return R.layout.fragment_b;
+        return R.layout.fragment_c;
     }
 
     @Override

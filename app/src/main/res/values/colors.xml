@@ -14,6 +14,7 @@
     <color name="common_button_disable_color">#BBBBBB</color>
     <!-- 分割线的颜色 -->
     <color name="common_line_color">#ECECEC</color>
+
     <!-- 矢量图标的颜色 -->
     <color name="common_icon_color">#7C7C7C</color>
 

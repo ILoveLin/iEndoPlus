@@ -9,7 +9,7 @@ import android.view.View;
 import com.company.iendo.R;
 import com.company.iendo.aop.SingleClick;
 import com.company.iendo.app.TitleBarFragment;
-import com.company.iendo.mineui.activity.ProgramActivity;
+import com.company.iendo.mineui.activity.choice.ProgramActivity;
 import com.company.iendo.ui.activity.AboutActivity;
 import com.company.iendo.ui.activity.BrowserActivity;
 import com.company.iendo.ui.activity.DialogActivity;

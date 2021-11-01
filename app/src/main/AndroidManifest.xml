@@ -62,12 +62,12 @@
         <!-- iEndoPlus界面 -->
         <!-- 方案界面 -->
         <activity
-            android:name=".mineui.activity.ProgramActivity"
+            android:name=".mineui.activity.choice.ProgramActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         <!-- 方案选择界面 -->
         <activity
-            android:name=".mineui.activity.ChoiceProgramActivity"
+            android:name=".mineui.activity.choice.ChoiceProgramActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         <!-- 设备选择界面 -->
@@ -111,8 +111,11 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
-
-
+        <!-- 搜索 -->
+        <activity
+            android:name=".mineui.activity.search.SearchActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
         <!--   已下是中台界面     -->
         <!--   已下是中台界面     -->
         <!--   已下是中台界面     -->

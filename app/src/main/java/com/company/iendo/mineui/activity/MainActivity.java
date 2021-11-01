@@ -15,10 +15,9 @@ import com.company.iendo.app.AppActivity;
 import com.company.iendo.app.AppFragment;
 import com.company.iendo.manager.ActivityManager;
 import com.company.iendo.mineui.fragment.AFragment;
-import com.company.iendo.mineui.fragment.BFragment;
-import com.company.iendo.mineui.fragment.CFragment;
+import com.company.iendo.mineui.fragment.casemanage.CaseManageFragment;
+import com.company.iendo.mineui.fragment.setting.SettingFragment;
 import com.company.iendo.other.DoubleClickHelper;
-import com.company.iendo.ui.activity.HomeActivity;
 import com.company.iendo.ui.adapter.NavigationAdapter;
 import com.company.iendo.ui.fragment.HomeFragment;
 import com.gyf.immersionbar.ImmersionBar;
@@ -63,11 +62,11 @@ public class MainActivity extends AppActivity implements NavigationAdapter.OnNav
         mViewPager = findViewById(R.id.vp_home_pager);
         mNavigationView = findViewById(R.id.rv_home_navigation);
         mNavigationAdapter = new NavigationAdapter(this);
-        mNavigationAdapter.addItem(new NavigationAdapter.MenuItem(getString(R.string.home_nav_index),
+        mNavigationAdapter.addItem(new NavigationAdapter.MenuItem(getString(R.string.home_nav_index01),
                 ContextCompat.getDrawable(this, R.drawable.home_home_selector)));
-        mNavigationAdapter.addItem(new NavigationAdapter.MenuItem(getString(R.string.home_nav_found),
+        mNavigationAdapter.addItem(new NavigationAdapter.MenuItem(getString(R.string.home_nav_index02),
                 ContextCompat.getDrawable(this, R.drawable.home_found_selector)));
-        mNavigationAdapter.addItem(new NavigationAdapter.MenuItem(getString(R.string.home_nav_message),
+        mNavigationAdapter.addItem(new NavigationAdapter.MenuItem(getString(R.string.home_nav_index03),
                 ContextCompat.getDrawable(this, R.drawable.home_message_selector)));
 //        mNavigationAdapter.addItem(new NavigationAdapter.MenuItem(getString(R.string.home_nav_me),
 //                ContextCompat.getDrawable(this, R.drawable.home_me_selector)));
@@ -79,10 +78,9 @@ public class MainActivity extends AppActivity implements NavigationAdapter.OnNav
     protected void initData() {
         mPagerAdapter = new FragmentPagerAdapter<>(this);
         mPagerAdapter.addFragment(AFragment.newInstance());
-        mPagerAdapter.addFragment(BFragment.newInstance());
-        mPagerAdapter.addFragment(CFragment.newInstance());
+        mPagerAdapter.addFragment(CaseManageFragment.newInstance());
+        mPagerAdapter.addFragment(SettingFragment.newInstance());
         mViewPager.setAdapter(mPagerAdapter);
-
         onNewIntent(getIntent());
 
     }

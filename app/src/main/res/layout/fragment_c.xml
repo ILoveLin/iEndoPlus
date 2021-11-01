@@ -10,6 +10,7 @@
     <com.hjq.bar.TitleBar
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:title="C" />
+        app:leftIcon="@null"
+        app:title="设置" />
 
 </LinearLayout>

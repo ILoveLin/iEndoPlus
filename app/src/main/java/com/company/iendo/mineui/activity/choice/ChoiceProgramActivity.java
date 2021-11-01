@@ -1,8 +1,7 @@
-package com.company.iendo.mineui.activity;
+package com.company.iendo.mineui.activity.choice;
 
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -11,16 +10,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.company.iendo.R;
 import com.company.iendo.app.AppActivity;
 import com.company.iendo.mineui.bean.ProgramEntity;
-import com.company.iendo.mineui.bean.event.ProgramDataEvent;
 import com.company.iendo.mineui.program.ChannelAdapter;
 import com.company.iendo.mineui.program.help.ItemDragHelperCallback;
 import com.company.iendo.utils.LogUtils;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
-import java.io.Serializable;
 import java.util.List;
 
 /**
