@@ -7,10 +7,12 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.gson.Gson;
 import com.gyf.immersionbar.ImmersionBar;
 import com.hjq.bar.TitleBar;
 import com.company.iendo.R;
 import com.company.iendo.action.TitleBarAction;
+import com.hjq.gson.factory.GsonFactory;
 
 /**
  *    author : Android 轮子哥
@@ -25,10 +27,12 @@ public abstract class TitleBarFragment<A extends AppActivity> extends AppFragmen
     private TitleBar mTitleBar;
     /** 状态栏沉浸 */
     private ImmersionBar mImmersionBar;
+    public  Gson mGson;
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        mGson = GsonFactory.getSingletonGson();
 
         // 设置标题栏点击监听
         if (getTitleBar() != null) {

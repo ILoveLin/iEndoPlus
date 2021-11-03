@@ -18,7 +18,7 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.company.iendo.manager.ActivityManager;
 import com.company.iendo.mineui.activity.MainActivity;
-import com.company.iendo.utils.Constants;
+import com.company.iendo.other.Constants;
 import com.company.iendo.utils.ScreenSizeUtil;
 import com.company.iendo.utils.SharePreferenceUtil;
 import com.gyf.immersionbar.ImmersionBar;

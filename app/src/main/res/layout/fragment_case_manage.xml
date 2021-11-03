@@ -7,24 +7,95 @@
     android:orientation="vertical"
     tools:context="com.company.iendo.ui.activity.CopyActivity">
 
-    <com.hjq.bar.TitleBar
-        android:id="@+id/case_manage_title_right"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:leftIcon="@null"
-        app:rightIcon="@drawable/search_ic"
-        app:title="病例列表" />
-    <com.scwang.smart.refresh.layout.SmartRefreshLayout
-        android:id="@+id/rl_b_refresh"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:srlEnablePreviewInEditMode="false">
+    <!--    <com.hjq.bar.TitleBar-->
+    <!--        android:id="@+id/case_manage_title_right"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        app:rightIcon="@drawable/search_ic"-->
+    <!--        app:leftIcon="@drawable/add_ic"-->
+    <!--        app:title="病例列表" />-->
 
-        <com.hjq.widget.layout.WrapRecyclerView
-            android:id="@+id/rv_b_recyclerview"
+
+    <View
+        android:id="@+id/viewtop"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_10"
+        android:background="@color/white" />
+
+    <RelativeLayout
+        android:id="@+id/rl_top"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_50"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+        <ImageButton
+            android:id="@+id/ib_left"
+            style="@style/ww"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:background="@null"
+            android:padding="@dimen/dp_10"
+            android:src="@drawable/add_ic"
+            android:textColor="@color/white" />
+
+
+        <TextView
+            android:id="@+id/tv_title"
+            style="@style/ww"
+            android:layout_centerInParent="true"
+            android:layout_marginLeft="@dimen/dp_20"
+            android:layout_marginRight="@dimen/dp_20"
+            android:ellipsize="end"
+            android:ems="8"
+            android:gravity="center"
+            android:singleLine="true"
+            android:text="病例列表"
+            android:textColor="@color/black"
+            android:textSize="@dimen/sp_16" />
+
+
+        <ImageButton
+            android:id="@+id/ib_right"
+            style="@style/ww"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:background="@null"
+            android:padding="@dimen/dp_10"
+            android:src="@drawable/search_ic" />
+
+        <View
+            android:id="@+id/v_title_line"
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_alignParentBottom="true"
+            android:background="@color/common_line_color" />
+
+    </RelativeLayout>
+
+    <com.company.iendo.widget.StatusLayout
+        android:id="@+id/status_hint"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!--纯滚动模式-->
+        <!--app:srlEnablePureScrollMode="true"-->
+        <!--刷新和加载更多设置-->
+        <!--app:srlEnableAutoLoadMore="false"-->
+        <!--app:srlEnableLoadMore="true"-->
+        <com.scwang.smart.refresh.layout.SmartRefreshLayout
+            android:id="@+id/rl_b_refresh"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:listCount="10"
-            tools:listitem="@layout/picker_item" />
-    </com.scwang.smart.refresh.layout.SmartRefreshLayout>
+            app:srlEnablePreviewInEditMode="false">
+
+            <com.hjq.widget.layout.WrapRecyclerView
+                android:id="@+id/rv_b_recyclerview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:listCount="10"
+                tools:listitem="@layout/picker_item" />
+        </com.scwang.smart.refresh.layout.SmartRefreshLayout>
+    </com.company.iendo.widget.StatusLayout>
+
 </LinearLayout>

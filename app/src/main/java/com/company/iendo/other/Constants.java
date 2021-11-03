@@ -1,4 +1,4 @@
-package com.company.iendo.utils;
+package com.company.iendo.other;
 
 /**
  * company：江西神州医疗设备有限公司

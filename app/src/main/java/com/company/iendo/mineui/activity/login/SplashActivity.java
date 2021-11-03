@@ -8,7 +8,7 @@ import android.widget.ImageView;
 import com.company.iendo.R;
 import com.company.iendo.app.AppActivity;
 import com.company.iendo.mineui.activity.MainActivity;
-import com.company.iendo.utils.Constants;
+import com.company.iendo.other.Constants;
 import com.company.iendo.utils.SharePreferenceUtil;
 import com.google.gson.Gson;
 

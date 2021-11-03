@@ -54,8 +54,8 @@ public final class LoginActivity extends AppActivity
         KeyboardWatcher.SoftKeyboardStateListener,
         TextView.OnEditorActionListener {
 
-    private static final String INTENT_KEY_IN_PHONE = "phone";
-    private static final String INTENT_KEY_IN_PASSWORD = "password";
+    private static final String INTENT_KEY_IN_PHONE = "Admin";
+    private static final String INTENT_KEY_IN_PASSWORD = "123";
     private TitleBar mTitleBar;
 
     @Log
@@ -121,8 +121,12 @@ public final class LoginActivity extends AppActivity
 
 
         // 自动填充手机号和密码
-        mPhoneView.setText(getString(INTENT_KEY_IN_PHONE));
-        mPasswordView.setText(getString(INTENT_KEY_IN_PASSWORD));
+//        mPhoneView.setText(getString(INTENT_KEY_IN_PHONE));
+//        mPasswordView.setText(getString(INTENT_KEY_IN_PASSWORD));
+
+
+        mPhoneView.setText("Admin");
+        mPasswordView.setText("123");
     }
 
 
