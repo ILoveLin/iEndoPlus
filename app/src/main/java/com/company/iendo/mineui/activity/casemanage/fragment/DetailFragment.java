@@ -38,7 +38,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
     protected void initView() {
         sendRequest(MainActivity.getCurrentItemID());
         mTV = findViewById(R.id.detail_text);
-        mStatusLayout = findViewById(R.id.status_hint);
+        mStatusLayout = findViewById(R.id.detail_hint);
     }
 
     private void sendRequest(String currentItemID) {

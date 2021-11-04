@@ -65,7 +65,7 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
     protected void initView() {
         mRefreshLayout = findViewById(R.id.rl_b_refresh);
         mRecyclerView = findViewById(R.id.rv_b_recyclerview);
-        mStatusLayout = findViewById(R.id.status_hint);
+        mStatusLayout = findViewById(R.id.b_hint);
         setOnClickListener(R.id.ib_right, R.id.ib_left);
 
     }

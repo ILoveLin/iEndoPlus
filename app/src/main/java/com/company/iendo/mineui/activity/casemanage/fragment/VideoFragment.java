@@ -55,7 +55,7 @@ public class VideoFragment extends TitleBarFragment<MainActivity> implements Sta
     protected void initView() {
         mRefreshLayout = findViewById(R.id.rl_video_refresh);
         mRecyclerView = findViewById(R.id.rv_video_list);
-        mStatusLayout = findViewById(R.id.status_hint);
+        mStatusLayout = findViewById(R.id.video_hint);
         mAdapter = new VideoAdapter(getActivity(), MainActivity.getCurrentItemID());
 
         mAdapter.setOnItemClickListener(this);

@@ -56,9 +56,9 @@ public class PictureFragment extends TitleBarFragment<MainActivity> implements S
 
     @Override
     protected void initView() {
-        mRefreshLayout = findViewById(R.id.rl_status_refresh);
-        mRecyclerView = findViewById(R.id.rv_status_list);
-        mStatusLayout = findViewById(R.id.status_hint);
+        mRefreshLayout = findViewById(R.id.rl_pic_refresh);
+        mRecyclerView = findViewById(R.id.rv_pic_list);
+        mStatusLayout = findViewById(R.id.pic_hint);
         mAdapter = new PictureAdapter(getActivity(), MainActivity.getCurrentItemID());
 
         mAdapter.setOnItemClickListener(this);

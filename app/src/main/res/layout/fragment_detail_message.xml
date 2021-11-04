@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
     <com.company.iendo.widget.StatusLayout
-        android:id="@+id/status_hint"
+        android:id="@+id/detail_hint"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
