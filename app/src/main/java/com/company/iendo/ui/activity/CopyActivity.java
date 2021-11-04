@@ -1,7 +1,12 @@
 package com.company.iendo.ui.activity;
 
+import androidx.annotation.NonNull;
+
 import com.company.iendo.R;
+import com.company.iendo.action.StatusAction;
 import com.company.iendo.app.AppActivity;
+import com.company.iendo.widget.StatusLayout;
+import com.gyf.immersionbar.ImmersionBar;
 
 /**
  *    author : Android 轮子哥
@@ -9,7 +14,9 @@ import com.company.iendo.app.AppActivity;
  *    time   : 2018/10/18
  *    desc   : 可进行拷贝的副本
  */
-public final class CopyActivity extends AppActivity {
+public final class CopyActivity extends AppActivity implements StatusAction {
+
+    private StatusLayout mStatusLayout;
 
     @Override
     protected int getLayoutId() {
@@ -18,11 +25,25 @@ public final class CopyActivity extends AppActivity {
 
     @Override
     protected void initView() {
-
+        mStatusLayout = findViewById(R.id.status_hint);
     }
 
     @Override
     protected void initData() {
 
     }
+
+    @Override
+    public StatusLayout getStatusLayout() {
+        return mStatusLayout;
+    }
+
+    @NonNull
+    @Override
+    protected ImmersionBar createStatusBarConfig() {
+        return super.createStatusBarConfig()
+                // 指定导航栏背景颜色
+                .navigationBarColor(R.color.white);
+    }
+
 }

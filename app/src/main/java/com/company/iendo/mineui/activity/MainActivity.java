@@ -39,6 +39,8 @@ public class MainActivity extends AppActivity implements NavigationAdapter.OnNav
     private NavigationAdapter mNavigationAdapter;
     private FragmentPagerAdapter<AppFragment<?>> mPagerAdapter;
 
+    private  static  String mCurrentItemID;
+
     public static void start(Context context) {
         start(context, HomeFragment.class);
     }
@@ -166,5 +168,13 @@ public class MainActivity extends AppActivity implements NavigationAdapter.OnNav
         mViewPager.setAdapter(null);
         mNavigationView.setAdapter(null);
         mNavigationAdapter.setOnNavigationListener(null);
+    }
+
+    public static String getCurrentItemID() {
+        return mCurrentItemID;
+    }
+
+    public void setCurrentItemID(String mCurrentItemID) {
+        this.mCurrentItemID = mCurrentItemID;
     }
 }

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.company.iendo.ui.activity.CopyActivity">
+
+    <com.hjq.bar.TitleBar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:title="病例详情" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_100"
+        android:background="@color/white"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_margin="@dimen/dp_10"
+            android:background="@color/common_line_color"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="图像采集"
+            android:textSize="@dimen/sp_16" />
+
+        <TextView
+            android:layout_margin="@dimen/dp_10"
+            android:background="@color/common_line_color"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="生产报告"
+            android:textSize="@dimen/sp_16" />
+
+        <TextView
+            android:layout_margin="@dimen/dp_10"
+            android:background="@color/common_line_color"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="删除"
+            android:textSize="@dimen/sp_16" />
+
+        <TextView
+            android:layout_margin="@dimen/dp_10"
+            android:background="@color/common_line_color"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="下载"
+            android:textSize="@dimen/sp_16" />
+
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/common_line_color" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_detail_tab"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:orientation="vertical"
+        tools:itemCount="3"
+        tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        tools:listitem="@layout/tab_item_design"
+        tools:spanCount="3" />
+
+    <com.hjq.widget.layout.NestedViewPager
+        android:id="@+id/vp_detail_pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+      />
+
+</LinearLayout>

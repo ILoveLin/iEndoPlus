@@ -39,7 +39,7 @@ public class SplashActivity extends AppActivity {
         isLogined = (Boolean) SharePreferenceUtil.get(this, Constants.Is_Logined, false);
         // 从浅到深,从百分之10到百分之百
         AlphaAnimation aa = new AlphaAnimation(0.3f, 1.0f);
-        aa.setDuration(1500);// 设置动画时间
+        aa.setDuration(2000);// 设置动画时间
         ivSplash.setAnimation(aa);// 给image设置动画
         aa.setAnimationListener(new Animation.AnimationListener() {
             @Override

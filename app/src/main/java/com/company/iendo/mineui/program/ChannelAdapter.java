@@ -19,7 +19,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.company.iendo.R;
-import com.company.iendo.mineui.bean.ProgramEntity;
+import com.company.iendo.bean.ProgramEntity;
 import com.company.iendo.mineui.program.help.OnDragVHListener;
 import com.company.iendo.mineui.program.help.OnItemMoveListener;
 

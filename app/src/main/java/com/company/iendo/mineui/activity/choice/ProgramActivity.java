@@ -6,7 +6,7 @@ import android.widget.TextView;
 
 import com.company.iendo.R;
 import com.company.iendo.app.AppActivity;
-import com.company.iendo.mineui.bean.ProgramEntity;
+import com.company.iendo.bean.ProgramEntity;
 
 import java.io.Serializable;
 import java.util.ArrayList;

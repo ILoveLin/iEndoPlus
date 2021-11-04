@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:background="@color/white"
-    android:layout_height="match_parent">
+    android:orientation="vertical">
+
     <LinearLayout
         android:id="@+id/linear_sheare"
         android:layout_width="match_parent"
-        android:layout_marginTop="@dimen/dp_10"
         android:layout_height="@dimen/dp_49"
+        android:layout_marginTop="@dimen/dp_10"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:transitionName="anim_search">
@@ -38,8 +39,8 @@
             android:id="@+id/iv_user_search"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:padding="@dimen/dp_10"
             android:layout_marginEnd="@dimen/dp_10"
+            android:padding="@dimen/dp_10"
             app:srcCompat="@drawable/search_ic" />
 
     </LinearLayout>
@@ -47,20 +48,26 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
-        android:background="@color/common_line_color"
-        />
+        android:background="@color/common_line_color" />
 
-    <com.scwang.smart.refresh.layout.SmartRefreshLayout
-        android:id="@+id/rl_search_refresh"
+    <com.company.iendo.widget.StatusLayout
+        android:id="@+id/status_hint"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:srlEnablePreviewInEditMode="false">
+        android:layout_height="match_parent">
 
-        <com.hjq.widget.layout.WrapRecyclerView
-            android:id="@+id/rv_search_recyclerview"
+        <com.scwang.smart.refresh.layout.SmartRefreshLayout
+            android:id="@+id/rl_search_refresh"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:listCount="10"
-            tools:listitem="@layout/picker_item" />
-    </com.scwang.smart.refresh.layout.SmartRefreshLayout>
+            app:srlEnablePreviewInEditMode="false">
+
+            <com.hjq.widget.layout.WrapRecyclerView
+                android:id="@+id/rv_search_recyclerview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:listCount="10"
+                tools:listitem="@layout/picker_item" />
+        </com.scwang.smart.refresh.layout.SmartRefreshLayout>
+    </com.company.iendo.widget.StatusLayout>
+
 </LinearLayout>

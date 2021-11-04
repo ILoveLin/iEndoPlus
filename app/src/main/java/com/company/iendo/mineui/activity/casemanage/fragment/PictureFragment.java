@@ -1,4 +1,4 @@
-package com.company.iendo.mineui.activity.search;
+package com.company.iendo.mineui.activity.casemanage.fragment;
 
 import android.view.View;
 
@@ -7,17 +7,17 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.company.iendo.R;
 import com.company.iendo.action.StatusAction;
-import com.company.iendo.app.AppActivity;
-import com.company.iendo.bean.CaseManageListBean;
+import com.company.iendo.app.TitleBarFragment;
+import com.company.iendo.bean.CaseDetailBean;
+import com.company.iendo.bean.DetailPictureBean;
 import com.company.iendo.bean.SearchListBean;
-import com.company.iendo.manager.ActivityManager;
+import com.company.iendo.mineui.activity.MainActivity;
+import com.company.iendo.mineui.activity.casemanage.fragment.adapter.PictureAdapter;
+import com.company.iendo.mineui.activity.search.SearchActivity;
 import com.company.iendo.mineui.activity.search.adapter.SearchAdapter;
 import com.company.iendo.other.HttpConstant;
-import com.company.iendo.utils.DateUtil;
-import com.company.iendo.utils.LogUtils;
 import com.company.iendo.widget.RecycleViewDivider;
 import com.company.iendo.widget.StatusLayout;
-import com.gyf.immersionbar.ImmersionBar;
 import com.hjq.base.BaseAdapter;
 import com.hjq.widget.layout.WrapRecyclerView;
 import com.scwang.smart.refresh.layout.SmartRefreshLayout;
@@ -34,108 +34,96 @@ import okhttp3.Call;
 /**
  * company：江西神州医疗设备有限公司
  * author： LoveLin
- * time：2021/11/1 13:46
- * desc：搜索界面
+ * time：2021/10/29 13:55
+ * desc：第2个tab-fragment
  */
-public class SearchActivity extends AppActivity implements StatusAction, BaseAdapter.OnItemClickListener, OnRefreshLoadMoreListener {
-    private List<SearchListBean.DataDTO> mDataLest = new ArrayList<>();
+public class PictureFragment extends TitleBarFragment<MainActivity> implements StatusAction, BaseAdapter.OnItemClickListener, OnRefreshLoadMoreListener {
     private SmartRefreshLayout mRefreshLayout;
     private WrapRecyclerView mRecyclerView;
-    private SearchAdapter mAdapter;
     private StatusLayout mStatusLayout;
+    private List<DetailPictureBean.DataDTO> mDataLest = new ArrayList<>();
+    private PictureAdapter mAdapter;
+
+    public static PictureFragment newInstance() {
+        return new PictureFragment();
+    }
 
     @Override
+
     protected int getLayoutId() {
-        return R.layout.activity_case_search;
+        return R.layout.fragment_detail_picture;
     }
 
     @Override
     protected void initView() {
-        mRefreshLayout = findViewById(R.id.rl_search_refresh);
-        mRecyclerView = findViewById(R.id.rv_search_recyclerview);
+        mRefreshLayout = findViewById(R.id.rl_status_refresh);
+        mRecyclerView = findViewById(R.id.rv_status_list);
         mStatusLayout = findViewById(R.id.status_hint);
-        setOnClickListener(R.id.tv_back);
-    }
+        mAdapter = new PictureAdapter(getActivity(), MainActivity.getCurrentItemID());
 
-    @Override
-    protected void initData() {
-        mAdapter = new SearchAdapter(SearchActivity.this);
         mAdapter.setOnItemClickListener(this);
         mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.addItemDecoration(new RecycleViewDivider(this, 1, R.drawable.shape_divideritem_decoration));
+        mRecyclerView.addItemDecoration(new RecycleViewDivider(getActivity(), 1, R.drawable.shape_divideritem_decoration));
         mAdapter.setData(mDataLest);
+        sendRequest(MainActivity.getCurrentItemID());
+
+
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        sendRequest(DateUtil.getSystemDate());
-    }
-
-    private void sendRequest(String systemDate) {
-        showLoading();
+    /**
+     * 获取当前用户的图片
+     *
+     * @param currentItemID
+     */
+    private void sendRequest(String currentItemID) {
         OkHttpUtils.get()
-                .url(HttpConstant.CaseManager_Search)
-                .addParams("CheckDateStart", "2021-11-03")
-//                .addParams("CheckDateStart", systemDate)
+                .url(HttpConstant.CaseManager_CasePictures)
+                .addParams("ID", currentItemID)
                 .build()
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
-                        LogUtils.e("=TAG=hy=onError==" + e.toString());
                         showError(listener -> {
-                            sendRequest(systemDate);
+                            sendRequest(currentItemID);
                         });
                     }
 
                     @Override
                     public void onResponse(String response, int id) {
                         if ("" != response) {
-                            SearchListBean mBean = mGson.fromJson(response, SearchListBean.class);
+                            DetailPictureBean mBean = mGson.fromJson(response, DetailPictureBean.class);
+                            List<DetailPictureBean.DataDTO> data = mBean.getData();
+                            toast(mBean.getMsg());
                             if (0 == mBean.getCode()) {  //成功
-                                if (mBean.getData().size() != 0) {
-                                    showComplete();
-                                    mDataLest.clear();
-                                    mDataLest.addAll(mBean.getData());
-                                    mAdapter.setData(mDataLest);
-                                } else {
-                                    showEmpty();
-                                }
+                                showComplete();
+                                mDataLest.clear();
+                                mDataLest.addAll(mBean.getData());
+                                mAdapter.setData(mDataLest);
                             } else {
                                 showError(listener -> {
-                                    sendRequest(systemDate);
+                                    sendRequest(currentItemID);
                                 });
                             }
                         } else {
                             showError(listener -> {
-                                sendRequest(systemDate);
+                                sendRequest(currentItemID);
                             });
                         }
                     }
                 });
+
     }
 
     @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.tv_back:
-                ActivityManager.getInstance().finishActivity(SearchActivity.class);
-                break;
-        }
+    protected void initData() {
+
     }
 
 
-    /**
-     * {@link BaseAdapter.OnItemClickListener}
-     *
-     * @param recyclerView RecyclerView对象
-     * @param itemView     被点击的条目对象
-     * @param position     被点击的条目位置
-     */
     @Override
     public void onItemClick(RecyclerView recyclerView, View itemView, int position) {
-        SearchListBean.DataDTO item = mAdapter.getItem(position);
-        toast(item.getCheckDate());
+        DetailPictureBean.DataDTO item = mAdapter.getItem(position);
+        toast(item.getID());
     }
 
     /**
@@ -161,16 +149,16 @@ public class SearchActivity extends AppActivity implements StatusAction, BaseAda
     }
 
 
-    @NonNull
     @Override
-    protected ImmersionBar createStatusBarConfig() {
-        return super.createStatusBarConfig()
-                // 指定导航栏背景颜色
-                .navigationBarColor(R.color.white);
+    public boolean isStatusBarEnabled() {
+        // 使用沉浸式状态栏
+        return !super.isStatusBarEnabled();
     }
 
     @Override
     public StatusLayout getStatusLayout() {
         return mStatusLayout;
     }
+
+
 }

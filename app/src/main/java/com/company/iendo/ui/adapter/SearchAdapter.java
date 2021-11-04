@@ -15,9 +15,9 @@ import com.company.iendo.app.AppAdapter;
  *    time   : 2019/09/22
  *    desc   : 状态数据列表
  */
-public final class StatusAdapter extends AppAdapter<String> {
+public final class SearchAdapter extends AppAdapter<String> {
 
-    public StatusAdapter(Context context) {
+    public SearchAdapter(Context context) {
         super(context);
     }
 

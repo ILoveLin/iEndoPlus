@@ -1,11 +1,14 @@
-package com.company.iendo.mineui.bean;
-
+package com.company.iendo.bean;
 import java.io.Serializable;
 
 /**
- * 方案实体类
- * Created by YoKeyword on 15/12/29.
+ * company：江西神州医疗设备有限公司
+ * author： LoveLin
+ * time：2021/11/4 9:32
+ * desc：方案实体类
  */
+
+
 public class ProgramEntity implements Serializable {
 
     private long id;

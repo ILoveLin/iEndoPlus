@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.company.iendo.R;
 import com.company.iendo.app.AppActivity;
-import com.company.iendo.mineui.bean.ProgramEntity;
+import com.company.iendo.bean.ProgramEntity;
 import com.company.iendo.mineui.program.ChannelAdapter;
 import com.company.iendo.mineui.program.help.ItemDragHelperCallback;
 import com.company.iendo.utils.LogUtils;

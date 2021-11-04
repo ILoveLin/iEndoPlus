@@ -1,5 +1,6 @@
 package com.company.iendo.mineui.fragment.casemanage;
 
+import android.content.Intent;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -10,6 +11,8 @@ import com.company.iendo.action.StatusAction;
 import com.company.iendo.app.TitleBarFragment;
 import com.company.iendo.bean.CaseManageListBean;
 import com.company.iendo.mineui.activity.MainActivity;
+import com.company.iendo.mineui.activity.casemanage.AddCaseActivity;
+import com.company.iendo.mineui.activity.casemanage.CaseDetailActivity;
 import com.company.iendo.mineui.activity.search.SearchActivity;
 import com.company.iendo.mineui.fragment.casemanage.adapter.CaseManageAdapter;
 import com.company.iendo.other.HttpConstant;
@@ -47,8 +50,6 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
     private DateDialog.Builder mDateDialog;
     private String mChoiceDate;
     private StatusLayout mStatusLayout;
-
-    private List<CaseManageListBean.DataDTO> mRequestListData;
     private List<CaseManageListBean.DataDTO> mDataLest = new ArrayList<>();
 
     public static CaseManageFragment newInstance() {
@@ -73,7 +74,10 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.ib_left:
-                showDateDialog();
+//                showDateDialog();
+                //跳转病例添加界面
+                startActivity(AddCaseActivity.class);
+
                 break;
             case R.id.ib_right:
                 startActivity(SearchActivity.class);
@@ -93,7 +97,7 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
     @Override
     public void onResume() {
         super.onResume();
-        sendDateRequest(DateUtil.getSystemDate());
+        sendRequest(DateUtil.getSystemDate());
     }
 
     //选择日期
@@ -116,7 +120,7 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
                         LogUtils.e("TTTTT" + mChoiceDate);
                         toast("时间：" + mChoiceDate);
 
-                        sendDateRequest(mChoiceDate);
+                        sendRequest(mChoiceDate);
 
                     }
 
@@ -129,10 +133,8 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
 
     }
 
-    private void sendDateRequest(String mChoiceDate) {
-//        showLoading();
-
-
+    private void sendRequest(String mChoiceDate) {
+        showLoading();
         OkHttpUtils.get()
                 .url(HttpConstant.CaseManager_List)
                 .addParams("datetime", mChoiceDate)
@@ -142,32 +144,40 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
                     public void onError(Call call, Exception e, int id) {
                         LogUtils.e("=TAG=hy=onError==" + e.toString());
                         showError(listener -> {
-                            sendDateRequest(mChoiceDate);
+                            sendRequest(mChoiceDate);
                         });
                     }
 
                     @Override
                     public void onResponse(String response, int id) {
-                        CaseManageListBean mBean = mGson.fromJson(response, CaseManageListBean.class);
-                        LogUtils.e("=TAG=hy=onError==Code===" + mBean.getCode());
-                        LogUtils.e("=TAG=hy=onError==size===" + mBean.getData().size());
-                        for (int i = 0; i < mBean.getData().size(); i++) {
-                            LogUtils.e("=TAG=hy=time==" + mBean.getData().get(i).getID());
-                        }
-                        if (0 == mBean.getCode()) {  //成功
-                            if (mBean.getData().size() != 0) {
-                                showComplete();
-                                mDataLest.clear();
-                                mDataLest.addAll(mBean.getData());
-                                mAdapter.setData(mDataLest);
-                            } else {
-                                showEmpty();
+                        if (""!=response){
+                            CaseManageListBean mBean = mGson.fromJson(response, CaseManageListBean.class);
+                            LogUtils.e("=TAG=hy=onError==Code===" + mBean.getCode());
+                            LogUtils.e("=TAG=hy=onError==size===" + mBean.getData().size());
+                            for (int i = 0; i < mBean.getData().size(); i++) {
+                                LogUtils.e("=TAG=hy=time==" + mBean.getData().get(i).getID());
                             }
-                        } else {
+                            if (0 == mBean.getCode()) {  //成功
+                                if (mBean.getData().size() != 0) {
+                                    showComplete();
+                                    mDataLest.clear();
+                                    mDataLest.addAll(mBean.getData());
+                                    mAdapter.setData(mDataLest);
+                                } else {
+                                    showEmpty();
+                                }
+                            } else {
+                                showError(listener -> {
+                                    sendRequest(mChoiceDate);
+                                });
+                            }
+                        }else{
                             showError(listener -> {
-                                sendDateRequest(mChoiceDate);
+                                sendRequest(mChoiceDate);
                             });
                         }
+
+
                     }
                 });
 
@@ -185,8 +195,14 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
     public void onItemClick(RecyclerView recyclerView, View itemView, int position) {
         CaseManageListBean.DataDTO item = mAdapter.getItem(position);
         toast("创建时间："+item.getName());
-
+        Intent intent = new Intent(getActivity(), CaseDetailActivity.class);
+        ((MainActivity)getActivity()).setCurrentItemID(item.getID()+"");
+        startActivity(intent);
     }
+
+
+
+
 
     /**
      * {@link OnRefreshLoadMoreListener}

@@ -93,7 +93,6 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/SplashTheme">
-
             <!-- 程序入口 -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -116,6 +115,16 @@
             android:name=".mineui.activity.search.SearchActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
+        <!-- 病例添加 -->
+        <activity
+            android:name=".mineui.activity.casemanage.AddCaseActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <!-- 病例详情 -->
+        <activity
+            android:name=".mineui.activity.casemanage.CaseDetailActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
         <!--   已下是中台界面     -->
         <!--   已下是中台界面     -->
         <!--   已下是中台界面     -->
@@ -128,7 +137,6 @@
         <!--   已下是中台界面     -->
         <!--   已下是中台界面     -->
         <!--   已下是中台界面     -->
-
 
 
         <!-- 注册页 -->

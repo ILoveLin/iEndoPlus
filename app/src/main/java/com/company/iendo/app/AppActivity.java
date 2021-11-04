@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 
+import com.google.gson.Gson;
 import com.gyf.immersionbar.ImmersionBar;
 import com.hjq.bar.TitleBar;
 import com.hjq.base.BaseActivity;
@@ -17,6 +18,7 @@ import com.company.iendo.action.TitleBarAction;
 import com.company.iendo.action.ToastAction;
 import com.company.iendo.http.model.HttpData;
 import com.company.iendo.ui.dialog.WaitDialog;
+import com.hjq.gson.factory.GsonFactory;
 import com.hjq.http.listener.OnHttpListener;
 
 import okhttp3.Call;
@@ -39,6 +41,7 @@ public abstract class AppActivity extends BaseActivity
     private BaseDialog mDialog;
     /** 对话框数量 */
     private int mDialogCount;
+    public Gson mGson;
 
     /**
      * 当前加载对话框是否在显示中
@@ -108,6 +111,8 @@ public abstract class AppActivity extends BaseActivity
                 ImmersionBar.setTitleBar(this, getTitleBar());
             }
         }
+        mGson = GsonFactory.getSingletonGson();
+
     }
 
     /**

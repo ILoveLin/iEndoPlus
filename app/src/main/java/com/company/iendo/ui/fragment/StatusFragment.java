@@ -10,7 +10,7 @@ import com.hjq.base.BaseAdapter;
 import com.company.iendo.R;
 import com.company.iendo.app.AppActivity;
 import com.company.iendo.app.TitleBarFragment;
-import com.company.iendo.ui.adapter.StatusAdapter;
+import com.company.iendo.ui.adapter.SearchAdapter;
 import com.hjq.widget.layout.WrapRecyclerView;
 import com.scwang.smart.refresh.layout.SmartRefreshLayout;
 import com.scwang.smart.refresh.layout.api.RefreshLayout;
@@ -36,7 +36,7 @@ public final class StatusFragment extends TitleBarFragment<AppActivity>
     private SmartRefreshLayout mRefreshLayout;
     private WrapRecyclerView mRecyclerView;
 
-    private StatusAdapter mAdapter;
+    private SearchAdapter mAdapter;
 
     @Override
     protected int getLayoutId() {
@@ -48,7 +48,7 @@ public final class StatusFragment extends TitleBarFragment<AppActivity>
         mRefreshLayout = findViewById(R.id.rl_status_refresh);
         mRecyclerView = findViewById(R.id.rv_status_list);
 
-        mAdapter = new StatusAdapter(getAttachActivity());
+        mAdapter = new SearchAdapter(getAttachActivity());
         mAdapter.setOnItemClickListener(this);
         mRecyclerView.setAdapter(mAdapter);
 
