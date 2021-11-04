@@ -96,9 +96,14 @@ public class PictureFragment extends TitleBarFragment<MainActivity> implements S
                             toast(mBean.getMsg());
                             if (0 == mBean.getCode()) {  //成功
                                 showComplete();
-                                mDataLest.clear();
-                                mDataLest.addAll(mBean.getData());
-                                mAdapter.setData(mDataLest);
+                                if (mBean.getData().size()!=0){
+                                    mDataLest.clear();
+                                    mDataLest.addAll(mBean.getData());
+                                    mAdapter.setData(mDataLest);
+                                }else{
+                                    showEmpty();
+                                }
+
                             } else {
                                 showError(listener -> {
                                     sendRequest(currentItemID);

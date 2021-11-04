@@ -36,7 +36,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="生产报告"
+            android:text="获取报告"
             android:textSize="@dimen/sp_16" />
 
         <TextView
