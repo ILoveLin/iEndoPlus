@@ -29,7 +29,6 @@ import okhttp3.Call;
  */
 public final class AddCaseActivity extends AppActivity implements StatusAction {
     private StatusLayout mStatusLayout;
-    private String mCaseNo;
     private TitleBar mTitleBar;
 
     @Override
@@ -57,11 +56,7 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
 
             @Override
             public void onRightClick(View view) {
-                if ("" != mCaseNo) {
-                    sendRequest();
-                } else {
-                    toast("病例编号不能为空~");
-                }
+                sendRequest();
             }
         });
     }
@@ -74,7 +69,6 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
         OkHttpUtils.post()
                 .url(HttpConstant.CaseManager_AddCase)
                 .addParams("Name", "张大仙")
-                .addParams("CaseNo", mCaseNo)
                 .addParams("UserName", "Admin")
                 .addParams("EndoType", "3")
                 .build()
@@ -82,7 +76,7 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
                     @Override
                     public void onError(Call call, Exception e, int id) {
                         showError(listener -> {
-                            sendGetCaseNoRequest();
+                            sendRequest();
                         });
                     }
 
@@ -97,12 +91,13 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
 
                             } else {
                                 showError(listener -> {
-                                    sendGetCaseNoRequest();
+                                    sendRequest();
+
                                 });
                             }
                         } else {
                             showError(listener -> {
-                                sendGetCaseNoRequest();
+                                sendRequest();
                             });
                         }
                     }
@@ -121,49 +116,6 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
     @Override
     protected void onResume() {
         super.onResume();
-        sendGetCaseNoRequest();
-
-
-    }
-
-    /**
-     * 获取病例编号，用于新增病例
-     */
-    private void sendGetCaseNoRequest() {
-        showLoading();
-        OkHttpUtils.get()
-                .url(HttpConstant.CaseManager_GetCaseNo)
-                .build()
-                .execute(new StringCallback() {
-                    @Override
-                    public void onError(Call call, Exception e, int id) {
-                        showError(listener -> {
-                            sendGetCaseNoRequest();
-                        });
-                    }
-
-                    @Override
-                    public void onResponse(String response, int id) {
-                        if ("" != response) {
-                            AddCaseNoBean mBean = mGson.fromJson(response, AddCaseNoBean.class);
-                            if (0 == mBean.getCode()) {  //成功
-                                showComplete();
-                                AddCaseNoBean.DataDTO data = mBean.getData();
-                                mCaseNo = data.getCaseNo();
-                            } else {
-                                showError(listener -> {
-                                    sendGetCaseNoRequest();
-                                });
-                            }
-                        } else {
-                            showError(listener -> {
-                                sendGetCaseNoRequest();
-                            });
-                        }
-                    }
-                });
-
-
     }
 
     @Override

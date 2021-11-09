@@ -12,7 +12,7 @@ import com.company.iendo.app.TitleBarFragment;
 import com.company.iendo.bean.CaseManageListBean;
 import com.company.iendo.mineui.activity.MainActivity;
 import com.company.iendo.mineui.activity.casemanage.AddCaseActivity;
-import com.company.iendo.mineui.activity.casemanage.CaseDetailActivity;
+import com.company.iendo.mineui.activity.casemanage.DetailCaseActivity;
 import com.company.iendo.mineui.activity.search.SearchActivity;
 import com.company.iendo.mineui.fragment.casemanage.adapter.CaseManageAdapter;
 import com.company.iendo.other.HttpConstant;
@@ -138,6 +138,7 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
         OkHttpUtils.get()
                 .url(HttpConstant.CaseManager_List)
                 .addParams("datetime", mChoiceDate)
+                .addParams("EndoType", "3")
                 .build()
                 .execute(new StringCallback() {
                     @Override
@@ -195,7 +196,7 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
     public void onItemClick(RecyclerView recyclerView, View itemView, int position) {
         CaseManageListBean.DataDTO item = mAdapter.getItem(position);
         toast("创建时间："+item.getName());
-        Intent intent = new Intent(getActivity(), CaseDetailActivity.class);
+        Intent intent = new Intent(getActivity(), DetailCaseActivity.class);
         ((MainActivity)getActivity()).setCurrentItemID(item.getID()+"");
         startActivity(intent);
     }

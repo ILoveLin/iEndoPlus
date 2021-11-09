@@ -77,7 +77,7 @@ public class SearchActivity extends AppActivity implements StatusAction, BaseAda
         OkHttpUtils.get()
                 .url(HttpConstant.CaseManager_Search)
                 .addParams("CheckDateStart", "2021-11-03")
-//                .addParams("CheckDateStart", systemDate)
+                .addParams("EndoType", "3")
                 .build()
                 .execute(new StringCallback() {
                     @Override

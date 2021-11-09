@@ -4,38 +4,54 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+
     <com.company.iendo.widget.StatusLayout
         android:id="@+id/detail_hint"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <LinearLayout
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="match_parent">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
 
 
+                    <com.hjq.widget.view.ClearEditText
+                        android:id="@+id/clearedit"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/dp_50"
+                        android:layout_margin="@dimen/dp_50" />
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/detail_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:background="@color/common_accent_color"
-                android:gravity="center"
-                android:padding="@dimen/dp_10"
-                android:text="这是一个宽高比 2:1 的FrameLayout"
-                android:textColor="@color/white" />
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/detail_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_below="@+id/clearedit"
+                        android:layout_gravity="center"
+                        android:background="@color/common_accent_color"
+                        android:gravity="center"
+                        android:padding="@dimen/dp_10"
+                        android:text="这是一个宽高比 2:1 的FrameLayout"
+                        android:textColor="@color/white" />
 
-        </LinearLayout>
+
+                </RelativeLayout>
 
 
-    </androidx.core.widget.NestedScrollView>
+            </RelativeLayout>
+
+
+        </androidx.core.widget.NestedScrollView>
     </com.company.iendo.widget.StatusLayout>
 
 </LinearLayout>

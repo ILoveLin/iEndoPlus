@@ -122,7 +122,7 @@
             android:screenOrientation="portrait" />
         <!-- 病例详情 -->
         <activity
-            android:name=".mineui.activity.casemanage.CaseDetailActivity"
+            android:name=".mineui.activity.casemanage.DetailCaseActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         <!--   已下是中台界面     -->
