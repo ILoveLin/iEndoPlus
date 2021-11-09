@@ -151,32 +151,39 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
 
                     @Override
                     public void onResponse(String response, int id) {
-                        if (""!=response){
-                            CaseManageListBean mBean = mGson.fromJson(response, CaseManageListBean.class);
-                            LogUtils.e("=TAG=hy=onError==Code===" + mBean.getCode());
-                            LogUtils.e("=TAG=hy=onError==size===" + mBean.getData().size());
-                            for (int i = 0; i < mBean.getData().size(); i++) {
-                                LogUtils.e("=TAG=hy=time==" + mBean.getData().get(i).getID());
-                            }
-                            if (0 == mBean.getCode()) {  //成功
-                                if (mBean.getData().size() != 0) {
-                                    showComplete();
-                                    mDataLest.clear();
-                                    mDataLest.addAll(mBean.getData());
-                                    mAdapter.setData(mDataLest);
-                                } else {
-                                    showEmpty();
+                        try {
+                            if (""!=response){
+                                CaseManageListBean mBean = mGson.fromJson(response, CaseManageListBean.class);
+                                LogUtils.e("=TAG=hy=onError==Code===" + mBean.getCode());
+                                LogUtils.e("=TAG=hy=onError==size===" + mBean.getData().size());
+                                for (int i = 0; i < mBean.getData().size(); i++) {
+                                    LogUtils.e("=TAG=hy=time==" + mBean.getData().get(i).getID());
                                 }
-                            } else {
+                                if (0 == mBean.getCode()) {  //成功
+                                    if (mBean.getData().size() != 0) {
+                                        showComplete();
+                                        mDataLest.clear();
+                                        mDataLest.addAll(mBean.getData());
+                                        mAdapter.setData(mDataLest);
+                                    } else {
+                                        showEmpty();
+                                    }
+                                } else {
+                                    showError(listener -> {
+                                        sendRequest(mChoiceDate);
+                                    });
+                                }
+                            }else{
                                 showError(listener -> {
                                     sendRequest(mChoiceDate);
                                 });
                             }
-                        }else{
-                            showError(listener -> {
-                                sendRequest(mChoiceDate);
-                            });
+                        }catch (Exception e){
+                            LogUtils.e("=TAG=hy=Exception==size===" +e.toString());
+
                         }
+
+
 
 
                     }

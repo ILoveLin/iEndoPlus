@@ -10,8 +10,8 @@ public class HttpConstant {
 
 //71.43
 
-    public static final String Common = "http://192.168.71.43:7001";
-//    public static final String Common = "http://192.168.64.28:7001";
+//    public static final String Common = "http://192.168.71.43:7001";
+    public static final String Common = "http://192.168.64.28:7001";
 
     /**
      * 病例列表
@@ -55,6 +55,31 @@ public class HttpConstant {
      * get casevideos
      */
     public static final String CaseManager_CaseVideos = Common+"/case/casevideos";
+
+
+
+
+
+
+
+    /**=======================================================================================*/
+
+
+    /**
+     * 获取用户列表
+     * get
+     */
+
+
+    public static final String UserManager_List = Common+"/users/list";
+
+
+
+
+
+
+
+
 
 
 }

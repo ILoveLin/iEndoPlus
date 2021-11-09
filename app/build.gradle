@@ -218,6 +218,9 @@ dependencies {
     //eventbus 3.0.0
     implementation 'org.greenrobot:eventbus:3.0.0'
 
+
+    implementation 'com.github.arcadefire:nice-spinner:1.4.4'
+
     // 多语种：https://github.com/getActivity/MultiLanguages
     // 悬浮窗：https://github.com/getActivity/XToast
     // 日志输出：https://github.com/getActivity/Logcat

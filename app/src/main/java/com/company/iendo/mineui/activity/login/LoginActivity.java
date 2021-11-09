@@ -5,21 +5,35 @@ import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Message;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
+import com.company.iendo.bean.AddCaseBean;
+import com.company.iendo.bean.UserListBean;
+import com.company.iendo.manager.ActivityManager;
 import com.company.iendo.mineui.activity.MainActivity;
+import com.company.iendo.mineui.activity.casemanage.AddCaseActivity;
 import com.company.iendo.mineui.fragment.AFragment;
+import com.company.iendo.other.HttpConstant;
 import com.company.iendo.ui.activity.HomeActivity;
+import com.company.iendo.ui.dialog.TipsDialog;
+import com.company.iendo.ui.dialog.WaitDialog;
+import com.company.iendo.ui.popup.ListPopup;
+import com.company.iendo.utils.LogUtils;
 import com.gyf.immersionbar.ImmersionBar;
 import com.company.iendo.R;
 import com.company.iendo.aop.Log;
@@ -33,13 +47,21 @@ import com.company.iendo.other.KeyboardWatcher;
 import com.company.iendo.ui.fragment.MineFragment;
 import com.hjq.bar.OnTitleBarListener;
 import com.hjq.bar.TitleBar;
+import com.hjq.base.BasePopupWindow;
+import com.hjq.base.action.AnimAction;
 import com.hjq.http.EasyConfig;
 import com.hjq.http.EasyHttp;
 import com.hjq.http.listener.HttpCallback;
 import com.hjq.toast.ToastUtils;
 import com.hjq.umeng.Platform;
 import com.hjq.umeng.UmengLogin;
+import com.hjq.widget.view.PasswordEditText;
 import com.hjq.widget.view.SubmitButton;
+import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.callback.StringCallback;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.Call;
 
@@ -57,6 +79,44 @@ public final class LoginActivity extends AppActivity
     private static final String INTENT_KEY_IN_PHONE = "Admin";
     private static final String INTENT_KEY_IN_PASSWORD = "123";
     private TitleBar mTitleBar;
+    private ImageButton username_right;
+    private int mPhoneViewWidth;
+
+
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case 0:
+                    mPhoneView.setText("admin");
+                    mPasswordView.setText("");
+                    break;
+                case 1:  //点击历史记录之后的操作
+//                    LogUtils.e("path=====录像--是否存在=====" + UserDBRememberBeanUtils.queryListIsExist((String) msg.obj));
+                    username_right.setTag("close");
+                    username_right.setImageResource(R.drawable.login_icon_down);
+                    mPhoneView.setText(""+(String) msg.obj);
+//                    if (UserDBRememberBeanUtils.queryListIsExist((String) msg.obj)) {
+//                        UserDBRememberBean userDBRememberBean = UserDBRememberBeanUtils.queryListByName((String) msg.obj);
+//                        username_right.setTag("close");
+//                        username_right.setImageResource(R.drawable.login_icon_down);
+//                        if ("Yes".equals(userDBRememberBean.getRemember())) {
+//                            checkbox.setChecked(true);
+//                            mPhoneView.setText("" + userDBRememberBean.getUsername());
+//                            mPasswordView.setText("" + userDBRememberBean.getPassword());
+//                        } else {
+//                            mPhoneView.setText("" + userDBRememberBean.getUsername());
+//                            mPasswordView.setText("");
+//                            checkbox.setChecked(false);
+//                        }
+//                    }
+                    break;
+            }
+        }
+    };
+    private WaitDialog.Builder mWaitDialog;
+    private List<UserListBean.DataDTO> mUserListData;
 
     @Log
     public static void start(Context context, String phone, String password) {
@@ -73,7 +133,7 @@ public final class LoginActivity extends AppActivity
 
     private ViewGroup mBodyLayout;
     private EditText mPhoneView;
-    private EditText mPasswordView;
+    private PasswordEditText mPasswordView;
 
     private SubmitButton mCommitView;
 
@@ -98,6 +158,7 @@ public final class LoginActivity extends AppActivity
         mBodyLayout = findViewById(R.id.ll_login_body);
         mPhoneView = findViewById(R.id.et_login_phone);
         mPasswordView = findViewById(R.id.et_login_password);
+        username_right = findViewById(R.id.username_right);
         mCommitView = findViewById(R.id.btn_login_commit);
         mTitleBar = findViewById(R.id.mtitlebar);
 
@@ -110,7 +171,85 @@ public final class LoginActivity extends AppActivity
                 .addView(mPasswordView)
                 .setMain(mCommitView)
                 .build();
+
+
+        mPhoneView.getViewTreeObserver().addOnDrawListener(new ViewTreeObserver.OnDrawListener() {
+            @Override
+            public void onDraw() {
+                mPhoneViewWidth = mPhoneView.getWidth();
+
+            }
+        });
+        sendRequest();
+
+
     }
+
+
+    /**
+     * 获取列表数据
+     */
+
+    private void sendRequest() {
+        showLoading();
+        OkHttpUtils.get()
+                .url(HttpConstant.UserManager_List)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        showError();
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        if ("" != response) {
+                            UserListBean mBean = mGson.fromJson(response, UserListBean.class);
+                            if (0 == mBean.getCode()) {  //成功
+                                showComplete();
+                                toast("" + mBean.getData().size());
+
+                                mUserListData = mBean.getData();
+
+                            } else {
+                                showError();
+                            }
+                        } else {
+                            showError();
+                        }
+                    }
+                });
+
+
+    }
+
+    private void showError() {
+        // 失败对话框
+        new TipsDialog.Builder(this)
+                .setIcon(TipsDialog.ICON_ERROR)
+                .setMessage("错误")
+                .show();
+    }
+
+    private void showComplete() {
+        if (mWaitDialog != null) {
+            mWaitDialog.dismiss();
+        }
+    }
+
+    private void showLoading() {
+        if (mWaitDialog == null) {
+            mWaitDialog = new WaitDialog.Builder(this);
+            // 消息文本可以不用填写
+            mWaitDialog.setMessage(getString(R.string.common_loading))
+                    .create();
+        }
+        if (!mWaitDialog.isShowing()) {
+            mWaitDialog.show();
+//            postDelayed(mWaitDialog::dismiss, 2000);
+        }
+    }
+
 
     @Override
     protected void initData() {
@@ -127,8 +266,73 @@ public final class LoginActivity extends AppActivity
 
         mPhoneView.setText("Admin");
         mPasswordView.setText("123");
+
+
+        showHistoryDialog();
     }
 
+    private ListPopup.Builder historyBuilder;
+
+    private void showHistoryDialog() {
+
+        username_right.setImageResource(R.drawable.login_icon_down);
+        username_right.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LogUtils.e("==========Tag======Tag===" + username_right.getTag());
+                if ("close".equals(username_right.getTag())) {
+                    username_right.setTag("open");
+                    username_right.setImageResource(R.drawable.login_icon_up);
+
+                } else {
+                    username_right.setTag("close");
+                    username_right.setImageResource(R.drawable.login_icon_down);
+                }
+
+
+                historyBuilder = new ListPopup.Builder(LoginActivity.this);
+                historyBuilder
+                        .setList(getListData())
+                        .setGravity(Gravity.CENTER)
+                        .setAutoDismiss(true)
+                        .setOutsideTouchable(false)
+                        .setWidth(mPhoneViewWidth + 60)
+                        .setXOffset(-30)
+                        .setHeight(650)
+                        .setAnimStyle(AnimAction.ANIM_SCALE)
+                        .setListener((ListPopup.OnListener<String>) (popupWindow, position, str) -> {
+                                    toast("点击了：" + str);
+
+                                    Message tempMsg = mHandler.obtainMessage();
+                                    tempMsg.what = 1;
+                                    tempMsg.obj = str;
+                                    mHandler.sendMessage(tempMsg);
+                                }
+
+                        )
+                        .showAsDropDown(mPhoneView);
+
+
+                historyBuilder.getPopupWindow().addOnDismissListener(new BasePopupWindow.OnDismissListener() {
+                    @Override
+                    public void onDismiss(BasePopupWindow popupWindow) {
+                        username_right.setTag("close");
+                        username_right.setImageResource(R.drawable.login_icon_down);
+                    }
+                });
+            }
+        });
+
+    }
+
+    private  ArrayList<String>  getListData() {
+        ArrayList<String> mList = new ArrayList<>();
+
+        for (int i = 0; i < mUserListData.size(); i++) {
+            mList.add(mUserListData.get(i).getUserName()+"");
+        }
+        return mList;
+    }
 
     @SingleClick
     @Override
