@@ -1,6 +1,8 @@
 apply plugin : 'com.android.application'
 apply plugin : 'android-aspectjx'
+apply plugin: 'org.greenrobot.greendao' // apply plugin
 apply from : '../common.gradle'
+//apply plugin: 'org.greenrobot.greendao' // apply plugin
 
 // Android 代码规范文档：https://github.com/getActivity/AndroidCodeStandard
 android {
@@ -118,6 +120,17 @@ android {
         // 只对以下包名做 AOP 处理
         include android.defaultConfig.applicationId
     }
+
+
+    greendao {
+        schemaVersion 1 //数据库版本号
+        daoPackage 'com.company.iendo.green.db'
+// 设置DaoMaster、DaoSession、Dao 包名
+        targetGenDir 'src/main/java'//设置DaoMaster、DaoSession、Dao目录,请注意，这里路径用/不要用.
+        generateTests false //设置为true以自动生成单元测试。
+        targetGenDirTests 'src/main/java' //应存储生成的单元测试的基本目录。默认为 src / androidTest / java。
+    }
+
 
     applicationVariants.all { variant ->
         // apk 输出文件名配置

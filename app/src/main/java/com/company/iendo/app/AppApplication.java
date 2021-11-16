@@ -3,6 +3,7 @@ package com.company.iendo.app;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.os.Build;
@@ -12,6 +13,8 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
 
+import com.company.iendo.green.db.DaoMaster;
+import com.company.iendo.green.db.DaoSession;
 import com.hjq.bar.TitleBar;
 import com.company.iendo.R;
 import com.company.iendo.aop.Log;
@@ -54,16 +57,37 @@ import timber.log.Timber;
  *    desc   : 应用入口
  */
 public final class AppApplication extends Application {
-
+    public static DaoSession mSession;
     @Log("启动耗时")
     @Override
     public void onCreate() {
         super.onCreate();
         initSdk(this);
         initOkHttp();
-//        initGreenDao();
+        initGreenDao();
 
     }
+
+
+    /**
+     * 初始化GreenDao,
+     * 连接数据库并创建会话
+     */
+    public void initGreenDao() {
+        // 1、获取需要连接的数据库
+        DaoMaster.DevOpenHelper devOpenHelper = new DaoMaster.DevOpenHelper(this, "green.db");
+        SQLiteDatabase db = devOpenHelper.getWritableDatabase();
+        // 2、创建数据库连接
+        DaoMaster daoMaster = new DaoMaster(db);
+        // 3、创建数据库会话
+        mSession = daoMaster.newSession();
+    }
+
+    // 供外接使用
+    public static DaoSession getDaoSession() {
+        return mSession;
+    }
+
     private void initOkHttp() {
         //Okhttp请求头
         //请求工具的拦截器  ,可以设置证书,设置可访问所有的https网站,参考https://www.jianshu.com/p/64cc92c52650

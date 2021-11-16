@@ -97,6 +97,7 @@ public final class LoginActivity extends AppActivity
                     username_right.setTag("close");
                     username_right.setImageResource(R.drawable.login_icon_down);
                     mPhoneView.setText(""+(String) msg.obj);
+                    toast("点击历史记录之后的操作"+(String) msg.obj);
 //                    if (UserDBRememberBeanUtils.queryListIsExist((String) msg.obj)) {
 //                        UserDBRememberBean userDBRememberBean = UserDBRememberBeanUtils.queryListByName((String) msg.obj);
 //                        username_right.setTag("close");
@@ -160,7 +161,9 @@ public final class LoginActivity extends AppActivity
         mPasswordView = findViewById(R.id.et_login_password);
         username_right = findViewById(R.id.username_right);
         mCommitView = findViewById(R.id.btn_login_commit);
+
         mTitleBar = findViewById(R.id.mtitlebar);
+
 
         setOnClickListener(mCommitView);
 
@@ -210,6 +213,7 @@ public final class LoginActivity extends AppActivity
                                 toast("" + mBean.getData().size());
 
                                 mUserListData = mBean.getData();
+                                LogUtils.e("用户列表==="+response);
 
                             } else {
                                 showError();
@@ -269,6 +273,10 @@ public final class LoginActivity extends AppActivity
 
 
         showHistoryDialog();
+
+
+
+
     }
 
     private ListPopup.Builder historyBuilder;
@@ -292,12 +300,13 @@ public final class LoginActivity extends AppActivity
 
                 historyBuilder = new ListPopup.Builder(LoginActivity.this);
                 historyBuilder
+//                        .setList("111","2222")
                         .setList(getListData())
                         .setGravity(Gravity.CENTER)
                         .setAutoDismiss(true)
                         .setOutsideTouchable(false)
                         .setWidth(mPhoneViewWidth + 60)
-                        .setXOffset(-30)
+                           .setXOffset(-30)
                         .setHeight(650)
                         .setAnimStyle(AnimAction.ANIM_SCALE)
                         .setListener((ListPopup.OnListener<String>) (popupWindow, position, str) -> {
@@ -330,6 +339,7 @@ public final class LoginActivity extends AppActivity
 
         for (int i = 0; i < mUserListData.size(); i++) {
             mList.add(mUserListData.get(i).getUserName()+"");
+            LogUtils.e("用户名:"+mUserListData.get(i).getUserName());
         }
         return mList;
     }
