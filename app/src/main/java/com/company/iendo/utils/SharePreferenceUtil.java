@@ -29,6 +29,16 @@ public class SharePreferenceUtil {
     public static final String Current_Host = "host";  // 加了---/---的
 
 
+
+    public static final String Current_Login_Role = "login_role";  //登录用户的role  权限
+    public static final String Current_Login_UserID = "login_userid";  //登录用户的role  权限
+
+
+
+
+
+
+
     /**
      * 保存数据的方法，我们需要拿到保存数据的具体类型，然后根据类型调用不同的保存方法
      *

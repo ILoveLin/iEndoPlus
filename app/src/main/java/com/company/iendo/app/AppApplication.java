@@ -15,6 +15,9 @@ import androidx.lifecycle.LifecycleOwner;
 
 import com.company.iendo.green.db.DaoMaster;
 import com.company.iendo.green.db.DaoSession;
+import com.company.iendo.utils.db.DBManager;
+import com.company.iendo.utils.db.MigrationHelper;
+import com.company.iendo.utils.db.MyOpenHelper;
 import com.hjq.bar.TitleBar;
 import com.company.iendo.R;
 import com.company.iendo.aop.Log;
@@ -51,13 +54,27 @@ import okhttp3.OkHttpClient;
 import timber.log.Timber;
 
 /**
- *    author : Android 轮子哥
- *    github : https://github.com/getActivity/AndroidProject
- *    time   : 2018/10/18
- *    desc   : 应用入口
+ * author : Android 轮子哥
+ * github : https://github.com/getActivity/AndroidProject
+ * time   : 2018/10/18
+ * desc   : 应用入口
  */
 public final class AppApplication extends Application {
     public static DaoSession mSession;
+    private static DaoMaster mDaoMaster;
+
+    public static DaoMaster getDaoMaster(Context context) {
+        if (null == mDaoMaster) {
+            synchronized (DBManager.class) {
+                if (null == mDaoMaster) {
+                    MyOpenHelper helper = new MyOpenHelper(context, "green.db", null);
+                    mDaoMaster = new DaoMaster(helper.getWritableDatabase());
+                }
+            }
+        }
+        return mDaoMaster;
+    }
+
     @Log("启动耗时")
     @Override
     public void onCreate() {
@@ -78,7 +95,8 @@ public final class AppApplication extends Application {
         DaoMaster.DevOpenHelper devOpenHelper = new DaoMaster.DevOpenHelper(this, "green.db");
         SQLiteDatabase db = devOpenHelper.getWritableDatabase();
         // 2、创建数据库连接
-        DaoMaster daoMaster = new DaoMaster(db);
+//        DaoMaster daoMaster = new DaoMaster(db);
+        DaoMaster daoMaster = getDaoMaster(getApplicationContext());
         // 3、创建数据库会话
         mSession = daoMaster.newSession();
     }
@@ -107,6 +125,7 @@ public final class AppApplication extends Application {
 
         OkHttpUtils.initClient(okHttpClientBuilder.build());
     }
+
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
@@ -151,6 +170,7 @@ public final class AppApplication extends Application {
                     // 仿苹果越界效果开关
                     .setEnableOverScrollDrag(false);
         });
+
 
         // 初始化吐司
         ToastUtils.init(application, new ToastStyle());
@@ -231,4 +251,6 @@ public final class AppApplication extends Application {
             });
         }
     }
+
+
 }

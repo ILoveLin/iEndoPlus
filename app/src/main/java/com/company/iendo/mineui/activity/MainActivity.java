@@ -29,7 +29,7 @@ import com.hjq.base.FragmentPagerAdapter;
  * time：2021/10/28 14:51
  * desc：主界面
  */
-public class MainActivity extends AppActivity implements NavigationAdapter.OnNavigationListener {
+public class MainActivity extends AppActivity implements NavigationAdapter.OnNavigationListener, ActivityManager.ApplicationLifecycleCallback {
     private static final String INTENT_KEY_IN_FRAGMENT_INDEX = "fragmentIndex";
     private static final String INTENT_KEY_IN_FRAGMENT_CLASS = "fragmentClass";
 
@@ -74,6 +74,10 @@ public class MainActivity extends AppActivity implements NavigationAdapter.OnNav
 //                ContextCompat.getDrawable(this, R.drawable.home_me_selector)));
         mNavigationAdapter.setOnNavigationListener(this);
         mNavigationView.setAdapter(mNavigationAdapter);
+
+
+        ActivityManager.getInstance().registerApplicationLifecycleCallback(this);
+
     }
 
     @Override
@@ -176,5 +180,25 @@ public class MainActivity extends AppActivity implements NavigationAdapter.OnNav
 
     public void setCurrentItemID(String mCurrentItemID) {
         this.mCurrentItemID = mCurrentItemID;
+    }
+
+    @Override
+    public void onApplicationCreate(Activity activity) {
+
+    }
+
+    @Override
+    public void onApplicationDestroy(Activity activity) {
+
+    }
+
+    @Override
+    public void onApplicationBackground(Activity activity) {
+
+    }
+
+    @Override
+    public void onApplicationForeground(Activity activity) {
+
     }
 }

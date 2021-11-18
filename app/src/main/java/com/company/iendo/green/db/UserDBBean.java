@@ -43,11 +43,15 @@ public class UserDBBean {
     private String type;
     //工作站类型
     private String endoType;
-    @Generated(hash = 700494660)
+    //备用字段
+    private String usemsg;
+    //备用字段2
+    private String usemsg02;
+    @Generated(hash = 1204359131)
     public UserDBBean(Long id, String deviceID, String ip, String httpPort,
             String socketPort, String livePort, String micPort, String username,
-            String password, String title, String msg, String type,
-            String endoType) {
+            String password, String title, String msg, String type, String endoType,
+            String usemsg, String usemsg02) {
         this.id = id;
         this.deviceID = deviceID;
         this.ip = ip;
@@ -61,6 +65,8 @@ public class UserDBBean {
         this.msg = msg;
         this.type = type;
         this.endoType = endoType;
+        this.usemsg = usemsg;
+        this.usemsg02 = usemsg02;
     }
     @Generated(hash = 202817274)
     public UserDBBean() {
@@ -142,6 +148,18 @@ public class UserDBBean {
     }
     public void setEndoType(String endoType) {
         this.endoType = endoType;
+    }
+    public String getUsemsg() {
+        return this.usemsg;
+    }
+    public void setUsemsg(String usemsg) {
+        this.usemsg = usemsg;
+    }
+    public String getUsemsg02() {
+        return this.usemsg02;
+    }
+    public void setUsemsg02(String usemsg02) {
+        this.usemsg02 = usemsg02;
     }
 
 }

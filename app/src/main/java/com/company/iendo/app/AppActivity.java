@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 
+import com.company.iendo.manager.ActivityManager;
 import com.google.gson.Gson;
 import com.gyf.immersionbar.ImmersionBar;
 import com.hjq.bar.TitleBar;
@@ -97,10 +98,10 @@ public abstract class AppActivity extends BaseActivity
     @Override
     protected void initLayout() {
         super.initLayout();
-
         if (getTitleBar() != null) {
             getTitleBar().setOnTitleBarListener(this);
         }
+
 
         // 初始化沉浸式状态栏
         if (isStatusBarEnabled()) {

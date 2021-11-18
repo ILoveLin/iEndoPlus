@@ -13,4 +13,13 @@
         app:leftIcon="@null"
         app:title="设置" />
 
+
+    <com.hjq.widget.layout.SettingBar
+        android:id="@+id/exit_bar"
+        android:layout_width="match_parent"
+        app:bar_leftText="退出"
+        app:bar_leftTextColor="@color/red"
+        app:bar_leftTextSize="@dimen/dp_16"
+        android:layout_height="@dimen/dp_50"/>
+
 </LinearLayout>

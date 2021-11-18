@@ -8,6 +8,7 @@ import com.company.iendo.app.AppApplication;
 import com.company.iendo.green.db.DaoSession;
 import com.company.iendo.green.db.UserDBBean;
 import com.company.iendo.green.db.UserDBBeanDao;
+import com.company.iendo.utils.db.DBManager;
 
 import org.greenrobot.greendao.query.QueryBuilder;
 
@@ -27,8 +28,10 @@ public class GreenDaoManager {
     public GreenDaoManager (Context context) {
         this.mContext = context;
         // 获取DAO实例
-        mUserDao = AppApplication.getDaoSession().getUserDBBeanDao();
+//        mUserDao = AppApplication.getDaoSession().getUserDBBeanDao();
 
+        //数据库升级
+        mUserDao = DBManager.getDaoSession(context).getUserDBBeanDao();
     }
 
     /**
@@ -40,7 +43,6 @@ public class GreenDaoManager {
      */
 
     public  void insertUserName(){
-
 
     }
 

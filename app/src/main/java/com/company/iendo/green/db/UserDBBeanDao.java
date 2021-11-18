@@ -35,6 +35,8 @@ public class UserDBBeanDao extends AbstractDao<UserDBBean, Long> {
         public final static Property Msg = new Property(10, String.class, "msg", false, "MSG");
         public final static Property Type = new Property(11, String.class, "type", false, "TYPE");
         public final static Property EndoType = new Property(12, String.class, "endoType", false, "ENDO_TYPE");
+        public final static Property Usemsg = new Property(13, String.class, "usemsg", false, "USEMSG");
+        public final static Property Usemsg02 = new Property(14, String.class, "usemsg02", false, "USEMSG02");
     }
 
 
@@ -62,7 +64,9 @@ public class UserDBBeanDao extends AbstractDao<UserDBBean, Long> {
                 "\"TITLE\" TEXT," + // 9: title
                 "\"MSG\" TEXT," + // 10: msg
                 "\"TYPE\" TEXT," + // 11: type
-                "\"ENDO_TYPE\" TEXT);"); // 12: endoType
+                "\"ENDO_TYPE\" TEXT," + // 12: endoType
+                "\"USEMSG\" TEXT," + // 13: usemsg
+                "\"USEMSG02\" TEXT);"); // 14: usemsg02
     }
 
     /** Drops the underlying database table. */
@@ -139,6 +143,16 @@ public class UserDBBeanDao extends AbstractDao<UserDBBean, Long> {
         if (endoType != null) {
             stmt.bindString(13, endoType);
         }
+ 
+        String usemsg = entity.getUsemsg();
+        if (usemsg != null) {
+            stmt.bindString(14, usemsg);
+        }
+ 
+        String usemsg02 = entity.getUsemsg02();
+        if (usemsg02 != null) {
+            stmt.bindString(15, usemsg02);
+        }
     }
 
     @Override
@@ -209,6 +223,16 @@ public class UserDBBeanDao extends AbstractDao<UserDBBean, Long> {
         if (endoType != null) {
             stmt.bindString(13, endoType);
         }
+ 
+        String usemsg = entity.getUsemsg();
+        if (usemsg != null) {
+            stmt.bindString(14, usemsg);
+        }
+ 
+        String usemsg02 = entity.getUsemsg02();
+        if (usemsg02 != null) {
+            stmt.bindString(15, usemsg02);
+        }
     }
 
     @Override
@@ -231,7 +255,9 @@ public class UserDBBeanDao extends AbstractDao<UserDBBean, Long> {
             cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9), // title
             cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10), // msg
             cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11), // type
-            cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12) // endoType
+            cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12), // endoType
+            cursor.isNull(offset + 13) ? null : cursor.getString(offset + 13), // usemsg
+            cursor.isNull(offset + 14) ? null : cursor.getString(offset + 14) // usemsg02
         );
         return entity;
     }
@@ -251,6 +277,8 @@ public class UserDBBeanDao extends AbstractDao<UserDBBean, Long> {
         entity.setMsg(cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10));
         entity.setType(cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11));
         entity.setEndoType(cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12));
+        entity.setUsemsg(cursor.isNull(offset + 13) ? null : cursor.getString(offset + 13));
+        entity.setUsemsg02(cursor.isNull(offset + 14) ? null : cursor.getString(offset + 14));
      }
     
     @Override

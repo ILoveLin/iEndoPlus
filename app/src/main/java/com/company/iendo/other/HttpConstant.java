@@ -70,12 +70,14 @@ public class HttpConstant {
      * get
      */
 
-
     public static final String UserManager_List = Common+"/users/list";
 
 
+    /**
+     * 用户登录
+     */
 
-
+    public static final String UserManager_Login = Common+"/users/login";
 
 
 
