@@ -31,7 +31,7 @@ public class SharePreferenceUtil {
 
 
     public static final String Current_Login_Role = "login_role";  //登录用户的role  权限
-    public static final String Current_Login_UserID = "login_userid";  //登录用户的role  权限
+    public static final String Current_Login_UserID = "login_userid";  //登录用户的ID
 
 
 

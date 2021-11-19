@@ -125,6 +125,12 @@
             android:name=".mineui.activity.casemanage.DetailCaseActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
+        <!-- 用户列表 -->
+        <activity
+            android:name=".mineui.activity.UserListActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+
         <!--   已下是中台界面     -->
         <!--   已下是中台界面     -->
         <!--   已下是中台界面     -->

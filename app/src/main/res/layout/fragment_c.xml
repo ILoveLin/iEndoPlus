@@ -13,6 +13,12 @@
         app:leftIcon="@null"
         app:title="设置" />
 
+    <com.hjq.widget.layout.SettingBar
+        android:id="@+id/user_bar"
+        android:layout_width="match_parent"
+        app:bar_leftText="用户列表"
+        app:bar_leftTextSize="@dimen/dp_16"
+        android:layout_height="@dimen/dp_50"/>
 
     <com.hjq.widget.layout.SettingBar
         android:id="@+id/exit_bar"

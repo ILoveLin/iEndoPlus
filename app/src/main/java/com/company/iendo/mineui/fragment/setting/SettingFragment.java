@@ -6,6 +6,7 @@ import com.company.iendo.R;
 import com.company.iendo.app.TitleBarFragment;
 import com.company.iendo.manager.ActivityManager;
 import com.company.iendo.mineui.activity.MainActivity;
+import com.company.iendo.mineui.activity.UserListActivity;
 import com.company.iendo.mineui.activity.login.LoginActivity;
 import com.company.iendo.other.Constants;
 import com.company.iendo.utils.SharePreferenceUtil;
@@ -29,7 +30,7 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
 
     @Override
     protected void initView() {
-        setOnClickListener(R.id.exit_bar);
+        setOnClickListener(R.id.exit_bar,R.id.user_bar);
     }
 
     @Override
@@ -45,6 +46,9 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
                 SharePreferenceUtil.put(getActivity(), Constants.Is_Logined, false);
                 startActivity(LoginActivity.class);
                 ActivityManager.getInstance().finishActivity(MainActivity.class);
+                break;
+            case R.id.user_bar:
+                startActivity(UserListActivity.class);
                 break;
 
         }

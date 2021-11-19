@@ -398,8 +398,11 @@ public final class LoginActivity extends AppActivity
                             if (!"".equals(response)) {
                                 LoginBean mBean = mGson.fromJson(response, LoginBean.class);
                                 if (0 == mBean.getCode()) {
-                                    SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Current_Login_Role, mBean.getData().getRole());
-                                    SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Current_Login_UserID, mBean.getData().getUserID());
+                                    LogUtils.e("登录==role==" + mBean.getData().getRole());
+                                    LogUtils.e("登录==userid==" + mBean.getData().getUserID());
+
+                                    SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Current_Login_Role, mBean.getData().getRole()+"");
+                                    SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Current_Login_UserID, mBean.getData().getUserID()+"");
                                     SharePreferenceUtil.put(LoginActivity.this, Constants.Is_Logined, true);
 
 

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:background="@color/white"
+    android:layout_height="@dimen/dp_50">
+
+    <TextView
+        android:paddingLeft="@dimen/dp_5"
+        android:paddingRight="@dimen/dp_5"
+        android:id="@+id/tv_delete"
+        android:text="删除"
+        android:layout_centerVertical="true"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:layout_alignParentRight="true"
+        android:layout_centerInParent="true"
+        android:layout_margin="@dimen/dp_8"
+        android:background="@drawable/bg_channel"
+        android:foreground="?attr/selectableItemBackground"
+       />
+
+    <TextView
+        android:paddingLeft="@dimen/dp_5"
+        android:paddingRight="@dimen/dp_5"
+        android:id="@+id/tv_change_password"
+        android:text="修改密码"
+        android:layout_centerVertical="true"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:layout_toLeftOf="@+id/tv_delete"
+        android:layout_margin="@dimen/dp_8"
+        android:background="@drawable/bg_channel"
+        android:foreground="?attr/selectableItemBackground"
+        />
+    <TextView
+        android:paddingLeft="@dimen/dp_5"
+        android:paddingRight="@dimen/dp_5"
+        android:id="@+id/tv_change_relo"
+        android:text="修改权限"
+        android:layout_centerVertical="true"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:layout_toLeftOf="@+id/tv_change_password"
+        android:layout_margin="@dimen/dp_8"
+        android:background="@drawable/bg_channel"
+        android:foreground="?attr/selectableItemBackground"
+        />
+    <TextView
+        android:paddingLeft="@dimen/dp_5"
+        android:paddingRight="@dimen/dp_5"
+        android:id="@+id/tv_name"
+        android:text="姓名"
+        android:layout_centerVertical="true"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:gravity="center"
+        android:layout_margin="@dimen/dp_8"
+        android:background="@drawable/bg_channel"
+        android:foreground="?attr/selectableItemBackground"
+        />
+
+</RelativeLayout>
