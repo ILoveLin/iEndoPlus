@@ -77,7 +77,7 @@ public class SearchActivity extends AppActivity implements StatusAction, BaseAda
         OkHttpUtils.get()
                 .url(HttpConstant.CaseManager_Search)
                 .addParams("CheckDateStart", "2021-11-03")
-                .addParams("EndoType", "3")
+                .addParams("EndoType", "3")////目前默认是3  耳鼻喉治疗台
                 .build()
                 .execute(new StringCallback() {
                     @Override

@@ -46,7 +46,7 @@ public class UserListAdapter extends AppAdapter<UserListBean.DataDTO> {
         @Override
         public void onBindView(int position) {
             UserListBean.DataDTO item = getItem(position);
-            mName.setText("Name:"+item.getUserName());
+            mName.setText("Name:"+item.getUserName()+"角色:"+item.getRole());
         }
     }
 }

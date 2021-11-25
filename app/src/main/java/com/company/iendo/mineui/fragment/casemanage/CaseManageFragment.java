@@ -138,7 +138,7 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
         OkHttpUtils.get()
                 .url(HttpConstant.CaseManager_List)
                 .addParams("datetime", mChoiceDate)
-                .addParams("EndoType", "3")
+                .addParams("EndoType","3")  //目前默认是3  耳鼻喉治疗台
                 .build()
                 .execute(new StringCallback() {
                     @Override

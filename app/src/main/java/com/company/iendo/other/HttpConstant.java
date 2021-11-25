@@ -11,7 +11,9 @@ public class HttpConstant {
 //71.43
 
     //    public static final String Common = "http://192.168.71.43:7001";
-    public static final String Common = "http://192.168.64.28:7001";
+//    public static final String Common = "http://192.168.1.101:7001";
+    public static final String Common = "http://192.168.71.41:7001";
+//    public static final String Common = "http://192.168.64.28:7001";
 
     /**
      * 病例列表

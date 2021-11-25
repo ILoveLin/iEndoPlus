@@ -70,7 +70,7 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
                 .url(HttpConstant.CaseManager_AddCase)
                 .addParams("Name", "张大仙")
                 .addParams("UserName", "Admin")
-                .addParams("EndoType", "3")
+                .addParams("EndoType", "3")  //目前默认是3  耳鼻喉治疗台
                 .build()
                 .execute(new StringCallback() {
                     @Override

@@ -10,12 +10,18 @@ import com.company.iendo.action.StatusAction;
 import com.company.iendo.app.AppActivity;
 import com.company.iendo.bean.UserDeletedBean;
 import com.company.iendo.bean.UserListBean;
+import com.company.iendo.manager.ActivityManager;
 import com.company.iendo.mineui.activity.usermanage.UserListAdapter;
 import com.company.iendo.other.HttpConstant;
+import com.company.iendo.ui.dialog.InputDialog;
 import com.company.iendo.ui.dialog.MessageDialog;
+import com.company.iendo.ui.dialog.SelectDialog;
 import com.company.iendo.utils.LogUtils;
+import com.company.iendo.utils.MD5ChangeUtil;
 import com.company.iendo.utils.SharePreferenceUtil;
 import com.company.iendo.widget.StatusLayout;
+import com.hjq.bar.OnTitleBarListener;
+import com.hjq.bar.TitleBar;
 import com.hjq.base.BaseAdapter;
 import com.hjq.base.BaseDialog;
 import com.hjq.widget.layout.WrapRecyclerView;
@@ -26,6 +32,7 @@ import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import okhttp3.Call;
@@ -45,6 +52,8 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
     private UserListAdapter mAdapter;
     private String mLoginRole;
     private String mLoginUserID;
+    private String mLoginUserName;
+    private TitleBar mTitleBar;
 
     @Override
     protected int getLayoutId() {
@@ -54,6 +63,7 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
     @Override
     protected void initView() {
         mStatusLayout = findViewById(R.id.status_hint);
+        mTitleBar = findViewById(R.id.userlist_titlebar);
         mSmartRefreshLayout = findViewById(R.id.rl_userlist_refresh);
         mRecyclerView = findViewById(R.id.rv_userlist_recyclerview);
 
@@ -63,6 +73,7 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
     protected void initData() {
         mLoginRole = (String) SharePreferenceUtil.get(this, SharePreferenceUtil.Current_Login_Role, "");
         mLoginUserID = (String) SharePreferenceUtil.get(this, SharePreferenceUtil.Current_Login_UserID, "1");
+        mLoginUserName = (String) SharePreferenceUtil.get(this, SharePreferenceUtil.Current_Login_UserName, "A");
 
         mAdapter = new UserListAdapter(this);
         mAdapter.setData(mDataLest);
@@ -78,11 +89,25 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
         mAdapter.setOnChildClickListener(R.id.tv_change_password, this);
         mAdapter.setOnChildClickListener(R.id.tv_change_relo, this);
 
+        mTitleBar.setOnTitleBarListener(new OnTitleBarListener() {
+            @Override
+            public void onLeftClick(View view) {
+                finish();
+            }
 
+            @Override
+            public void onTitleClick(View view) {
+
+            }
+
+            @Override
+            public void onRightClick(View view) {
+                toast("添加用户");
+            }
+        });
     }
 
     private void sendRequest() {
-
         showLoading();
         OkHttpUtils.get()
                 .url(HttpConstant.UserManager_List)
@@ -100,6 +125,7 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
 
                     @Override
                     public void onResponse(String response, int id) {
+                        LogUtils.e("用户列表=="+response);
                         if ("" != response) {
                             UserListBean mBean = mGson.fromJson(response, UserListBean.class);
                             if (0 == mBean.getCode()) {  //成功
@@ -165,12 +191,168 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
                 showDeleteDialog(mAdapter.getItem(position));
                 break;
             case R.id.tv_change_password://修改密码
+                showChangePasswordDialog(mAdapter.getItem(position));
 
                 break;
             case R.id.tv_change_relo://修改权限
-
+                showChangeReloDialog(mAdapter.getItem(position));
                 break;
         }
+    }
+
+    /**
+     * 修改权限对话框
+     *
+     * @param item
+     */
+    private void showChangeReloDialog(UserListBean.DataDTO item) {
+        // 角色 0-超级管理员 1-管理员 2-操作员 3-查询员 4-自定义
+        new SelectDialog.Builder(this)
+                .setTitle("修改权限")
+                .setList("管理员", "操作员", "查询员")//0 1 2
+                .setSingleSelect()
+                .setSelect(0)
+                .setListener(new SelectDialog.OnListener<String>() {
+
+                    @Override
+                    public void onSelected(BaseDialog dialog, HashMap<Integer, String> data) {
+                        toast("确定了：" + data.toString());
+                        sendChangeReloRequest(item, data.toString().substring(1, 2));
+                    }
+
+                    @Override
+                    public void onCancel(BaseDialog dialog) {
+                        toast("取消了");
+                    }
+                })
+                .show();
+
+    }
+
+    /**
+     * 修改用户权限
+     *
+     * @param item
+     * @param substring
+     */
+    private void sendChangeReloRequest(UserListBean.DataDTO item, String substring) {
+        int i = Integer.parseInt(substring) + 1;
+        toast("确定了：" + i);
+        showLoading();
+        String userID = item.getUserID();
+        LogUtils.e("修改权限====userID=="+userID+"");
+        OkHttpUtils.post()
+                .url(HttpConstant.UserManager_ChangeRelo)
+                .addParams("CurrentUserID", mLoginUserID)//当前登入的用户ID == 1
+                .addParams("ChangeUserID", userID)//需要被修改权限的用户ID
+                .addParams("UserName", mLoginUserName)//当前用户名字
+                .addParams("Relo",  i+"")//需要被修改的用户权限等级
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        showError(new StatusLayout.OnRetryListener() {
+                            @Override
+                            public void onRetry(StatusLayout layout) {
+                                toast("请求错误");
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        showComplete();
+                        LogUtils.e("修改权限====response=="+response);
+
+                        if ("" != response) {
+                            UserDeletedBean mBean = mGson.fromJson(response, UserDeletedBean.class);
+                            toast(mBean.getMsg() + "");
+                            LogUtils.e("修改权限====Relo=="+i);
+                            LogUtils.e("修改权限====item.getUserID()=="+item.getUserID()+"");
+                            if (mBean.getCode().equals("0")) {
+                                sendRequest();
+                            }
+                        } else {
+                            showError(listener -> {
+                                sendRequest();
+                            });
+                        }
+                    }
+                });
+
+    }
+
+    /**
+     * 修改密码对话框
+     *
+     * @param item
+     */
+    private void showChangePasswordDialog(UserListBean.DataDTO item) {
+        new InputDialog.Builder(this)
+                .setTitle("提示")
+                .setHint("请输入新密码")
+                .setCancel("取消")
+                .setConfirm("确定")
+                .setListener(new InputDialog.OnListener() {
+                    @Override
+                    public void onConfirm(BaseDialog dialog, String password) {
+                        toast("确定了：" + password);
+                        sendChangePasswordRequest(item, MD5ChangeUtil.Md5_32(password) );
+                    }
+
+                    @Override
+                    public void onCancel(BaseDialog dialog) {
+
+                    }
+                }).show();
+
+    }
+
+    /**
+     * 发送其他人修改密码请求
+     *
+     * @param item
+     * @param password
+     */
+    private void sendChangePasswordRequest(UserListBean.DataDTO item, String password) {
+        showLoading();
+        OkHttpUtils.post()
+                .url(HttpConstant.UserManager_ChangeElsePassword)
+                .addParams("userID", mLoginUserID)//自己的ID
+                .addParams("changedUserID", item.getUserID())//被修改用户ID
+                .addParams("userRelo", mLoginRole)//自己的权限
+                .addParams("changedUserRelo", item.getRole() + "")//被修改用户的权限
+                .addParams("changedPassword", password)//新密码
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        showError(new StatusLayout.OnRetryListener() {
+                            @Override
+                            public void onRetry(StatusLayout layout) {
+                                toast("请求错误");
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        showComplete();
+                        if ("" != response) {
+                            UserDeletedBean mBean = mGson.fromJson(response, UserDeletedBean.class);
+                            toast(mBean.getMsg() + "");
+                            LogUtils.e("修改其他人密码====");
+                            if (mBean.getCode().equals("0")) {
+                                mAdapter.notifyDataSetChanged();
+                            }
+                        } else {
+                            showError(listener -> {
+                                sendRequest();
+                            });
+                        }
+                    }
+                });
+
     }
 
     /**
@@ -235,7 +417,6 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
                                 mAdapter.removeItem(item);
                                 mAdapter.notifyDataSetChanged();
                             }
-
 //                            if (0 == ) {  //成功
 //                                if (mBean.getData().size() != 0) {
 //                                    showComplete();
