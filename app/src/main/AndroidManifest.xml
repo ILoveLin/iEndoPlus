@@ -75,6 +75,11 @@
             android:name=".mineui.activity.login.DeviceChoiceActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
+        <!-- 设备添加界面 -->
+        <activity
+            android:name=".mineui.activity.login.DeviceActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
         <!-- 引导页 -->
         <activity
             android:name="com.company.iendo.mineui.activity.login.GuideActivity"

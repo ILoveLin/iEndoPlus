@@ -28,47 +28,43 @@
         app:srcCompat="@drawable/logo_big_ic" />
 
 
-
-
-
-
     <LinearLayout
         android:id="@+id/ll_login_body"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-<!--        <com.hjq.widget.view.ClearEditText-->
-<!--            android:id="@+id/et_login_phone"-->
-<!--            style="@style/EditTextStyle"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginHorizontal="@dimen/dp_40"-->
-<!--            android:layout_marginTop="@dimen/dp_10"-->
-<!--            android:hint="@string/common_account"-->
-<!--            android:inputType="text"-->
-<!--            android:singleLine="true" />-->
+        <!--        <com.hjq.widget.view.ClearEditText-->
+        <!--            android:id="@+id/et_login_phone"-->
+        <!--            style="@style/EditTextStyle"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_marginHorizontal="@dimen/dp_40"-->
+        <!--            android:layout_marginTop="@dimen/dp_10"-->
+        <!--            android:hint="@string/common_account"-->
+        <!--            android:inputType="text"-->
+        <!--            android:singleLine="true" />-->
 
-<!--        <View-->
-<!--            style="@style/HorizontalLineStyle"-->
-<!--            android:layout_marginHorizontal="@dimen/dp_40" />-->
+        <!--        <View-->
+        <!--            style="@style/HorizontalLineStyle"-->
+        <!--            android:layout_marginHorizontal="@dimen/dp_40" />-->
 
-<!--        <com.hjq.widget.view.PasswordEditText-->
-<!--            android:id="@+id/et_login_password"-->
-<!--            style="@style/EditTextStyle"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginHorizontal="@dimen/dp_40"-->
-<!--            android:layout_marginTop="@dimen/dp_15"-->
-<!--            android:digits="0123456789abcdefghigklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ@."-->
-<!--            android:hint="@string/common_password_input_error"-->
-<!--            android:imeOptions="actionDone"-->
-<!--            android:maxLength="20"-->
-<!--            android:singleLine="true" />-->
+        <!--        <com.hjq.widget.view.PasswordEditText-->
+        <!--            android:id="@+id/et_login_password"-->
+        <!--            style="@style/EditTextStyle"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_marginHorizontal="@dimen/dp_40"-->
+        <!--            android:layout_marginTop="@dimen/dp_15"-->
+        <!--            android:digits="0123456789abcdefghigklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ@."-->
+        <!--            android:hint="@string/common_password_input_error"-->
+        <!--            android:imeOptions="actionDone"-->
+        <!--            android:maxLength="20"-->
+        <!--            android:singleLine="true" />-->
 
-<!--        <View-->
-<!--            style="@style/HorizontalLineStyle"-->
-<!--            android:layout_marginHorizontal="@dimen/dp_40" />-->
+        <!--        <View-->
+        <!--            style="@style/HorizontalLineStyle"-->
+        <!--            android:layout_marginHorizontal="@dimen/dp_40" />-->
 
 
         <RelativeLayout
@@ -154,7 +150,26 @@
 
         </RelativeLayout>
 
+        <Button
+            android:id="@+id/btn_login_setting"
+            style="@style/ButtonSettingStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/dp_40"
+            android:layout_marginTop="@dimen/dp_20"
+            android:text="@string/login_setting" />
 
+        <TextView
+            android:id="@+id/btn_device_type"
+            android:layout_width="@dimen/dp_40"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/dp_40"
+            android:layout_marginTop="@dimen/dp_5"
+            android:background="@color/white"
+            android:drawableTop="@mipmap/icon_video"
+            android:gravity="center_horizontal"
+            android:text="@string/login_type"
+            android:textSize="@dimen/sp_10" />
 
         <com.hjq.widget.view.SubmitButton
             android:id="@+id/btn_login_commit"
@@ -162,8 +177,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/dp_40"
-            android:layout_marginTop="@dimen/dp_30"
+            android:layout_marginTop="@dimen/dp_5"
             android:text="@string/login_text" />
+
 
     </LinearLayout>
 

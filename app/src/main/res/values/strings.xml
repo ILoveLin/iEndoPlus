@@ -163,6 +163,8 @@
     <string name="login_register">注册</string>
     <string name="login_forget">忘记密码？</string>
     <string name="login_text">登录</string>
+    <string name="login_setting">设置</string>
+    <string name="login_type">类别</string>
 
     <string name="login_other">其他登录方式</string>
 
