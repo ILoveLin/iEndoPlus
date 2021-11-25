@@ -216,13 +216,11 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
 
                     @Override
                     public void onSelected(BaseDialog dialog, HashMap<Integer, String> data) {
-                        toast("确定了：" + data.toString());
                         sendChangeReloRequest(item, data.toString().substring(1, 2));
                     }
 
                     @Override
                     public void onCancel(BaseDialog dialog) {
-                        toast("取消了");
                     }
                 })
                 .show();
@@ -237,7 +235,6 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
      */
     private void sendChangeReloRequest(UserListBean.DataDTO item, String substring) {
         int i = Integer.parseInt(substring) + 1;
-        toast("确定了：" + i);
         showLoading();
         String userID = item.getUserID();
         LogUtils.e("修改权限====userID=="+userID+"");
@@ -266,8 +263,8 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
 
                         if ("" != response) {
                             UserDeletedBean mBean = mGson.fromJson(response, UserDeletedBean.class);
-                            toast(mBean.getMsg() + "");
                             LogUtils.e("修改权限====Relo=="+i);
+                            toast(mBean.getMsg()+"");
                             LogUtils.e("修改权限====item.getUserID()=="+item.getUserID()+"");
                             if (mBean.getCode().equals("0")) {
                                 sendRequest();
@@ -296,7 +293,6 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
                 .setListener(new InputDialog.OnListener() {
                     @Override
                     public void onConfirm(BaseDialog dialog, String password) {
-                        toast("确定了：" + password);
                         sendChangePasswordRequest(item, MD5ChangeUtil.Md5_32(password) );
                     }
 
@@ -340,9 +336,10 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
                         showComplete();
                         if ("" != response) {
                             UserDeletedBean mBean = mGson.fromJson(response, UserDeletedBean.class);
-                            toast(mBean.getMsg() + "");
                             LogUtils.e("修改其他人密码====");
                             if (mBean.getCode().equals("0")) {
+                                toast(mBean.getMsg()+"");
+
                                 mAdapter.notifyDataSetChanged();
                             }
                         } else {
@@ -369,14 +366,11 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
                 .setListener(new MessageDialog.OnListener() {
                     @Override
                     public void onConfirm(BaseDialog dialog) {
-                        toast("onConfirm");
                         sendDeleteRequest(item);
                     }
 
                     @Override
                     public void onCancel(BaseDialog dialog) {
-                        toast("onCancel");
-
                     }
                 }).show();
 
@@ -411,9 +405,10 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
                         showComplete();
                         if ("" != response) {
                             UserDeletedBean mBean = mGson.fromJson(response, UserDeletedBean.class);
-                            toast(mBean.getMsg() + "");
                             LogUtils.e("删除用户====");
                             if (mBean.getCode().equals("0")) {
+                                toast(mBean.getMsg()+"");
+
                                 mAdapter.removeItem(item);
                                 mAdapter.notifyDataSetChanged();
                             }

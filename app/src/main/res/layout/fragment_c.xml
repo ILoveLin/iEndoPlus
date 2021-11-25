@@ -21,6 +21,13 @@
         android:layout_height="@dimen/dp_50"/>
 
     <com.hjq.widget.layout.SettingBar
+        android:id="@+id/password_bar"
+        android:layout_width="match_parent"
+        app:bar_leftText="修改密码"
+        app:bar_leftTextSize="@dimen/dp_16"
+        android:layout_height="@dimen/dp_50"/>
+
+    <com.hjq.widget.layout.SettingBar
         android:id="@+id/exit_bar"
         android:layout_width="match_parent"
         app:bar_leftText="退出"

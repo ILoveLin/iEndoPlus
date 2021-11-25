@@ -404,6 +404,7 @@ public final class LoginActivity extends AppActivity
                                     SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Current_Login_Role, mBean.getData().getRole()+"");
                                     SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Current_Login_UserID, mBean.getData().getUserID()+"");
                                     SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Current_Login_UserName, mPhoneView.getText().toString());
+                                    SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Current_Login_Password, mPasswordView.getText().toString());
                                     SharePreferenceUtil.put(LoginActivity.this, Constants.Is_Logined, true);
 
 
