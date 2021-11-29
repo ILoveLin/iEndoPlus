@@ -13,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
@@ -23,16 +22,14 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
-import com.company.iendo.bean.AddCaseBean;
 import com.company.iendo.bean.LoginBean;
 import com.company.iendo.bean.UserListBean;
 import com.company.iendo.manager.ActivityManager;
 import com.company.iendo.mineui.activity.MainActivity;
-import com.company.iendo.mineui.activity.casemanage.AddCaseActivity;
+import com.company.iendo.mineui.activity.login.device.DeviceActivity;
 import com.company.iendo.mineui.fragment.AFragment;
 import com.company.iendo.other.Constants;
 import com.company.iendo.other.HttpConstant;
-import com.company.iendo.ui.activity.HomeActivity;
 import com.company.iendo.ui.dialog.TipsDialog;
 import com.company.iendo.ui.dialog.WaitDialog;
 import com.company.iendo.ui.popup.ListPopup;
@@ -44,20 +41,13 @@ import com.company.iendo.R;
 import com.company.iendo.aop.Log;
 import com.company.iendo.aop.SingleClick;
 import com.company.iendo.app.AppActivity;
-import com.company.iendo.http.api.LoginApi;
 import com.company.iendo.http.glide.GlideApp;
-import com.company.iendo.http.model.HttpData;
 import com.company.iendo.manager.InputTextManager;
 import com.company.iendo.other.KeyboardWatcher;
-import com.company.iendo.ui.fragment.MineFragment;
 import com.hjq.bar.OnTitleBarListener;
 import com.hjq.bar.TitleBar;
 import com.hjq.base.BasePopupWindow;
 import com.hjq.base.action.AnimAction;
-import com.hjq.http.EasyConfig;
-import com.hjq.http.EasyHttp;
-import com.hjq.http.listener.HttpCallback;
-import com.hjq.toast.ToastUtils;
 import com.hjq.umeng.Platform;
 import com.hjq.umeng.UmengLogin;
 import com.hjq.widget.view.PasswordEditText;
@@ -211,6 +201,7 @@ public final class LoginActivity extends AppActivity
                     @Override
                     public void onError(Call call, Exception e, int id) {
                         showError();
+                        showComplete();
                     }
 
                     @Override
@@ -670,7 +661,7 @@ public final class LoginActivity extends AppActivity
 
     @Override
     public void onApplicationDestroy(Activity activity) {
-
+        ActivityManager.getInstance().unregisterApplicationLifecycleCallback(this);
     }
 
     @Override

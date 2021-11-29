@@ -31,7 +31,7 @@ public class SplashActivity extends AppActivity {
 
     @Override
     protected void initView() {
-        ivSplash = findViewById(R.id.iv_splash);
+        ivSplash = findViewById(R.id.iv_splash_login);
 //        ImageView tv_011_text = findViewById(R.id.tv_011_text);
         //是否第一次进入app
         isFirstIn = (Boolean) SharePreferenceUtil.get(this, Constants.SP_IS_FIRST_IN, true);

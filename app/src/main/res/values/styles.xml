@@ -45,7 +45,16 @@
         <item name="android:windowIsTranslucent">false</item>
         <item name="android:windowDisablePreview">true</item>
     </style>
-
+    <style name="textInputLayoutHint">
+        <item name="android:textSize">@dimen/dp_12</item>
+        <item name="android:textColor">@color/black40</item>
+    </style>
+    <style name="nestedscrollview_vertical_style">
+        <item name="android:scrollbarSize">@dimen/dp_2</item>
+        <item name="android:scrollbars">vertical</item>
+        <item name="android:scrollbarThumbVertical">@drawable/recy_vertical_scrollbar</item>
+        <item name="android:scrollbarTrackVertical">@drawable/recy_vertical_scrollbar_bg</item>
+    </style>
     <!-- 默认按钮样式 -->
     <style name="ButtonStyle" parent="Widget.AppCompat.Button.Borderless">
         <item name="android:paddingStart">@dimen/dp_20</item>

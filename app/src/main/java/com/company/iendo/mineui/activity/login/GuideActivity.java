@@ -81,7 +81,7 @@ public final class GuideActivity extends AppActivity {
 //            HomeActivity.start(getContext());
             if (!isLogined) {  //未登入,跳转登入界面
                 Intent intent = new Intent();
-                intent.setClass(GuideActivity.this, DeviceChoiceActivity.class);
+                intent.setClass(GuideActivity.this, LoginActivity.class);
 //                intent.setClass(GuideActivity.this, LoginActivity.class);
                 startActivity(intent);
                 SharePreferenceUtil.put(GuideActivity.this, Constants.SP_IS_FIRST_IN, false);

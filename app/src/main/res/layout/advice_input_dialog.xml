@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginVertical="10dp"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/linear_pop_change"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_300"
+        android:background="@drawable/shape_ffffff_15"
+        android:orientation="vertical">
+        <!--        android:background="@drawable/shape_ffffff_15"-->
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+
+            <!--            输入框的信息-->
+
+            <include
+
+                layout="@layout/include_layout_input_videomessage" />
+
+            <TextView
+                android:id="@+id/tv_two_bt_content"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_20"
+                android:layout_marginBottom="@dimen/dp_20"
+                android:gravity="center"
+                android:text="请先对订单进行评价"
+                android:textColor="@color/color_666666"
+                android:textSize="@dimen/sp_15"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+
+
+    </LinearLayout>
+</LinearLayout>

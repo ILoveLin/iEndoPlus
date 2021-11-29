@@ -189,7 +189,7 @@ public class MainActivity extends AppActivity implements NavigationAdapter.OnNav
 
     @Override
     public void onApplicationDestroy(Activity activity) {
-
+        ActivityManager.getInstance().unregisterApplicationLifecycleCallback(this);
     }
 
     @Override

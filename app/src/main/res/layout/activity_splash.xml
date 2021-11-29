@@ -28,7 +28,7 @@
     <ImageView
         android:layout_centerHorizontal="true"
         android:layout_above="@+id/sp_player"
-        android:id="@+id/iv_splash"
+        android:id="@+id/iv_splash_login"
         android:layout_width="@dimen/dp_175"
         android:layout_height="@dimen/dp_150"
         android:src="@mipmap/icon_logo" />
