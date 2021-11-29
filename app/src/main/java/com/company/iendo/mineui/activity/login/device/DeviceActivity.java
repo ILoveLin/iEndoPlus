@@ -11,7 +11,10 @@ import com.company.iendo.green.db.DeviceDBBean;
 import com.company.iendo.green.db.DeviceDBUtils;
 import com.company.iendo.mineui.activity.login.device.adapter.DeviceAdapter;
 import com.company.iendo.ui.dialog.InputDeviceDialog;
+import com.company.iendo.ui.dialog.MessageDialog;
+import com.company.iendo.ui.dialog.ModifyDeviceDialog;
 import com.company.iendo.ui.dialog.SelectDialog;
+import com.company.iendo.ui.dialog.SelectModifyTypeDialog;
 import com.company.iendo.ui.popup.ListPopup;
 import com.company.iendo.utils.LogUtils;
 import com.company.iendo.widget.StatusLayout;
@@ -20,6 +23,7 @@ import com.hjq.bar.TitleBar;
 import com.hjq.base.BaseAdapter;
 import com.hjq.base.BaseDialog;
 import com.hjq.widget.layout.WrapRecyclerView;
+import com.hjq.widget.view.ClearEditText;
 import com.scwang.smart.refresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
@@ -67,9 +71,16 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
         mAdapter.setOnChildClickListener(R.id.delBtn, this);
         mAdapter.setOnChildClickListener(R.id.reInputBtn, this);
 
-        mAdapter.setData(getDBDeviceData());
+        mAdapter.setData(mDataLest);
         mRecyclerView.setAdapter(mAdapter);
+        int count = mAdapter.getCount();
+        if (0 == count) {
+            showEmpty();
+        } else {
+            showComplete();
+        }
 
+        refreshRecycleviewData();
         mDeviceBar.setOnTitleBarListener(new OnTitleBarListener() {
             @Override
             public void onLeftClick(View view) {
@@ -139,7 +150,6 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
 
                     @Override
                     public void onCancel(BaseDialog dialog) {
-                        toast("取消了");
                     }
                 })
                 .show();
@@ -158,9 +168,10 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                 // 输入对话框
                 new InputDeviceDialog.Builder(this)
                         // 标题可以不用填写
-                        .setTitle("我是标题")
+                        .setTitle("添加设备")
                         // 内容可以不用填写
                         .setAccountContent("我是Account内容")
+                        .setDeviceCodeContent("1")
                         // 提示可以不用填写
                         // 确定按钮文本
                         .setConfirm(getString(R.string.common_confirm))
@@ -172,9 +183,25 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                         .setListener(new InputDeviceDialog.OnListener() {
 
                             @Override
-                            public void onConfirm(BaseDialog dialog, String mDeviceName, String mDeviceCode, String mDeviceNoteMessage, String mDeviceIP, String mDeviceAccount, String mDevicePassword, String mHttpPort, String mSocketPort, String mLivePort, String mMicPort, String content) {
+                            public void onConfirm(BaseDialog dialog, String mDeviceName, String mDeviceCode, String mDeviceNoteMessage,
+                                                  String mDeviceIP, String mDeviceAccount, String mDevicePassword, String mHttpPort,
+                                                  String mSocketPort, String mLivePort, String mMicPort, String mDeviceType) {
                                 toast("确定了：" + mDeviceName);
-
+                                //添加设备HD3
+                                DeviceDBBean deviceDBBean = new DeviceDBBean();
+                                deviceDBBean.setUsemsg01(mDeviceName);  //设备名
+                                deviceDBBean.setUsername(mDeviceCode); //设备码
+                                deviceDBBean.setMsg(mDeviceNoteMessage);//备注信息
+                                deviceDBBean.setIp(mDeviceIP);          //ip
+                                deviceDBBean.setUsername(mDeviceAccount);//设备账号
+                                deviceDBBean.setPassword(mDevicePassword);//设备密码
+                                deviceDBBean.setHttpPort(mHttpPort);    //http端口
+                                deviceDBBean.setSocketPort(mSocketPort);//socket端口
+                                deviceDBBean.setLivePort(mLivePort);   //直播端口
+                                deviceDBBean.setMicPort(mMicPort);     //语音端口
+                                deviceDBBean.setType(mDeviceType);     //设备类型
+                                DeviceDBUtils.insertOrReplaceInTx(DeviceActivity.this, deviceDBBean);
+                                refreshRecycleviewData();
                             }
 
                             @Override
@@ -194,6 +221,13 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
 
     }
 
+    private void refreshRecycleviewData() {
+        List<DeviceDBBean> deviceDBBeans = DeviceDBUtils.queryAll(DeviceActivity.this, mDeviceDBBean);
+        showComplete();
+        mAdapter.setData(deviceDBBeans);
+        mAdapter.notifyDataSetChanged();
+    }
+
     /**
      * 查询数据库获取到数据
      *
@@ -210,16 +244,17 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
 //            deviceDBBean.setType("类别:" + i + 4);
 //            DeviceDBUtils.insertOrReplaceInTx(this, deviceDBBean);
 //        }
-        List<DeviceDBBean> deviceDBBeans = DeviceDBUtils.queryAll(this, mDeviceDBBean);
-        for (int i = 0; i < deviceDBBeans.size(); i++) {
-            DeviceDBBean deviceDBBean = deviceDBBeans.get(i);
-            String msg = deviceDBBean.getMsg();
-            LogUtils.e("data==" + msg);
+//        List<DeviceDBBean> deviceDBBeans = DeviceDBUtils.queryAll(this, mDeviceDBBean);
+//        for (int i = 0; i < deviceDBBeans.size(); i++) {
+//            DeviceDBBean deviceDBBean = deviceDBBeans.get(i);
+//            String msg = deviceDBBean.getMsg();
+//            LogUtils.e("data==" + msg);
+//
+//
+//        }
 
-
-        }
         mDataLest.clear();
-        mDataLest.addAll(deviceDBBeans);
+        mDataLest.addAll(mDataLest);
         return mDataLest;
     }
 
@@ -250,13 +285,127 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
 
                 break;
             case R.id.delBtn:
-                toast("删除");
-
+                showDeleteItemDialog(mAdapter.getItem(position));
                 break;
             case R.id.reInputBtn:
-                toast("修改");
+                showModifyItemDialog(mAdapter.getItem(position));
                 break;
         }
+
+    }
+
+
+    //删除当前数据
+    private void showDeleteItemDialog(DeviceDBBean item) {
+        new MessageDialog.Builder(this)
+                .setTitle("提示")
+                .setMessage("确定删除吗?")
+                .setConfirm("确定")
+                .setCancel("取消")
+                .setListener(new MessageDialog.OnListener() {
+                    @Override
+                    public void onConfirm(BaseDialog dialog) {
+                        DeviceDBUtils.delete(DeviceActivity.this, item);
+                        refreshRecycleviewData();
+                        toast("删除成功");
+                    }
+
+                    @Override
+                    public void onCancel(BaseDialog dialog) {
+
+                    }
+                }).show();
+
+    }
+
+    //修改当前数据
+    private void showModifyItemDialog(DeviceDBBean item) {
+
+
+        ModifyDeviceDialog.Builder builder = new ModifyDeviceDialog.Builder(this);
+        builder
+                .setTitle("修改设备")
+                .setDeviceNameContent(item.getUsemsg01())
+                .setDeviceCodeContent(item.getDeviceID())
+                .setDeviceIPContent(item.getIp())
+                .setAccountContent(item.getUsername())
+                .setPasswordContent(item.getPassword())
+                .setHttpPortContent(item.getHttpPort())
+                .setSocketPortContent(item.getSocketPort())
+                .setLivePortContent(item.getLivePort())
+                .setMicPortContent(item.getMicPort())
+                .setTypeContent(item.getType() + "类型")
+                .setConfirm(getString(R.string.common_confirm))
+                // 设置 null 表示不显示取消按钮
+                .setCancel(getString(R.string.common_cancel))
+                // 设置点击按钮后不关闭对话框
+                //.setAutoDismiss(false)
+                .setCanceledOnTouchOutside(false)
+                .setListener(new ModifyDeviceDialog.OnListener() {
+                    @Override
+                    public void onConfirm(BaseDialog dialog, String mDeviceName, String mDeviceCode, String mDeviceNoteMessage, String mDeviceIP, String mDeviceAccount, String mDevicePassword, String mHttpPort, String mSocketPort, String mLivePort, String mMicPort, String content) {
+
+                    }
+
+                    @Override
+                    public void onCancel(BaseDialog dialog) {
+
+                    }
+                }).show();
+
+        //再次选择设备类型的时候,弹出对话框选择
+        ClearEditText deviceTypeView = builder.getDeviceTypeView();
+        deviceTypeView.setFocusable(false);//让EditText失去焦点，然后获取点击事件
+        deviceTypeView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toast(deviceTypeView.getText().toString());
+                showModifyTypeDialog(deviceTypeView.getText().toString());
+            }
+        });
+
+
+    }
+
+    /**
+     * 修改设备的时候,切换设备类型
+     *
+     * @param currentType
+     */
+    private void showModifyTypeDialog(String currentType) {
+        new SelectModifyTypeDialog.Builder(this)
+                .setTitle("请选择设备类型")
+                .setList("HD3", "一体机", "耳鼻喉治疗台")
+                // 设置单选模式
+                .setSingleSelect()
+                // 设置默认选中
+                .setSelect(0)
+                .setBackgroundDimEnabled(false)
+//                .setWidth(ScreenSizeUtil.getScreenWidth(this) /2)
+                .setCanceledOnTouchOutside(false)
+                .setListener(new SelectModifyTypeDialog.OnListener<String>() {
+
+                    @Override
+                    public void onSelected(BaseDialog dialog, HashMap<Integer, String> data) {
+                        LogUtils.e("showMultiDialog===" + data.toString()); //{0=HD3}
+                        int start = data.toString().indexOf("=");
+                        String str = data.toString().substring(start + 1, data.toString().length() - 1);
+                        LogUtils.e("showMultiDialog===str==" + str); //{0=HD3}
+                        toast("确定了：" + str);
+
+                        postDelayed(() -> {
+                            toast("确定了：" + "切换设备类型之后,刷新默认数据");
+
+                        }, 1000);
+
+                    }
+
+                    @Override
+                    public void onCancel(BaseDialog dialog) {
+                    }
+                })
+                .show();
+
 
     }
 

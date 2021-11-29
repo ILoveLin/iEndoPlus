@@ -25,7 +25,7 @@
 
             <include
 
-                layout="@layout/include_layout_input_videomessage" />
+                layout="@layout/include_layout_modify_videomessage" />
 
             <TextView
                 android:id="@+id/tv_two_bt_content"

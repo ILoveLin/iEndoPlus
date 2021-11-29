@@ -43,7 +43,7 @@ public class DeviceDBBean {
     //工作站类型
     private String endoType;
     //备用字段
-    private String usemsg01;
+    private String usemsg01;  //设备名字
     //备用字段2
     private String usemsg02;
     @Generated(hash = 1975722533)

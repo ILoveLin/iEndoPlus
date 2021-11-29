@@ -31,11 +31,12 @@ public final class ModifyDeviceDialog {
         @Nullable
         private OnListener mListener;
         private final ClearEditText mDeviceName, mDeviceCode, mDeviceNoteMessage, mDeviceIP,
-                mDeviceAccount, mDevicePassword, mHttpPort, mSocketPort, mLivePort, mMicPort, mDeviceType;
+                mDeviceAccount, mDevicePassword, mHttpPort, mSocketPort, mLivePort, mMicPort;
+        private ClearEditText mDeviceType;
 
         public Builder(Context context) {
             super(context);
-            setCustomView(R.layout.advice_input_dialog);
+            setCustomView(R.layout.advice_modify_dialog);
 
             mDeviceName = findViewById(R.id.device_name);
             mDeviceCode = findViewById(R.id.device_code);
@@ -47,7 +48,7 @@ public final class ModifyDeviceDialog {
             mSocketPort = findViewById(R.id.socket_port);
             mLivePort = findViewById(R.id.cet_cme_port);
             mMicPort = findViewById(R.id.cet_cme_mic_port);
-            mDeviceType = findViewById(R.id.cet_cme_start_type);
+            mDeviceType = findViewById(R.id.modify_device_type);
 
             addOnShowListener(this);
         }
@@ -154,10 +155,10 @@ public final class ModifyDeviceDialog {
          * 2,设备码
          */
         public Builder setDeviceCodeContent(@StringRes int id) {
-            return DeviceCodeContent(getString(id));
+            return setDeviceCodeContent(getString(id));
         }
 
-        public Builder DeviceCodeContent(CharSequence text) {
+        public Builder setDeviceCodeContent(CharSequence text) {
             mDeviceCode.setText(text);
             Editable editable = mDeviceCode.getText();
             if (editable == null) {
@@ -175,11 +176,11 @@ public final class ModifyDeviceDialog {
         /**
          * 3,备注信息
          */
-        public Builder DeviceNoteContent(@StringRes int id) {
-            return DeviceNoteContent(getString(id));
+        public Builder setDeviceNoteContent(@StringRes int id) {
+            return setDeviceNoteContent(getString(id));
         }
 
-        public Builder DeviceNoteContent(CharSequence text) {
+        public Builder setDeviceNoteContent(CharSequence text) {
             mDeviceNoteMessage.setText(text);
             Editable editable = mDeviceNoteMessage.getText();
             if (editable == null) {
@@ -197,11 +198,11 @@ public final class ModifyDeviceDialog {
         /**
          * 4,ip
          */
-        public Builder DeviceIPContent(@StringRes int id) {
-            return DeviceIPContent(getString(id));
+        public Builder setDeviceIPContent(@StringRes int id) {
+            return setDeviceIPContent(getString(id));
         }
 
-        public Builder DeviceIPContent(CharSequence text) {
+        public Builder setDeviceIPContent(CharSequence text) {
             mDeviceIP.setText(text);
             Editable editable = mDeviceIP.getText();
             if (editable == null) {
@@ -240,7 +241,6 @@ public final class ModifyDeviceDialog {
             mDeviceAccount.setSelection(index);
             return this;
         }
-
 
 
         /**
@@ -378,7 +378,13 @@ public final class ModifyDeviceDialog {
             return setTypeContent(getString(id));
         }
 
+        public ClearEditText getDeviceTypeView() {
+            return mDeviceType;
+        }
+
+
         public Builder setTypeContent(CharSequence text) {
+
             mDeviceType.setText(text);
             Editable editable = mDeviceType.getText();
             if (editable == null) {
@@ -401,6 +407,7 @@ public final class ModifyDeviceDialog {
          * 点击确定时回调
          */
         void onConfirm(BaseDialog dialog, String mDeviceName, String mDeviceCode, String mDeviceNoteMessage, String mDeviceIP, String mDeviceAccount, String mDevicePassword, String mHttpPort, String mSocketPort, String mLivePort, String mMicPort, String content);
+
 
         /**
          * 点击取消时回调

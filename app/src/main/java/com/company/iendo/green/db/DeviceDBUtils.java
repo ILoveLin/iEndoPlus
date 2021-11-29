@@ -31,6 +31,10 @@ public class DeviceDBUtils {
     public static void delete(Context context, DeviceDBBean bean) {
         DBManager.getDaoSession(context).getDeviceDBBeanDao().delete(bean);
     }
+    //删除
+    public static void deleteAll(Context context) {
+        DBManager.getDaoSession(context).getDeviceDBBeanDao().deleteAll();
+    }
 
     //查询全部
     public static List<DeviceDBBean> queryAll(Context context, DeviceDBBean bean) {

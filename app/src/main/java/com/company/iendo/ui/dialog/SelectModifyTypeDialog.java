@@ -13,11 +13,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.hjq.base.BaseAdapter;
-import com.hjq.base.BaseDialog;
 import com.company.iendo.R;
 import com.company.iendo.aop.SingleClick;
 import com.company.iendo.app.AppAdapter;
+import com.hjq.base.BaseAdapter;
+import com.hjq.base.BaseDialog;
 import com.hjq.toast.ToastUtils;
 
 import java.util.ArrayList;
@@ -31,10 +31,10 @@ import java.util.List;
  *    time   : 2019/10/09
  *    desc   : 单选或者多选对话框
  */
-public final class SelectDialog {
+public final class SelectModifyTypeDialog {
 
     public static final class Builder
-            extends CommonDialog.Builder<Builder>
+            extends CommonModifyTypeDialog.Builder<Builder>
             implements View.OnLayoutChangeListener, Runnable {
 
         @SuppressWarnings("rawtypes")
@@ -238,7 +238,7 @@ public final class SelectDialog {
         }
 
         /**
-         * {@link BaseAdapter.OnItemClickListener}
+         * {@link OnItemClickListener}
          */
 
         @Override

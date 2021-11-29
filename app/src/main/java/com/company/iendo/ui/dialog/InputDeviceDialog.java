@@ -154,10 +154,10 @@ public final class InputDeviceDialog {
          * 2,设备码
          */
         public Builder setDeviceCodeContent(@StringRes int id) {
-            return DeviceCodeContent(getString(id));
+            return setDeviceCodeContent(getString(id));
         }
 
-        public Builder DeviceCodeContent(CharSequence text) {
+        public Builder setDeviceCodeContent(CharSequence text) {
             mDeviceCode.setText(text);
             Editable editable = mDeviceCode.getText();
             if (editable == null) {
@@ -175,11 +175,11 @@ public final class InputDeviceDialog {
         /**
          * 3,备注信息
          */
-        public Builder DeviceNoteContent(@StringRes int id) {
-            return DeviceNoteContent(getString(id));
+        public Builder setDeviceNoteContent(@StringRes int id) {
+            return setDeviceNoteContent(getString(id));
         }
 
-        public Builder DeviceNoteContent(CharSequence text) {
+        public Builder setDeviceNoteContent(CharSequence text) {
             mDeviceNoteMessage.setText(text);
             Editable editable = mDeviceNoteMessage.getText();
             if (editable == null) {
@@ -197,11 +197,11 @@ public final class InputDeviceDialog {
         /**
          * 4,ip
          */
-        public Builder DeviceIPContent(@StringRes int id) {
-            return DeviceIPContent(getString(id));
+        public Builder setDeviceIPContent(@StringRes int id) {
+            return setDeviceIPContent(getString(id));
         }
 
-        public Builder DeviceIPContent(CharSequence text) {
+        public Builder setDeviceIPContent(CharSequence text) {
             mDeviceIP.setText(text);
             Editable editable = mDeviceIP.getText();
             if (editable == null) {

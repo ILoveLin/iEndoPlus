@@ -66,9 +66,9 @@ public class DeviceAdapter extends AppAdapter<DeviceDBBean> {
 //            Log.e("adapter", "" + "Path:" + bean.getFilePath());
 
 //            mTextView.setText("Path:" + mDBBean.getMsg());
-            mTitle.setText(mDBBean.getTitle());
-            mMake.setText(mDBBean.getMsg());
-            mType.setText(mDBBean.getType());
+            mTitle.setText(mDBBean.getUsemsg01());
+            mMake.setText(mDBBean.getDeviceID());
+            mType.setText(mDBBean.getMsg());
 
         }
     }
