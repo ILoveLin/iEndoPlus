@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/dp_10"
+    android:layout_marginTop="@dimen/dp_10"
+    android:background="@drawable/shape_cme_input"
+    android:orientation="vertical">
+
+    <androidx.core.widget.NestedScrollView
+        style="@style/nestedscrollview_vertical_style"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/dp_10"
+                app:hintTextAppearance="@style/textInputLayoutHint">
+
+                <com.hjq.widget.view.ClearEditText
+                    android:id="@+id/user_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dp_35"
+                    android:background="@color/transparent"
+                    android:hint="用户姓名"
+                    android:lines="1"
+                    android:paddingLeft="@dimen/dp_10"
+                    android:paddingRight="@dimen/dp_10"
+                    android:singleLine="true"
+                    android:text=""
+                    android:textColor="@color/black80"
+                    android:textColorHint="@color/black20"
+                    android:textSize="@dimen/sp_16" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:background="@color/colorLine" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/dp_10"
+                app:hintTextAppearance="@style/textInputLayoutHint">
+
+                <com.hjq.widget.view.ClearEditText
+                    android:id="@+id/user_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dp_35"
+                    android:background="@color/transparent"
+                    android:hint="用户密码"
+                    android:lines="1"
+                    android:paddingLeft="@dimen/dp_10"
+                    android:paddingRight="@dimen/dp_10"
+                    android:singleLine="true"
+                    android:text=""
+                    android:textColor="@color/black80"
+                    android:textColorHint="@color/black20"
+                    android:textSize="@dimen/sp_16" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:background="@color/colorLine" />
+
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/dp_10"
+                app:hintTextAppearance="@style/textInputLayoutHint">
+
+                <com.hjq.widget.view.ClearEditText
+                    android:id="@+id/user_relo"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dp_35"
+                    android:background="@color/transparent"
+                    android:hint="用户权限"
+                    android:lines="1"
+                    android:paddingLeft="@dimen/dp_10"
+                    android:paddingRight="@dimen/dp_10"
+                    android:singleLine="true"
+                    android:text=""
+                    android:textColor="@color/black80"
+                    android:textSize="@dimen/sp_16" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</LinearLayout>

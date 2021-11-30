@@ -1,5 +1,6 @@
 package com.company.iendo.mineui.activity.login.device;
 
+import android.view.Gravity;
 import android.view.View;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -73,14 +74,8 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
 
         mAdapter.setData(mDataLest);
         mRecyclerView.setAdapter(mAdapter);
-        int count = mAdapter.getCount();
-        if (0 == count) {
-            showEmpty();
-        } else {
-            showComplete();
-        }
 
-        refreshRecycleviewData();
+        refreshRecycleViewData();
         mDeviceBar.setOnTitleBarListener(new OnTitleBarListener() {
             @Override
             public void onLeftClick(View view) {
@@ -201,7 +196,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                                 deviceDBBean.setMicPort(mMicPort);     //语音端口
                                 deviceDBBean.setType(mDeviceType);     //设备类型
                                 DeviceDBUtils.insertOrReplaceInTx(DeviceActivity.this, deviceDBBean);
-                                refreshRecycleviewData();
+                                refreshRecycleViewData();
                             }
 
                             @Override
@@ -221,42 +216,19 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
 
     }
 
-    private void refreshRecycleviewData() {
+    private void refreshRecycleViewData() {
         List<DeviceDBBean> deviceDBBeans = DeviceDBUtils.queryAll(DeviceActivity.this, mDeviceDBBean);
         showComplete();
         mAdapter.setData(deviceDBBeans);
         mAdapter.notifyDataSetChanged();
+        int count = mAdapter.getCount();
+        if (0 == count) {
+            showEmpty();
+        } else {
+            showComplete();
+        }
     }
 
-    /**
-     * 查询数据库获取到数据
-     *
-     * @return
-     */
-    private List<DeviceDBBean> getDBDeviceData() {
-        //先模拟几条数据
-//        for (int i = 0; i < 10; i++) {
-//            DeviceDBBean deviceDBBean = new DeviceDBBean();
-//            deviceDBBean.setDeviceID("设备ID" + i);
-//            deviceDBBean.setHttpPort("httpPort:" + i);
-//            deviceDBBean.setTitle("标题:" + i + 2);
-//            deviceDBBean.setMsg("备注:" + i + 3);
-//            deviceDBBean.setType("类别:" + i + 4);
-//            DeviceDBUtils.insertOrReplaceInTx(this, deviceDBBean);
-//        }
-//        List<DeviceDBBean> deviceDBBeans = DeviceDBUtils.queryAll(this, mDeviceDBBean);
-//        for (int i = 0; i < deviceDBBeans.size(); i++) {
-//            DeviceDBBean deviceDBBean = deviceDBBeans.get(i);
-//            String msg = deviceDBBean.getMsg();
-//            LogUtils.e("data==" + msg);
-//
-//
-//        }
-
-        mDataLest.clear();
-        mDataLest.addAll(mDataLest);
-        return mDataLest;
-    }
 
     @Override
     public StatusLayout getStatusLayout() {
@@ -265,7 +237,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
 
     @Override
     public void onItemClick(RecyclerView recyclerView, View itemView, int position) {
-
+        toast(mAdapter.getItem(position).getUsemsg01()+"~~~");
     }
 
 
@@ -306,7 +278,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                     @Override
                     public void onConfirm(BaseDialog dialog) {
                         DeviceDBUtils.delete(DeviceActivity.this, item);
-                        refreshRecycleviewData();
+                        refreshRecycleViewData();
                         toast("删除成功");
                     }
 
@@ -318,10 +290,12 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
 
     }
 
-    //修改当前数据
+    /**
+     * 修改设备数据----修改当前数据
+     *
+     * @param item
+     */
     private void showModifyItemDialog(DeviceDBBean item) {
-
-
         ModifyDeviceDialog.Builder builder = new ModifyDeviceDialog.Builder(this);
         builder
                 .setTitle("修改设备")
@@ -355,7 +329,8 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
 
         //再次选择设备类型的时候,弹出对话框选择
         ClearEditText deviceTypeView = builder.getDeviceTypeView();
-        deviceTypeView.setFocusable(false);//让EditText失去焦点，然后获取点击事件
+        //让EditText失去焦点，然后获取点击事件
+        deviceTypeView.setFocusable(false);
         deviceTypeView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

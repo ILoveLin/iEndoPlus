@@ -64,7 +64,10 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
             case R.id.exit_bar:
                 SharePreferenceUtil.put(getActivity(), Constants.Is_Logined, false);
                 startActivity(LoginActivity.class);
-                ActivityManager.getInstance().finishActivity(MainActivity.class);
+                // 进行内存优化，销毁除登录页之外的所有界面  --传入相对于的activity
+                // 进行内存优化，销毁掉所有的界面
+                finish();
+//                ActivityManager.getInstance().finishAllActivities();
                 break;
             case R.id.user_bar:
                 startActivity(UserListActivity.class);

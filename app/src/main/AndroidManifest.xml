@@ -95,7 +95,6 @@
         <!-- Splash界面 -->
         <activity
             android:name=".mineui.activity.login.SplashActivity"
-            android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/SplashTheme">
             <!-- 程序入口 -->

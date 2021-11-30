@@ -36,7 +36,7 @@ public class SharePreferenceUtil {
     public static final String Current_Login_Password = "login_password";  //登录用户的password
 
     // 角色 0-超级管理员 1-管理员 2-操作员 3-查询员 4-自定义
-
+    // 角色 0-超级管理员 1-管理员 2-操作员 3-查询员 4-自定义
 
 
 

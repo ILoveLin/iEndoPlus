@@ -7,7 +7,7 @@ package com.company.iendo.other;
  * desc：http请求用到的常量
  */
 public class HttpConstant {
-
+    // 角色 0-超级管理员 1-管理员 2-操作员 3-查询员 4-自定义
 //71.43
 
     //    public static final String Common = "http://192.168.71.43:7001";

@@ -69,7 +69,7 @@ import okhttp3.Call;
 public final class LoginActivity extends AppActivity
         implements UmengLogin.OnLoginListener,
         KeyboardWatcher.SoftKeyboardStateListener,
-        TextView.OnEditorActionListener, ActivityManager.ApplicationLifecycleCallback {
+        TextView.OnEditorActionListener {
 
     private static final String INTENT_KEY_IN_PHONE = "Admin";
     private static final String INTENT_KEY_IN_PASSWORD = "123";
@@ -183,7 +183,6 @@ public final class LoginActivity extends AppActivity
         });
         sendRequest();
 
-        ActivityManager.getInstance().registerApplicationLifecycleCallback(this);
 
     }
 
@@ -277,7 +276,8 @@ public final class LoginActivity extends AppActivity
 
             @Override
             public void onLeftClick(View view) {
-                ActivityManager.getInstance().finishAllActivities(LoginActivity.class);
+                finish();
+
             }
 
             @Override
@@ -654,23 +654,4 @@ public final class LoginActivity extends AppActivity
                 .navigationBarColor(R.color.white);
     }
 
-    @Override
-    public void onApplicationCreate(Activity activity) {
-
-    }
-
-    @Override
-    public void onApplicationDestroy(Activity activity) {
-        ActivityManager.getInstance().unregisterApplicationLifecycleCallback(this);
-    }
-
-    @Override
-    public void onApplicationBackground(Activity activity) {
-
-    }
-
-    @Override
-    public void onApplicationForeground(Activity activity) {
-
-    }
 }

@@ -1,5 +1,6 @@
 package com.company.iendo.mineui.activity;
 
+import android.text.Editable;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -11,11 +12,14 @@ import com.company.iendo.app.AppActivity;
 import com.company.iendo.bean.UserDeletedBean;
 import com.company.iendo.bean.UserListBean;
 import com.company.iendo.manager.ActivityManager;
+import com.company.iendo.mineui.activity.login.device.DeviceActivity;
 import com.company.iendo.mineui.activity.usermanage.UserListAdapter;
 import com.company.iendo.other.HttpConstant;
+import com.company.iendo.ui.dialog.InputAddUserDialog;
 import com.company.iendo.ui.dialog.InputDialog;
 import com.company.iendo.ui.dialog.MessageDialog;
 import com.company.iendo.ui.dialog.SelectDialog;
+import com.company.iendo.ui.dialog.SelectUserDialog;
 import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.MD5ChangeUtil;
 import com.company.iendo.utils.SharePreferenceUtil;
@@ -25,6 +29,7 @@ import com.hjq.bar.TitleBar;
 import com.hjq.base.BaseAdapter;
 import com.hjq.base.BaseDialog;
 import com.hjq.widget.layout.WrapRecyclerView;
+import com.hjq.widget.view.ClearEditText;
 import com.scwang.smart.refresh.layout.SmartRefreshLayout;
 import com.scwang.smart.refresh.layout.api.RefreshLayout;
 import com.scwang.smart.refresh.layout.listener.OnRefreshLoadMoreListener;
@@ -54,6 +59,9 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
     private String mLoginUserID;
     private String mLoginUserName;
     private TitleBar mTitleBar;
+
+    private int mAddCurrentCode = 1;//管理员
+    private String mAddCurrentString = "管理员";//管理员
 
     @Override
     protected int getLayoutId() {
@@ -102,13 +110,116 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
 
             @Override
             public void onRightClick(View view) {
-                toast("添加用户");
+                showAddUserDialog();
             }
         });
     }
 
-    private void sendRequest() {
+    /**
+     * 添加用户
+     */
+    private void showAddUserDialog() {
+
+        InputAddUserDialog.Builder addUserBuilder = new InputAddUserDialog.Builder(this);
+        addUserBuilder.setTitle("请添加新用户")
+                .setCancel("取消")
+                .setConfirm("确定")
+                .setListener(new InputAddUserDialog.OnListener() {
+                    @Override
+                    public void onConfirm(BaseDialog dialog, String userName, String passwrod, String relo) {
+                        LogUtils.e("userName==" + userName);
+                        LogUtils.e("passwrod==" + passwrod);
+                        LogUtils.e("relo==" + mAddCurrentString);
+                        LogUtils.e("relo=code=" + mAddCurrentCode);
+                        //添加用户请求
+                        sendAddUserRequest(userName, passwrod, mAddCurrentCode);
+
+                    }
+
+                }).show();
+
+        ClearEditText reloView = addUserBuilder.getRelo();
+        reloView.setFocusable(false);
+        reloView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // 角色 0-超级管理员 1-管理员 2-操作员 3-查询员 4-自定义
+                new SelectUserDialog.Builder(UserListActivity.this)
+                        .setTitle("请选择用户权限")
+                        .setList("管理员", "操作员", "查询员")
+                        .setBackgroundDimEnabled(false)
+                        .setSingleSelect()
+                        .setCancel("取消")
+                        .setConfirm("确定")
+                        .setListener(new SelectUserDialog.OnListener() {
+                            @Override
+                            public void onSelected(BaseDialog dialog, HashMap data) {
+                                String string = data.toString();
+                                int i = string.indexOf("=");
+                                String substringName = string.substring(i + 1, data.toString().length() - 1);
+                                mAddCurrentCode = Integer.parseInt(string.substring(1, 2)) + 1;
+                                mAddCurrentString = substringName;
+                                LogUtils.e("mAddCurrentCode==" + mAddCurrentCode);
+                                LogUtils.e("mAddCurrentString==" + mAddCurrentString);
+                                reloView.setText("" + mAddCurrentString);
+                            }
+                        }).show();
+            }
+        });
+
+    }
+
+    /**
+     * 添加用户
+     *
+     * @param userName
+     * @param passwrod
+     * @param mAddCurrentCode
+     */
+    private void sendAddUserRequest(String userName, String passwrod, int mAddCurrentCode) {
         showLoading();
+        OkHttpUtils.post()
+                .url(HttpConstant.UserManager_AddUser)
+                .addParams("CurrentRelo", mLoginRole)    //当前用户权限
+                .addParams("CreateRelo", mAddCurrentCode + "")     //新用户的权限
+                .addParams("UserName", userName)    //新用户的名字
+                .addParams("Password", passwrod)    //新用户的密码
+                .addParams("Des", mAddCurrentString)    //新用户的描述
+                .addParams("CanSUE", "1")    //新用户是否激活1激活，0是未激活
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        showError(new StatusLayout.OnRetryListener() {
+                            @Override
+                            public void onRetry(StatusLayout layout) {
+                                toast("请求错误");
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        LogUtils.e("新增用户==" + response);
+                        showComplete();
+                        if ("" != response) {
+                            UserDeletedBean mBean = mGson.fromJson(response, UserDeletedBean.class);
+//                            toast(mBean.getMsg() + "");
+                            if (mBean.getCode().equals("0")) {
+                                toast(mBean.getMsg() + "");
+                                sendRequest();
+
+                            }
+                        } else {
+                            showError(listener -> {
+                                sendRequest();
+                            });
+                        }
+                    }
+                });
+    }
+
+    private void sendRequest() {
         OkHttpUtils.get()
                 .url(HttpConstant.UserManager_List)
                 .build()
@@ -125,12 +236,12 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
 
                     @Override
                     public void onResponse(String response, int id) {
-                        LogUtils.e("用户列表=="+response);
+                        LogUtils.e("用户列表==" + response);
                         if ("" != response) {
+                            showComplete();
                             UserListBean mBean = mGson.fromJson(response, UserListBean.class);
                             if (0 == mBean.getCode()) {  //成功
                                 if (mBean.getData().size() != 0) {
-                                    showComplete();
                                     mDataLest.clear();
                                     mDataLest.addAll(mBean.getData());
                                     mAdapter.setData(mDataLest);
@@ -237,13 +348,13 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
         int i = Integer.parseInt(substring) + 1;
         showLoading();
         String userID = item.getUserID();
-        LogUtils.e("修改权限====userID=="+userID+"");
+        LogUtils.e("修改权限====userID==" + userID + "");
         OkHttpUtils.post()
                 .url(HttpConstant.UserManager_ChangeRelo)
                 .addParams("CurrentUserID", mLoginUserID)//当前登入的用户ID == 1
                 .addParams("ChangeUserID", userID)//需要被修改权限的用户ID
                 .addParams("UserName", mLoginUserName)//当前用户名字
-                .addParams("Relo",  i+"")//需要被修改的用户权限等级
+                .addParams("Relo", i + "")//需要被修改的用户权限等级
                 .build()
                 .execute(new StringCallback() {
                     @Override
@@ -259,13 +370,13 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
                     @Override
                     public void onResponse(String response, int id) {
                         showComplete();
-                        LogUtils.e("修改权限====response=="+response);
+                        LogUtils.e("修改权限====response==" + response);
 
                         if ("" != response) {
                             UserDeletedBean mBean = mGson.fromJson(response, UserDeletedBean.class);
-                            LogUtils.e("修改权限====Relo=="+i);
-                            toast(mBean.getMsg()+"");
-                            LogUtils.e("修改权限====item.getUserID()=="+item.getUserID()+"");
+                            LogUtils.e("修改权限====Relo==" + i);
+                            toast(mBean.getMsg() + "");
+                            LogUtils.e("修改权限====item.getUserID()==" + item.getUserID() + "");
                             if (mBean.getCode().equals("0")) {
                                 sendRequest();
                             }
@@ -293,7 +404,7 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
                 .setListener(new InputDialog.OnListener() {
                     @Override
                     public void onConfirm(BaseDialog dialog, String password) {
-                        sendChangePasswordRequest(item, MD5ChangeUtil.Md5_32(password) );
+                        sendChangePasswordRequest(item, MD5ChangeUtil.Md5_32(password));
                     }
 
                     @Override
@@ -338,7 +449,7 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
                             UserDeletedBean mBean = mGson.fromJson(response, UserDeletedBean.class);
                             LogUtils.e("修改其他人密码====");
                             if (mBean.getCode().equals("0")) {
-                                toast(mBean.getMsg()+"");
+                                toast(mBean.getMsg() + "");
 
                                 mAdapter.notifyDataSetChanged();
                             }
@@ -407,7 +518,7 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
                             UserDeletedBean mBean = mGson.fromJson(response, UserDeletedBean.class);
                             LogUtils.e("删除用户====");
                             if (mBean.getCode().equals("0")) {
-                                toast(mBean.getMsg()+"");
+                                toast(mBean.getMsg() + "");
 
                                 mAdapter.removeItem(item);
                                 mAdapter.notifyDataSetChanged();

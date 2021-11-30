@@ -29,7 +29,7 @@ import com.hjq.base.FragmentPagerAdapter;
  * time：2021/10/28 14:51
  * desc：主界面
  */
-public class MainActivity extends AppActivity implements NavigationAdapter.OnNavigationListener, ActivityManager.ApplicationLifecycleCallback {
+public class MainActivity extends AppActivity implements NavigationAdapter.OnNavigationListener {
     private static final String INTENT_KEY_IN_FRAGMENT_INDEX = "fragmentIndex";
     private static final String INTENT_KEY_IN_FRAGMENT_CLASS = "fragmentClass";
 
@@ -64,8 +64,8 @@ public class MainActivity extends AppActivity implements NavigationAdapter.OnNav
         mViewPager = findViewById(R.id.vp_home_pager);
         mNavigationView = findViewById(R.id.rv_home_navigation);
         mNavigationAdapter = new NavigationAdapter(this);
-        mNavigationAdapter.addItem(new NavigationAdapter.MenuItem(getString(R.string.home_nav_index01),
-                ContextCompat.getDrawable(this, R.drawable.home_home_selector)));
+//        mNavigationAdapter.addItem(new NavigationAdapter.MenuItem(getString(R.string.home_nav_index01),
+//                ContextCompat.getDrawable(this, R.drawable.home_home_selector)));
         mNavigationAdapter.addItem(new NavigationAdapter.MenuItem(getString(R.string.home_nav_index02),
                 ContextCompat.getDrawable(this, R.drawable.home_found_selector)));
         mNavigationAdapter.addItem(new NavigationAdapter.MenuItem(getString(R.string.home_nav_index03),
@@ -76,14 +76,13 @@ public class MainActivity extends AppActivity implements NavigationAdapter.OnNav
         mNavigationView.setAdapter(mNavigationAdapter);
 
 
-        ActivityManager.getInstance().registerApplicationLifecycleCallback(this);
 
     }
 
     @Override
     protected void initData() {
         mPagerAdapter = new FragmentPagerAdapter<>(this);
-        mPagerAdapter.addFragment(AFragment.newInstance());
+//        mPagerAdapter.addFragment(AFragment.newInstance());
         mPagerAdapter.addFragment(CaseManageFragment.newInstance());
         mPagerAdapter.addFragment(SettingFragment.newInstance());
         mViewPager.setAdapter(mPagerAdapter);
@@ -119,7 +118,7 @@ public class MainActivity extends AppActivity implements NavigationAdapter.OnNav
         switch (fragmentIndex) {
             case 0:
             case 1:
-            case 2:
+//            case 2:
 //            case 3:
                 mViewPager.setCurrentItem(fragmentIndex);
                 mNavigationAdapter.setSelectedPosition(fragmentIndex);
@@ -134,7 +133,7 @@ public class MainActivity extends AppActivity implements NavigationAdapter.OnNav
         switch (position) {
             case 0:
             case 1:
-            case 2:
+//            case 2:
                 mViewPager.setCurrentItem(position);
                 return true;
             default:
@@ -182,23 +181,5 @@ public class MainActivity extends AppActivity implements NavigationAdapter.OnNav
         this.mCurrentItemID = mCurrentItemID;
     }
 
-    @Override
-    public void onApplicationCreate(Activity activity) {
 
-    }
-
-    @Override
-    public void onApplicationDestroy(Activity activity) {
-        ActivityManager.getInstance().unregisterApplicationLifecycleCallback(this);
-    }
-
-    @Override
-    public void onApplicationBackground(Activity activity) {
-
-    }
-
-    @Override
-    public void onApplicationForeground(Activity activity) {
-
-    }
 }

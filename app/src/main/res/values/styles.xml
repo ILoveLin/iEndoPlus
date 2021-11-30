@@ -85,6 +85,12 @@
         <item name="android:background">@drawable/button_rect_selector</item>
     </style>
 
+
+<!--    <style name="SplashActivityTheme" parent="android:Theme.Holo.Light.NoActionBar">-->
+<!--        &lt;!&ndash; Customize your theme here. &ndash;&gt;-->
+<!--        <item name="android:windowBackground">@drawable/splash</item>-->
+<!--    </style>-->
+
     <!-- 默认文本框样式 -->
     <style name="EditTextStyle">
         <item name="android:background">@null</item>

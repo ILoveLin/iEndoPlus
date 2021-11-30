@@ -9,8 +9,11 @@ import com.company.iendo.R;
 import com.company.iendo.app.AppActivity;
 import com.company.iendo.mineui.activity.MainActivity;
 import com.company.iendo.other.Constants;
+import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.SharePreferenceUtil;
 import com.google.gson.Gson;
+
+import static java.lang.Thread.sleep;
 
 /**
  * company：江西神州医疗设备有限公司
@@ -39,28 +42,34 @@ public class SplashActivity extends AppActivity {
         isLogined = (Boolean) SharePreferenceUtil.get(this, Constants.Is_Logined, false);
         // 从浅到深,从百分之10到百分之百
         AlphaAnimation aa = new AlphaAnimation(0.3f, 1.0f);
-        aa.setDuration(2000);// 设置动画时间
-        ivSplash.setAnimation(aa);// 给image设置动画
+        aa.setDuration(1200);// 设置动画时间
+//        ivSplash.setAnimation(aa);// 给image设置动画
         aa.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
+
             }
 
             @Override
             public void onAnimationEnd(Animation animation) {
                 initData();
-
             }
 
             @Override
             public void onAnimationRepeat(Animation animation) {
+
             }
         });
     }
 
     @Override
     protected void initData() {
-        switchGoing();
+        postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                switchGoing();
+            }
+        },1500);
     }
 
 
@@ -74,6 +83,8 @@ public class SplashActivity extends AppActivity {
 //            }
 //            startActivity(intent);
 //            finish();
+        LogUtils.e("isFirstIn===="+isFirstIn);
+        LogUtils.e("login===="+isLogined);
 
         if (isFirstIn) {
             SharePreferenceUtil.put(SplashActivity.this, Constants.SP_IS_FIRST_IN, true);
@@ -90,6 +101,7 @@ public class SplashActivity extends AppActivity {
             }
             startActivity(intent);
             finish();
+
         }
 
     }
