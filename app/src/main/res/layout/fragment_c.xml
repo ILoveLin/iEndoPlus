@@ -13,26 +13,161 @@
         app:leftIcon="@null"
         app:title="设置" />
 
-    <com.hjq.widget.layout.SettingBar
-        android:id="@+id/user_bar"
+    <com.scwang.smart.refresh.layout.SmartRefreshLayout
+        android:id="@+id/smartRefresh"
         android:layout_width="match_parent"
-        app:bar_leftText="用户列表"
-        app:bar_leftTextSize="@dimen/dp_16"
-        android:layout_height="@dimen/dp_50"/>
+        android:layout_height="match_parent"
+        app:srlAccentColor="@color/gray"
+        app:srlEnableNestedScrolling="false"
 
-    <com.hjq.widget.layout.SettingBar
-        android:id="@+id/password_bar"
-        android:layout_width="match_parent"
-        app:bar_leftText="修改密码"
-        app:bar_leftTextSize="@dimen/dp_16"
-        android:layout_height="@dimen/dp_50"/>
+        app:srlEnablePureScrollMode="true">
+        <!--纯滚动模式-->
+        <!--app:srlEnablePureScrollMode="true"-->
+        <!--刷新和加载更多设置-->
+        <!--app:srlEnableAutoLoadMore="false"-->
+        <!--app:srlEnableLoadMore="true"-->
 
-    <com.hjq.widget.layout.SettingBar
-        android:id="@+id/exit_bar"
-        android:layout_width="match_parent"
-        app:bar_leftText="退出"
-        app:bar_leftTextColor="@color/red"
-        app:bar_leftTextSize="@dimen/dp_16"
-        android:layout_height="@dimen/dp_50"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
+                <com.hjq.widget.layout.SettingBar
+                    android:id="@+id/current_user"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/selector_item_ffffff"
+                    app:bar_leftDrawable="@mipmap/icon_mine_user"
+                    app:bar_leftDrawablePadding="@dimen/dp_12"
+                    app:bar_leftText="当前用户"
+                    app:bar_leftTextColor="@color/black333333"
+                    app:bar_leftTextSize="@dimen/dp_16"
+                    app:bar_lineMargin="@dimen/dp_15"
+                    app:bar_lineSize="1px"
+                    app:bar_lineVisible="true"
+                    app:bar_rightText="admin"
+                    app:bar_rightTextColor="@color/color_999999" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dp_15"
+                    android:background="@color/color_f4f4f4" />
+
+                <com.hjq.widget.layout.SettingBar
+                    android:id="@+id/params_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:bar_leftDrawable="@mipmap/icon_mine_pre"
+                    app:bar_leftDrawablePadding="@dimen/dp_12"
+                    app:bar_leftText="设备参数"
+                    app:bar_leftTextColor="@color/black333333"
+                    app:bar_leftTextSize="@dimen/dp_16"
+                    app:bar_lineMargin="@dimen/dp_15"
+                    app:bar_lineSize="1px"
+                    app:bar_lineVisible="true"
+                    app:bar_rightDrawable="@drawable/arrows_right_ic"
+                    app:bar_rightTextColor="@color/color_999999" />
+
+                <com.hjq.widget.layout.SettingBar
+                    android:id="@+id/hospital_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:bar_leftDrawable="@mipmap/icon_instructions"
+                    app:bar_leftDrawablePadding="@dimen/dp_12"
+                    app:bar_leftText="医院信息"
+                    app:bar_leftTextColor="@color/black333333"
+                    app:bar_leftTextSize="@dimen/dp_16"
+                    app:bar_lineMargin="@dimen/dp_15"
+                    app:bar_lineSize="1px"
+                    app:bar_lineVisible="true"
+                    app:bar_rightDrawable="@drawable/arrows_right_ic"
+                    app:bar_rightTextColor="@color/color_999999" />
+
+                <com.hjq.widget.layout.SettingBar
+                    android:id="@+id/user_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:bar_leftDrawable="@drawable/shape_user_list"
+                    app:bar_leftDrawablePadding="@dimen/dp_12"
+                    app:bar_leftText="用户管理"
+                    app:bar_leftTextColor="@color/black333333"
+                    app:bar_leftTextSize="@dimen/dp_16"
+                    app:bar_lineMargin="@dimen/dp_15"
+                    app:bar_lineSize="1px"
+                    app:bar_lineVisible="true"
+                    app:bar_rightDrawable="@drawable/arrows_right_ic"
+                    app:bar_rightTextColor="@color/color_999999" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dp_15"
+                    android:background="@color/color_f4f4f4" />
+
+                <com.hjq.widget.layout.SettingBar
+                    android:id="@+id/about_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:bar_leftDrawable="@mipmap/icon_mine_pre"
+                    app:bar_leftDrawablePadding="@dimen/dp_12"
+                    app:bar_leftText="关于"
+                    app:bar_leftTextColor="@color/black333333"
+                    app:bar_leftTextSize="@dimen/dp_16"
+                    app:bar_lineMargin="@dimen/dp_15"
+                    app:bar_lineSize="1px"
+                    app:bar_lineVisible="true"
+                    app:bar_rightDrawable="@drawable/arrows_right_ic"
+                    app:bar_rightTextColor="@color/color_999999" />
+
+                <com.hjq.widget.layout.SettingBar
+                    android:id="@+id/memory_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:bar_leftDrawable="@mipmap/icon_memory"
+                    app:bar_leftDrawablePadding="@dimen/dp_12"
+                    app:bar_leftText="可用空间"
+                    app:bar_leftTextColor="@color/black333333"
+                    app:bar_leftTextSize="@dimen/dp_16"
+                    app:bar_lineMargin="@dimen/dp_15"
+                    app:bar_lineSize="1px"
+                    app:bar_lineVisible="true"
+                    app:bar_rightDrawable="@drawable/arrows_right_ic"
+                    app:bar_rightTextColor="@color/color_999999" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dp_15"
+                    android:background="@color/color_f4f4f4" />
+
+                <com.hjq.widget.layout.SettingBar
+                    android:id="@+id/password_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:bar_leftDrawable="@mipmap/icon_mine_password"
+                    app:bar_leftDrawablePadding="@dimen/dp_12"
+                    app:bar_leftText="修改密码"
+                    app:bar_leftTextColor="@color/black333333"
+                    app:bar_leftTextSize="@dimen/dp_16"
+                    app:bar_lineMargin="@dimen/dp_15"
+                    app:bar_lineSize="1px"
+                    app:bar_lineVisible="true"
+                    app:bar_rightDrawable="@drawable/arrows_right_ic"
+                    app:bar_rightTextColor="@color/color_999999" />
+
+                <com.hjq.widget.layout.SettingBar
+                    android:id="@+id/exit_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:bar_leftDrawable="@mipmap/icon_mine_exit"
+                    app:bar_leftDrawablePadding="@dimen/dp_12"
+                    app:bar_leftText="退出登录"
+                    app:bar_leftTextColor="@color/black333333"
+                    app:bar_leftTextSize="@dimen/dp_16"
+                    app:bar_lineMargin="@dimen/dp_15"
+                    app:bar_lineSize="1px"
+
+                    app:bar_lineVisible="true"
+                    app:bar_rightDrawable="@drawable/arrows_right_ic"
+                    app:bar_rightTextColor="@color/color_999999" />
+            </LinearLayout>
+    </com.scwang.smart.refresh.layout.SmartRefreshLayout>
 </LinearLayout>

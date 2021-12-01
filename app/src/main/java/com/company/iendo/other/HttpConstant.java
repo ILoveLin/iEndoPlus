@@ -16,7 +16,7 @@ public class HttpConstant {
 //    public static final String Common = "http://192.168.64.28:7001";
 
     /**
-     * 病例列表
+     * 1.1病例列表
      * get
      */
 //    http://192.168.64.28:7001/case/list
@@ -24,36 +24,48 @@ public class HttpConstant {
 
 
     /**
-     * 病例搜索列表
+     * 1.2病例搜索列表
      * get
      */
     public static final String CaseManager_Search = Common + "/case/search";
 
+
     /**
-     * 获取添加病例的CaseNo
+     * 1.2病例搜索列表
      * get
      */
-    public static final String CaseManager_GetCaseNo = Common + "case/caseNo";
+    public static final String CaseManager_ListCaseDicts = Common + "/case/listDicts";
 
 
     /**
-     * 添加病例的
+     * 1.5添加病例的
      * post
      */
     public static final String CaseManager_AddCase = Common + "/case/add";
+
     /**
-     * 病例详情
+     * 1.6修改病例的
+     * post
+     */
+    public static final String CaseManager_ChangeCase = Common + "/case/update";
+    /**
+     * 1.7删除病例的
+     * post
+     */
+    public static final String CaseManager_DeleteCase = Common + "/case/delete";
+    /**
+     * 1.8病例详情
      * get case
      */
     public static final String CaseManager_CaseInfo = Common + "/case/caseInfo";
 
     /**
-     * 当前用户图片
+     * 1.9当前用户图片
      * get caseimages
      */
     public static final String CaseManager_CasePictures = Common + "/case/caseimages";
     /**
-     * 当前用户视频
+     * 1.9当前用户视频
      * get casevideos
      */
     public static final String CaseManager_CaseVideos = Common + "/case/casevideos";
@@ -99,7 +111,7 @@ public class HttpConstant {
      */
     public static final String UserManager_ChangeRelo = Common + "/users/changePurview";
 
-   /**
+    /**
      * 修添加新用户
      */
     public static final String UserManager_AddUser = Common + "/users/createUser";

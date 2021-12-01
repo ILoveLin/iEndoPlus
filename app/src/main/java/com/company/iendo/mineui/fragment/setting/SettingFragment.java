@@ -1,11 +1,14 @@
 package com.company.iendo.mineui.fragment.setting;
 
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.view.View;
 
 import com.company.iendo.R;
 import com.company.iendo.app.TitleBarFragment;
 import com.company.iendo.bean.UserDeletedBean;
 import com.company.iendo.manager.ActivityManager;
+import com.company.iendo.manager.CacheDataManager;
 import com.company.iendo.mineui.activity.MainActivity;
 import com.company.iendo.mineui.activity.UserListActivity;
 import com.company.iendo.mineui.activity.login.LoginActivity;
@@ -13,15 +16,21 @@ import com.company.iendo.other.Constants;
 import com.company.iendo.other.HttpConstant;
 import com.company.iendo.ui.dialog.Input2Dialog;
 import com.company.iendo.ui.dialog.InputDialog;
+import com.company.iendo.ui.dialog.MessageAboutDialog;
+import com.company.iendo.ui.dialog.MessageDialog;
 import com.company.iendo.ui.dialog.TipsDialog;
 import com.company.iendo.ui.dialog.WaitDialog;
+import com.company.iendo.utils.FileUtil;
 import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.MD5ChangeUtil;
 import com.company.iendo.utils.SharePreferenceUtil;
 import com.company.iendo.widget.StatusLayout;
 import com.hjq.base.BaseDialog;
+import com.hjq.widget.layout.SettingBar;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
+
+import java.util.Calendar;
 
 import okhttp3.Call;
 
@@ -35,6 +44,8 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
 
     private String mLoginUserID;
     private String mLoginPassword;
+    private SettingBar current_user;
+    private String mLoginUserName;
 
     public static SettingFragment newInstance() {
         return new SettingFragment();
@@ -47,36 +58,98 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
 
     @Override
     protected void initView() {
-        setOnClickListener(R.id.exit_bar, R.id.user_bar, R.id.password_bar);
+        SettingBar memory_bar = findViewById(R.id.memory_bar);
+        current_user = findViewById(R.id.current_user);
+        memory_bar.setRightText(FileUtil.getROMAvailableSize(getActivity()));
+        setOnClickListener(R.id.params_bar, R.id.hospital_bar, R.id.user_bar, R.id.about_bar, R.id.memory_bar, R.id.password_bar, R.id.exit_bar);
     }
 
     @Override
     protected void initData() {
         mLoginUserID = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_Login_UserID, "");
         mLoginPassword = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_Login_Password, "");
-
+        mLoginUserName = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_Login_UserName, "");
+        current_user.setLeftText("" + mLoginUserName);
     }
 
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.exit_bar:
-                SharePreferenceUtil.put(getActivity(), Constants.Is_Logined, false);
-                startActivity(LoginActivity.class);
-                // 进行内存优化，销毁除登录页之外的所有界面  --传入相对于的activity
-                // 进行内存优化，销毁掉所有的界面
-                finish();
-//                ActivityManager.getInstance().finishAllActivities();
+            case R.id.params_bar:
+                toast("设备参数");
+                break;
+            case R.id.hospital_bar:
+                toast("医院信息");
                 break;
             case R.id.user_bar:
                 startActivity(UserListActivity.class);
                 break;
+            case R.id.about_bar:
+                showAboutDialog();
+                break;
             case R.id.password_bar:
                 showChangePasswordDialog();
                 break;
+            case R.id.exit_bar:
+                showExitDialog();
+                break;
 
         }
+    }
+
+    private void showAboutDialog() {
+        String showCopyrightYear = "";
+        String versionName = getVersionName();
+        int year = Calendar.getInstance().get(Calendar.YEAR);
+
+        if ("2020".equals(year + "")) {
+            showCopyrightYear = "2020";
+        } else {
+            showCopyrightYear = "2020" + "-" + year;
+        }
+        new MessageAboutDialog.Builder(getActivity())
+                .setVersion("版本:V" + versionName)
+                .setCopyright("版权所有(C)：" + showCopyrightYear)
+                .setUpdateDate("更新日期：2021年12月")
+                .setConfirm("确定")
+                .show();
+
+    }
+
+    private String getVersionName() {
+        // 获取packagemanager的实例
+        PackageManager packageManager = getActivity().getPackageManager();
+        // getPackageName()是你当前类的包名，0代表是获取版本信息
+        PackageInfo packInfo = null;
+        try {
+            packInfo = packageManager.getPackageInfo(getActivity().getPackageName(), 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        String version = packInfo.versionName;
+        return version;
+    }
+
+    /**
+     * 退出登录
+     */
+    private void showExitDialog() {
+        new MessageDialog.Builder(getActivity())
+                .setTitle("提示")
+                .setMessage("确定退出登录吗?")
+                .setCancel("取消")
+                .setConfirm("确定")
+                .setListener(new MessageDialog.OnListener() {
+                    @Override
+                    public void onConfirm(BaseDialog dialog) {
+                        SharePreferenceUtil.put(getActivity(), Constants.Is_Logined, false);
+                        startActivity(LoginActivity.class);
+                        // 进行内存优化，销毁除登录页之外的所有界面  --传入相对于的activity
+                        // 进行内存优化，销毁掉所有的界面
+                        finish();
+                    }
+                }).show();
     }
 
     /**
@@ -91,10 +164,10 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
                 .setConfirm("确定")
                 .setListener(new Input2Dialog.OnListener() {
                     @Override
-                    public void onConfirm(BaseDialog dialog, String password,String newPassword) {
-                        LogUtils.e("旧密码=="+password);
-                        LogUtils.e("新密码=="+newPassword);
-                        sendChangeMineRequest( MD5ChangeUtil.Md5_32(password),MD5ChangeUtil.Md5_32(newPassword));
+                    public void onConfirm(BaseDialog dialog, String password, String newPassword) {
+                        LogUtils.e("旧密码==" + password);
+                        LogUtils.e("新密码==" + newPassword);
+                        sendChangeMineRequest(MD5ChangeUtil.Md5_32(password), MD5ChangeUtil.Md5_32(newPassword));
                     }
 
                     @Override
@@ -102,8 +175,6 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
 
                     }
                 }).show();
-
-
 
 
     }
@@ -130,7 +201,7 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
                         showComplete();
                         if ("" != response) {
                             UserDeletedBean mBean = mGson.fromJson(response, UserDeletedBean.class);
-                            LogUtils.e("修改自己的密码===="+mBean.getMsg() );
+                            LogUtils.e("修改自己的密码====" + mBean.getMsg());
                             toast(mBean.getMsg() + "");
 
                             if (mBean.getCode().equals("0")) {

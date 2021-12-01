@@ -90,7 +90,10 @@
 <!--        &lt;!&ndash; Customize your theme here. &ndash;&gt;-->
 <!--        <item name="android:windowBackground">@drawable/splash</item>-->
 <!--    </style>-->
-
+    <style name="Font_Middle_Gray">
+        <item name="android:textSize">@dimen/sp_14</item>
+        <item name="android:textColor">@color/color_696969</item>
+    </style>
     <!-- 默认文本框样式 -->
     <style name="EditTextStyle">
         <item name="android:background">@null</item>

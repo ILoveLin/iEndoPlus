@@ -29,12 +29,14 @@
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
     <color name="btn_rect_alpha">#56b3b3b3</color>
-
+    <color name="color_f4f4f4">#f4f4f4</color>
+    <color name="colorConfirm">#007AFF</color>
     <color name="colorIcon">#7C7C7C</color>
 
     <color name="colorPrimary">#3971be</color>
     <color name="colorPrimaryDark">#3971be</color>
     <color name="colorAccent">#3971be</color>
+    <color name="color_999999">#999999</color>
 
     <color name="theme_bg_color">#f2f2f2</color>
     <color name="color_1296db">#1296db</color>
@@ -421,7 +423,6 @@
     <color name="bg_focus">#DDDDDD</color>
     <color name="red_500">#ef4836</color>
 
-    <color name="color_999999">#999999</color>
     <color name="color_BDBDBE">#BDBDBE</color>
 
 </resources>
