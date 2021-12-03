@@ -1,23 +1,28 @@
 package com.company.iendo.mineui.activity.casemanage.fragment;
 
 import android.content.Context;
-import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatTextView;
-import androidx.fragment.app.FragmentActivity;
 
 import com.company.iendo.R;
 import com.company.iendo.action.StatusAction;
 import com.company.iendo.app.TitleBarFragment;
 import com.company.iendo.bean.CaseDetailBean;
+import com.company.iendo.bean.DeleteBean;
 import com.company.iendo.mineui.activity.MainActivity;
 import com.company.iendo.mineui.activity.casemanage.DetailCaseActivity;
 import com.company.iendo.other.HttpConstant;
+import com.company.iendo.ui.dialog.MessageDialog;
+import com.company.iendo.ui.dialog.SelectDialog;
+import com.company.iendo.utils.LogUtils;
 import com.company.iendo.widget.StatusLayout;
+import com.hjq.base.BaseDialog;
 import com.hjq.widget.view.ClearEditText;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
+
+import java.util.HashMap;
 
 import okhttp3.Call;
 
@@ -32,7 +37,9 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
     private AppCompatTextView mTV;
     private StatusLayout mStatusLayout;
     private ClearEditText mEdit;
-    private Boolean mEditStatus= false;
+    private Boolean mEditStatus = false;
+    private DetailCaseActivity mActivity;
+    private CaseDetailBean mBean;
 
     public static DetailFragment newInstance() {
         return new DetailFragment();
@@ -45,22 +52,23 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 
     @Override
     protected void initView() {
-        sendRequest(MainActivity.getCurrentItemID());
         mTV = findViewById(R.id.detail_text);
         mEdit = findViewById(R.id.clearedit);
         mStatusLayout = findViewById(R.id.detail_hint);
         setEditStatus();
-
+        sendRequest(MainActivity.getCurrentItemID());
     }
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        DetailCaseActivity mActivity = (DetailCaseActivity) getActivity();
+        //activity和fragment 通信回调
+        mActivity = (DetailCaseActivity) getActivity();
         mActivity.setOnEditStatusListener(this);
     }
 
     private void sendRequest(String currentItemID) {
+        showLoading();
         OkHttpUtils.get()
                 .url(HttpConstant.CaseManager_CaseInfo)
                 .addParams("ID", currentItemID)
@@ -76,8 +84,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                     @Override
                     public void onResponse(String response, int id) {
                         if ("" != response) {
-                            CaseDetailBean mBean = mGson.fromJson(response, CaseDetailBean.class);
-                            toast(mBean.getMsg());
+                            mBean = mGson.fromJson(response, CaseDetailBean.class);
                             if (0 == mBean.getCode()) {  //成功
                                 showComplete();
                                 setLayoutData(mBean);
@@ -119,6 +126,18 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         return mStatusLayout;
     }
 
+    private void setEditStatus() {
+        if (mEditStatus) {
+            //设置可编辑状态
+            mEdit.setFocusableInTouchMode(true);
+            mEdit.setFocusable(true);
+            mEdit.requestFocus();
+        } else {
+            //设置不可编辑状态
+            mEdit.setFocusable(false);
+            mEdit.setFocusableInTouchMode(false);
+        }
+    }
 
     /**
      * EditText 和  弹窗是否可以用的标识
@@ -132,16 +151,106 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         setEditStatus();
     }
 
-    private void setEditStatus() {
-        if (mEditStatus) {
-            //设置可编辑状态
-            mEdit.setFocusableInTouchMode(true);
-            mEdit.setFocusable(true);
-            mEdit.requestFocus();
-        } else {
-            //设置不可编辑状态
-            mEdit.setFocusable(false);
-            mEdit.setFocusableInTouchMode(false);
-        }
+    @Override
+    public void onDown(boolean userInfo, boolean userPicture) {
+        new SelectDialog.Builder(getActivity())
+                .setTitle("信息下载")
+                .setList("用户信息", "图片信息")
+                .setListener(new SelectDialog.OnListener() {
+                    @Override
+                    public void onSelected(BaseDialog dialog, HashMap data) {
+                        String string = data.toString();
+                        LogUtils.e("下载===" + data.toString());
+                        int size = data.size();
+                        LogUtils.e("下载===size=" + size);
+                        if (size == 2) {//下载用户信息和图片信息
+
+                        } else {//筛选下载哪种信息
+                            int i = string.indexOf("=");
+                            String value = string.substring(i + 1, string.length() - 1);
+                            LogUtils.e("下载===value=" + value);
+                            if (value.equals("用户信息")) {  //下载用户信息
+
+                            } else if (value.equals("图片信息")) {//下载图片信息
+
+                            }
+
+                        }
+
+
+                        toast(data.toString());
+                    }
+                }).show();
+
     }
+
+    @Override
+    public void onDelete() {
+        new MessageDialog.Builder(getActivity())
+                .setTitle("提示")
+                .setMessage("确认删除该用户吗?")
+                .setConfirm("确定")
+                .setCancel("取消")
+                .setListener(new MessageDialog.OnListener() {
+                    @Override
+                    public void onConfirm(BaseDialog dialog) {
+                        sendDeleteRequest();
+                    }
+                }).show();
+    }
+
+
+    @Override
+    public void onGetReport() {
+        toast("获取报告");
+
+    }
+
+    @Override
+    public void onGetPicture() {
+        toast("图像采集");
+
+    }
+
+    //删除用户请求
+    private void sendDeleteRequest() {
+        LogUtils.e("删除用户==params=" + mBean.getData().getID() + "");
+
+        showLoading();
+        OkHttpUtils.post()
+                .url(HttpConstant.CaseManager_DeleteCase)
+                .addParams("ID", mBean.getData().getID() + "")
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        showError(listener -> {
+                            sendDeleteRequest();
+                        });
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        LogUtils.e("删除用户===" + response);
+                        if ("" != response) {
+                            DeleteBean mBean = mGson.fromJson(response, DeleteBean.class);
+                            toast(mBean.getMsg());
+                            if (0 == mBean.getCode()) {  //成功
+                                showComplete();
+                                mActivity.finish();
+
+                            } else {
+                                showError(listener -> {
+                                    sendDeleteRequest();
+                                });
+                            }
+                        } else {
+                            showError(listener -> {
+                                sendDeleteRequest();
+                            });
+                        }
+                    }
+                });
+    }
+
 }

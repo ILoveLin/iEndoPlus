@@ -22,6 +22,7 @@
         android:orientation="horizontal">
 
         <TextView
+            android:id="@+id/case_picture"
             android:layout_margin="@dimen/dp_10"
             android:background="@color/common_line_color"
             android:layout_width="0dp"
@@ -32,6 +33,7 @@
             android:textSize="@dimen/sp_16" />
 
         <TextView
+            android:id="@+id/case_report"
             android:layout_margin="@dimen/dp_10"
             android:background="@color/common_line_color"
             android:layout_width="0dp"
@@ -42,6 +44,7 @@
             android:textSize="@dimen/sp_16" />
 
         <TextView
+            android:id="@+id/case_delete"
             android:layout_margin="@dimen/dp_10"
             android:background="@color/common_line_color"
             android:layout_width="0dp"
@@ -52,6 +55,7 @@
             android:textSize="@dimen/sp_16" />
 
         <TextView
+            android:id="@+id/case_down"
             android:layout_margin="@dimen/dp_10"
             android:background="@color/common_line_color"
             android:layout_width="0dp"

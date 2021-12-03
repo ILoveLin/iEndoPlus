@@ -1,6 +1,9 @@
 package com.company.iendo.mineui.activity.casemanage;
 
+import android.content.Intent;
+import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -31,6 +34,10 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
     private RecyclerView mTabView;
     private TabAdapter mTabAdapter;
     private TitleBar mTitlebar;
+    private TextView mDown;
+    private TextView mDelete;
+    private TextView mReport;
+    private TextView mPicture;
 
     @Override
     protected int getLayoutId() {
@@ -42,6 +49,10 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
         mTabView = findViewById(R.id.rv_detail_tab);
         mViewPager = findViewById(R.id.vp_detail_pager);
         mTitlebar = findViewById(R.id.titlebar);
+        mPicture = findViewById(R.id.case_picture);
+        mReport = findViewById(R.id.case_report);
+        mDelete = findViewById(R.id.case_delete);
+        mDown = findViewById(R.id.case_down);
 
         FragmentPagerAdapter mPagerAdapter = new FragmentPagerAdapter<>(this);
         mPagerAdapter.addFragment(DetailFragment.newInstance(), "详情");
@@ -49,10 +60,11 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
         mPagerAdapter.addFragment(VideoFragment.newInstance(), "视频");
         mViewPager.setAdapter(mPagerAdapter);
         mViewPager.addOnPageChangeListener(this);
-
+        setOnClickListener(R.id.case_picture, R.id.case_report, R.id.case_delete, R.id.case_down);
         mTitlebar.setOnTitleBarListener(new OnTitleBarListener() {
             @Override
             public void onLeftClick(View view) {
+                finish();
 
             }
 
@@ -64,13 +76,17 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
             @Override
             public void onRightClick(View view) {
                 if (mTitlebar.getRightTitle().equals("编辑")) {
-                    mOnEditStatusListener.onEditStatus(true);
+                    if (null != mOnEditStatusListener) {
+                        mOnEditStatusListener.onEditStatus(true);
+                    }
                     mTitlebar.setRightTitle("编辑中...");
                     mTitlebar.setRightTitleColor(getResources().getColor(R.color.red));
                 } else {
                     mTitlebar.setRightTitle("编辑");
                     mTitlebar.setRightTitleColor(getResources().getColor(R.color.black));
-                    mOnEditStatusListener.onEditStatus(false);
+                    if (null != mOnEditStatusListener) {
+                        mOnEditStatusListener.onEditStatus(false);
+                    }
                 }
             }
         });
@@ -100,6 +116,34 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
     }
 
 
+    @Override
+    public void onClick(View view) {
+        if (null != mOnEditStatusListener) {
+            switch (view.getId()) {
+                case R.id.case_picture://图像采集
+                    mOnEditStatusListener.onGetPicture();
+                    break;
+                case R.id.case_report://获取报告
+                    mOnEditStatusListener.onGetReport();
+                    Intent intent = new Intent(this, ReportActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("A",1);
+                    bundle.putString("B","B");
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+
+                    break;
+                case R.id.case_delete://删除
+                    mOnEditStatusListener.onDelete();
+
+                    break;
+                case R.id.case_down://下载
+                    mOnEditStatusListener.onDown(true, true);
+                    break;
+            }
+        }
+    }
+
     /**
      * activity 和 fragment数据通信= activity通知fragment刷新UI状态
      * <p>
@@ -118,7 +162,21 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
     }
 
     public interface OnEditStatusListener {
+        //activity制作发送的提示,具体操作全部在DetailFragment里面实现
         void onEditStatus(boolean status);
+
+        //下载用户数据
+        void onDown(boolean userInfo, boolean userPicture);
+
+        //删除病例
+        void onDelete();
+
+        //获取报告
+        void onGetReport();
+
+        //图像采集
+        void onGetPicture();
+
     }
 
 
