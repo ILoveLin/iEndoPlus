@@ -143,6 +143,7 @@
         <activity
             android:name=".mineui.activity.setting.HospitalActivity"
             android:launchMode="singleTop"
+            android:windowSoftInputMode="adjustResize"
             android:screenOrientation="portrait" />
 
         <!--   已下是中台界面     -->

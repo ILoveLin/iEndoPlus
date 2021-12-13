@@ -22,136 +22,148 @@
         app:srlEnableNestedScrolling="false"
         app:srlEnablePureScrollMode="true">
 
-        <com.company.iendo.widget.StatusLayout
-            android:id="@+id/status_hint"
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <LinearLayout
+            <com.company.iendo.widget.StatusLayout
+                android:id="@+id/status_hint"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
-
-                <RelativeLayout
-                    android:id="@+id/relative_top"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:paddingLeft="@dimen/dp_10"
-                    android:paddingRight="@dimen/dp_10">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:text="头像"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/sp_16" />
-
-                    <com.makeramen.roundedimageview.RoundedImageView xmlns:app="http://schemas.android.com/apk/res-auto"
-                        android:id="@+id/avatar_view"
-                        android:layout_width="@dimen/dp_100"
-                        android:layout_height="@dimen/dp_100"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:scaleType="fitCenter"
-                        android:src="@drawable/example_bg"
-                        app:riv_border_color="@color/red_500"
-                        app:riv_border_width="@dimen/dp_2"
-                        app:riv_corner_radius="@dimen/dp_50"
-                        app:riv_corner_radius_bottom_left="@dimen/dp_5"
-                        app:riv_corner_radius_bottom_right="@dimen/dp_5"
-                        app:riv_corner_radius_top_left="@dimen/dp_5"
-                        app:riv_corner_radius_top_right="@dimen/dp_5"
-                        app:riv_mutate_background="true"
-                        app:riv_oval="false"
-                        app:riv_tile_mode="repeat" />
-
-                </RelativeLayout>
+                android:layout_height="match_parent">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:paddingLeft="@dimen/dp_10"
-                    android:paddingRight="@dimen/dp_10">
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <RelativeLayout
+                        android:id="@+id/relative_top"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingLeft="@dimen/dp_10"
+                        android:paddingRight="@dimen/dp_10">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:text="头像"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/sp_16" />
+
+                        <com.makeramen.roundedimageview.RoundedImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+                            android:id="@+id/avatar_view"
+                            android:layout_width="@dimen/dp_100"
+                            android:layout_height="@dimen/dp_100"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/example_bg"
+                            app:riv_border_color="@color/red_500"
+                            app:riv_border_width="@dimen/dp_2"
+                            app:riv_corner_radius="@dimen/dp_50"
+                            app:riv_corner_radius_bottom_left="@dimen/dp_5"
+                            app:riv_corner_radius_bottom_right="@dimen/dp_5"
+                            app:riv_corner_radius_top_left="@dimen/dp_5"
+                            app:riv_corner_radius_top_right="@dimen/dp_5"
+                            app:riv_mutate_background="true"
+                            app:riv_oval="false"
+                            app:riv_tile_mode="repeat" />
+
+                    </RelativeLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingLeft="@dimen/dp_10"
+                        android:paddingRight="@dimen/dp_10">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="主标题"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/sp_16" />
+
+                        <com.hjq.widget.view.ClearEditText
+                            android:id="@+id/title_01"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/dp_25"
+                            android:layout_marginTop="@dimen/dp_2"
+                            android:background="@drawable/shape_hosppital" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="副标题"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/sp_16" />
+
+                        <com.hjq.widget.view.ClearEditText
+                            android:id="@+id/title_02"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/dp_25"
+                            android:layout_marginTop="@dimen/dp_2"
+                            android:background="@drawable/shape_hosppital" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="地址"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/sp_16" />
+
+                        <com.hjq.widget.view.ClearEditText
+                            android:id="@+id/address"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/dp_50"
+                            android:layout_marginTop="@dimen/dp_2"
+                            android:background="@drawable/shape_hosppital" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="电话"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/sp_16" />
+
+                        <com.hjq.widget.view.ClearEditText
+                            android:id="@+id/phone"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/dp_25"
+                            android:layout_marginTop="@dimen/dp_2"
+                            android:background="@drawable/shape_hosppital" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="邮编"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/sp_16" />
+
+                        <com.hjq.widget.view.ClearEditText
+                            android:id="@+id/number"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/dp_25"
+                            android:layout_marginTop="@dimen/dp_2"
+                            android:background="@drawable/shape_hosppital" />
+
+                    </LinearLayout>
 
                     <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="主标题"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/sp_16" />
-
-                    <com.hjq.widget.view.ClearEditText
-                        android:id="@+id/title_01"
                         android:layout_width="match_parent"
-                        android:layout_height="@dimen/dp_25"
-                        android:layout_marginTop="@dimen/dp_2"
-                        android:background="@drawable/shape_hosppital" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="副标题"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/sp_16" />
-
-                    <com.hjq.widget.view.ClearEditText
-                        android:id="@+id/title_02"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/dp_25"
-                        android:layout_marginTop="@dimen/dp_2"
-                        android:background="@drawable/shape_hosppital" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="地址"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/sp_16" />
-
-                    <com.hjq.widget.view.ClearEditText
-                        android:id="@+id/address"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/dp_50"
-                        android:layout_marginTop="@dimen/dp_2"
-                        android:background="@drawable/shape_hosppital" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="电话"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/sp_16" />
-
-                    <com.hjq.widget.view.ClearEditText
-                        android:id="@+id/phone"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/dp_25"
-                        android:layout_marginTop="@dimen/dp_2"
-                        android:background="@drawable/shape_hosppital" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="邮编"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/sp_16" />
-
-                    <com.hjq.widget.view.ClearEditText
-                        android:id="@+id/number"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/dp_25"
-                        android:layout_marginTop="@dimen/dp_2"
-                        android:background="@drawable/shape_hosppital" />
-
+                        android:layout_height="@dimen/dp_250" />
                 </LinearLayout>
 
 
-            </LinearLayout>
+
+            </com.company.iendo.widget.StatusLayout>
 
 
-        </com.company.iendo.widget.StatusLayout>
+        </androidx.core.widget.NestedScrollView>
+
+
     </com.scwang.smart.refresh.layout.SmartRefreshLayout>
 </LinearLayout>
