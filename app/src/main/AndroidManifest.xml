@@ -139,6 +139,11 @@
             android:name=".mineui.activity.casemanage.ReportActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
+        <!--医院信息-->
+        <activity
+            android:name=".mineui.activity.setting.HospitalActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
 
         <!--   已下是中台界面     -->
         <!--   已下是中台界面     -->

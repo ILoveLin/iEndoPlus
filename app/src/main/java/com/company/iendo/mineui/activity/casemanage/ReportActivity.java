@@ -2,8 +2,11 @@ package com.company.iendo.mineui.activity.casemanage;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+
 import com.company.iendo.R;
 import com.company.iendo.app.AppActivity;
+import com.gyf.immersionbar.ImmersionBar;
 
 /**
  * company：江西神州医疗设备有限公司
@@ -29,5 +32,12 @@ public class ReportActivity extends AppActivity {
     @Override
     protected void initData() {
 
+    }
+    @NonNull
+    @Override
+    protected ImmersionBar createStatusBarConfig() {
+        return super.createStatusBarConfig()
+                // 指定导航栏背景颜色
+                .navigationBarColor(R.color.white);
     }
 }

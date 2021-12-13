@@ -116,6 +116,7 @@ public final class AppApplication extends Application {
                 .connectTimeout(60000L, TimeUnit.MILLISECONDS)
                 .addInterceptor(new MyInterceptor(this))                      //拦截器,可以添加header 一些信息
                 .readTimeout(10000L, TimeUnit.MILLISECONDS)
+
                 .hostnameVerifier(new HostnameVerifier() {//允许访问https网站,并忽略证书
                     @Override
                     public boolean verify(String hostname, SSLSession session) {

@@ -12,6 +12,7 @@ import com.company.iendo.manager.CacheDataManager;
 import com.company.iendo.mineui.activity.MainActivity;
 import com.company.iendo.mineui.activity.UserListActivity;
 import com.company.iendo.mineui.activity.login.LoginActivity;
+import com.company.iendo.mineui.activity.setting.HospitalActivity;
 import com.company.iendo.other.Constants;
 import com.company.iendo.other.HttpConstant;
 import com.company.iendo.ui.dialog.Input2Dialog;
@@ -80,7 +81,7 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
                 toast("设备参数");
                 break;
             case R.id.hospital_bar:
-                toast("医院信息");
+                startActivity(HospitalActivity.class);
                 break;
             case R.id.user_bar:
                 startActivity(UserListActivity.class);

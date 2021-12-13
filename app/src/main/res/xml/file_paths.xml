@@ -12,4 +12,11 @@
     <external-cache-path name="name" path="path" />
     <!-- Environment.getExternalStorageDirectory() -->
     <external-path name="external" path="." />
+    <external-path
+        name="external_storage_root"
+        path="." />
+
+    <external-files-path
+        name="external_files_path"
+        path="." />
 </paths>

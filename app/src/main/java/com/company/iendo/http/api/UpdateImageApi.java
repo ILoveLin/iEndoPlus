@@ -14,8 +14,11 @@ public final class UpdateImageApi implements IRequestApi {
 
     @Override
     public String getApi() {
-        return "update/image";
+        return "/case/uploadHospitalLogo";
     }
+//    public String getApi() {
+//        return "update/image";
+//    }
 
     /** 图片文件 */
     private File image;

@@ -19,7 +19,7 @@ public class RequestServer implements IRequestServer {
 
     @Override
     public String getPath() {
-        return "api/";
+        return "http://192.168.131.114:7001";
     }
 
     @Override
