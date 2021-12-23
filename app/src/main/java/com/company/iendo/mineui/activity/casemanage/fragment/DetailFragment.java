@@ -1,6 +1,8 @@
 package com.company.iendo.mineui.activity.casemanage.fragment;
 
 import android.content.Context;
+import android.os.Environment;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatTextView;
@@ -22,6 +24,7 @@ import com.hjq.widget.view.ClearEditText;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
+import java.io.File;
 import java.util.HashMap;
 
 import okhttp3.Call;
@@ -153,8 +156,10 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 
     @Override
     public void onDown(boolean userInfo, boolean userPicture) {
+
         new SelectDialog.Builder(getActivity())
                 .setTitle("信息下载")
+                .setSelect(0, 1)
                 .setList("用户信息", "图片信息")
                 .setListener(new SelectDialog.OnListener() {
                     @Override
@@ -164,6 +169,15 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                         int size = data.size();
                         LogUtils.e("下载===size=" + size);
                         if (size == 2) {//下载用户信息和图片信息
+//                            Log.e("adapter", "item==path==" + "http://192.168.64.28:7001/" + mID + "/" + item.getImagePath());
+//                            String path = "http://192.168.64.28:7001/" + mID + "/" + item.getImagePath();
+
+                            File   toLocalFile = new File(Environment.getExternalStorageDirectory() +
+                                    "/MyData/Images/" + MainActivity.getCurrentItemID());
+
+                            //创建本地的/MyData/Images/mID文件夹  再把图片下载到这个文件夹下
+
+
 
                         } else {//筛选下载哪种信息
                             int i = string.indexOf("=");

@@ -16,6 +16,7 @@ import com.company.iendo.mineui.activity.casemanage.fragment.adapter.PictureAdap
 import com.company.iendo.mineui.activity.search.SearchActivity;
 import com.company.iendo.mineui.activity.search.adapter.SearchAdapter;
 import com.company.iendo.other.HttpConstant;
+import com.company.iendo.utils.LogUtils;
 import com.company.iendo.widget.RecycleViewDivider;
 import com.company.iendo.widget.StatusLayout;
 import com.hjq.base.BaseAdapter;
@@ -76,6 +77,8 @@ public class PictureFragment extends TitleBarFragment<MainActivity> implements S
      * @param currentItemID
      */
     private void sendRequest(String currentItemID) {
+        LogUtils.e("currentItemID" + currentItemID);
+
         OkHttpUtils.get()
                 .url(HttpConstant.CaseManager_CasePictures)
                 .addParams("ID", currentItemID)
@@ -94,11 +97,16 @@ public class PictureFragment extends TitleBarFragment<MainActivity> implements S
                             DetailPictureBean mBean = mGson.fromJson(response, DetailPictureBean.class);
                             List<DetailPictureBean.DataDTO> data = mBean.getData();
                             toast(mBean.getMsg());
+                            LogUtils.e("图片"+"response==="+response);////原图路径
+
                             if (0 == mBean.getCode()) {  //成功
                                 showComplete();
+
+
                                 if (mBean.getData().size()!=0){
                                     mDataLest.clear();
                                     mDataLest.addAll(mBean.getData());
+                                    LogUtils.e("图片"+"");////原图路径
                                     mAdapter.setData(mDataLest);
                                 }else{
                                     showEmpty();

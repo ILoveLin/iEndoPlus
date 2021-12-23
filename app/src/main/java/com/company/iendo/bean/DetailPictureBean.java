@@ -52,9 +52,9 @@ public class DetailPictureBean {
         @SerializedName("FtpPath")
         private int FtpPath;
         @SerializedName("ImagePath")
-        private String ImagePath;
+        private String ImagePath;  //原图路径
         @SerializedName("ThumbPath")
-        private String ThumbPath;
+        private String ThumbPath;  //缩略图
         @SerializedName("ImageDescription")
         private String ImageDescription;
         @SerializedName("ImageTitle")

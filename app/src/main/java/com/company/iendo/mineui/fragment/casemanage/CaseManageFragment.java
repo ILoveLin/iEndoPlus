@@ -97,7 +97,8 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
     @Override
     public void onResume() {
         super.onResume();
-        sendRequest(DateUtil.getSystemDate());
+//        sendRequest(DateUtil.getSystemDate());
+        showDateDialog();
     }
 
     //选择日期
@@ -205,6 +206,8 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
         toast("创建时间："+item.getName());
         Intent intent = new Intent(getActivity(), DetailCaseActivity.class);
         ((MainActivity)getActivity()).setCurrentItemID(item.getID()+"");
+        LogUtils.e("item.getID()" + item.getID()+"");
+
         startActivity(intent);
     }
 

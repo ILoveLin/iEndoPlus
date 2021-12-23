@@ -1,8 +1,11 @@
 package com.company.iendo.mineui.activity;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -22,6 +25,11 @@ import com.company.iendo.ui.adapter.NavigationAdapter;
 import com.company.iendo.ui.fragment.HomeFragment;
 import com.gyf.immersionbar.ImmersionBar;
 import com.hjq.base.FragmentPagerAdapter;
+import com.hjq.permissions.OnPermissionCallback;
+import com.hjq.permissions.Permission;
+import com.hjq.permissions.XXPermissions;
+
+import java.util.List;
 
 /**
  * company：江西神州医疗设备有限公司
@@ -87,6 +95,39 @@ public class MainActivity extends AppActivity implements NavigationAdapter.OnNav
         mPagerAdapter.addFragment(SettingFragment.newInstance());
         mViewPager.setAdapter(mPagerAdapter);
         onNewIntent(getIntent());
+        requestPermission();
+    }
+
+    private void requestPermission() {
+        XXPermissions.with(this)
+                // 不适配 Android 11 可以这样写
+//                .permission(Permission.Group.STORAGE)
+                // 适配 Android 11 需要这样写，这里无需再写 Permission.Group.STORAGE
+//                .permission(Permission.MANAGE_EXTERNAL_STORAGE)
+                .permission(Permission.RECORD_AUDIO)
+                .permission(Permission.WRITE_EXTERNAL_STORAGE)
+                .permission(Permission.READ_EXTERNAL_STORAGE)
+                .permission(Permission.READ_PHONE_STATE)
+                .request(new OnPermissionCallback() {
+
+                    @Override
+                    public void onGranted(List<String> permissions, boolean all) {
+                        if (all) {
+//                            showToast("获取存储权限成功");
+                        }
+                    }
+
+                    @Override
+                    public void onDenied(List<String> permissions, boolean never) {
+                        if (never) {
+                            toast("被永久拒绝授权，请手动授予存储权限");
+                            // 如果是被永久拒绝就跳转到应用权限系统设置页面
+                            XXPermissions.startPermissionActivity(MainActivity.this, permissions);
+                        } else {
+                            toast("获取存储权限失败");
+                        }
+                    }
+                });
 
     }
 

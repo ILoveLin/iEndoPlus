@@ -25,7 +25,6 @@
                     android:layout_height="match_parent">
 
 
-
                     <com.hjq.widget.view.ClearEditText
                         android:id="@+id/clearedit"
                         android:layout_width="match_parent"
@@ -37,20 +36,14 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_below="@+id/clearedit"
-                        android:layout_gravity="center"
+                         android:layout_gravity="center"
                         android:background="@color/common_accent_color"
                         android:gravity="center"
                         android:padding="@dimen/dp_10"
                         android:text="这是一个宽高比 2:1 的FrameLayout"
                         android:textColor="@color/white" />
-
-
                 </RelativeLayout>
-
-
             </RelativeLayout>
-
-
         </androidx.core.widget.NestedScrollView>
     </com.company.iendo.widget.StatusLayout>
 
