@@ -97,8 +97,8 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
     @Override
     public void onResume() {
         super.onResume();
-//        sendRequest(DateUtil.getSystemDate());
-        showDateDialog();
+        sendRequest(DateUtil.getSystemDate());
+//        showDateDialog();
     }
 
     //选择日期

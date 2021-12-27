@@ -1,7 +1,9 @@
 package com.company.iendo.mineui.activity.casemanage.fragment;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -22,9 +24,12 @@ import com.company.iendo.widget.StatusLayout;
 import com.hjq.base.BaseDialog;
 import com.hjq.widget.view.ClearEditText;
 import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.callback.BitmapCallback;
+import com.zhy.http.okhttp.callback.FileCallBack;
 import com.zhy.http.okhttp.callback.StringCallback;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.HashMap;
 
 import okhttp3.Call;
@@ -171,13 +176,13 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                         if (size == 2) {//下载用户信息和图片信息
 //                            Log.e("adapter", "item==path==" + "http://192.168.64.28:7001/" + mID + "/" + item.getImagePath());
 //                            String path = "http://192.168.64.28:7001/" + mID + "/" + item.getImagePath();
-
-                            File   toLocalFile = new File(Environment.getExternalStorageDirectory() +
+//                            https://images.csdn.net/20150817/1.jpg
+                            File toLocalFile = new File(Environment.getExternalStorageDirectory() +
                                     "/MyData/Images/" + MainActivity.getCurrentItemID());
 
                             //创建本地的/MyData/Images/mID文件夹  再把图片下载到这个文件夹下
 
-
+                            sendGetPictureRequest();
 
                         } else {//筛选下载哪种信息
                             int i = string.indexOf("=");
@@ -195,6 +200,49 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                         toast(data.toString());
                     }
                 }).show();
+
+    }
+
+    private void sendGetPictureRequest() {
+
+//      Log.e("adapter", "item==path==" + "http://192.168.64.28:7001/" + mID + "/" + item.getImagePath());
+//      String path = "http://192.168.64.28:7001/" + mID + "/" + item.getImagePath();
+//      https://images.csdn.net/20150817/1.jpg
+        File toLocalFile = new File(Environment.getExternalStorageDirectory() +
+                "/MyData/Images/" + MainActivity.getCurrentItemID());
+
+        //创建本地的/MyData/Images/mID文件夹  再把图片下载到这个文件夹下
+        String url = "http://images.csdn.net/20150817/1.jpg";
+        if (!toLocalFile.exists()) {
+            toLocalFile.mkdir();
+        }
+
+
+        OkHttpUtils//
+                .get()//
+                .url(url)//
+                .build()//
+                .execute(new FileCallBack(toLocalFile.getAbsolutePath(), "1.jpg") {
+
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        LogUtils.e("下载图片==onError==" + e);
+                        //下载失败
+                    }
+
+                    @Override
+                    public void onResponse(File response, int id) {
+                        LogUtils.e("下载图片==onResponse==" + response.toString());
+                        //刷新相册
+                        try {
+                            MediaStore.Images.Media.insertImage(getActivity().getContentResolver(), toLocalFile.getAbsolutePath()+"/1.jpg","", "");
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                });
+
 
     }
 
