@@ -6,6 +6,7 @@ import android.util.Log;
 import com.company.iendo.utils.db.DBManager;
 
 import org.greenrobot.greendao.query.Query;
+import org.greenrobot.greendao.query.QueryBuilder;
 
 import java.util.List;
 
@@ -54,6 +55,12 @@ public class DeviceDBUtils {
 
     }
 
+    /**
+     *
+     * @param context
+     * @param id
+     * @return
+     */
     //条件查询
     //精确查询 活得list
     public static List<DeviceDBBean> getQueryList(Context context, Long id) {
@@ -61,6 +68,20 @@ public class DeviceDBUtils {
         List<DeviceDBBean> beanList = deviceDBBeanDao.queryBuilder().where(DeviceDBBeanDao.Properties.DeviceID.notEq("1")).list();
         return beanList;
     }
+//    QueryBuilder 查询
+//    List joes = userDao.queryBuilder()  // 查询 User
+//            .where(Properties.FirstName.eq("Joe"))  // 首名为 Joe
+//            .orderAsc(Properties.LastName)  // 末名升序排列
+//            .list();  // 返回集合
+//
+//    // Joe，>= 1970.10
+//    QueryBuilder qb = userDao.queryBuilder();
+//qb.where(Properties.FirstName.eq("Joe"),
+//        qb.or(Properties.YearOfBirth.gt(1970),
+//        qb.and(Properties.YearOfBirth.eq(1970), Properties.MonthOfBirth.ge(10))));
+//    List youngJoes = qb.list();
+
+
 
 //    private void queryThread(Context context) {
 //        DeviceDBBeanDao deviceDBBeanDao = DBManager.getDaoSession(context).getDeviceDBBeanDao();

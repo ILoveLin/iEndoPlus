@@ -393,6 +393,15 @@ public final class InputDeviceDialog {
             return this;
         }
 
+        /**
+         * 获取设备类型
+         * @return
+         */
+        public ClearEditText getDeviceTypeView() {
+            return mDeviceType;
+        }
+
+
     }
 
     public interface OnListener {

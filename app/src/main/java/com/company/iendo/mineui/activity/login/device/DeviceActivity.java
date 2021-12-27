@@ -1,6 +1,5 @@
 package com.company.iendo.mineui.activity.login.device;
 
-import android.view.Gravity;
 import android.view.View;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -47,6 +46,8 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
     private DeviceAdapter mAdapter;
     private DeviceDBBean mDeviceDBBean;
     private String selectedData01;
+    private ModifyDeviceDialog.Builder mChangeDialog;
+    private InputDeviceDialog.Builder mCurrentChoseDialog;    //添加新设备的时候,再次选择不同类型的情况下
 
 
     @Override
@@ -136,7 +137,6 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                     @Override
                     public void onSelected(BaseDialog dialog, HashMap<Integer, String> data) {
                         LogUtils.e("showMultiDialog===" + data.toString()); //{0=HD3}
-                        toast("确定了：" + data.toString());
                         int start = data.toString().indexOf("=");
                         String str = data.toString().substring(start + 1, data.toString().length() - 1);
                         LogUtils.e("showMultiDialog===str==" + str); //{0=HD3}
@@ -161,12 +161,17 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
         switch (str) {
             case "HD3":
                 // 输入对话框
-                new InputDeviceDialog.Builder(this)
-                        // 标题可以不用填写
-                        .setTitle("添加设备")
+                mCurrentChoseDialog = new InputDeviceDialog.Builder(this);
+                // 标题可以不用填写
+                mCurrentChoseDialog.setTitle("添加设备")
                         // 内容可以不用填写
-                        .setAccountContent("我是Account内容")
-                        .setDeviceCodeContent("1")
+                        .setDeviceNameContent("HD3")
+                        .setDeviceNoteContent("HD3备注信息")
+                        .setDeviceIPContent("192.168.1.200")
+                        .setAccountContent("Admin")
+                        .setPasswordContent("12345")
+                        .setLivePortContent("80")
+                        .setTypeContent("HD3")
                         // 提示可以不用填写
                         // 确定按钮文本
                         .setConfirm(getString(R.string.common_confirm))
@@ -181,7 +186,6 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                             public void onConfirm(BaseDialog dialog, String mDeviceName, String mDeviceCode, String mDeviceNoteMessage,
                                                   String mDeviceIP, String mDeviceAccount, String mDevicePassword, String mHttpPort,
                                                   String mSocketPort, String mLivePort, String mMicPort, String mDeviceType) {
-                                toast("确定了：" + mDeviceName);
                                 //添加设备HD3
                                 DeviceDBBean deviceDBBean = new DeviceDBBean();
                                 deviceDBBean.setUsemsg01(mDeviceName);  //设备名
@@ -201,15 +205,148 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
 
                             @Override
                             public void onCancel(BaseDialog dialog) {
-                                toast("取消了");
                             }
                         })
                         .show();
 
+
+                //再次选择设备类型的时候,弹出对话框选择
+                ClearEditText hd3TypeView = mCurrentChoseDialog.getDeviceTypeView();
+                //让EditText失去焦点，然后获取点击事件
+                hd3TypeView.setFocusable(false);
+                hd3TypeView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showModifyTypeDialog(hd3TypeView.getText().toString(), "添加类型");
+                    }
+                });
+
+
                 break;
             case "一体机":
+                // 输入对话框  mOneDeviceDialog
+                mCurrentChoseDialog = new InputDeviceDialog.Builder(this);
+                // 标题可以不用填写
+                mCurrentChoseDialog.setTitle("添加设备")
+                        // 内容可以不用填写
+                        .setDeviceNameContent("一体机")
+                        .setDeviceNoteContent("一体机备注信息")
+                        .setDeviceIPContent("192.168.1.200")
+                        .setAccountContent("root")
+                        .setPasswordContent("root")
+                        .setHttpPortContent("3000")
+                        .setLivePortContent("7788")
+                        .setMicPortContent("7789")
+                        .setTypeContent("一体机")
+                        // 提示可以不用填写
+                        // 确定按钮文本
+                        .setConfirm(getString(R.string.common_confirm))
+                        // 设置 null 表示不显示取消按钮
+                        .setCancel(getString(R.string.common_cancel))
+                        // 设置点击按钮后不关闭对话框
+                        //.setAutoDismiss(false)
+                        .setCanceledOnTouchOutside(false)
+                        .setListener(new InputDeviceDialog.OnListener() {
+
+                            @Override
+                            public void onConfirm(BaseDialog dialog, String mDeviceName, String mDeviceCode, String mDeviceNoteMessage,
+                                                  String mDeviceIP, String mDeviceAccount, String mDevicePassword, String mHttpPort,
+                                                  String mSocketPort, String mLivePort, String mMicPort, String mDeviceType) {
+                                //添加设备HD3
+                                DeviceDBBean deviceDBBean = new DeviceDBBean();
+                                deviceDBBean.setUsemsg01(mDeviceName);  //设备名
+                                deviceDBBean.setUsername(mDeviceCode); //设备码
+                                deviceDBBean.setMsg(mDeviceNoteMessage);//备注信息
+                                deviceDBBean.setIp(mDeviceIP);          //ip
+                                deviceDBBean.setUsername(mDeviceAccount);//设备账号
+                                deviceDBBean.setPassword(mDevicePassword);//设备密码
+                                deviceDBBean.setHttpPort(mHttpPort);    //http端口
+                                deviceDBBean.setSocketPort(mSocketPort);//socket端口
+                                deviceDBBean.setLivePort(mLivePort);   //直播端口
+                                deviceDBBean.setMicPort(mMicPort);     //语音端口
+                                deviceDBBean.setType(mDeviceType);     //设备类型
+                                DeviceDBUtils.insertOrReplaceInTx(DeviceActivity.this, deviceDBBean);
+                                refreshRecycleViewData();
+                            }
+
+                            @Override
+                            public void onCancel(BaseDialog dialog) {
+                            }
+                        })
+                        .show();
+                //再次选择设备类型的时候,弹出对话框选择
+                ClearEditText oneDeviceDialog = mCurrentChoseDialog.getDeviceTypeView();
+                //让EditText失去焦点，然后获取点击事件
+                oneDeviceDialog.setFocusable(false);
+                oneDeviceDialog.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showModifyTypeDialog(oneDeviceDialog.getText().toString(), "添加类型");
+                    }
+                });
                 break;
             case "耳鼻喉治疗台":
+                // 输入对话框
+                mCurrentChoseDialog = new InputDeviceDialog.Builder(this);
+                mCurrentChoseDialog.setTitle("添加设备")
+                        // 内容可以不用填写
+                        .setDeviceNameContent("耳鼻喉治疗台")
+                        .setDeviceNoteContent("耳鼻喉治疗台备注信息")
+                        .setDeviceIPContent("192.168.1.200")
+                        .setAccountContent("root")
+                        .setPasswordContent("root")
+                        .setHttpPortContent("3000")
+                        .setLivePortContent("7788")
+                        .setMicPortContent("7789")
+                        .setTypeContent("耳鼻喉治疗台")
+                        // 提示可以不用填写
+                        // 确定按钮文本
+                        .setConfirm(getString(R.string.common_confirm))
+                        // 设置 null 表示不显示取消按钮
+                        .setCancel(getString(R.string.common_cancel))
+                        // 设置点击按钮后不关闭对话框
+                        //.setAutoDismiss(false)
+                        .setCanceledOnTouchOutside(false)
+                        .setListener(new InputDeviceDialog.OnListener() {
+
+                            @Override
+                            public void onConfirm(BaseDialog dialog, String mDeviceName, String mDeviceCode, String mDeviceNoteMessage,
+                                                  String mDeviceIP, String mDeviceAccount, String mDevicePassword, String mHttpPort,
+                                                  String mSocketPort, String mLivePort, String mMicPort, String mDeviceType) {
+                                //添加设备HD3
+                                DeviceDBBean deviceDBBean = new DeviceDBBean();
+                                deviceDBBean.setUsemsg01(mDeviceName);  //设备名
+                                deviceDBBean.setUsername(mDeviceCode); //设备码
+                                deviceDBBean.setMsg(mDeviceNoteMessage);//备注信息
+                                deviceDBBean.setIp(mDeviceIP);          //ip
+                                deviceDBBean.setUsername(mDeviceAccount);//设备账号
+                                deviceDBBean.setPassword(mDevicePassword);//设备密码
+                                deviceDBBean.setHttpPort(mHttpPort);    //http端口
+                                deviceDBBean.setSocketPort(mSocketPort);//socket端口
+                                deviceDBBean.setLivePort(mLivePort);   //直播端口
+                                deviceDBBean.setMicPort(mMicPort);     //语音端口
+                                deviceDBBean.setType(mDeviceType);     //设备类型
+                                DeviceDBUtils.insertOrReplaceInTx(DeviceActivity.this, deviceDBBean);
+                                refreshRecycleViewData();
+                            }
+
+                            @Override
+                            public void onCancel(BaseDialog dialog) {
+                            }
+                        })
+                        .show();
+
+
+                //再次选择设备类型的时候,弹出对话框选择
+                ClearEditText eyeProjectDialog = mCurrentChoseDialog.getDeviceTypeView();
+                //让EditText失去焦点，然后获取点击事件
+                eyeProjectDialog.setFocusable(false);
+                eyeProjectDialog.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showModifyTypeDialog(eyeProjectDialog.getText().toString(), "添加类型");
+                    }
+                });
                 break;
 
         }
@@ -237,7 +374,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
 
     @Override
     public void onItemClick(RecyclerView recyclerView, View itemView, int position) {
-        toast(mAdapter.getItem(position).getUsemsg01()+"~~~");
+        toast(mAdapter.getItem(position).getUsemsg01() + "~~~");
     }
 
 
@@ -296,9 +433,8 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
      * @param item
      */
     private void showModifyItemDialog(DeviceDBBean item) {
-        ModifyDeviceDialog.Builder builder = new ModifyDeviceDialog.Builder(this);
-        builder
-                .setTitle("修改设备")
+        mChangeDialog = new ModifyDeviceDialog.Builder(this);
+        mChangeDialog.setTitle("修改设备")
                 .setDeviceNameContent(item.getUsemsg01())
                 .setDeviceCodeContent(item.getDeviceID())
                 .setDeviceIPContent(item.getIp())
@@ -317,8 +453,23 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                 .setCanceledOnTouchOutside(false)
                 .setListener(new ModifyDeviceDialog.OnListener() {
                     @Override
-                    public void onConfirm(BaseDialog dialog, String mDeviceName, String mDeviceCode, String mDeviceNoteMessage, String mDeviceIP, String mDeviceAccount, String mDevicePassword, String mHttpPort, String mSocketPort, String mLivePort, String mMicPort, String content) {
-
+                    public void onConfirm(BaseDialog dialog, String mDeviceName, String mDeviceCode, String mDeviceNoteMessage, String mDeviceIP, String mDeviceAccount, String mDevicePassword, String mHttpPort, String mSocketPort,
+                                          String mLivePort, String mMicPort, String mDeviceType) {
+                        LogUtils.e("不管是更换还是不变都update 数据库,再次刷新界面====");
+                        //不管是更换还是不变都update 数据库,再次刷新界面
+                        item.setUsemsg01(mDeviceName);  //设备名
+                        item.setUsername(mDeviceCode); //设备码
+                        item.setMsg(mDeviceNoteMessage);//备注信息
+                        item.setIp(mDeviceIP);          //ip
+                        item.setUsername(mDeviceAccount);//设备账号
+                        item.setPassword(mDevicePassword);//设备密码
+                        item.setHttpPort(mHttpPort);    //http端口
+                        item.setSocketPort(mSocketPort);//socket端口
+                        item.setLivePort(mLivePort);   //直播端口
+                        item.setMicPort(mMicPort);     //语音端口
+                        item.setType(mDeviceType);     //设备类型
+                        DeviceDBUtils.update(DeviceActivity.this, item);
+                        refreshRecycleViewData();
                     }
 
                     @Override
@@ -328,14 +479,13 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                 }).show();
 
         //再次选择设备类型的时候,弹出对话框选择
-        ClearEditText deviceTypeView = builder.getDeviceTypeView();
+        ClearEditText deviceTypeView = mChangeDialog.getDeviceTypeView();
         //让EditText失去焦点，然后获取点击事件
         deviceTypeView.setFocusable(false);
         deviceTypeView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                toast(deviceTypeView.getText().toString());
-                showModifyTypeDialog(deviceTypeView.getText().toString());
+                showModifyTypeDialog(deviceTypeView.getText().toString(), "修改类型");
             }
         });
 
@@ -343,11 +493,13 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
     }
 
     /**
-     * 修改设备的时候,切换设备类型
+     * 1,修改设备的时候切换设备类型
+     * 2,添加设备的时候切换设备类型
      *
-     * @param currentType
+     * @param deviceType 设备类型
+     * @param type       当前是修改类型的时候点击设备类型选择,  还是添加类型的时候点击设备类型选择
      */
-    private void showModifyTypeDialog(String currentType) {
+    private void showModifyTypeDialog(String deviceType, String type) {
         new SelectModifyTypeDialog.Builder(this)
                 .setTitle("请选择设备类型")
                 .setList("HD3", "一体机", "耳鼻喉治疗台")
@@ -366,13 +518,11 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                         int start = data.toString().indexOf("=");
                         String str = data.toString().substring(start + 1, data.toString().length() - 1);
                         LogUtils.e("showMultiDialog===str==" + str); //{0=HD3}
-                        toast("确定了：" + str);
 
-                        postDelayed(() -> {
-                            toast("确定了：" + "切换设备类型之后,刷新默认数据");
-
-                        }, 1000);
-
+                        //刷新选择类型后,的默认数据---修改类型,或者添加类型
+                        post(() -> {
+                            setChangeTypeData(str, type);
+                        });
                     }
 
                     @Override
@@ -380,6 +530,91 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                     }
                 })
                 .show();
+
+
+    }
+
+    /**
+     * type 当前是修改类型的时候点击设备类型选择,  还是添加类型的时候点击设备类型选择
+     */
+    private void setChangeTypeData(String str, String type) {
+        switch (str) {
+            case "HD3":
+                if ("修改类型".equals(type)) {
+                    mChangeDialog.setDeviceNameContent("HD3")
+                            .setDeviceNoteContent("HD3备注信息")
+                            .setDeviceIPContent("192.168.1.200")
+                            .setAccountContent("Admin")
+                            .setPasswordContent("12345")
+                            .setLivePortContent("80")
+                            .setTypeContent("HD3")
+                            .show();
+                } else {
+                    mCurrentChoseDialog.setDeviceNameContent("HD3")
+                            .setDeviceNoteContent("HD3备注信息")
+                            .setDeviceIPContent("192.168.1.200")
+                            .setAccountContent("Admin")
+                            .setPasswordContent("12345")
+                            .setLivePortContent("80")
+                            .setTypeContent("HD3")
+                            .show();
+                }
+
+                break;
+            case "一体机":
+                if ("修改类型".equals(type)) {
+                    mChangeDialog.setDeviceNameContent("一体机")
+                            .setDeviceNoteContent("一体机备注信息")
+                            .setDeviceIPContent("192.168.1.200")
+                            .setAccountContent("root")
+                            .setPasswordContent("root")
+                            .setHttpPortContent("3000")
+                            .setLivePortContent("7788")
+                            .setMicPortContent("7789")
+                            .setTypeContent("一体机")
+                            .show();
+                } else {
+                    mCurrentChoseDialog.setDeviceNameContent("一体机")
+                            .setDeviceNoteContent("一体机备注信息")
+                            .setDeviceIPContent("192.168.1.200")
+                            .setAccountContent("root")
+                            .setPasswordContent("root")
+                            .setHttpPortContent("3000")
+                            .setLivePortContent("7788")
+                            .setMicPortContent("7789")
+                            .setTypeContent("一体机")
+                            .show();
+                }
+
+
+                break;
+            case "耳鼻喉治疗台":
+                if ("修改类型".equals(type)) {
+                    mChangeDialog.setDeviceNameContent("耳鼻喉治疗台")
+                            .setDeviceNoteContent("耳鼻喉治疗台备注信息")
+                            .setDeviceIPContent("192.168.1.200")
+                            .setAccountContent("root")
+                            .setPasswordContent("root")
+                            .setHttpPortContent("3000")
+                            .setLivePortContent("7788")
+                            .setMicPortContent("7789")
+                            .setTypeContent("耳鼻喉治疗台")
+                            .show();
+                } else {
+                    mCurrentChoseDialog.setDeviceNameContent("耳鼻喉治疗台")
+                            .setDeviceNoteContent("耳鼻喉治疗台备注信息")
+                            .setDeviceIPContent("192.168.1.200")
+                            .setAccountContent("root")
+                            .setPasswordContent("root")
+                            .setHttpPortContent("3000")
+                            .setLivePortContent("7788")
+                            .setMicPortContent("7789")
+                            .setTypeContent("耳鼻喉治疗台")
+                            .show();
+                }
+
+                break;
+        }
 
 
     }

@@ -9,8 +9,10 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 
 import com.company.iendo.R;
+import com.company.iendo.aop.Log;
 import com.company.iendo.app.AppAdapter;
 import com.company.iendo.green.db.DeviceDBBean;
+import com.company.iendo.utils.LogUtils;
 import com.company.iendo.widget.SwipeMenuLayout;
 
 /**
@@ -65,6 +67,8 @@ public class DeviceAdapter extends AppAdapter<DeviceDBBean> {
 //            http://192.168.64.28:7001/ID/FilePath
 //            Log.e("adapter", "" + "Path:" + bean.getFilePath());
 
+
+            LogUtils.e("adapter===="+mDBBean.toString());
 //            mTextView.setText("Path:" + mDBBean.getMsg());
             mTitle.setText(mDBBean.getUsemsg01());
             mMake.setText(mDBBean.getDeviceID());

@@ -160,4 +160,25 @@ public class DeviceDBBean {
     public void setUsemsg02(String usemsg02) {
         this.usemsg02 = usemsg02;
     }
+
+    @Override
+    public String toString() {
+        return "DeviceDBBean{" +
+                "id=" + id +
+                ", deviceID='" + deviceID + '\'' +
+                ", ip='" + ip + '\'' +
+                ", httpPort='" + httpPort + '\'' +
+                ", socketPort='" + socketPort + '\'' +
+                ", livePort='" + livePort + '\'' +
+                ", micPort='" + micPort + '\'' +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", title='" + title + '\'' +
+                ", msg='" + msg + '\'' +
+                ", type='" + type + '\'' +
+                ", endoType='" + endoType + '\'' +
+                ", usemsg01='" + usemsg01 + '\'' +
+                ", usemsg02='" + usemsg02 + '\'' +
+                '}';
+    }
 }
