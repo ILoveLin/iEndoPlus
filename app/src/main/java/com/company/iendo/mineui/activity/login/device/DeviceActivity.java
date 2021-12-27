@@ -65,17 +65,20 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
 
     @Override
     protected void initData() {
-        mAdapter = new DeviceAdapter(this);
+        List<DeviceDBBean> deviceDBBeans = DeviceDBUtils.queryAll(DeviceActivity.this);
+        mDataLest.clear();
+        mDataLest.addAll(deviceDBBeans);
+        mAdapter = new DeviceAdapter(this, mRecyclerView, mDataLest);
         mAdapter.setOnItemClickListener(this);
+        mAdapter.setOnChildClickListener(R.id.linear_item, this);
         mAdapter.setOnChildClickListener(R.id.tv_video_title, this);
         mAdapter.setOnChildClickListener(R.id.tv_video_type, this);
         mAdapter.setOnChildClickListener(R.id.tv_video_make, this);
         mAdapter.setOnChildClickListener(R.id.delBtn, this);
         mAdapter.setOnChildClickListener(R.id.reInputBtn, this);
-
+//        mAdapter.setOnChildClickListener(R.id.iv_item_select, this);
         mAdapter.setData(mDataLest);
         mRecyclerView.setAdapter(mAdapter);
-
         refreshRecycleViewData();
         mDeviceBar.setOnTitleBarListener(new OnTitleBarListener() {
             @Override
@@ -199,6 +202,8 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                                 deviceDBBean.setLivePort(mLivePort);   //直播端口
                                 deviceDBBean.setMicPort(mMicPort);     //语音端口
                                 deviceDBBean.setType(mDeviceType);     //设备类型
+                                deviceDBBean.setMSelected(false);
+
                                 DeviceDBUtils.insertOrReplaceInTx(DeviceActivity.this, deviceDBBean);
                                 refreshRecycleViewData();
                             }
@@ -265,6 +270,8 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                                 deviceDBBean.setLivePort(mLivePort);   //直播端口
                                 deviceDBBean.setMicPort(mMicPort);     //语音端口
                                 deviceDBBean.setType(mDeviceType);     //设备类型
+                                deviceDBBean.setMSelected(false);
+
                                 DeviceDBUtils.insertOrReplaceInTx(DeviceActivity.this, deviceDBBean);
                                 refreshRecycleViewData();
                             }
@@ -326,6 +333,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                                 deviceDBBean.setLivePort(mLivePort);   //直播端口
                                 deviceDBBean.setMicPort(mMicPort);     //语音端口
                                 deviceDBBean.setType(mDeviceType);     //设备类型
+                                deviceDBBean.setMSelected(false);
                                 DeviceDBUtils.insertOrReplaceInTx(DeviceActivity.this, deviceDBBean);
                                 refreshRecycleViewData();
                             }
@@ -354,7 +362,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
     }
 
     private void refreshRecycleViewData() {
-        List<DeviceDBBean> deviceDBBeans = DeviceDBUtils.queryAll(DeviceActivity.this, mDeviceDBBean);
+        List<DeviceDBBean> deviceDBBeans = DeviceDBUtils.queryAll(DeviceActivity.this);
         showComplete();
         mAdapter.setData(deviceDBBeans);
         mAdapter.notifyDataSetChanged();
@@ -377,13 +385,60 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
         toast(mAdapter.getItem(position).getUsemsg01() + "~~~");
     }
 
+    private int mSelectedPos = -1;
 
     @Override
     public void onChildClick(RecyclerView recyclerView, View childView, int position) {
         switch (childView.getId()) {
+
             case R.id.tv_video_title:
                 toast("标题");
 
+                break;
+            case R.id.linear_item:
+                toast("选中开始点击了");
+
+                List<DeviceDBBean> deviceDBBeans = DeviceDBUtils.queryAll(DeviceActivity.this);
+                DeviceDBBean itemBean = mAdapter.getItem(position);
+                //点击就是选中
+                itemBean.setId(itemBean.getId());
+                itemBean.setMSelected(true);
+                DeviceDBUtils.insertOrReplaceInTx(DeviceActivity.this, itemBean);
+
+
+                List<DeviceDBBean> deviceDBBeans1 = DeviceDBUtils.queryAll(DeviceActivity.this);
+                DeviceDBBean deviceDBBean1 = deviceDBBeans1.get(0);
+                LogUtils.e(deviceDBBean1.toString() + "========AAAAA===选中开始点击了===");
+
+                String id = itemBean.getId() + "";
+                LogUtils.e(id + "========id===选中开始点击了===");
+
+                for (int i = 0; i < deviceDBBeans.size(); i++) {
+
+
+                    DeviceDBBean deviceDBBean = deviceDBBeans.get(i);
+                    String currentID = deviceDBBean.getId() + "";
+                    LogUtils.e(currentID + "========currentID===选中开始点击了===");
+
+                    if (currentID.equals(id)) {
+                        deviceDBBean.setMSelected(true);
+                        DeviceDBUtils.insertOrReplaceInTx(DeviceActivity.this, deviceDBBean);
+                    } else {
+                        deviceDBBean.setMSelected(false);
+                        DeviceDBUtils.insertOrReplaceInTx(DeviceActivity.this, deviceDBBean);
+
+                    }
+//                    LogUtils.e(deviceDBBean.getId() + "========其他ID===选中开始点击了===");
+//
+//                    Boolean mSelected = deviceDBBean.getMSelected();
+//                    if (!mSelected) {
+//                        deviceDBBean.setMSelected(false);
+//
+//                        DeviceDBUtils.insertOrReplaceInTx(DeviceActivity.this, deviceDBBean);
+//                    }
+
+                }
+                refreshRecycleViewData();
                 break;
             case R.id.tv_video_type:
                 toast("类型");

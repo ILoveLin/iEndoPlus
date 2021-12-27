@@ -37,6 +37,8 @@ public class DeviceDBBeanDao extends AbstractDao<DeviceDBBean, Long> {
         public final static Property EndoType = new Property(12, String.class, "endoType", false, "ENDO_TYPE");
         public final static Property Usemsg01 = new Property(13, String.class, "usemsg01", false, "USEMSG01");
         public final static Property Usemsg02 = new Property(14, String.class, "usemsg02", false, "USEMSG02");
+        public final static Property IsSelected = new Property(15, String.class, "isSelected", false, "IS_SELECTED");
+        public final static Property MSelected = new Property(16, Boolean.class, "mSelected", false, "M_SELECTED");
     }
 
 
@@ -66,7 +68,9 @@ public class DeviceDBBeanDao extends AbstractDao<DeviceDBBean, Long> {
                 "\"TYPE\" TEXT," + // 11: type
                 "\"ENDO_TYPE\" TEXT," + // 12: endoType
                 "\"USEMSG01\" TEXT," + // 13: usemsg01
-                "\"USEMSG02\" TEXT);"); // 14: usemsg02
+                "\"USEMSG02\" TEXT," + // 14: usemsg02
+                "\"IS_SELECTED\" TEXT," + // 15: isSelected
+                "\"M_SELECTED\" INTEGER);"); // 16: mSelected
     }
 
     /** Drops the underlying database table. */
@@ -153,6 +157,16 @@ public class DeviceDBBeanDao extends AbstractDao<DeviceDBBean, Long> {
         if (usemsg02 != null) {
             stmt.bindString(15, usemsg02);
         }
+ 
+        String isSelected = entity.getIsSelected();
+        if (isSelected != null) {
+            stmt.bindString(16, isSelected);
+        }
+ 
+        Boolean mSelected = entity.getMSelected();
+        if (mSelected != null) {
+            stmt.bindLong(17, mSelected ? 1L: 0L);
+        }
     }
 
     @Override
@@ -233,6 +247,16 @@ public class DeviceDBBeanDao extends AbstractDao<DeviceDBBean, Long> {
         if (usemsg02 != null) {
             stmt.bindString(15, usemsg02);
         }
+ 
+        String isSelected = entity.getIsSelected();
+        if (isSelected != null) {
+            stmt.bindString(16, isSelected);
+        }
+ 
+        Boolean mSelected = entity.getMSelected();
+        if (mSelected != null) {
+            stmt.bindLong(17, mSelected ? 1L: 0L);
+        }
     }
 
     @Override
@@ -257,7 +281,9 @@ public class DeviceDBBeanDao extends AbstractDao<DeviceDBBean, Long> {
             cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11), // type
             cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12), // endoType
             cursor.isNull(offset + 13) ? null : cursor.getString(offset + 13), // usemsg01
-            cursor.isNull(offset + 14) ? null : cursor.getString(offset + 14) // usemsg02
+            cursor.isNull(offset + 14) ? null : cursor.getString(offset + 14), // usemsg02
+            cursor.isNull(offset + 15) ? null : cursor.getString(offset + 15), // isSelected
+            cursor.isNull(offset + 16) ? null : cursor.getShort(offset + 16) != 0 // mSelected
         );
         return entity;
     }
@@ -279,6 +305,8 @@ public class DeviceDBBeanDao extends AbstractDao<DeviceDBBean, Long> {
         entity.setEndoType(cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12));
         entity.setUsemsg01(cursor.isNull(offset + 13) ? null : cursor.getString(offset + 13));
         entity.setUsemsg02(cursor.isNull(offset + 14) ? null : cursor.getString(offset + 14));
+        entity.setIsSelected(cursor.isNull(offset + 15) ? null : cursor.getString(offset + 15));
+        entity.setMSelected(cursor.isNull(offset + 16) ? null : cursor.getShort(offset + 16) != 0);
      }
     
     @Override

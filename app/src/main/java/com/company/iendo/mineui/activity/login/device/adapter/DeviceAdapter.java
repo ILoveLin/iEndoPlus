@@ -1,19 +1,25 @@
 package com.company.iendo.mineui.activity.login.device.adapter;
 
 import android.content.Context;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.company.iendo.R;
 import com.company.iendo.aop.Log;
 import com.company.iendo.app.AppAdapter;
 import com.company.iendo.green.db.DeviceDBBean;
+import com.company.iendo.green.db.DeviceDBUtils;
 import com.company.iendo.utils.LogUtils;
 import com.company.iendo.widget.SwipeMenuLayout;
+
+import java.util.List;
 
 /**
  * company：江西神州医疗设备有限公司
@@ -22,17 +28,26 @@ import com.company.iendo.widget.SwipeMenuLayout;
  * desc：设备
  */
 public class DeviceAdapter extends AppAdapter<DeviceDBBean> {
-//    private String mID;
-//
-//    public DeviceAdapter(Context context, String mID) {
-//        super(context);
-//        this.mID = mID;
-//
-//    }
+    private String mID;
+    private RecyclerView mRv;
+    private List<DeviceDBBean> mDataLest;
 
-
-    public DeviceAdapter(@NonNull Context context) {
+    //
+    public DeviceAdapter(Context context, String mID) {
         super(context);
+        this.mID = mID;
+
+    }
+
+
+    private int mSelectedPos = -1;
+
+    public DeviceAdapter(@NonNull Context context, RecyclerView mRv, List<DeviceDBBean> mDataLest) {
+        super(context);
+        this.mRv = mRv;
+        this.mDataLest = mDataLest;
+        //找到默认选中的position
+        LogUtils.e(mDataLest.size() + "mDataLest===Adapter==" + mDataLest.size());
     }
 
     @NonNull
@@ -49,6 +64,7 @@ public class DeviceAdapter extends AppAdapter<DeviceDBBean> {
         public final TextView mMake;
         private final Button mDeleteBtn;
         private final Button mRePutBtn;
+        private final ImageView mSelect;
 
         private ViewHolder() {
             super(R.layout.item_swipemenulayout_device);
@@ -59,20 +75,24 @@ public class DeviceAdapter extends AppAdapter<DeviceDBBean> {
             mMake = findViewById(R.id.tv_video_make);
             mDeleteBtn = findViewById(R.id.delBtn);
             mRePutBtn = findViewById(R.id.reInputBtn);
+            mSelect = findViewById(R.id.iv_item_select);
         }
 
         @Override
         public void onBindView(int position) {
+
+
             DeviceDBBean mDBBean = getItem(position);
 //            http://192.168.64.28:7001/ID/FilePath
 //            Log.e("adapter", "" + "Path:" + bean.getFilePath());
+            LogUtils.e(mDBBean.toString()+"========AAAAA======");
+            LogUtils.e(mDBBean.getMSelected()+"========AAAAA======");
 
-
-            LogUtils.e("adapter===="+mDBBean.toString());
 //            mTextView.setText("Path:" + mDBBean.getMsg());
             mTitle.setText(mDBBean.getUsemsg01());
             mMake.setText(mDBBean.getDeviceID());
             mType.setText(mDBBean.getMsg());
+            mSelect.setSelected(mDBBean.getMSelected());
 
         }
     }

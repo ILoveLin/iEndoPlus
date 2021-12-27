@@ -11,6 +11,7 @@
     app:swipeEnable="true">
 
     <LinearLayout
+        android:clickable="true"
         android:id="@+id/linear_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -87,10 +88,12 @@
                 android:layout_weight="1" />
 
             <ImageView
+                android:id="@+id/iv_item_select"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="@dimen/dp_15"
-                android:src="@mipmap/icon_video_right" />
+                android:layout_marginStart="10dp"
+                android:layout_marginRight="@dimen/dp_10"
+                android:background="@drawable/bg_item_check" />
 
 
         </LinearLayout>

@@ -45,12 +45,16 @@ public class DeviceDBBean {
     //备用字段
     private String usemsg01;  //设备名字
     //备用字段2
-    private String usemsg02;
-    @Generated(hash = 1975722533)
-    public DeviceDBBean(Long id, String deviceID, String ip, String httpPort,
-            String socketPort, String livePort, String micPort, String username,
-            String password, String title, String msg, String type, String endoType,
-            String usemsg01, String usemsg02) {
+    private String usemsg02;  //备用字段2
+    //作废字段
+    private String isSelected;  //;
+    private Boolean mSelected;    //是否被选中    :0未选中,1被选中
+
+    @Generated(hash = 1595823383)
+    public DeviceDBBean(Long id, String deviceID, String ip, String httpPort, String socketPort,
+            String livePort, String micPort, String username, String password, String title, String msg,
+            String type, String endoType, String usemsg01, String usemsg02, String isSelected,
+            Boolean mSelected) {
         this.id = id;
         this.deviceID = deviceID;
         this.ip = ip;
@@ -66,97 +70,130 @@ public class DeviceDBBean {
         this.endoType = endoType;
         this.usemsg01 = usemsg01;
         this.usemsg02 = usemsg02;
+        this.isSelected = isSelected;
+        this.mSelected = mSelected;
     }
+
     @Generated(hash = 1828217020)
     public DeviceDBBean() {
     }
+
     public Long getId() {
         return this.id;
     }
+
     public void setId(Long id) {
         this.id = id;
     }
+
     public String getDeviceID() {
         return this.deviceID;
     }
+
     public void setDeviceID(String deviceID) {
         this.deviceID = deviceID;
     }
+
     public String getIp() {
         return this.ip;
     }
+
     public void setIp(String ip) {
         this.ip = ip;
     }
+
     public String getHttpPort() {
         return this.httpPort;
     }
+
     public void setHttpPort(String httpPort) {
         this.httpPort = httpPort;
     }
+
     public String getSocketPort() {
         return this.socketPort;
     }
+
     public void setSocketPort(String socketPort) {
         this.socketPort = socketPort;
     }
+
     public String getLivePort() {
         return this.livePort;
     }
+
     public void setLivePort(String livePort) {
         this.livePort = livePort;
     }
+
     public String getMicPort() {
         return this.micPort;
     }
+
     public void setMicPort(String micPort) {
         this.micPort = micPort;
     }
+
     public String getUsername() {
         return this.username;
     }
+
     public void setUsername(String username) {
         this.username = username;
     }
+
     public String getPassword() {
         return this.password;
     }
+
     public void setPassword(String password) {
         this.password = password;
     }
+
     public String getTitle() {
         return this.title;
     }
+
     public void setTitle(String title) {
         this.title = title;
     }
+
     public String getMsg() {
         return this.msg;
     }
+
     public void setMsg(String msg) {
         this.msg = msg;
     }
+
     public String getType() {
         return this.type;
     }
+
     public void setType(String type) {
         this.type = type;
     }
+
     public String getEndoType() {
         return this.endoType;
     }
+
     public void setEndoType(String endoType) {
         this.endoType = endoType;
     }
+
     public String getUsemsg01() {
         return this.usemsg01;
     }
+
     public void setUsemsg01(String usemsg01) {
         this.usemsg01 = usemsg01;
     }
+
     public String getUsemsg02() {
         return this.usemsg02;
     }
+
     public void setUsemsg02(String usemsg02) {
         this.usemsg02 = usemsg02;
     }
@@ -179,6 +216,24 @@ public class DeviceDBBean {
                 ", endoType='" + endoType + '\'' +
                 ", usemsg01='" + usemsg01 + '\'' +
                 ", usemsg02='" + usemsg02 + '\'' +
+                ", isSelected='" + isSelected + '\'' +
+                ", mSelected=" + mSelected +
                 '}';
+    }
+
+    public String getIsSelected() {
+        return this.isSelected;
+    }
+
+    public void setIsSelected(String isSelected) {
+        this.isSelected = isSelected;
+    }
+
+    public Boolean getMSelected() {
+        return this.mSelected;
+    }
+
+    public void setMSelected(Boolean mSelected) {
+        this.mSelected = mSelected;
     }
 }

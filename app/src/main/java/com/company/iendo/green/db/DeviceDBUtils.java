@@ -38,7 +38,7 @@ public class DeviceDBUtils {
     }
 
     //查询全部
-    public static List<DeviceDBBean> queryAll(Context context, DeviceDBBean bean) {
+    public static List<DeviceDBBean> queryAll(Context context) {
         //查询所有数据
         List<DeviceDBBean> list = DBManager.getDaoSession(context).getDeviceDBBeanDao().queryBuilder().list();
         return list;
