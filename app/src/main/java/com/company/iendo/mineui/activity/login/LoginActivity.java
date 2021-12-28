@@ -111,9 +111,11 @@ public final class LoginActivity extends AppActivity
         }
     };
     private WaitDialog.Builder mWaitDialog;
-    private List<UserListBean.DataDTO> mUserListData;
+    private List<UserListBean.DataDTO> mUserListData = new ArrayList<UserListBean.DataDTO>();
     private Button mSettingView;
     private TextView mDeviceType;
+    private String mBaseUrl;
+    private TextView mStatus;
 
     @Log
     public static void start(Context context, String phone, String password) {
@@ -155,6 +157,7 @@ public final class LoginActivity extends AppActivity
         mBodyLayout = findViewById(R.id.ll_login_body);
         mPhoneView = findViewById(R.id.et_login_phone);
         mPasswordView = findViewById(R.id.et_login_password);
+        mStatus = findViewById(R.id.btn_device_status);
         username_right = findViewById(R.id.username_right);
         mCommitView = findViewById(R.id.btn_login_commit);
         mSettingView = findViewById(R.id.btn_login_setting);
@@ -163,7 +166,7 @@ public final class LoginActivity extends AppActivity
         mTitleBar = findViewById(R.id.mtitlebar);
 
 
-        setOnClickListener(R.id.btn_login_commit,R.id.btn_login_setting);
+        setOnClickListener(R.id.btn_login_commit, R.id.btn_login_setting);
 
         mPasswordView.setOnEditorActionListener(this);
 
@@ -181,7 +184,7 @@ public final class LoginActivity extends AppActivity
 
             }
         });
-        sendRequest();
+//        sendRequest();
 
 
     }
@@ -189,22 +192,31 @@ public final class LoginActivity extends AppActivity
 
     /**
      * 获取列表数据
+     *
+     * @param mBaseUrl
      */
 
-    private void sendRequest() {
+    private void sendRequest(String mBaseUrl) {
         showLoading();
+        String mUrl = (String) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Current_BaseUrl, "http://192.168.1.200:3000");
+        LogUtils.e("登录==url==0001=" + mBaseUrl);
+        LogUtils.e("登录==url==0001=" + mUrl + HttpConstant.UserManager_List);
         OkHttpUtils.get()
-                .url(HttpConstant.UserManager_List)
+                .url(mUrl + HttpConstant.UserManager_List)
                 .build()
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
                         showError();
                         showComplete();
+                        mPasswordView.setText("");
+                        mPhoneView.setText("");
+                        mStatus.setText("链接设备失败,请检查网络和设备配置!");
                     }
 
                     @Override
                     public void onResponse(String response, int id) {
+                        mStatus.setText("");
                         if ("" != response) {
                             UserListBean mBean = mGson.fromJson(response, UserListBean.class);
                             if (0 == mBean.getCode()) {  //成功
@@ -220,7 +232,6 @@ public final class LoginActivity extends AppActivity
                         }
                     }
                 });
-
 
     }
 
@@ -323,8 +334,6 @@ public final class LoginActivity extends AppActivity
                         .setHeight(650)
                         .setAnimStyle(AnimAction.ANIM_SCALE)
                         .setListener((ListPopup.OnListener<String>) (popupWindow, position, str) -> {
-                                    toast("点击了：" + str);
-
                                     Message tempMsg = mHandler.obtainMessage();
                                     tempMsg.what = 1;
                                     tempMsg.obj = str;
@@ -366,10 +375,15 @@ public final class LoginActivity extends AppActivity
                 hideKeyboard(getCurrentFocus());
                 LogUtils.e("登录===" + MD5ChangeUtil.Md5_16(mPasswordView.getText().toString()));
                 LogUtils.e("登录===" + MD5ChangeUtil.Md5_32(mPasswordView.getText().toString()));
+                LogUtils.e("登录==url=" + mBaseUrl + HttpConstant.UserManager_Login);
+                String mUrl = (String) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Current_BaseUrl, "http://192.168.1.200:3000");
+                LogUtils.e("登录==url==02=" + mBaseUrl);
+                LogUtils.e("登录==url==02=" + mBaseUrl + HttpConstant.UserManager_Login);
+
                 mCommitView.showProgress();
-                showLoading();
+
                 OkHttpUtils.post()
-                        .url(HttpConstant.UserManager_Login)
+                        .url(mUrl + HttpConstant.UserManager_Login)
                         .addParams("UserName", mPhoneView.getText().toString())
                         .addParams("Password", MD5ChangeUtil.Md5_32(mPasswordView.getText().toString()))
                         .build()
@@ -378,26 +392,28 @@ public final class LoginActivity extends AppActivity
                             public void onError(Call call, Exception e, int id) {
                                 LogUtils.e("登录===" + e);
                                 showError();
+                                showComplete();
+                                mPasswordView.setText("");
+                                mPhoneView.setText("");
+                                mStatus.setText("链接设备失败,请检查网络和设备配置!");
                             }
 
                             @Override
                             public void onResponse(String response, int id) {
                                 mCommitView.showProgress();
                                 showComplete();
+                                mStatus.setText("");
                                 LogUtils.e("登录===" + response);
                                 if (!"".equals(response)) {
                                     LoginBean mBean = mGson.fromJson(response, LoginBean.class);
                                     if (0 == mBean.getCode()) {
                                         LogUtils.e("登录==role==" + mBean.getData().getRole());
                                         LogUtils.e("登录==userid==" + mBean.getData().getUserID());
-
                                         SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Current_Login_Role, mBean.getData().getRole() + "");
                                         SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Current_Login_UserID, mBean.getData().getUserID() + "");
                                         SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Current_Login_UserName, mPhoneView.getText().toString());
                                         SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Current_Login_Password, mPasswordView.getText().toString());
                                         SharePreferenceUtil.put(LoginActivity.this, Constants.Is_Logined, true);
-
-
                                         postDelayed(() -> {
                                             mCommitView.showSucceed();
                                             postDelayed(() -> {
@@ -407,7 +423,7 @@ public final class LoginActivity extends AppActivity
                                         }, 2000);
                                     } else {
                                         postDelayed(() -> {
-                                            mCommitView.showError(3000);
+                                            mCommitView.showError(1500);
                                         }, 1000);
                                         toast("密码错误!!");
 
@@ -549,8 +565,6 @@ public final class LoginActivity extends AppActivity
 //        }
 
 
-
-
     }
 
 
@@ -631,6 +645,21 @@ public final class LoginActivity extends AppActivity
         animatorSet.play(translationY).with(scaleX).with(scaleY);
         animatorSet.setDuration(mAnimTime);
         animatorSet.start();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        LogUtils.e("========当前设备的备注信息~~~~====LoginActivity==onResume===");
+        mBaseUrl = (String) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Current_BaseUrl, "http://192.168.1.200:3000");
+        LogUtils.e("========当前设备的备注信息~~~~====LoginActivity==mBaseUrl===" + mBaseUrl);
+        postDelayed(() -> {
+            sendRequest(mBaseUrl);
+        }, 500);
+
+        String mType = (String) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Current_Type, "耳鼻喉治疗台");
+        mDeviceType.setText("" + mType);
+
     }
 
     /**

@@ -47,6 +47,7 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
     private String mLoginPassword;
     private SettingBar current_user;
     private String mLoginUserName;
+    private String mBaseUrl;
 
     public static SettingFragment newInstance() {
         return new SettingFragment();
@@ -62,6 +63,7 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
         SettingBar memory_bar = findViewById(R.id.memory_bar);
         current_user = findViewById(R.id.current_user);
         memory_bar.setRightText(FileUtil.getROMAvailableSize(getActivity()));
+        mBaseUrl = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_BaseUrl, "111");
         setOnClickListener(R.id.params_bar, R.id.hospital_bar, R.id.user_bar, R.id.about_bar, R.id.memory_bar, R.id.password_bar, R.id.exit_bar);
     }
 
@@ -183,11 +185,10 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
     private void sendChangeMineRequest(String oldPassword, String newPassword) {
         showLoading();
         OkHttpUtils.post()
-                .url(HttpConstant.UserManager_ChangeMinePassword)
+                .url(mBaseUrl+HttpConstant.UserManager_ChangeMinePassword)
                 .addParams("UserID", mLoginUserID)//自己的ID
                 .addParams("oldPassword", oldPassword)//原来的密码
                 .addParams("newPassword", newPassword)//新密码
-
                 .build()
                 .execute(new StringCallback() {
                     @Override

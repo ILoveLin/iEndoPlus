@@ -14,6 +14,7 @@ import com.company.iendo.mineui.activity.MainActivity;
 import com.company.iendo.mineui.activity.casemanage.fragment.adapter.PictureAdapter;
 import com.company.iendo.mineui.activity.casemanage.fragment.adapter.VideoAdapter;
 import com.company.iendo.other.HttpConstant;
+import com.company.iendo.utils.SharePreferenceUtil;
 import com.company.iendo.widget.RecycleViewDivider;
 import com.company.iendo.widget.StatusLayout;
 import com.hjq.base.BaseAdapter;
@@ -41,6 +42,7 @@ public class VideoFragment extends TitleBarFragment<MainActivity> implements Sta
     private StatusLayout mStatusLayout;
     private List<DetailVideoBean.DataDTO> mDataLest = new ArrayList<>();
     private VideoAdapter mAdapter;
+    private String mBaseUrl;
 
     public static VideoFragment newInstance() {
         return new VideoFragment();
@@ -56,6 +58,8 @@ public class VideoFragment extends TitleBarFragment<MainActivity> implements Sta
         mRefreshLayout = findViewById(R.id.rl_video_refresh);
         mRecyclerView = findViewById(R.id.rv_video_list);
         mStatusLayout = findViewById(R.id.video_hint);
+
+        mBaseUrl = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_BaseUrl, "111");
         mAdapter = new VideoAdapter(getActivity(), MainActivity.getCurrentItemID());
 
         mAdapter.setOnItemClickListener(this);
@@ -72,7 +76,7 @@ public class VideoFragment extends TitleBarFragment<MainActivity> implements Sta
      */
     private void sendRequest(String currentItemID) {
         OkHttpUtils.get()
-                .url(HttpConstant.CaseManager_CaseVideos)
+                .url(mBaseUrl+HttpConstant.CaseManager_CaseVideos)
                 .addParams("ID", currentItemID)
                 .build()
                 .execute(new StringCallback() {

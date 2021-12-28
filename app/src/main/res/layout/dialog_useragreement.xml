@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:gravity="center_horizontal"
-            android:text="恭喜你获得成就：\n发现一款超级好用的对话框组件"
+            android:text="神州医疗：\n用心关爱您的健康!"
             android:textColor="@color/color_999999"
             android:textSize="@dimen/sp_14" />
 

@@ -20,6 +20,7 @@ import com.company.iendo.other.HttpConstant;
 import com.company.iendo.ui.dialog.MessageDialog;
 import com.company.iendo.ui.dialog.SelectDialog;
 import com.company.iendo.utils.LogUtils;
+import com.company.iendo.utils.SharePreferenceUtil;
 import com.company.iendo.widget.StatusLayout;
 import com.hjq.base.BaseDialog;
 import com.hjq.widget.view.ClearEditText;
@@ -48,6 +49,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
     private Boolean mEditStatus = false;
     private DetailCaseActivity mActivity;
     private CaseDetailBean mBean;
+    private String mBaseUrl;
 
     public static DetailFragment newInstance() {
         return new DetailFragment();
@@ -63,6 +65,8 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         mTV = findViewById(R.id.detail_text);
         mEdit = findViewById(R.id.clearedit);
         mStatusLayout = findViewById(R.id.detail_hint);
+
+        mBaseUrl = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_BaseUrl, "111");
         setEditStatus();
         sendRequest(MainActivity.getCurrentItemID());
     }
@@ -78,7 +82,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
     private void sendRequest(String currentItemID) {
         showLoading();
         OkHttpUtils.get()
-                .url(HttpConstant.CaseManager_CaseInfo)
+                .url(mBaseUrl + HttpConstant.CaseManager_CaseInfo)
                 .addParams("ID", currentItemID)
                 .build()
                 .execute(new StringCallback() {
@@ -235,7 +239,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                         LogUtils.e("下载图片==onResponse==" + response.toString());
                         //刷新相册
                         try {
-                            MediaStore.Images.Media.insertImage(getActivity().getContentResolver(), toLocalFile.getAbsolutePath()+"/1.jpg","", "");
+                            MediaStore.Images.Media.insertImage(getActivity().getContentResolver(), toLocalFile.getAbsolutePath() + "/1.jpg", "", "");
                         } catch (FileNotFoundException e) {
                             e.printStackTrace();
                         }
@@ -280,7 +284,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 
         showLoading();
         OkHttpUtils.post()
-                .url(HttpConstant.CaseManager_DeleteCase)
+                .url(mBaseUrl + HttpConstant.CaseManager_DeleteCase)
                 .addParams("ID", mBean.getData().getID() + "")
                 .build()
                 .execute(new StringCallback() {

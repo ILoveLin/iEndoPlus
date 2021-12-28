@@ -42,12 +42,13 @@ public class DeviceDBBean {
     private String type;
     //工作站类型
     private String endoType;
-    //备用字段
+    //备用字段-设备名字
     private String usemsg01;  //设备名字
     //备用字段2
     private String usemsg02;  //备用字段2
     //作废字段
-    private String isSelected;  //;
+    private String isSelected;  //;//作废字段
+    //是否被选中
     private Boolean mSelected;    //是否被选中    :0未选中,1被选中
 
     @Generated(hash = 1595823383)

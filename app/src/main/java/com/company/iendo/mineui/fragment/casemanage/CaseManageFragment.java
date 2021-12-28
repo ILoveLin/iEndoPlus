@@ -13,12 +13,14 @@ import com.company.iendo.bean.CaseManageListBean;
 import com.company.iendo.mineui.activity.MainActivity;
 import com.company.iendo.mineui.activity.casemanage.AddCaseActivity;
 import com.company.iendo.mineui.activity.casemanage.DetailCaseActivity;
+import com.company.iendo.mineui.activity.login.device.DeviceActivity;
 import com.company.iendo.mineui.activity.search.SearchActivity;
 import com.company.iendo.mineui.fragment.casemanage.adapter.CaseManageAdapter;
 import com.company.iendo.other.HttpConstant;
 import com.company.iendo.ui.dialog.DateDialog;
 import com.company.iendo.utils.DateUtil;
 import com.company.iendo.utils.LogUtils;
+import com.company.iendo.utils.SharePreferenceUtil;
 import com.company.iendo.widget.StatusLayout;
 import com.gyf.immersionbar.ImmersionBar;
 import com.hjq.base.BaseAdapter;
@@ -51,6 +53,7 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
     private String mChoiceDate;
     private StatusLayout mStatusLayout;
     private List<CaseManageListBean.DataDTO> mDataLest = new ArrayList<>();
+    private String mBaseUrl;
 
     public static CaseManageFragment newInstance() {
         return new CaseManageFragment();
@@ -97,6 +100,7 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
     @Override
     public void onResume() {
         super.onResume();
+        mBaseUrl = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_BaseUrl, "111");
         sendRequest(DateUtil.getSystemDate());
 //        showDateDialog();
     }
@@ -137,7 +141,7 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
     private void sendRequest(String mChoiceDate) {
         showLoading();
         OkHttpUtils.get()
-                .url(HttpConstant.CaseManager_List)
+                .url(mBaseUrl+HttpConstant.CaseManager_List)
                 .addParams("datetime", mChoiceDate)
                 .addParams("EndoType","3")  //目前默认是3  耳鼻喉治疗台
                 .build()

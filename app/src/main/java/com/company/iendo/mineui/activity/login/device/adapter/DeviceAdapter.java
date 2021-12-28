@@ -85,13 +85,13 @@ public class DeviceAdapter extends AppAdapter<DeviceDBBean> {
             DeviceDBBean mDBBean = getItem(position);
 //            http://192.168.64.28:7001/ID/FilePath
 //            Log.e("adapter", "" + "Path:" + bean.getFilePath());
-            LogUtils.e(mDBBean.toString()+"========AAAAA======");
-            LogUtils.e(mDBBean.getMSelected()+"========AAAAA======");
-
 //            mTextView.setText("Path:" + mDBBean.getMsg());
-            mTitle.setText(mDBBean.getUsemsg01());
-            mMake.setText(mDBBean.getDeviceID());
-            mType.setText(mDBBean.getMsg());
+            mTitle.setText(mDBBean.getUsemsg01()); //设备名字
+            mMake.setText(mDBBean.getMsg()); //备注信息
+//            mType.setText(mDBBean.getType());
+            LogUtils.e(mDBBean.getMsg() + "========当前设备的备注信息~~~~======");
+            LogUtils.e(mDBBean.getType() + "========当前设备的类型~~~~======");
+
             mSelect.setSelected(mDBBean.getMSelected());
 
         }

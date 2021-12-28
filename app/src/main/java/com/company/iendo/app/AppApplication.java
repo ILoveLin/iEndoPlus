@@ -113,7 +113,7 @@ public final class AppApplication extends Application {
         OkHttpClient.Builder okHttpClientBuilder = new OkHttpClient.Builder()
                 .sslSocketFactory(sslParams.sSLSocketFactory, sslParams.trustManager)
                 .cookieJar(new CookieJarImpl(new MemoryCookieStore()))                  //内存存储cookie
-                .connectTimeout(60000L, TimeUnit.MILLISECONDS)
+                .connectTimeout(10000L, TimeUnit.MILLISECONDS)
                 .addInterceptor(new MyInterceptor(this))                      //拦截器,可以添加header 一些信息
                 .readTimeout(10000L, TimeUnit.MILLISECONDS)
 

@@ -12,6 +12,7 @@ import androidx.annotation.StringRes;
 
 import com.company.iendo.R;
 import com.company.iendo.aop.SingleClick;
+import com.company.iendo.utils.LogUtils;
 import com.hjq.base.BaseDialog;
 import com.hjq.widget.view.ClearEditText;
 
@@ -103,6 +104,7 @@ public final class InputDeviceDialog {
                 Editable editable10 = mDeviceType.getText();
                 String mDeviceType = editable10 != null ? editable10.toString() : "";
 
+                LogUtils.e("");
                 mListener.onConfirm(getDialog(), mDeviceName, mDeviceCode, mDeviceNoteMessage, mDeviceIP,
                         mDeviceAccount, mDevicePassword, mHttpPort, mSocketPort, mLivePort, mMicPort, mDeviceType);
             } else if (viewId == R.id.tv_ui_cancel) {

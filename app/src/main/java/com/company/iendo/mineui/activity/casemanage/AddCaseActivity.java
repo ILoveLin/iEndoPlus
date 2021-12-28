@@ -67,7 +67,7 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
     private void sendRequest() {
         showLoading();
         OkHttpUtils.post()
-                .url(HttpConstant.CaseManager_AddCase)
+                .url(mBaseUrl+HttpConstant.CaseManager_AddCase)
                 .addParams("Name", "张大仙")
                 .addParams("UserName", "Admin")
                 .addParams("EndoType", "3")  //目前默认是3  耳鼻喉治疗台

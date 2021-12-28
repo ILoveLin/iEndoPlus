@@ -23,11 +23,10 @@ public class SharePreferenceUtil {
     public static final String FILE_NAME = "share_data";
     public static final String UID = "uid";
 
-    public static final String Current_DeviceType = "一体机";
-    public static final String Current_IP = "ip";
     public static final String Current_Port = "port";
     public static final String Current_Host = "host";  // 加了---/---的
 
+    public static final String Current_BaseUrl = "BaseUrl";     //末尾不加斜杠  http://192.168.66.42:8008
 
 
     public static final String Current_Login_Role = "login_role";  //登录用户的role  权限
@@ -38,8 +37,21 @@ public class SharePreferenceUtil {
     // 角色 0-超级管理员 1-管理员 2-操作员 3-查询员 4-自定义
     // 角色 0-超级管理员 1-管理员 2-操作员 3-查询员 4-自定义
 
-
-
+    /**
+     * 被选中当前登入设备的信息
+     */
+    public static final String Current_DeviceID = "Current_DeviceID";                //设备唯一标识
+    public static final String Current_IP = "Current_IP";                            //设备ip
+    public static final String Current_HttpPort = "Current_HttpPort";                //设备http端口
+    public static final String Current_SocketPort = "Current_SocketPort";            //socket端口
+    public static final String Current_LivePort = "Current_LivePort";                //直播端口
+    public static final String Current_MicPort = "Current_MicPort";                  //语音端口
+    public static final String Current_DeviceUsername = "Current_DeviceUsername";    //设备账号(直播)
+    public static final String Current_DevicePassword = "Current_DevicePassword";    //设备密码(直播)
+    public static final String Current_Type = "Current_Type";                        //设备类型
+    public static final String Current_EndoType = "Current_EndoType";                //工作站类型
+    public static final String Current_Usemsg01 = "Current_Usemsg01";                //设备名字
+    public static final String Current_MSelected = "Current_MSelected";              //是否被选中:0未选中,1被选中
 
 
     /**

@@ -146,7 +146,7 @@ public class HospitalActivity extends AppActivity implements StatusAction {
         if (postCode) {
             showLoading();
             OkHttpUtils.post()
-                    .url(HttpConstant.CaseManager_CaseUpdateHospitalInfo)
+                    .url(mBaseUrl+HttpConstant.CaseManager_CaseUpdateHospitalInfo)
                     .addParams("ID", mID)
                     .addParams("szHospital", mTitle_01.getText().toString().trim())
                     .addParams("szSlave", mTitle_02.getText().toString().trim())
@@ -185,7 +185,7 @@ public class HospitalActivity extends AppActivity implements StatusAction {
     private void sendRequest() {
         showLoading();
         OkHttpUtils.get()
-                .url(HttpConstant.CaseManager_CaseHospitalInfo)
+                .url(mBaseUrl+HttpConstant.CaseManager_CaseHospitalInfo)
                 .build()
                 .execute(new StringCallback() {
                     @Override
@@ -327,7 +327,7 @@ public class HospitalActivity extends AppActivity implements StatusAction {
         String realPathFromURI = PictureFileUtil.getRealPathFromURI(this, mAvatarUrl);
         File file1 = new File(realPathFromURI);
         OkHttpUtils.post()
-                .url(HttpConstant.CaseManager_CaseUpdateHospitalLogo)
+                .url(mBaseUrl+HttpConstant.CaseManager_CaseUpdateHospitalLogo)
                 .addFile("logo", file1.getName(), file1)
                 .build()
                 .execute(new StringCallback() {

@@ -9,6 +9,8 @@ import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 
 import com.company.iendo.manager.ActivityManager;
+import com.company.iendo.mineui.activity.login.device.DeviceActivity;
+import com.company.iendo.utils.SharePreferenceUtil;
 import com.google.gson.Gson;
 import com.gyf.immersionbar.ImmersionBar;
 import com.hjq.bar.TitleBar;
@@ -43,6 +45,7 @@ public abstract class AppActivity extends BaseActivity
     /** 对话框数量 */
     private int mDialogCount;
     public Gson mGson;
+    public String mBaseUrl;  //当前用户的头部url
 
     /**
      * 当前加载对话框是否在显示中
@@ -103,6 +106,7 @@ public abstract class AppActivity extends BaseActivity
         }
 
 
+        mBaseUrl = (String) SharePreferenceUtil.get(AppActivity.this, SharePreferenceUtil.Current_BaseUrl, "111");
         // 初始化沉浸式状态栏
         if (isStatusBarEnabled()) {
             getStatusBarConfig().init();

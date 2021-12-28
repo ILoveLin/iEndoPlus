@@ -179,7 +179,7 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
     private void sendAddUserRequest(String userName, String passwrod, int mAddCurrentCode) {
         showLoading();
         OkHttpUtils.post()
-                .url(HttpConstant.UserManager_AddUser)
+                .url(mBaseUrl+HttpConstant.UserManager_AddUser)
                 .addParams("CurrentRelo", mLoginRole)    //当前用户权限
                 .addParams("CreateRelo", mAddCurrentCode + "")     //新用户的权限
                 .addParams("UserName", userName)    //新用户的名字
@@ -221,7 +221,7 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
 
     private void sendRequest() {
         OkHttpUtils.get()
-                .url(HttpConstant.UserManager_List)
+                .url(mBaseUrl+HttpConstant.UserManager_List)
                 .build()
                 .execute(new StringCallback() {
                     @Override
@@ -350,7 +350,7 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
         String userID = item.getUserID();
         LogUtils.e("修改权限====userID==" + userID + "");
         OkHttpUtils.post()
-                .url(HttpConstant.UserManager_ChangeRelo)
+                .url(mBaseUrl+HttpConstant.UserManager_ChangeRelo)
                 .addParams("CurrentUserID", mLoginUserID)//当前登入的用户ID == 1
                 .addParams("ChangeUserID", userID)//需要被修改权限的用户ID
                 .addParams("UserName", mLoginUserName)//当前用户名字
@@ -424,7 +424,7 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
     private void sendChangePasswordRequest(UserListBean.DataDTO item, String password) {
         showLoading();
         OkHttpUtils.post()
-                .url(HttpConstant.UserManager_ChangeElsePassword)
+                .url(mBaseUrl+HttpConstant.UserManager_ChangeElsePassword)
                 .addParams("userID", mLoginUserID)//自己的ID
                 .addParams("changedUserID", item.getUserID())//被修改用户ID
                 .addParams("userRelo", mLoginRole)//自己的权限
@@ -495,7 +495,7 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
     private void sendDeleteRequest(UserListBean.DataDTO item) {
         showLoading();
         OkHttpUtils.post()
-                .url(HttpConstant.UserManager_Delete)
+                .url(mBaseUrl+HttpConstant.UserManager_Delete)
                 .addParams("DeleteUserID", item.getUserID())//被删除用户的ID
                 .addParams("CurrentUserID", mLoginUserID)//当前用户ID
                 .addParams("CurrentRelo", mLoginRole + "")//当前用户权限

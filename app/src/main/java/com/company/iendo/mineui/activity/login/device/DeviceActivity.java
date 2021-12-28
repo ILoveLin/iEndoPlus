@@ -9,6 +9,7 @@ import com.company.iendo.action.StatusAction;
 import com.company.iendo.app.AppActivity;
 import com.company.iendo.green.db.DeviceDBBean;
 import com.company.iendo.green.db.DeviceDBUtils;
+import com.company.iendo.mineui.activity.login.LoginActivity;
 import com.company.iendo.mineui.activity.login.device.adapter.DeviceAdapter;
 import com.company.iendo.ui.dialog.InputDeviceDialog;
 import com.company.iendo.ui.dialog.MessageDialog;
@@ -17,6 +18,7 @@ import com.company.iendo.ui.dialog.SelectDialog;
 import com.company.iendo.ui.dialog.SelectModifyTypeDialog;
 import com.company.iendo.ui.popup.ListPopup;
 import com.company.iendo.utils.LogUtils;
+import com.company.iendo.utils.SharePreferenceUtil;
 import com.company.iendo.widget.StatusLayout;
 import com.hjq.bar.OnTitleBarListener;
 import com.hjq.bar.TitleBar;
@@ -48,6 +50,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
     private String selectedData01;
     private ModifyDeviceDialog.Builder mChangeDialog;
     private InputDeviceDialog.Builder mCurrentChoseDialog;    //添加新设备的时候,再次选择不同类型的情况下
+    private DeviceDBBean mDBBean;
 
 
     @Override
@@ -156,7 +159,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
     }
 
     /**
-     * 弹出第一个对话框
+     * 弹出第一个对话框--当前选择类型
      *
      * @param str 当前选择类型
      */
@@ -369,6 +372,8 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
         int count = mAdapter.getCount();
         if (0 == count) {
             showEmpty();
+            SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_BaseUrl, "http://192.168.1.200:3000");
+
         } else {
             showComplete();
         }
@@ -392,25 +397,23 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
         switch (childView.getId()) {
 
             case R.id.tv_video_title:
-                toast("标题");
 
                 break;
             case R.id.linear_item:
-                toast("选中开始点击了");
 
                 List<DeviceDBBean> deviceDBBeans = DeviceDBUtils.queryAll(DeviceActivity.this);
-                DeviceDBBean itemBean = mAdapter.getItem(position);
+                DeviceDBBean selectedItemBean = mAdapter.getItem(position);
                 //点击就是选中
-                itemBean.setId(itemBean.getId());
-                itemBean.setMSelected(true);
-                DeviceDBUtils.insertOrReplaceInTx(DeviceActivity.this, itemBean);
+                selectedItemBean.setId(selectedItemBean.getId());
+                selectedItemBean.setMSelected(true);
+                DeviceDBUtils.insertOrReplaceInTx(DeviceActivity.this, selectedItemBean);
 
 
                 List<DeviceDBBean> deviceDBBeans1 = DeviceDBUtils.queryAll(DeviceActivity.this);
                 DeviceDBBean deviceDBBean1 = deviceDBBeans1.get(0);
                 LogUtils.e(deviceDBBean1.toString() + "========AAAAA===选中开始点击了===");
 
-                String id = itemBean.getId() + "";
+                String id = selectedItemBean.getId() + "";
                 LogUtils.e(id + "========id===选中开始点击了===");
 
                 for (int i = 0; i < deviceDBBeans.size(); i++) {
@@ -441,11 +444,10 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                 refreshRecycleViewData();
                 break;
             case R.id.tv_video_type:
-                toast("类型");
 
                 break;
             case R.id.tv_video_make:
-                toast("备注");
+
 
                 break;
             case R.id.delBtn:
@@ -488,10 +490,13 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
      * @param item
      */
     private void showModifyItemDialog(DeviceDBBean item) {
+        LogUtils.e("修改设备=====getMsg=====" + item.getMsg());
+        LogUtils.e("修改设备=====getMsg=====" + item.toString());
         mChangeDialog = new ModifyDeviceDialog.Builder(this);
         mChangeDialog.setTitle("修改设备")
                 .setDeviceNameContent(item.getUsemsg01())
                 .setDeviceCodeContent(item.getDeviceID())
+                .setDeviceNoteContent(item.getMsg())
                 .setDeviceIPContent(item.getIp())
                 .setAccountContent(item.getUsername())
                 .setPasswordContent(item.getPassword())
@@ -499,7 +504,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                 .setSocketPortContent(item.getSocketPort())
                 .setLivePortContent(item.getLivePort())
                 .setMicPortContent(item.getMicPort())
-                .setTypeContent(item.getType() + "类型")
+                .setTypeContent(item.getType() )
                 .setConfirm(getString(R.string.common_confirm))
                 // 设置 null 表示不显示取消按钮
                 .setCancel(getString(R.string.common_cancel))
@@ -510,6 +515,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                     @Override
                     public void onConfirm(BaseDialog dialog, String mDeviceName, String mDeviceCode, String mDeviceNoteMessage, String mDeviceIP, String mDeviceAccount, String mDevicePassword, String mHttpPort, String mSocketPort,
                                           String mLivePort, String mMicPort, String mDeviceType) {
+                        LogUtils.e("不管是更换还是不变都update 数据库,再次刷新界面====");
                         LogUtils.e("不管是更换还是不变都update 数据库,再次刷新界面====");
                         //不管是更换还是不变都update 数据库,再次刷新界面
                         item.setUsemsg01(mDeviceName);  //设备名
@@ -597,6 +603,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
             case "HD3":
                 if ("修改类型".equals(type)) {
                     mChangeDialog.setDeviceNameContent("HD3")
+                            .setDeviceNoteContent("")
                             .setDeviceNoteContent("HD3备注信息")
                             .setDeviceIPContent("192.168.1.200")
                             .setAccountContent("Admin")
@@ -619,6 +626,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
             case "一体机":
                 if ("修改类型".equals(type)) {
                     mChangeDialog.setDeviceNameContent("一体机")
+                            .setDeviceNoteContent("")
                             .setDeviceNoteContent("一体机备注信息")
                             .setDeviceIPContent("192.168.1.200")
                             .setAccountContent("root")
@@ -645,7 +653,9 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                 break;
             case "耳鼻喉治疗台":
                 if ("修改类型".equals(type)) {
+
                     mChangeDialog.setDeviceNameContent("耳鼻喉治疗台")
+                            .setDeviceNoteContent("")
                             .setDeviceNoteContent("耳鼻喉治疗台备注信息")
                             .setDeviceIPContent("192.168.1.200")
                             .setAccountContent("root")
@@ -674,7 +684,44 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
 
     }
 
-//
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        LogUtils.e("========当前设备的备注信息~~~~====DeviceActivity==onDestroy===");
+        LogUtils.e("========当前设备的备注信息~~~~====DeviceActivity==onDestroy===");
+        //把当前选择的itembean的数据信息存到sp里面去
+        List<DeviceDBBean> deviceDBBeans = DeviceDBUtils.queryAll(DeviceActivity.this);
+        for (int i = 0; i < deviceDBBeans.size(); i++) {
+            if (deviceDBBeans.get(i).getMSelected()) {
+                mDBBean = deviceDBBeans.get(i);
+                continue;
+            }
+
+
+        }
+        if (null != mDBBean) {
+            SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_DeviceID, null != mDBBean.getDeviceID() ? mDBBean.getDeviceID() : "1");  //为null的时候全部给1表示
+            SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_IP, mDBBean.getIp());
+            SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_HttpPort, mDBBean.getHttpPort());
+            SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_SocketPort, null != mDBBean.getSocketPort() ? mDBBean.getSocketPort() : "1");
+            SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_LivePort, mDBBean.getLivePort());
+            SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_MicPort, null != mDBBean.getMicPort() ? mDBBean.getMicPort() : "1");
+            SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_DeviceUsername, mDBBean.getUsername());
+            SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_DevicePassword, mDBBean.getPassword());
+            SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_Type, mDBBean.getType());
+            SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_EndoType, null != mDBBean.getEndoType() ? mDBBean.getEndoType() : "1");
+            SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_Usemsg01, mDBBean.getUsemsg01());
+            SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_MSelected, mDBBean.getMSelected());
+
+            //http://192.168.66.42:8008
+            SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_BaseUrl, "http://" + mDBBean.getIp() + ":" + mDBBean.getHttpPort());
+            String mBaseUrl = (String) SharePreferenceUtil.get(DeviceActivity.this, SharePreferenceUtil.Current_BaseUrl, "111");
+            LogUtils.e("========当前设备的备注信息~~~~====DeviceActivity==mBaseUrl===" + mBaseUrl);
+        }
+
+    }
+
+    //
 //
 //    @Override
 //    public void onLoadMore(@NonNull RefreshLayout refreshLayout) {

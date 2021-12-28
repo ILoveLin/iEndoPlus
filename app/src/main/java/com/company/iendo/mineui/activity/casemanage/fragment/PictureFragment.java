@@ -13,10 +13,12 @@ import com.company.iendo.bean.DetailPictureBean;
 import com.company.iendo.bean.SearchListBean;
 import com.company.iendo.mineui.activity.MainActivity;
 import com.company.iendo.mineui.activity.casemanage.fragment.adapter.PictureAdapter;
+import com.company.iendo.mineui.activity.login.device.DeviceActivity;
 import com.company.iendo.mineui.activity.search.SearchActivity;
 import com.company.iendo.mineui.activity.search.adapter.SearchAdapter;
 import com.company.iendo.other.HttpConstant;
 import com.company.iendo.utils.LogUtils;
+import com.company.iendo.utils.SharePreferenceUtil;
 import com.company.iendo.widget.RecycleViewDivider;
 import com.company.iendo.widget.StatusLayout;
 import com.hjq.base.BaseAdapter;
@@ -44,6 +46,7 @@ public class PictureFragment extends TitleBarFragment<MainActivity> implements S
     private StatusLayout mStatusLayout;
     private List<DetailPictureBean.DataDTO> mDataLest = new ArrayList<>();
     private PictureAdapter mAdapter;
+    private String mBaseUrl;
 
     public static PictureFragment newInstance() {
         return new PictureFragment();
@@ -60,6 +63,7 @@ public class PictureFragment extends TitleBarFragment<MainActivity> implements S
         mRefreshLayout = findViewById(R.id.rl_pic_refresh);
         mRecyclerView = findViewById(R.id.rv_pic_list);
         mStatusLayout = findViewById(R.id.pic_hint);
+        mBaseUrl = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_BaseUrl, "111");
         mAdapter = new PictureAdapter(getActivity(), MainActivity.getCurrentItemID());
 
         mAdapter.setOnItemClickListener(this);
@@ -80,7 +84,7 @@ public class PictureFragment extends TitleBarFragment<MainActivity> implements S
         LogUtils.e("currentItemID" + currentItemID);
 
         OkHttpUtils.get()
-                .url(HttpConstant.CaseManager_CasePictures)
+                .url(mBaseUrl+HttpConstant.CaseManager_CasePictures)
                 .addParams("ID", currentItemID)
                 .build()
                 .execute(new StringCallback() {
