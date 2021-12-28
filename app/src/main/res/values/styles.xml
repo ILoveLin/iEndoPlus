@@ -45,10 +45,12 @@
         <item name="android:windowIsTranslucent">false</item>
         <item name="android:windowDisablePreview">true</item>
     </style>
+
     <style name="textInputLayoutHint">
         <item name="android:textSize">@dimen/dp_12</item>
         <item name="android:textColor">@color/black40</item>
     </style>
+
     <style name="nestedscrollview_vertical_style">
         <item name="android:scrollbarSize">@dimen/dp_2</item>
         <item name="android:scrollbars">vertical</item>
@@ -65,6 +67,23 @@
         <item name="android:textColor">@color/white90</item>
         <item name="android:gravity">center</item>
         <item name="android:background">@drawable/button_circle_selector</item>
+        <item name="android:foreground">@null</item>
+    </style>
+
+    <!-- 默认按钮样式 -->
+    <style name="ButtonLoginStyle" parent="Widget.AppCompat.Button.Borderless">
+        <item name="android:textSize">@dimen/sp_20</item>
+        <item name="android:textColor">@color/white90</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/button_circle_selector</item>
+        <item name="android:foreground">@null</item>
+    </style>
+    <!-- 设备管理按钮样式 -->
+    <style name="ButtonDeviceStyle" parent="Widget.AppCompat.Button.Borderless">
+        <item name="android:textSize">@dimen/sp_14</item>
+        <item name="android:textColor">@color/black80</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/button_device_selector</item>
         <item name="android:foreground">@null</item>
     </style>
     <!-- 默认按钮样式 -->
@@ -86,10 +105,10 @@
     </style>
 
 
-<!--    <style name="SplashActivityTheme" parent="android:Theme.Holo.Light.NoActionBar">-->
-<!--        &lt;!&ndash; Customize your theme here. &ndash;&gt;-->
-<!--        <item name="android:windowBackground">@drawable/splash</item>-->
-<!--    </style>-->
+    <!--    <style name="SplashActivityTheme" parent="android:Theme.Holo.Light.NoActionBar">-->
+    <!--        &lt;!&ndash; Customize your theme here. &ndash;&gt;-->
+    <!--        <item name="android:windowBackground">@drawable/splash</item>-->
+    <!--    </style>-->
     <style name="Font_Middle_Gray">
         <item name="android:textSize">@dimen/sp_14</item>
         <item name="android:textColor">@color/color_696969</item>
@@ -137,6 +156,7 @@
         <item name="android:textColor">@drawable/countdown_color_selector</item>
         <item name="android:textSize">@dimen/sp_12</item>
     </style>
+
     <style name="ButtonStyleCancle" parent="Widget.AppCompat.Button.Borderless">
         <item name="android:paddingStart">@dimen/dp_20</item>
         <item name="android:paddingEnd">@dimen/dp_20</item>

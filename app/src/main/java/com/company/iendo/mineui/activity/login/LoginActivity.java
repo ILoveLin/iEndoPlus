@@ -15,12 +15,15 @@ import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatCheckBox;
 
 import com.company.iendo.bean.LoginBean;
 import com.company.iendo.bean.UserListBean;
@@ -73,7 +76,6 @@ public final class LoginActivity extends AppActivity
 
     private static final String INTENT_KEY_IN_PHONE = "Admin";
     private static final String INTENT_KEY_IN_PASSWORD = "123";
-    private TitleBar mTitleBar;
     private ImageButton username_right;
     private int mPhoneViewWidth;
 
@@ -112,10 +114,11 @@ public final class LoginActivity extends AppActivity
     };
     private WaitDialog.Builder mWaitDialog;
     private List<UserListBean.DataDTO> mUserListData = new ArrayList<UserListBean.DataDTO>();
-    private Button mSettingView;
+    private TextView mSettingView;
     private TextView mDeviceType;
     private String mBaseUrl;
-    private TextView mStatus;
+    private LinearLayout mTopLogoAnim;
+    private AppCompatCheckBox mCheckbox;
 
     @Log
     public static void start(Context context, String phone, String password) {
@@ -157,16 +160,15 @@ public final class LoginActivity extends AppActivity
         mBodyLayout = findViewById(R.id.ll_login_body);
         mPhoneView = findViewById(R.id.et_login_phone);
         mPasswordView = findViewById(R.id.et_login_password);
-        mStatus = findViewById(R.id.btn_device_status);
         username_right = findViewById(R.id.username_right);
         mCommitView = findViewById(R.id.btn_login_commit);
         mSettingView = findViewById(R.id.btn_login_setting);
         mDeviceType = findViewById(R.id.btn_device_type);
+        mTopLogoAnim = findViewById(R.id.linear_top_logo);
+        mCheckbox = findViewById(R.id.checkbox_remember);
+        boolean checked = mCheckbox.isChecked();
 
-        mTitleBar = findViewById(R.id.mtitlebar);
-
-
-        setOnClickListener(R.id.btn_login_commit, R.id.btn_login_setting);
+        setOnClickListener(R.id.btn_login_commit, R.id.btn_login_setting, R.id.checkbox_remember);
 
         mPasswordView.setOnEditorActionListener(this);
 
@@ -211,12 +213,10 @@ public final class LoginActivity extends AppActivity
                         showComplete();
                         mPasswordView.setText("");
                         mPhoneView.setText("");
-                        mStatus.setText("链接设备失败,请检查网络和设备配置!");
                     }
 
                     @Override
                     public void onResponse(String response, int id) {
-                        mStatus.setText("");
                         if ("" != response) {
                             UserListBean mBean = mGson.fromJson(response, UserListBean.class);
                             if (0 == mBean.getCode()) {  //成功
@@ -282,23 +282,6 @@ public final class LoginActivity extends AppActivity
 
 
         showHistoryDialog();
-
-        mTitleBar.setOnTitleBarListener(new OnTitleBarListener() {
-
-            @Override
-            public void onLeftClick(View view) {
-                finish();
-
-            }
-
-            @Override
-            public void onTitleClick(View view) {
-            }
-
-            @Override
-            public void onRightClick(View view) {
-            }
-        });
 
 
     }
@@ -395,14 +378,12 @@ public final class LoginActivity extends AppActivity
                                 showComplete();
                                 mPasswordView.setText("");
                                 mPhoneView.setText("");
-                                mStatus.setText("链接设备失败,请检查网络和设备配置!");
                             }
 
                             @Override
                             public void onResponse(String response, int id) {
                                 mCommitView.showProgress();
                                 showComplete();
-                                mStatus.setText("");
                                 LogUtils.e("登录===" + response);
                                 if (!"".equals(response)) {
                                     LoginBean mBean = mGson.fromJson(response, LoginBean.class);
@@ -436,6 +417,14 @@ public final class LoginActivity extends AppActivity
 
                             }
                         });
+                break;
+            case R.id.checkbox_remember: //记住密码
+                mCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        toast(isChecked);
+                    }
+                });
                 break;
             case R.id.btn_login_setting:
                 startActivity(DeviceActivity.class);
@@ -612,12 +601,12 @@ public final class LoginActivity extends AppActivity
         objectAnimator.start();
 
         // 执行缩小动画
-        mLogoView.setPivotX(mLogoView.getWidth() / 2f);
-        mLogoView.setPivotY(mLogoView.getHeight());
+        mTopLogoAnim.setPivotX(mTopLogoAnim.getWidth() / 2f);
+        mTopLogoAnim.setPivotY(mTopLogoAnim.getHeight());
         AnimatorSet animatorSet = new AnimatorSet();
-        ObjectAnimator scaleX = ObjectAnimator.ofFloat(mLogoView, "scaleX", 1f, mLogoScale);
-        ObjectAnimator scaleY = ObjectAnimator.ofFloat(mLogoView, "scaleY", 1f, mLogoScale);
-        ObjectAnimator translationY = ObjectAnimator.ofFloat(mLogoView, "translationY", 0f, -mCommitView.getHeight());
+        ObjectAnimator scaleX = ObjectAnimator.ofFloat(mTopLogoAnim, "scaleX", 1f, mLogoScale);
+        ObjectAnimator scaleY = ObjectAnimator.ofFloat(mTopLogoAnim, "scaleY", 1f, mLogoScale);
+        ObjectAnimator translationY = ObjectAnimator.ofFloat(mTopLogoAnim, "translationY", 0f, -mCommitView.getHeight());
         animatorSet.play(translationY).with(scaleX).with(scaleY);
         animatorSet.setDuration(mAnimTime);
         animatorSet.start();
@@ -631,17 +620,17 @@ public final class LoginActivity extends AppActivity
         objectAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
         objectAnimator.start();
 
-        if (mLogoView.getTranslationY() == 0) {
+        if (mTopLogoAnim.getTranslationY() == 0) {
             return;
         }
 
         // 执行放大动画
-        mLogoView.setPivotX(mLogoView.getWidth() / 2f);
-        mLogoView.setPivotY(mLogoView.getHeight());
+        mTopLogoAnim.setPivotX(mTopLogoAnim.getWidth() / 2f);
+        mTopLogoAnim.setPivotY(mTopLogoAnim.getHeight());
         AnimatorSet animatorSet = new AnimatorSet();
-        ObjectAnimator scaleX = ObjectAnimator.ofFloat(mLogoView, "scaleX", mLogoScale, 1f);
-        ObjectAnimator scaleY = ObjectAnimator.ofFloat(mLogoView, "scaleY", mLogoScale, 1f);
-        ObjectAnimator translationY = ObjectAnimator.ofFloat(mLogoView, "translationY", mLogoView.getTranslationY(), 0f);
+        ObjectAnimator scaleX = ObjectAnimator.ofFloat(mTopLogoAnim, "scaleX", mLogoScale, 1f);
+        ObjectAnimator scaleY = ObjectAnimator.ofFloat(mTopLogoAnim, "scaleY", mLogoScale, 1f);
+        ObjectAnimator translationY = ObjectAnimator.ofFloat(mTopLogoAnim, "translationY", mTopLogoAnim.getTranslationY(), 0f);
         animatorSet.play(translationY).with(scaleX).with(scaleY);
         animatorSet.setDuration(mAnimTime);
         animatorSet.start();
