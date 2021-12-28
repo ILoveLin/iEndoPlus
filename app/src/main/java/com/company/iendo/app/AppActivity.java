@@ -107,6 +107,9 @@ public abstract class AppActivity extends BaseActivity
 
 
         mBaseUrl = (String) SharePreferenceUtil.get(AppActivity.this, SharePreferenceUtil.Current_BaseUrl, "111");
+        String  mEndoType = (String) SharePreferenceUtil.get(AppActivity.this, SharePreferenceUtil.Current_EndoType, "耳鼻喉治疗台");
+
+
         // 初始化沉浸式状态栏
         if (isStatusBarEnabled()) {
             getStatusBarConfig().init();

@@ -16,6 +16,7 @@ import com.company.iendo.mineui.activity.casemanage.AddCaseActivity;
 import com.company.iendo.mineui.activity.casemanage.DetailCaseActivity;
 import com.company.iendo.mineui.activity.login.device.DeviceActivity;
 import com.company.iendo.mineui.activity.search.SearchActivity;
+import com.company.iendo.mineui.activity.search.SearchSelectedActivity;
 import com.company.iendo.mineui.fragment.casemanage.adapter.CaseManageAdapter;
 import com.company.iendo.other.HttpConstant;
 import com.company.iendo.ui.dialog.DateDialog;
@@ -90,7 +91,9 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
 
                 break;
             case R.id.ib_right:
-                startActivity(SearchActivity.class);
+
+                startActivity(SearchSelectedActivity.class);
+//                startActivity(SearchActivity.class);
                 break;
         }
     }

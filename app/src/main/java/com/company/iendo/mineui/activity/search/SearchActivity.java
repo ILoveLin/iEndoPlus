@@ -1,5 +1,6 @@
 package com.company.iendo.mineui.activity.search;
 
+import android.content.Intent;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -26,8 +27,12 @@ import com.scwang.smart.refresh.layout.listener.OnRefreshLoadMoreListener;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import okhttp3.Call;
 
@@ -43,6 +48,7 @@ public class SearchActivity extends AppActivity implements StatusAction, BaseAda
     private WrapRecyclerView mRecyclerView;
     private SearchAdapter mAdapter;
     private StatusLayout mStatusLayout;
+    private HashMap parmasMap;
 
     @Override
     protected int getLayoutId() {
@@ -54,6 +60,18 @@ public class SearchActivity extends AppActivity implements StatusAction, BaseAda
         mRefreshLayout = findViewById(R.id.rl_search_refresh);
         mRecyclerView = findViewById(R.id.rv_search_recyclerview);
         mStatusLayout = findViewById(R.id.status_hint);
+
+        Intent intent = getIntent();
+        parmasMap = (HashMap) intent.getSerializableExtra("parmasMap");
+
+        String checkDateStart = (String) parmasMap.get("CheckDateStart");
+        String CheckDateEnd = (String) parmasMap.get("CheckDateEnd");
+        String Married = (String) parmasMap.get("Married");
+
+
+        LogUtils.e("parmasMap=02==参数===" + checkDateStart);
+        LogUtils.e("parmasMap=02==参数===" + CheckDateEnd);
+        LogUtils.e("parmasMap=02==参数===" + Married);
         setOnClickListener(R.id.tv_back);
     }
 
@@ -62,6 +80,7 @@ public class SearchActivity extends AppActivity implements StatusAction, BaseAda
         mAdapter = new SearchAdapter(SearchActivity.this);
         mAdapter.setOnItemClickListener(this);
         mRecyclerView.setAdapter(mAdapter);
+
         mRecyclerView.addItemDecoration(new RecycleViewDivider(this, 1, R.drawable.shape_divideritem_decoration));
         mAdapter.setData(mDataLest);
     }
@@ -75,14 +94,16 @@ public class SearchActivity extends AppActivity implements StatusAction, BaseAda
     private void sendRequest(String systemDate) {
         showLoading();
         OkHttpUtils.get()
-                .url(mBaseUrl+HttpConstant.CaseManager_Search)
-                .addParams("CheckDateStart", "2021-11-03")
-                .addParams("EndoType", "3")////目前默认是3  耳鼻喉治疗台
+                .url(mBaseUrl + HttpConstant.CaseManager_Search)
+                .params(parmasMap)
+//                .addParams("CheckDateStart", "2021-11-03")
+//                .addParams("EndoType", "3")////目前默认是3  耳鼻喉治疗台
                 .build()
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
-                        LogUtils.e("=TAG=hy=onError==" + e.toString());
+                        LogUtils.e("=TAG=sendRequest=onError==" + e.toString());
+
                         showError(listener -> {
                             sendRequest(systemDate);
                         });
@@ -90,6 +111,7 @@ public class SearchActivity extends AppActivity implements StatusAction, BaseAda
 
                     @Override
                     public void onResponse(String response, int id) {
+                        LogUtils.e("=TAG=sendRequest=onResponse==" + response);
                         if ("" != response) {
                             SearchListBean mBean = mGson.fromJson(response, SearchListBean.class);
                             if (0 == mBean.getCode()) {  //成功

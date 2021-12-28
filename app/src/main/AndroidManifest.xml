@@ -83,6 +83,7 @@
             android:name=".mineui.activity.login.DeviceChoiceActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
+
         <!-- 设备添加界面 -->
         <activity
             android:name=".mineui.activity.login.device.DeviceActivity"
@@ -125,6 +126,11 @@
         <!-- 搜索 -->
         <activity
             android:name=".mineui.activity.search.SearchActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <!--搜索条件选择界面-->
+        <activity
+            android:name=".mineui.activity.search.SearchSelectedActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         <!-- 病例添加 -->
