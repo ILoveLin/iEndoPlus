@@ -2,6 +2,7 @@ package com.company.iendo.mineui.fragment.casemanage;
 
 import android.content.Intent;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -43,7 +44,7 @@ import okhttp3.Call;
  * company：江西神州医疗设备有限公司
  * author： LoveLin
  * time：2021/10/29 13:55
- * desc：第3个tab-fragment
+ * desc：病例列表
  */
 public class CaseManageFragment extends TitleBarFragment<MainActivity> implements StatusAction, BaseAdapter.OnItemClickListener, OnRefreshLoadMoreListener {
     private SmartRefreshLayout mRefreshLayout;
@@ -54,6 +55,7 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
     private StatusLayout mStatusLayout;
     private List<CaseManageListBean.DataDTO> mDataLest = new ArrayList<>();
     private String mBaseUrl;
+    private TextView mTitle;
 
     public static CaseManageFragment newInstance() {
         return new CaseManageFragment();
@@ -68,16 +70,21 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
     protected void initView() {
         mRefreshLayout = findViewById(R.id.rl_b_refresh);
         mRecyclerView = findViewById(R.id.rv_b_recyclerview);
+        mTitle = findViewById(R.id.tv_title);
         mStatusLayout = findViewById(R.id.b_hint);
-        setOnClickListener(R.id.ib_right, R.id.ib_left);
+        mTitle.setText(DateUtil.getSystemDate());
+        setOnClickListener(R.id.ib_right, R.id.ib_left, R.id.tv_title);
 
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.tv_title:
+                //选择事件请求列表
+                showDateDialog();
+                break;
             case R.id.ib_left:
-//                showDateDialog();
                 //跳转病例添加界面
                 startActivity(AddCaseActivity.class);
 
@@ -124,7 +131,7 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
                         mChoiceDate = new SimpleDateFormat("yyyy年MM月dd日").format(calendar.getTime());
                         LogUtils.e("TTTTT" + mChoiceDate);
                         toast("时间：" + mChoiceDate);
-
+                        mTitle.setText(mChoiceDate+"");
                         sendRequest(mChoiceDate);
 
                     }
@@ -141,9 +148,9 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
     private void sendRequest(String mChoiceDate) {
         showLoading();
         OkHttpUtils.get()
-                .url(mBaseUrl+HttpConstant.CaseManager_List)
+                .url(mBaseUrl + HttpConstant.CaseManager_List)
                 .addParams("datetime", mChoiceDate)
-                .addParams("EndoType","3")  //目前默认是3  耳鼻喉治疗台
+                .addParams("EndoType", "3")  //目前默认是3  耳鼻喉治疗台
                 .build()
                 .execute(new StringCallback() {
                     @Override
@@ -157,7 +164,7 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
                     @Override
                     public void onResponse(String response, int id) {
                         try {
-                            if (""!=response){
+                            if ("" != response) {
                                 CaseManageListBean mBean = mGson.fromJson(response, CaseManageListBean.class);
                                 LogUtils.e("=TAG=hy=onError==Code===" + mBean.getCode());
                                 LogUtils.e("=TAG=hy=onError==size===" + mBean.getData().size());
@@ -178,17 +185,15 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
                                         sendRequest(mChoiceDate);
                                     });
                                 }
-                            }else{
+                            } else {
                                 showError(listener -> {
                                     sendRequest(mChoiceDate);
                                 });
                             }
-                        }catch (Exception e){
-                            LogUtils.e("=TAG=hy=Exception==size===" +e.toString());
+                        } catch (Exception e) {
+                            LogUtils.e("=TAG=hy=Exception==size===" + e.toString());
 
                         }
-
-
 
 
                     }
@@ -207,16 +212,13 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
     @Override
     public void onItemClick(RecyclerView recyclerView, View itemView, int position) {
         CaseManageListBean.DataDTO item = mAdapter.getItem(position);
-        toast("创建时间："+item.getName());
+        toast("创建时间：" + item.getName());
         Intent intent = new Intent(getActivity(), DetailCaseActivity.class);
-        ((MainActivity)getActivity()).setCurrentItemID(item.getID()+"");
-        LogUtils.e("item.getID()" + item.getID()+"");
+        ((MainActivity) getActivity()).setCurrentItemID(item.getID() + "");
+        LogUtils.e("item.getID()" + item.getID() + "");
 
         startActivity(intent);
     }
-
-
-
 
 
     /**
