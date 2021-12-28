@@ -7,48 +7,53 @@
     android:background="@color/white"
     android:orientation="vertical">
 
-    <LinearLayout
-        android:id="@+id/linear_sheare"
+<!--    <LinearLayout-->
+<!--        android:id="@+id/linear_sheare"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="@dimen/dp_49"-->
+<!--        android:layout_marginTop="@dimen/dp_10"-->
+<!--        android:gravity="center_vertical"-->
+<!--        android:orientation="horizontal"-->
+<!--        android:transitionName="anim_search">-->
+
+<!--        <TextView-->
+<!--            android:id="@+id/tv_back"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:background="@drawable/arrows_left_ic"-->
+<!--            android:paddingLeft="@dimen/dp_10" />-->
+
+<!--        <com.hjq.widget.view.ClearEditText-->
+<!--            android:id="@+id/cet_user_search"-->
+<!--            style="@style/EditTextStyle"-->
+<!--            android:layout_width="0px"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginLeft="@dimen/dp_10"-->
+<!--            android:layout_marginRight="@dimen/dp_10"-->
+<!--            android:layout_weight="1"-->
+<!--            android:background="@drawable/home_search_bar_transparent_bg"-->
+<!--            android:hint="搜索..."-->
+<!--            android:singleLine="true" />-->
+
+<!--        <androidx.appcompat.widget.AppCompatImageView-->
+<!--            android:id="@+id/iv_user_search"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:layout_marginEnd="@dimen/dp_10"-->
+<!--            android:padding="@dimen/dp_10"-->
+<!--            app:srcCompat="@drawable/search_ic" />-->
+
+<!--    </LinearLayout>-->
+
+<!--    <View-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="0.5dp"-->
+<!--        android:background="@color/common_line_color" />-->
+
+    <com.hjq.bar.TitleBar
         android:layout_width="match_parent"
-        android:layout_height="@dimen/dp_49"
-        android:layout_marginTop="@dimen/dp_10"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:transitionName="anim_search">
-
-        <TextView
-            android:id="@+id/tv_back"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/arrows_left_ic"
-            android:paddingLeft="@dimen/dp_10" />
-
-        <com.hjq.widget.view.ClearEditText
-            android:id="@+id/cet_user_search"
-            style="@style/EditTextStyle"
-            android:layout_width="0px"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/dp_10"
-            android:layout_marginRight="@dimen/dp_10"
-            android:layout_weight="1"
-            android:background="@drawable/home_search_bar_transparent_bg"
-            android:hint="搜索..."
-            android:singleLine="true" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/iv_user_search"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginEnd="@dimen/dp_10"
-            android:padding="@dimen/dp_10"
-            app:srcCompat="@drawable/search_ic" />
-
-    </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-        android:background="@color/common_line_color" />
+        android:layout_height="wrap_content"
+        app:title="搜索结果" />
 
     <com.company.iendo.widget.StatusLayout
         android:id="@+id/status_hint"

@@ -72,7 +72,7 @@ public class SearchActivity extends AppActivity implements StatusAction, BaseAda
         LogUtils.e("parmasMap=02==参数===" + checkDateStart);
         LogUtils.e("parmasMap=02==参数===" + CheckDateEnd);
         LogUtils.e("parmasMap=02==参数===" + Married);
-        setOnClickListener(R.id.tv_back);
+//        setOnClickListener(R.id.tv_back);
     }
 
     @Override
@@ -137,14 +137,14 @@ public class SearchActivity extends AppActivity implements StatusAction, BaseAda
                 });
     }
 
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.tv_back:
-                ActivityManager.getInstance().finishActivity(SearchActivity.class);
-                break;
-        }
-    }
+//    @Override
+//    public void onClick(View view) {
+//        switch (view.getId()) {
+//            case R.id.tv_back:
+//                ActivityManager.getInstance().finishActivity(SearchActivity.class);
+//                break;
+//        }
+//    }
 
 
     /**
