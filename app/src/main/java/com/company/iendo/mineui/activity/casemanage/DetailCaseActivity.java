@@ -107,7 +107,6 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
     @Override
     protected void initData() {
         String currentItemID = MainActivity.getCurrentItemID();
-        toast("id~======" + currentItemID);
         mTabAdapter.addItem("详情");
         mTabAdapter.addItem("图片");
         mTabAdapter.addItem("视频");

@@ -261,8 +261,7 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                     username_right.setImageResource(R.drawable.login_icon_down);
                 }
                 historyBuilder = new ListPopup.Builder(LoginActivity.this);
-                historyBuilder
-                        .setList(getListData())
+                historyBuilder.setList(getListData())
                         .setGravity(Gravity.CENTER)
                         .setAutoDismiss(true)
                         .setOutsideTouchable(false)

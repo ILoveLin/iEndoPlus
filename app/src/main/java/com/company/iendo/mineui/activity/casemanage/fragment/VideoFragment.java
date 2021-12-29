@@ -8,14 +8,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.company.iendo.R;
 import com.company.iendo.action.StatusAction;
 import com.company.iendo.app.TitleBarFragment;
-import com.company.iendo.bean.DetailPictureBean;
 import com.company.iendo.bean.DetailVideoBean;
 import com.company.iendo.mineui.activity.MainActivity;
-import com.company.iendo.mineui.activity.casemanage.fragment.adapter.PictureAdapter;
 import com.company.iendo.mineui.activity.casemanage.fragment.adapter.VideoAdapter;
 import com.company.iendo.other.HttpConstant;
 import com.company.iendo.utils.SharePreferenceUtil;
-import com.company.iendo.widget.RecycleViewDivider;
+import com.company.iendo.widget.MyItemDecoration;
 import com.company.iendo.widget.StatusLayout;
 import com.hjq.base.BaseAdapter;
 import com.hjq.widget.layout.WrapRecyclerView;
@@ -64,7 +62,7 @@ public class VideoFragment extends TitleBarFragment<MainActivity> implements Sta
 
         mAdapter.setOnItemClickListener(this);
         mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.addItemDecoration(new RecycleViewDivider(getActivity(), 1, R.drawable.shape_divideritem_decoration));
+        mRecyclerView.addItemDecoration(new MyItemDecoration(getActivity(), 1, R.drawable.shape_divideritem_decoration));
         mAdapter.setData(mDataLest);
         sendRequest(MainActivity.getCurrentItemID());
     }

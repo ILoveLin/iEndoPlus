@@ -10,7 +10,7 @@ import android.view.View;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class RecycleViewDivider extends RecyclerView.ItemDecoration {
+public class MyItemDecoration extends RecyclerView.ItemDecoration {
     private Drawable mDivider;
     private int mDividerHeight = 1;//分割线高度，默认为1px
     private static final int[] ATTRS = new int[]{android.R.attr.listDivider};
@@ -22,7 +22,7 @@ public class RecycleViewDivider extends RecyclerView.ItemDecoration {
      * @param dividerHeight 分割线高度
      * @param drawableId    分割线颜色
      */
-    public RecycleViewDivider(Context context, int dividerHeight, int drawableId) {
+    public MyItemDecoration(Context context, int dividerHeight, int drawableId) {
         final TypedArray a = context.obtainStyledAttributes(ATTRS);
         mDivider = a.getDrawable(0);
         a.recycle();

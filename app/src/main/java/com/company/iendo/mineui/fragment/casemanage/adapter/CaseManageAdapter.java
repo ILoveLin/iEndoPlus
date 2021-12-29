@@ -30,17 +30,23 @@ public class CaseManageAdapter extends AppAdapter<CaseManageListBean.DataDTO> {
 
     private final class ViewHolder extends AppAdapter<?>.ViewHolder {
 
-        private final TextView mTextView;
+        private final TextView mName, mAge, mNum, mCheckDate;
 
         private ViewHolder() {
             super(R.layout.item_case_list);
-            mTextView = findViewById(R.id.tv_status_text);
+            mName = findViewById(R.id.tv_case_name);
+            mAge = findViewById(R.id.tv_case_age);
+            mNum = findViewById(R.id.tv_case_num);
+            mCheckDate = findViewById(R.id.tv_check_date);
         }
 
         @Override
         public void onBindView(int position) {
             CaseManageListBean.DataDTO item = getItem(position);
-            mTextView.setText("ID:"+item.getID());
+            mName.setText(item.getName());
+            mAge.setText(item.getPatientAge() + item.getAgeUnit());
+            mNum.setText("病例编号: " + item.getCaseNo());
+            mCheckDate.setText(item.getCheck_date());
         }
     }
 }

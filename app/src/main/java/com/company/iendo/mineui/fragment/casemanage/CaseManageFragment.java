@@ -23,6 +23,7 @@ import com.company.iendo.ui.dialog.DateDialog;
 import com.company.iendo.utils.DateUtil;
 import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.SharePreferenceUtil;
+import com.company.iendo.widget.MyItemDecoration;
 import com.company.iendo.widget.StatusLayout;
 import com.gyf.immersionbar.ImmersionBar;
 import com.hjq.base.BaseAdapter;
@@ -104,6 +105,8 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
         mAdapter.setOnItemClickListener(this);
         mAdapter.setData(mDataLest);
         mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.addItemDecoration(new MyItemDecoration(getActivity(), 1, R.drawable.shape_divideritem_decoration));
+
 
     }
 
@@ -131,10 +134,12 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
                         // 月份从零开始，所以需要减 1
                         calendar.set(Calendar.MONTH, month - 1);
                         calendar.set(Calendar.DAY_OF_MONTH, day);
-                        mChoiceDate = new SimpleDateFormat("yyyy年MM月dd日").format(calendar.getTime());
+                        String mDate = new SimpleDateFormat("yyyy年MM月dd日").format(calendar.getTime());
+                        String mChoiceDate = mDate.replace("年", "-").replace("月", "-").replace("日", "");
+
                         LogUtils.e("TTTTT" + mChoiceDate);
-                        toast("时间：" + mChoiceDate);
-                        mTitle.setText(mChoiceDate+"");
+//                        toast("时间：" + mChoiceDate);
+                        mTitle.setText(mChoiceDate + "");
                         sendRequest(mChoiceDate);
 
                     }
@@ -215,7 +220,6 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
     @Override
     public void onItemClick(RecyclerView recyclerView, View itemView, int position) {
         CaseManageListBean.DataDTO item = mAdapter.getItem(position);
-        toast("创建时间：" + item.getName());
         Intent intent = new Intent(getActivity(), DetailCaseActivity.class);
         ((MainActivity) getActivity()).setCurrentItemID(item.getID() + "");
         LogUtils.e("item.getID()" + item.getID() + "");

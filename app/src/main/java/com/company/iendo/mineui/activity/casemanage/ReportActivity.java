@@ -25,7 +25,7 @@ public class ReportActivity extends AppActivity {
         Bundle bundle = getIntent().getExtras();
         int a = bundle.getInt("A");
         String b = bundle.getString("B");
-        toast("报告界面~======" + a);
+        toast("Socket通讯模块暂未开发" + a);
 
     }
 

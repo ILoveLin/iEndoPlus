@@ -159,7 +159,6 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
     @Override
     public void onEditStatus(boolean status) {
         this.mEditStatus = status;
-        toast(status);
         setEditStatus();
     }
 
@@ -201,7 +200,6 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                         }
 
 
-                        toast(data.toString());
                     }
                 }).show();
 
@@ -300,7 +298,6 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                         LogUtils.e("删除用户===" + response);
                         if ("" != response) {
                             DeleteBean mBean = mGson.fromJson(response, DeleteBean.class);
-                            toast(mBean.getMsg());
                             if (0 == mBean.getCode()) {  //成功
                                 showComplete();
                                 mActivity.finish();

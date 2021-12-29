@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.company.iendo.widget.MyItemDecoration;
 import com.hjq.base.BaseAdapter;
 import com.hjq.base.BasePopupWindow;
 import com.hjq.base.action.AnimAction;
@@ -45,16 +46,15 @@ public final class ListPopup {
             super(context);
 
             RecyclerView recyclerView = new RecyclerView(context);
-            recyclerView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            recyclerView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
             setContentView(recyclerView);
-
             mAdapter = new MenuAdapter(getContext());
             mAdapter.setOnItemClickListener(this);
             recyclerView.setAdapter(mAdapter);
-
+            recyclerView.addItemDecoration(new MyItemDecoration(context, 1, R.drawable.shape_divideritem_decoration));
             new ArrowDrawable.Builder(context)
                     .setArrowOrientation(Gravity.TOP)
-                    .setArrowGravity(Gravity.CENTER)
+                    .setArrowGravity(Gravity.RIGHT)
                     .setShadowSize((int) getResources().getDimension(R.dimen.dp_10))
                     .setBackgroundColor(0xFFFFFFFF)
                     .apply(recyclerView);

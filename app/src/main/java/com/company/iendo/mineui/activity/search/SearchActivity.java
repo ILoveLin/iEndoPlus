@@ -9,14 +9,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.company.iendo.R;
 import com.company.iendo.action.StatusAction;
 import com.company.iendo.app.AppActivity;
-import com.company.iendo.bean.CaseManageListBean;
 import com.company.iendo.bean.SearchListBean;
-import com.company.iendo.manager.ActivityManager;
 import com.company.iendo.mineui.activity.search.adapter.SearchAdapter;
 import com.company.iendo.other.HttpConstant;
 import com.company.iendo.utils.DateUtil;
 import com.company.iendo.utils.LogUtils;
-import com.company.iendo.widget.RecycleViewDivider;
+import com.company.iendo.widget.MyItemDecoration;
 import com.company.iendo.widget.StatusLayout;
 import com.gyf.immersionbar.ImmersionBar;
 import com.hjq.base.BaseAdapter;
@@ -27,12 +25,9 @@ import com.scwang.smart.refresh.layout.listener.OnRefreshLoadMoreListener;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import okhttp3.Call;
 
@@ -81,7 +76,7 @@ public class SearchActivity extends AppActivity implements StatusAction, BaseAda
         mAdapter.setOnItemClickListener(this);
         mRecyclerView.setAdapter(mAdapter);
 
-        mRecyclerView.addItemDecoration(new RecycleViewDivider(this, 1, R.drawable.shape_divideritem_decoration));
+        mRecyclerView.addItemDecoration(new MyItemDecoration(this, 1, R.drawable.shape_divideritem_decoration));
         mAdapter.setData(mDataLest);
     }
 
