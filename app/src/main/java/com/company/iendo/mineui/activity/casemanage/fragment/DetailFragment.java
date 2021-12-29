@@ -45,7 +45,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 
     private AppCompatTextView mTV;
     private StatusLayout mStatusLayout;
-    private ClearEditText mEdit;
+
     private Boolean mEditStatus = false;
     private DetailCaseActivity mActivity;
     private CaseDetailBean mBean;
@@ -62,8 +62,6 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 
     @Override
     protected void initView() {
-        mTV = findViewById(R.id.detail_text);
-        mEdit = findViewById(R.id.clearedit);
         mStatusLayout = findViewById(R.id.detail_hint);
 
         mBaseUrl = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_BaseUrl, "111");
@@ -116,9 +114,12 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 
     }
 
+    /**
+     * 设置数据
+     * @param mBean
+     */
     private void setLayoutData(CaseDetailBean mBean) {
         CaseDetailBean.DataDTO data = mBean.getData();
-        mTV.setText("全部的数据:" + data.toString());
 
     }
 
@@ -139,16 +140,16 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
     }
 
     private void setEditStatus() {
-        if (mEditStatus) {
-            //设置可编辑状态
-            mEdit.setFocusableInTouchMode(true);
-            mEdit.setFocusable(true);
-            mEdit.requestFocus();
-        } else {
-            //设置不可编辑状态
-            mEdit.setFocusable(false);
-            mEdit.setFocusableInTouchMode(false);
-        }
+//        if (mEditStatus) {
+//            //设置可编辑状态
+//            mEdit.setFocusableInTouchMode(true);
+//            mEdit.setFocusable(true);
+//            mEdit.requestFocus();
+//        } else {
+//            //设置不可编辑状态
+//            mEdit.setFocusable(false);
+//            mEdit.setFocusableInTouchMode(false);
+//        }
     }
 
     /**

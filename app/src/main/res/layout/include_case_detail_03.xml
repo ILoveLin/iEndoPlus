@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/dp_10"
+    android:layout_marginBottom="@dimen/dp_10"
+    android:orientation="vertical">
+
+
+    <!--其他-->
+    <TextView
+        android:layout_width="@dimen/dp_100"
+        android:layout_height="@dimen/dp_50"
+        android:background="@color/black30"
+        android:gravity="center"
+        android:text="其他"
+        android:textColor="@color/black"
+        android:textSize="@dimen/sp_16" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_10"
+        android:layout_marginBottom="@dimen/dp_10"
+        android:orientation="vertical">
+        <!--01=门诊号-->
+        <TextView
+            style="@style/CaseTextViewStyle"
+            android:text="门诊号" />
+
+        <com.hjq.widget.view.ClearEditText
+            android:id="@+id/et_03_door_num"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_35"
+            android:layout_marginTop="@dimen/dp_10"
+            android:background="@drawable/shape_bg_case_detail"
+            android:hint=""
+            android:lines="1"
+            android:paddingLeft="@dimen/dp_10"
+            android:paddingRight="@dimen/dp_10"
+            android:singleLine="true"
+            android:text=""
+            android:textColor="@color/black80"
+            android:textColorHint="@color/black20"
+            android:textSize="@dimen/sp_14" />
+        <!--02=医保号-->
+        <TextView
+            style="@style/CaseTextViewStyle"
+            android:text="医保号" />
+
+        <com.hjq.widget.view.ClearEditText
+            android:id="@+id/et_03_protection_num"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_35"
+            android:layout_marginTop="@dimen/dp_10"
+            android:background="@drawable/shape_bg_case_detail"
+            android:hint=""
+            android:lines="1"
+            android:paddingLeft="@dimen/dp_10"
+            android:paddingRight="@dimen/dp_10"
+            android:singleLine="true"
+            android:text=""
+            android:textColor="@color/black80"
+            android:textColorHint="@color/black20"
+            android:textSize="@dimen/sp_14" />
+        <!--03=科室-->
+        <TextView
+            style="@style/CaseTextViewStyle"
+            android:text="科室" />
+
+        <com.hjq.widget.view.ClearEditText
+            android:id="@+id/et_03_section"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_35"
+            android:layout_marginTop="@dimen/dp_10"
+            android:background="@drawable/shape_bg_case_detail"
+            android:hint=""
+            android:lines="1"
+            android:focusable="false"
+            android:paddingLeft="@dimen/dp_10"
+            android:paddingRight="@dimen/dp_10"
+            android:singleLine="true"
+            android:text=""
+            android:textColor="@color/black80"
+            android:textColorHint="@color/black20"
+            android:textSize="@dimen/sp_14" />
+        <!--04=设备-->
+        <TextView
+            style="@style/CaseTextViewStyle"
+            android:text="设备" />
+
+        <com.hjq.widget.view.ClearEditText
+            android:id="@+id/et_03_device"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_35"
+            android:layout_marginTop="@dimen/dp_10"
+            android:background="@drawable/shape_bg_case_detail"
+            android:hint=""
+            android:lines="1"
+            android:paddingLeft="@dimen/dp_10"
+            android:paddingRight="@dimen/dp_10"
+            android:singleLine="true"
+            android:focusable="false"
+            android:text=""
+            android:textColor="@color/black80"
+            android:textColorHint="@color/black20"
+            android:textSize="@dimen/sp_14" />
+        <!--05=病例号-->
+        <TextView
+            style="@style/CaseTextViewStyle"
+            android:text="病例号" />
+
+        <com.hjq.widget.view.ClearEditText
+            android:id="@+id/et_03_case_num"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_35"
+            android:layout_marginTop="@dimen/dp_10"
+            android:background="@drawable/shape_bg_case_detail"
+            android:hint=""
+            android:lines="1"
+            android:paddingLeft="@dimen/dp_10"
+            android:paddingRight="@dimen/dp_10"
+            android:singleLine="true"
+            android:text=""
+            android:textColor="@color/black80"
+            android:textColorHint="@color/black20"
+            android:textSize="@dimen/sp_14" />
+        <!--06=住院号-->
+        <TextView
+            style="@style/CaseTextViewStyle"
+            android:text="住院号" />
+
+        <com.hjq.widget.view.ClearEditText
+            android:id="@+id/et_03_in_hospital_num"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_35"
+            android:layout_marginTop="@dimen/dp_10"
+            android:background="@drawable/shape_bg_case_detail"
+            android:hint=""
+            android:lines="1"
+            android:paddingLeft="@dimen/dp_10"
+            android:paddingRight="@dimen/dp_10"
+            android:singleLine="true"
+            android:text=""
+            android:textColor="@color/black80"
+            android:textColorHint="@color/black20"
+            android:textSize="@dimen/sp_14" />
+        <!--07=病区号-->
+        <TextView
+            style="@style/CaseTextViewStyle"
+            android:text="病区号" />
+
+        <com.hjq.widget.view.ClearEditText
+            android:id="@+id/et_03_case_area_num"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_35"
+            android:layout_marginTop="@dimen/dp_10"
+            android:background="@drawable/shape_bg_case_detail"
+            android:hint=""
+            android:lines="1"
+            android:paddingLeft="@dimen/dp_10"
+            android:paddingRight="@dimen/dp_10"
+            android:singleLine="true"
+            android:text=""
+            android:textColor="@color/black80"
+            android:textColorHint="@color/black20"
+            android:textSize="@dimen/sp_14" />
+        <!--07.5=病床号-->
+        <TextView
+            style="@style/CaseTextViewStyle"
+            android:text="病床号" />
+
+        <com.hjq.widget.view.ClearEditText
+            android:id="@+id/et_03_case_bed_num"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_35"
+            android:layout_marginTop="@dimen/dp_10"
+            android:background="@drawable/shape_bg_case_detail"
+            android:hint=""
+            android:lines="1"
+            android:paddingLeft="@dimen/dp_10"
+            android:paddingRight="@dimen/dp_10"
+            android:singleLine="true"
+            android:text=""
+            android:textColor="@color/black80"
+            android:textColorHint="@color/black20"
+            android:textSize="@dimen/sp_14" />
+        <!--08=籍贯-->
+        <TextView
+            style="@style/CaseTextViewStyle"
+            android:text="籍贯" />
+
+        <com.hjq.widget.view.ClearEditText
+            android:id="@+id/et_03_native_place"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_35"
+            android:layout_marginTop="@dimen/dp_10"
+            android:background="@drawable/shape_bg_case_detail"
+            android:hint=""
+            android:lines="1"
+            android:paddingLeft="@dimen/dp_10"
+            android:paddingRight="@dimen/dp_10"
+            android:singleLine="true"
+            android:text=""
+            android:textColor="@color/black80"
+            android:textColorHint="@color/black20"
+            android:textSize="@dimen/sp_14" />
+        <!--09=民族-->
+        <TextView
+            style="@style/CaseTextViewStyle"
+            android:text="民族" />
+
+        <com.hjq.widget.view.ClearEditText
+            android:id="@+id/et_03_ming_zu"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_35"
+            android:layout_marginTop="@dimen/dp_10"
+            android:background="@drawable/shape_bg_case_detail"
+            android:hint=""
+            android:lines="1"
+            android:paddingLeft="@dimen/dp_10"
+            android:paddingRight="@dimen/dp_10"
+            android:singleLine="true"
+            android:text=""
+            android:focusable="false"
+            android:textColor="@color/black80"
+            android:textColorHint="@color/black20"
+            android:textSize="@dimen/sp_14" />
+        <!--10=婚否-->
+        <TextView
+            style="@style/CaseTextViewStyle"
+            android:text="婚否" />
+
+        <com.hjq.widget.view.ClearEditText
+            android:id="@+id/et_03_is_married"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_35"
+            android:layout_marginTop="@dimen/dp_10"
+            android:background="@drawable/shape_bg_case_detail"
+            android:hint=""
+            android:lines="1"
+            android:focusable="false"
+            android:paddingLeft="@dimen/dp_10"
+            android:paddingRight="@dimen/dp_10"
+            android:singleLine="true"
+            android:text=""
+            android:textColor="@color/black80"
+            android:textColorHint="@color/black20"
+            android:textSize="@dimen/sp_14" />
+        <!--12=电话-->
+        <TextView
+            style="@style/CaseTextViewStyle"
+            android:text="电话" />
+
+        <com.hjq.widget.view.ClearEditText
+            android:id="@+id/et_03_tel"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_35"
+            android:layout_marginTop="@dimen/dp_10"
+            android:background="@drawable/shape_bg_case_detail"
+            android:hint=""
+            android:lines="1"
+            android:paddingLeft="@dimen/dp_10"
+            android:paddingRight="@dimen/dp_10"
+            android:singleLine="true"
+            android:text=""
+            android:textColor="@color/black80"
+            android:textColorHint="@color/black20"
+            android:textSize="@dimen/sp_14" />
+        <!--13=住址-->
+        <TextView
+            style="@style/CaseTextViewStyle"
+            android:text="住址" />
+
+        <com.hjq.widget.view.ClearEditText
+            android:id="@+id/et_03_address"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_35"
+            android:layout_marginTop="@dimen/dp_10"
+            android:background="@drawable/shape_bg_case_detail"
+            android:hint=""
+            android:lines="1"
+            android:paddingLeft="@dimen/dp_10"
+            android:paddingRight="@dimen/dp_10"
+            android:singleLine="true"
+            android:text=""
+            android:textColor="@color/black80"
+            android:textColorHint="@color/black20"
+            android:textSize="@dimen/sp_14" />
+        <!--14=身份证-->
+        <TextView
+            style="@style/CaseTextViewStyle"
+            android:text="身份证" />
+
+        <com.hjq.widget.view.ClearEditText
+            android:id="@+id/et_03_my_id_num"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_35"
+            android:layout_marginTop="@dimen/dp_10"
+            android:background="@drawable/shape_bg_case_detail"
+            android:hint=""
+            android:lines="1"
+            android:paddingLeft="@dimen/dp_10"
+            android:paddingRight="@dimen/dp_10"
+            android:singleLine="true"
+            android:text=""
+            android:textColor="@color/black80"
+            android:textColorHint="@color/black20"
+            android:textSize="@dimen/sp_14" />
+        <!--15=病史-->
+        <TextView
+            style="@style/CaseTextViewStyle"
+            android:text="病史" />
+
+        <com.hjq.widget.view.ClearEditText
+            android:id="@+id/et_03_case_history"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_10"
+            android:background="@drawable/shape_bg_case_detail"
+            android:hint=""
+            android:lines="1"
+            android:paddingLeft="@dimen/dp_10"
+            android:paddingRight="@dimen/dp_10"
+            android:singleLine="true"
+            android:text=""
+            android:textColor="@color/black80"
+            android:textColorHint="@color/black20"
+            android:textSize="@dimen/sp_14" />
+        <!--16=家族病史-->
+        <TextView
+            style="@style/CaseTextViewStyle"
+            android:text="家族病史" />
+
+        <com.hjq.widget.view.ClearEditText
+            android:id="@+id/et_03_family_case_history"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_10"
+            android:background="@drawable/shape_bg_case_detail"
+            android:hint=""
+            android:lines="1"
+            android:paddingLeft="@dimen/dp_10"
+            android:paddingRight="@dimen/dp_10"
+            android:singleLine="true"
+            android:text=""
+            android:textColor="@color/black80"
+            android:textColorHint="@color/black20"
+            android:textSize="@dimen/sp_14" />
+
+    </LinearLayout>
+
+</LinearLayout>

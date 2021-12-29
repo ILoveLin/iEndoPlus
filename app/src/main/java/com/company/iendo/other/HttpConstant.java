@@ -45,12 +45,18 @@ public class HttpConstant {
      */
     public static final String CaseManager_ListCaseDicts = "/case/listDicts";
 
+    /**
+     * 1.4 病例数据字典
+     * post
+     */
+    public static final String CaseManager_CaseDialogDate = "/case/listDicts";
 
     /**
      * 1.5添加病例的
      * post
      */
     public static final String CaseManager_AddCase = "/case/add";
+
 
     /**
      * 1.6修改病例的

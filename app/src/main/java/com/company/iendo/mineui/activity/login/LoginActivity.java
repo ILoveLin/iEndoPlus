@@ -262,7 +262,7 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                 }
                 historyBuilder = new ListPopup.Builder(LoginActivity.this);
                 historyBuilder.setList(getListData())
-                        .setGravity(Gravity.CENTER)
+                        .setGravity(Gravity.CENTER_VERTICAL)
                         .setAutoDismiss(true)
                         .setOutsideTouchable(false)
                         .setWidth(mPhoneViewWidth + 60)

@@ -46,7 +46,7 @@ public final class ListPopup {
             super(context);
 
             RecyclerView recyclerView = new RecyclerView(context);
-            recyclerView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            recyclerView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
             setContentView(recyclerView);
             mAdapter = new MenuAdapter(getContext());
             mAdapter.setOnItemClickListener(this);

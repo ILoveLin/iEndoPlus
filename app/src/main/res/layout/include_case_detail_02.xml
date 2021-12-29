@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_marginTop="@dimen/dp_10"
+    android:layout_marginBottom="@dimen/dp_10"
+    android:orientation="vertical"
+    android:layout_height="wrap_content">
+
+    <!--镜检-->
+    <TextView
+        android:layout_width="@dimen/dp_100"
+        android:layout_height="@dimen/dp_50"
+        android:background="@color/black30"
+        android:gravity="center"
+        android:text="镜检"
+        android:textColor="@color/black"
+        android:textSize="@dimen/sp_16" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_10"
+        android:layout_marginBottom="@dimen/dp_10"
+        android:orientation="vertical">
+
+        <!--01=镜检所见-->
+        <TextView
+            style="@style/CaseTextViewStyle"
+            android:text="镜检所见" />
+
+        <com.hjq.widget.view.ClearEditText
+            android:id="@+id/et_02_mirror_see"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_10"
+            android:background="@drawable/shape_bg_case_detail"
+            android:hint=""
+            android:lines="1"
+            android:focusable="false"
+            android:paddingLeft="@dimen/dp_10"
+            android:paddingRight="@dimen/dp_10"
+            android:singleLine="true"
+            android:text=""
+            android:textColor="@color/black80"
+            android:textColorHint="@color/black20"
+            android:textSize="@dimen/sp_14" />
+
+        <!--02=镜检诊断-->
+        <TextView
+            style="@style/CaseTextViewStyle"
+            android:text="镜检诊断" />
+
+        <com.hjq.widget.view.ClearEditText
+            android:id="@+id/et_02_mirror_result"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_10"
+            android:background="@drawable/shape_bg_case_detail"
+            android:hint=""
+            android:lines="1"
+            android:focusable="false"
+            android:paddingLeft="@dimen/dp_10"
+            android:paddingRight="@dimen/dp_10"
+            android:singleLine="true"
+            android:text=""
+            android:textColor="@color/black80"
+            android:textColorHint="@color/black20"
+            android:textSize="@dimen/sp_14" />
+        <!--03=活检-->
+        <TextView
+            style="@style/CaseTextViewStyle"
+            android:text="活检" />
+
+        <com.hjq.widget.view.ClearEditText
+            android:id="@+id/et_02_live_check"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_35"
+            android:layout_marginTop="@dimen/dp_10"
+            android:background="@drawable/shape_bg_case_detail"
+            android:hint=""
+            android:lines="1"
+            android:focusable="false"
+            android:paddingLeft="@dimen/dp_10"
+            android:paddingRight="@dimen/dp_10"
+            android:singleLine="true"
+            android:text=""
+            android:textColor="@color/black80"
+            android:textColorHint="@color/black20"
+            android:textSize="@dimen/sp_14" />
+        <!--04=细胞学-->
+        <TextView
+            style="@style/CaseTextViewStyle"
+            android:text="细胞学" />
+
+        <com.hjq.widget.view.ClearEditText
+            android:id="@+id/et_02_cytology"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_35"
+            android:layout_marginTop="@dimen/dp_10"
+            android:background="@drawable/shape_bg_case_detail"
+            android:hint=""
+            android:lines="1"
+            android:paddingLeft="@dimen/dp_10"
+            android:paddingRight="@dimen/dp_10"
+            android:singleLine="true"
+            android:text=""
+            android:focusable="false"
+            android:textColor="@color/black80"
+            android:textColorHint="@color/black20"
+            android:textSize="@dimen/sp_14" />
+        <!--05=试验-->
+        <TextView
+            style="@style/CaseTextViewStyle"
+            android:text="试验" />
+
+        <com.hjq.widget.view.ClearEditText
+            android:id="@+id/et_02_test"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_35"
+            android:layout_marginTop="@dimen/dp_10"
+            android:background="@drawable/shape_bg_case_detail"
+            android:hint=""
+            android:lines="1"
+            android:paddingLeft="@dimen/dp_10"
+            android:paddingRight="@dimen/dp_10"
+            android:singleLine="true"
+            android:text=""
+            android:focusable="false"
+            android:textColor="@color/black80"
+            android:textColorHint="@color/black20"
+            android:textSize="@dimen/sp_14" />
+        <!--06=病理学-->
+        <TextView
+            style="@style/CaseTextViewStyle"
+            android:text="病理学" />
+
+        <com.hjq.widget.view.ClearEditText
+            android:id="@+id/et_02_pathology"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_35"
+            android:layout_marginTop="@dimen/dp_10"
+            android:background="@drawable/shape_bg_case_detail"
+            android:hint=""
+            android:lines="1"
+            android:paddingLeft="@dimen/dp_10"
+            android:paddingRight="@dimen/dp_10"
+            android:singleLine="true"
+            android:text=""
+            android:focusable="false"
+            android:textColor="@color/black80"
+            android:textColorHint="@color/black20"
+            android:textSize="@dimen/sp_14" />
+        <!--07=建议-->
+        <TextView
+            style="@style/CaseTextViewStyle"
+            android:text="建议" />
+
+        <com.hjq.widget.view.ClearEditText
+            android:id="@+id/et_02_advice"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_35"
+            android:layout_marginTop="@dimen/dp_10"
+            android:background="@drawable/shape_bg_case_detail"
+            android:hint=""
+            android:lines="1"
+            android:paddingLeft="@dimen/dp_10"
+            android:paddingRight="@dimen/dp_10"
+            android:singleLine="true"
+            android:text=""
+            android:focusable="false"
+            android:textColor="@color/black80"
+            android:textColorHint="@color/black20"
+            android:textSize="@dimen/sp_14" />
+        <!--08=检查医生-->
+        <TextView
+            style="@style/CaseTextViewStyle"
+            android:text="检查医生" />
+
+        <com.hjq.widget.view.ClearEditText
+            android:id="@+id/et_02_check_doctor"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_35"
+            android:layout_marginTop="@dimen/dp_10"
+            android:background="@drawable/shape_bg_case_detail"
+            android:hint=""
+            android:lines="1"
+            android:paddingLeft="@dimen/dp_10"
+            android:paddingRight="@dimen/dp_10"
+            android:singleLine="true"
+            android:text=""
+            android:focusable="false"
+            android:textColor="@color/black80"
+            android:textColorHint="@color/black20"
+            android:textSize="@dimen/sp_14" />
+    </LinearLayout>
+
+</LinearLayout>

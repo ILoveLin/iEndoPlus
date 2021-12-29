@@ -69,6 +69,16 @@
         <item name="android:background">@drawable/button_circle_selector</item>
         <item name="android:foreground">@null</item>
     </style>
+    <!-- 默认按钮样式 -->
+    <style name="CaseTextViewStyle" parent="Widget.AppCompat.TextView">
+        <item name="android:layout_marginTop">@dimen/dp_10</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">@dimen/sp_14</item>
+
+
+    </style>
 
     <!-- 默认按钮样式 -->
     <style name="ButtonLoginStyle" parent="Widget.AppCompat.Button.Borderless">

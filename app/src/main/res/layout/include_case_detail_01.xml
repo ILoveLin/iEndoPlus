@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/dp_10"
+    android:layout_marginBottom="@dimen/dp_10"
+    android:orientation="vertical">
+    <!--基本-->
+    <TextView
+        android:layout_width="@dimen/dp_100"
+        android:layout_height="@dimen/dp_50"
+        android:background="@color/black30"
+        android:gravity="center"
+        android:text="基本"
+        android:textColor="@color/black"
+        android:textSize="@dimen/sp_16" />
+
+
+    <!--01=检查号-->
+    <TextView
+        style="@style/CaseTextViewStyle"
+        android:text="检查号" />
+
+    <com.hjq.widget.view.ClearEditText
+        android:id="@+id/et_01_check_num"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_35"
+        android:layout_marginTop="@dimen/dp_10"
+        android:background="@drawable/shape_bg_case_detail"
+        android:hint=""
+        android:lines="1"
+        android:paddingLeft="@dimen/dp_10"
+        android:paddingRight="@dimen/dp_10"
+        android:singleLine="true"
+        android:text=""
+        android:textColor="@color/black80"
+        android:textColorHint="@color/black20"
+        android:textSize="@dimen/sp_14" />
+    <!--02=姓名-->
+    <TextView
+        style="@style/CaseTextViewStyle"
+        android:text="姓名" />
+
+    <com.hjq.widget.view.ClearEditText
+        android:id="@+id/et_01_name"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_35"
+        android:layout_marginTop="@dimen/dp_10"
+        android:background="@drawable/shape_bg_case_detail"
+        android:hint=""
+        android:lines="1"
+        android:paddingLeft="@dimen/dp_10"
+        android:paddingRight="@dimen/dp_10"
+        android:singleLine="true"
+        android:text=""
+        android:textColor="@color/black80"
+        android:textColorHint="@color/black20"
+        android:textSize="@dimen/sp_14" />
+    <!--03=性别-->
+    <TextView
+        style="@style/CaseTextViewStyle"
+        android:text="性别" />
+
+    <com.hjq.widget.view.ClearEditText
+        android:id="@+id/et_01_sex_type"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_35"
+        android:layout_marginTop="@dimen/dp_10"
+        android:background="@drawable/shape_bg_case_detail"
+        android:hint=""
+        android:lines="1"
+        android:paddingLeft="@dimen/dp_10"
+        android:paddingRight="@dimen/dp_10"
+        android:singleLine="true"
+        android:text=""
+        android:focusable="false"
+        android:textColor="@color/black80"
+        android:textColorHint="@color/black20"
+        android:textSize="@dimen/sp_14" />
+    <!--04=年龄-->
+    <TextView
+        style="@style/CaseTextViewStyle"
+        android:text="年龄" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_35"
+        android:layout_marginTop="@dimen/dp_10"
+        android:layout_weight="5"
+        android:orientation="horizontal">
+
+        <com.hjq.widget.view.ClearEditText
+            android:id="@+id/et_01_age"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/dp_35"
+            android:layout_weight="4"
+            android:background="@drawable/shape_bg_case_detail"
+            android:hint=""
+            android:lines="1"
+            android:paddingLeft="@dimen/dp_10"
+            android:paddingRight="@dimen/dp_10"
+            android:singleLine="true"
+            android:text=""
+            android:textColor="@color/black80"
+            android:textColorHint="@color/black20"
+            android:textSize="@dimen/sp_14" />
+
+        <TextView
+            android:layout_marginLeft="@dimen/dp_10"
+            android:id="@+id/tv_01_age_type"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/dp_35"
+            android:layout_weight="1"
+            android:background="@drawable/shape_bg_case_detail"
+            android:gravity="center"
+            android:text="岁"
+            android:textColor="@color/black"
+            android:textSize="@dimen/sp_14" />
+
+    </LinearLayout>
+
+    <!--05=职业-->
+    <TextView
+        style="@style/CaseTextViewStyle"
+        android:text="职业" />
+
+    <com.hjq.widget.view.ClearEditText
+        android:id="@+id/et_01_jop"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_35"
+        android:layout_marginTop="@dimen/dp_10"
+        android:background="@drawable/shape_bg_case_detail"
+        android:hint=""
+        android:lines="1"
+        android:focusable="false"
+        android:paddingLeft="@dimen/dp_10"
+        android:paddingRight="@dimen/dp_10"
+        android:singleLine="true"
+        android:text=""
+        android:textColor="@color/black80"
+        android:textColorHint="@color/black20"
+        android:textSize="@dimen/sp_14" />
+    <!--06=收费-->
+    <TextView
+        style="@style/CaseTextViewStyle"
+        android:text="收费" />
+
+    <com.hjq.widget.view.ClearEditText
+        android:id="@+id/et_01_fee"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_35"
+        android:layout_marginTop="@dimen/dp_10"
+        android:background="@drawable/shape_bg_case_detail"
+        android:hint=""
+        android:lines="1"
+        android:paddingLeft="@dimen/dp_10"
+        android:paddingRight="@dimen/dp_10"
+        android:singleLine="true"
+        android:text=""
+        android:textColor="@color/black80"
+        android:textColorHint="@color/black20"
+        android:textSize="@dimen/sp_14" />
+    <!--07=送检医生-->
+    <TextView
+        style="@style/CaseTextViewStyle"
+        android:text="送检医生" />
+
+    <com.hjq.widget.view.ClearEditText
+        android:id="@+id/et_01_get_check_doctor"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_35"
+        android:layout_marginTop="@dimen/dp_10"
+        android:background="@drawable/shape_bg_case_detail"
+        android:hint=""
+        android:lines="1"
+        android:paddingLeft="@dimen/dp_10"
+        android:paddingRight="@dimen/dp_10"
+        android:singleLine="true"
+        android:text=""
+        android:focusable="false"
+        android:textColor="@color/black80"
+        android:textColorHint="@color/black20"
+        android:textSize="@dimen/sp_14" />
+    <!--08=主诉-->
+    <TextView
+        style="@style/CaseTextViewStyle"
+        android:text="主诉" />
+
+    <com.hjq.widget.view.ClearEditText
+        android:id="@+id/et_01_i_tell_you"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_10"
+        android:background="@drawable/shape_bg_case_detail"
+        android:hint=""
+        android:paddingLeft="@dimen/dp_10"
+        android:paddingRight="@dimen/dp_10"
+        android:singleLine="true"
+        android:text=""
+        android:focusable="false"
+        android:textColor="@color/black80"
+        android:textColorHint="@color/black20"
+        android:textSize="@dimen/sp_14" />
+    <!--09=临床诊断-->
+    <TextView
+        style="@style/CaseTextViewStyle"
+        android:text="临床诊断" />
+
+    <com.hjq.widget.view.ClearEditText
+        android:id="@+id/et_01_bad_tell"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_10"
+        android:background="@drawable/shape_bg_case_detail"
+        android:hint=""
+        android:focusable="false"
+        android:paddingLeft="@dimen/dp_10"
+        android:paddingRight="@dimen/dp_10"
+        android:singleLine="true"
+        android:text=""
+        android:textColor="@color/black80"
+        android:textColorHint="@color/black20"
+        android:textSize="@dimen/sp_14" />
+</LinearLayout>
