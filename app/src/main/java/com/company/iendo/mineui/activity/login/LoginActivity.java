@@ -2,6 +2,7 @@ package com.company.iendo.mineui.activity.login;
 
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -25,14 +26,22 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatCheckBox;
 
+import com.company.iendo.R;
+import com.company.iendo.aop.Log;
+import com.company.iendo.aop.SingleClick;
+import com.company.iendo.app.AppActivity;
 import com.company.iendo.bean.LoginBean;
 import com.company.iendo.bean.UserListBean;
-import com.company.iendo.manager.ActivityManager;
+import com.company.iendo.green.db.UserDBBean;
+import com.company.iendo.green.db.UserDBUtils;
+import com.company.iendo.http.glide.GlideApp;
+import com.company.iendo.manager.InputTextManager;
 import com.company.iendo.mineui.activity.MainActivity;
 import com.company.iendo.mineui.activity.login.device.DeviceActivity;
 import com.company.iendo.mineui.fragment.AFragment;
 import com.company.iendo.other.Constants;
 import com.company.iendo.other.HttpConstant;
+import com.company.iendo.other.KeyboardWatcher;
 import com.company.iendo.ui.dialog.TipsDialog;
 import com.company.iendo.ui.dialog.WaitDialog;
 import com.company.iendo.ui.popup.ListPopup;
@@ -40,21 +49,11 @@ import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.MD5ChangeUtil;
 import com.company.iendo.utils.SharePreferenceUtil;
 import com.gyf.immersionbar.ImmersionBar;
-import com.company.iendo.R;
-import com.company.iendo.aop.Log;
-import com.company.iendo.aop.SingleClick;
-import com.company.iendo.app.AppActivity;
-import com.company.iendo.http.glide.GlideApp;
-import com.company.iendo.manager.InputTextManager;
-import com.company.iendo.other.KeyboardWatcher;
-import com.hjq.bar.OnTitleBarListener;
-import com.hjq.bar.TitleBar;
 import com.hjq.base.BasePopupWindow;
 import com.hjq.base.action.AnimAction;
 import com.hjq.umeng.Platform;
 import com.hjq.umeng.UmengLogin;
 import com.hjq.widget.view.PasswordEditText;
-import com.hjq.widget.view.SubmitButton;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -69,17 +68,27 @@ import okhttp3.Call;
  * time   : 2018/10/18
  * desc   : 登录界面
  */
-public final class LoginActivity extends AppActivity
-        implements UmengLogin.OnLoginListener,
-        KeyboardWatcher.SoftKeyboardStateListener,
-        TextView.OnEditorActionListener {
-
+public final class LoginActivity extends AppActivity implements UmengLogin.OnLoginListener, KeyboardWatcher.SoftKeyboardStateListener, TextView.OnEditorActionListener {
     private static final String INTENT_KEY_IN_PHONE = "Admin";
     private static final String INTENT_KEY_IN_PASSWORD = "123";
     private ImageButton username_right;
     private int mPhoneViewWidth;
+    private WaitDialog.Builder mWaitDialog;
+    private List<UserListBean.DataDTO> mUserListData = new ArrayList<UserListBean.DataDTO>();
+    private TextView mSettingView;
+    private TextView mDeviceType;
+    private String mBaseUrl;
+    private LinearLayout mTopLogoAnim;
+    private AppCompatCheckBox mCheckbox;
+    private ImageView mLogoView;
+    private ViewGroup mBodyLayout;
+    private EditText mPhoneView;
+    private PasswordEditText mPasswordView;
+    private Button mCommitView;
+    private final float mLogoScale = 0.8f;
+    private final int mAnimTime = 300;
 
-
+    @SuppressLint("HandlerLeak")
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(@NonNull Message msg) {
@@ -90,35 +99,48 @@ public final class LoginActivity extends AppActivity
                     mPasswordView.setText("");
                     break;
                 case 1:  //点击历史记录之后的操作
-//                    LogUtils.e("path=====录像--是否存在=====" + UserDBRememberBeanUtils.queryListIsExist((String) msg.obj));
                     username_right.setTag("close");
                     username_right.setImageResource(R.drawable.login_icon_down);
+                    String userName = (String) msg.obj;
                     mPhoneView.setText("" + (String) msg.obj);
-//                    if (UserDBRememberBeanUtils.queryListIsExist((String) msg.obj)) {
-//                        UserDBRememberBean userDBRememberBean = UserDBRememberBeanUtils.queryListByName((String) msg.obj);
-//                        username_right.setTag("close");
-//                        username_right.setImageResource(R.drawable.login_icon_down);
-//                        if ("Yes".equals(userDBRememberBean.getRemember())) {
-//                            checkbox.setChecked(true);
-//                            mPhoneView.setText("" + userDBRememberBean.getUsername());
-//                            mPasswordView.setText("" + userDBRememberBean.getPassword());
-//                        } else {
-//                            mPhoneView.setText("" + userDBRememberBean.getUsername());
-//                            mPasswordView.setText("");
-//                            checkbox.setChecked(false);
-//                        }
-//                    }
+                    //之前本地数据库存入了保存密码(存入本地数据库)
+                    Boolean isSave = (Boolean) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Flag_UserDBSave, false);
+                    if (isSave) {//存过设备之后才能查询本地数据库用户表
+                        if (UserDBUtils.queryListIsExist(getApplicationContext(), userName)) {
+                            UserDBBean userDBBean = UserDBUtils.queryListByName(getApplicationContext(), userName);
+                            mPhoneView.setText("" + userDBBean.getUserName());
+                            mPasswordView.setText("" + userDBBean.getPassword());
+                            mCheckbox.setChecked(true);
+
+                        } else {
+                            mPhoneView.setText("" + userName);
+                            mPasswordView.setText("");
+                            mCheckbox.setChecked(false);
+                        }
+                    }
                     break;
             }
         }
     };
-    private WaitDialog.Builder mWaitDialog;
-    private List<UserListBean.DataDTO> mUserListData = new ArrayList<UserListBean.DataDTO>();
-    private TextView mSettingView;
-    private TextView mDeviceType;
-    private String mBaseUrl;
-    private LinearLayout mTopLogoAnim;
-    private AppCompatCheckBox mCheckbox;
+
+    private void initRememberPassword() {
+        Boolean isSave = (Boolean) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Flag_UserDBSave, false);
+        LogUtils.e("initRememberPassword====isSave:" + isSave);
+        String userName = mPhoneView.getText().toString().trim();
+        if (isSave && !"".equals(userName)) {//存过设备之后才能查询本地数据库用户表--并且选中了当前用户
+            if (UserDBUtils.queryListIsExist(getApplicationContext(), userName)) {
+                UserDBBean userDBBean = UserDBUtils.queryListByName(getApplicationContext(), userName);
+                mCheckbox.setChecked(true);
+                mPhoneView.setText("" + userDBBean.getUserName());
+                mPasswordView.setText("" + userDBBean.getPassword());
+            }
+        } else {
+            mCheckbox.setChecked(false);
+            mPhoneView.setText("");
+            mPasswordView.setText("");
+        }
+
+    }
 
     @Log
     public static void start(Context context, String phone, String password) {
@@ -130,24 +152,6 @@ public final class LoginActivity extends AppActivity
         }
         context.startActivity(intent);
     }
-
-    private ImageView mLogoView;
-
-    private ViewGroup mBodyLayout;
-    private EditText mPhoneView;
-    private PasswordEditText mPasswordView;
-
-    private SubmitButton mCommitView;
-
-
-    /**
-     * logo 缩放比例
-     */
-    private final float mLogoScale = 0.8f;
-    /**
-     * 动画时间
-     */
-    private final int mAnimTime = 300;
 
     @Override
     protected int getLayoutId() {
@@ -166,19 +170,13 @@ public final class LoginActivity extends AppActivity
         mDeviceType = findViewById(R.id.btn_device_type);
         mTopLogoAnim = findViewById(R.id.linear_top_logo);
         mCheckbox = findViewById(R.id.checkbox_remember);
-        boolean checked = mCheckbox.isChecked();
-
-        setOnClickListener(R.id.btn_login_commit, R.id.btn_login_setting, R.id.checkbox_remember);
-
+        setOnClickListener(R.id.btn_login_commit, R.id.btn_login_setting, R.id.checkbox_remember, R.id.login_type);
         mPasswordView.setOnEditorActionListener(this);
-
         InputTextManager.with(this)
                 .addView(mPhoneView)
                 .addView(mPasswordView)
                 .setMain(mCommitView)
                 .build();
-
-
         mPhoneView.getViewTreeObserver().addOnDrawListener(new ViewTreeObserver.OnDrawListener() {
             @Override
             public void onDraw() {
@@ -186,9 +184,6 @@ public final class LoginActivity extends AppActivity
 
             }
         });
-//        sendRequest();
-
-
     }
 
 
@@ -235,34 +230,6 @@ public final class LoginActivity extends AppActivity
 
     }
 
-    private void showError() {
-        // 失败对话框
-        new TipsDialog.Builder(this)
-                .setIcon(TipsDialog.ICON_ERROR)
-                .setMessage("错误")
-                .show();
-
-    }
-
-    private void showComplete() {
-        if (mWaitDialog != null) {
-            mWaitDialog.dismiss();
-        }
-    }
-
-    private void showLoading() {
-        if (mWaitDialog == null) {
-            mWaitDialog = new WaitDialog.Builder(this);
-            // 消息文本可以不用填写
-            mWaitDialog.setMessage(getString(R.string.common_loading))
-                    .create();
-        }
-        if (!mWaitDialog.isShowing()) {
-            mWaitDialog.show();
-//            postDelayed(mWaitDialog::dismiss, 2000);
-        }
-    }
-
 
     @Override
     protected void initData() {
@@ -271,20 +238,10 @@ public final class LoginActivity extends AppActivity
                     .setListener(LoginActivity.this);
         }, 500);
 
-
-        // 自动填充手机号和密码
-//        mPhoneView.setText(getString(INTENT_KEY_IN_PHONE));
-//        mPasswordView.setText(getString(INTENT_KEY_IN_PASSWORD));
-
-
-        mPhoneView.setText("Admin");
-        mPasswordView.setText("123");
-
-
+        initRememberPassword();
         showHistoryDialog();
-
-
     }
+
 
     private ListPopup.Builder historyBuilder;
 
@@ -303,11 +260,8 @@ public final class LoginActivity extends AppActivity
                     username_right.setTag("close");
                     username_right.setImageResource(R.drawable.login_icon_down);
                 }
-
-
                 historyBuilder = new ListPopup.Builder(LoginActivity.this);
                 historyBuilder
-//                        .setList("111","2222")
                         .setList(getListData())
                         .setGravity(Gravity.CENTER)
                         .setAutoDismiss(true)
@@ -362,9 +316,8 @@ public final class LoginActivity extends AppActivity
                 String mUrl = (String) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Current_BaseUrl, "http://192.168.1.200:3000");
                 LogUtils.e("登录==url==02=" + mBaseUrl);
                 LogUtils.e("登录==url==02=" + mBaseUrl + HttpConstant.UserManager_Login);
-
-                mCommitView.showProgress();
-
+//                登录按钮动画
+                showLoading();
                 OkHttpUtils.post()
                         .url(mUrl + HttpConstant.UserManager_Login)
                         .addParams("UserName", mPhoneView.getText().toString())
@@ -382,7 +335,7 @@ public final class LoginActivity extends AppActivity
 
                             @Override
                             public void onResponse(String response, int id) {
-                                mCommitView.showProgress();
+//                                mCommitView.showProgress();
                                 showComplete();
                                 LogUtils.e("登录===" + response);
                                 if (!"".equals(response)) {
@@ -394,20 +347,23 @@ public final class LoginActivity extends AppActivity
                                         SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Current_Login_UserID, mBean.getData().getUserID() + "");
                                         SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Current_Login_UserName, mPhoneView.getText().toString());
                                         SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Current_Login_Password, mPasswordView.getText().toString());
+                                        SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Flag_UserDBSave, true);
                                         SharePreferenceUtil.put(LoginActivity.this, Constants.Is_Logined, true);
-                                        postDelayed(() -> {
-                                            mCommitView.showSucceed();
-                                            postDelayed(() -> {
-                                                MainActivity.start(getContext(), AFragment.class);
-                                                finish();
-                                            }, 1000);
-                                        }, 2000);
+                                        saveRememberPassword(mBean);
+                                        MainActivity.start(getContext(), AFragment.class);
+                                        finish();
+//                                        postDelayed(() -> {
+////                                            mCommitView.showSucceed();
+//                                            postDelayed(() -> {
+//                                                MainActivity.start(getContext(), AFragment.class);
+//                                                finish();
+//                                            }, 1000);
+//                                        }, 2000);
                                     } else {
-                                        postDelayed(() -> {
-                                            mCommitView.showError(1500);
-                                        }, 1000);
+//                                        postDelayed(() -> {
+//                                            mCommitView.showError(1500);
+//                                        }, 1000);
                                         toast("密码错误!!");
-
                                     }
 
                                 } else {
@@ -426,133 +382,42 @@ public final class LoginActivity extends AppActivity
                     }
                 });
                 break;
+            case R.id.login_type:
+                toast("功能暂定!");
+                break;
             case R.id.btn_login_setting:
                 startActivity(DeviceActivity.class);
                 break;
         }
 
-//
-//        if (view == mCommitView) {
-////            if (mPhoneView.getText().toString().length() != 11) {
-////                mPhoneView.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.shake_anim));
-////                mCommitView.showError(3000);
-////                toast(R.string.common_phone_input_error);
-////                return;
-////            }
-//
-//            // 隐藏软键盘
-//            hideKeyboard(getCurrentFocus());
-//
-////            if (true) {
-////                mCommitView.showProgress();
-////                postDelayed(() -> {
-////                    mCommitView.showSucceed();
-////                    postDelayed(() -> {
-////                        MainActivity.start(getContext(), AFragment.class);
-////                        finish();
-////                    }, 1000);
-////                }, 2000);
-////                return;
-////            }
-//
-//            LogUtils.e("登录===" + MD5ChangeUtil.Md5_16(mPasswordView.getText().toString()));
-//            LogUtils.e("登录===" + MD5ChangeUtil.Md5_32(mPasswordView.getText().toString()));
-//            mCommitView.showProgress();
-//            showLoading();
-//            OkHttpUtils.post()
-//                    .url(HttpConstant.UserManager_Login)
-//                    .addParams("UserName", mPhoneView.getText().toString())
-//                    .addParams("Password", MD5ChangeUtil.Md5_32(mPasswordView.getText().toString()))
-//                    .build()
-//                    .execute(new StringCallback() {
-//                        @Override
-//                        public void onError(Call call, Exception e, int id) {
-//                            LogUtils.e("登录===" + e);
-//                            showError();
-//                        }
-//
-//                        @Override
-//                        public void onResponse(String response, int id) {
-//                            mCommitView.showProgress();
-//                            showComplete();
-//                            LogUtils.e("登录===" + response);
-//                            if (!"".equals(response)) {
-//                                LoginBean mBean = mGson.fromJson(response, LoginBean.class);
-//                                if (0 == mBean.getCode()) {
-//                                    LogUtils.e("登录==role==" + mBean.getData().getRole());
-//                                    LogUtils.e("登录==userid==" + mBean.getData().getUserID());
-//
-//                                    SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Current_Login_Role, mBean.getData().getRole() + "");
-//                                    SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Current_Login_UserID, mBean.getData().getUserID() + "");
-//                                    SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Current_Login_UserName, mPhoneView.getText().toString());
-//                                    SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Current_Login_Password, mPasswordView.getText().toString());
-//                                    SharePreferenceUtil.put(LoginActivity.this, Constants.Is_Logined, true);
-//
-//
-//                                    postDelayed(() -> {
-//                                        mCommitView.showSucceed();
-//                                        postDelayed(() -> {
-//                                            MainActivity.start(getContext(), AFragment.class);
-//                                            finish();
-//                                        }, 1000);
-//                                    }, 2000);
-//                                } else {
-//                                    postDelayed(() -> {
-//                                        mCommitView.showError(3000);
-//                                    }, 1000);
-//                                    toast("密码错误!!");
-//
-//                                }
-//
-//                            } else {
-//                                showError();
-//                                toast("返回数据为空!");
-//                            }
-//
-//                        }
-//                    });
-//
-//
-////            EasyHttp.post(this)
-////                    .api(new LoginApi()
-////                            .setPhone(mPhoneView.getText().toString())
-////                            .setPassword(mPasswordView.getText().toString()))
-////                    .request(new HttpCallback<HttpData<LoginApi.Bean>>(this) {
-////
-////                        @Override
-////                        public void onStart(Call call) {
-////                            mCommitView.showProgress();
-////                        }
-////
-////                        @Override
-////                        public void onEnd(Call call) {}
-////
-////                        @Override
-////                        public void onSucceed(HttpData<LoginApi.Bean> data) {
-////                            // 更新 Token
-////                            EasyConfig.getInstance()
-////                                    .addParam("token", data.getData().getToken());
-////                            postDelayed(() -> {
-////                                mCommitView.showSucceed();
-////                                postDelayed(() -> {
-////                                    // 跳转到首页
-////                                    HomeActivity.start(getContext(), MineFragment.class);
-////                                    finish();
-////                                }, 1000);
-////                            }, 1000);
-////                        }
-////
-////                        @Override
-////                        public void onFail(Exception e) {
-////                            super.onFail(e);
-////                            postDelayed(() -> {
-////                                mCommitView.showError(3000);
-////                            }, 1000);
-////                        }
-////                    });
-//            return;
-//        }
 
+    }
+
+    /**
+     * 登录成功之后,判断是否记录密码,记住密码就存入数据库
+     *
+     * @param mBean
+     */
+    private void saveRememberPassword(LoginBean mBean) {
+        if (mCheckbox.isChecked()) { //记住密码状态下存入数据库
+            LoginBean.DataDTO bean = mBean.getData();
+            UserDBBean userDBBean = new UserDBBean();
+            userDBBean.setUserName(mPhoneView.getText().toString().trim());
+            userDBBean.setPassword(mPasswordView.getText().toString().trim());
+            userDBBean.setDeviceUserID(bean.getUserID());
+            userDBBean.setRelo(bean.getRole() + "");
+            userDBBean.setIsRememberPassword(true);
+            /**
+             * 设备ID
+             * 这个用户是在哪个设备上的     用户和病例都是和设备绑定的
+             * 当前选中设备的主键id,因为离线模式下就能通过这个主键id查找这个设备下的所有用户
+             */
+            String mMainID = (String) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Current_MainID, "1");
+            userDBBean.setDeviceID(mMainID + "");
+            UserDBUtils.insertOrReplaceInTx(LoginActivity.this, userDBBean);
+            SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Flag_UserDBSave, true);
+
+        }
 
     }
 
@@ -670,6 +535,34 @@ public final class LoginActivity extends AppActivity
         return super.createStatusBarConfig()
                 // 指定导航栏背景颜色
                 .navigationBarColor(R.color.white);
+    }
+
+    private void showError() {
+        // 失败对话框
+        new TipsDialog.Builder(this)
+                .setIcon(TipsDialog.ICON_ERROR)
+                .setMessage("错误")
+                .show();
+
+    }
+
+    private void showComplete() {
+        if (mWaitDialog != null) {
+            mWaitDialog.dismiss();
+        }
+    }
+
+    private void showLoading() {
+        if (mWaitDialog == null) {
+            mWaitDialog = new WaitDialog.Builder(this);
+            // 消息文本可以不用填写
+            mWaitDialog.setMessage(getString(R.string.common_loading))
+                    .create();
+        }
+        if (!mWaitDialog.isShowing()) {
+            mWaitDialog.show();
+//            postDelayed(mWaitDialog::dismiss, 2000);
+        }
     }
 
 }

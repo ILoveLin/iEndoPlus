@@ -38,8 +38,13 @@ public class SharePreferenceUtil {
     // 角色 0-超级管理员 1-管理员 2-操作员 3-查询员 4-自定义
 
     /**
+     * 登入界面记住密码,第一次用户表不存在bug是因为还没存入过和创建用户表
+     */
+    public static final String Flag_UserDBSave = "Flag_UserDBSave";                //用户表是否创建过
+    /**
      * 被选中当前登入设备的信息
      */
+    public static final String Current_MainID = "Current_MainID";                    //设备主键ID--//这个主键ID是需要绑定用户表中的deviceID,确保是这个设备下,离线模式能通过id查询绑定用户
     public static final String Current_DeviceID = "Current_DeviceID";                //设备唯一标识
     public static final String Current_IP = "Current_IP";                            //设备ip
     public static final String Current_HttpPort = "Current_HttpPort";                //设备http端口

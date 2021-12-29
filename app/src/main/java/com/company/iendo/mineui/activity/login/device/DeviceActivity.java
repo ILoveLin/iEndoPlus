@@ -504,7 +504,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                 .setSocketPortContent(item.getSocketPort())
                 .setLivePortContent(item.getLivePort())
                 .setMicPortContent(item.getMicPort())
-                .setTypeContent(item.getType() )
+                .setTypeContent(item.getType())
                 .setConfirm(getString(R.string.common_confirm))
                 // 设置 null 表示不显示取消按钮
                 .setCancel(getString(R.string.common_cancel))
@@ -700,6 +700,8 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
 
         }
         if (null != mDBBean) {
+            //这个主键ID是需要绑定用户表中的deviceID,确保是这个设备下,离线模式能通过id查询绑定用户
+            SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_MainID, mDBBean.getId() + "");
             SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_DeviceID, null != mDBBean.getDeviceID() ? mDBBean.getDeviceID() : "1");  //为null的时候全部给1表示
             SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_IP, mDBBean.getIp());
             SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_HttpPort, mDBBean.getHttpPort());

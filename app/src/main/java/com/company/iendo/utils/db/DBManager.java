@@ -106,7 +106,6 @@ public class DBManager {
                 mDaoSession = getDaoMaster(context).newSession();
             }
         }
-
         return mDaoSession;
     }
 }

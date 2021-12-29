@@ -16,7 +16,7 @@ import org.greenrobot.greendao.annotation.Unique;
 public class DeviceDBBean {
     //主键
     @Id(autoincrement = true)
-    private Long id;
+    private Long id;  //这个主键ID是需要绑定用户表中的deviceID,确保是这个设备下,离线模式能通过id查询绑定用户
     //设备唯一标识
     @Unique
     private String deviceID;
