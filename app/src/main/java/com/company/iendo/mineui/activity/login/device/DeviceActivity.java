@@ -688,7 +688,6 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
     protected void onDestroy() {
         super.onDestroy();
         LogUtils.e("========当前设备的备注信息~~~~====DeviceActivity==onDestroy===");
-        LogUtils.e("========当前设备的备注信息~~~~====DeviceActivity==onDestroy===");
         //把当前选择的itembean的数据信息存到sp里面去
         List<DeviceDBBean> deviceDBBeans = DeviceDBUtils.queryAll(DeviceActivity.this);
         for (int i = 0; i < deviceDBBeans.size(); i++) {
@@ -700,6 +699,20 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
 
         }
         if (null != mDBBean) {
+            LogUtils.e("添加病例=== mDBBean.toString()===" +  mDBBean.getUsemsg01());   //通过此字段判断EndoType
+            switch (mDBBean.getUsemsg01()) {
+                case "HD3":
+                    SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_EndoType, null != mDBBean.getEndoType() ? mDBBean.getEndoType() : "1");
+                    break;
+                case "一体机":
+                    SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_EndoType, null != mDBBean.getEndoType() ? mDBBean.getEndoType() : "2");
+                    break;
+                case "耳鼻喉治疗台":
+                    SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_EndoType, null != mDBBean.getEndoType() ? mDBBean.getEndoType() : "3");
+                    break;
+
+            }
+            LogUtils.e("添加病例=== mDBBean.getEndoType()===" +  mDBBean.getEndoType() );
             //这个主键ID是需要绑定用户表中的deviceID,确保是这个设备下,离线模式能通过id查询绑定用户
             SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_MainID, mDBBean.getId() + "");
             SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_DeviceID, null != mDBBean.getDeviceID() ? mDBBean.getDeviceID() : "1");  //为null的时候全部给1表示
@@ -711,7 +724,6 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
             SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_DeviceUsername, mDBBean.getUsername());
             SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_DevicePassword, mDBBean.getPassword());
             SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_Type, mDBBean.getType());
-            SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_EndoType, null != mDBBean.getEndoType() ? mDBBean.getEndoType() : "1");
             SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_Usemsg01, mDBBean.getUsemsg01());
             SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_MSelected, mDBBean.getMSelected());
 

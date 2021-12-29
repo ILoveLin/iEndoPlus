@@ -16,6 +16,7 @@ import com.company.iendo.manager.ActivityManager;
 import com.company.iendo.other.HttpConstant;
 import com.company.iendo.ui.dialog.MenuDialog;
 import com.company.iendo.utils.LogUtils;
+import com.company.iendo.utils.SharePreferenceUtil;
 import com.company.iendo.widget.StatusLayout;
 import com.gyf.immersionbar.ImmersionBar;
 import com.hjq.bar.OnTitleBarListener;
@@ -38,17 +39,19 @@ import okhttp3.Call;
  * github : https://github.com/getActivity/AndroidProject
  * time   : 2018/10/18
  * desc   : 添加病例
+ *
  */
 public final class AddCaseActivity extends AppActivity implements StatusAction {
     private StatusLayout mStatusLayout;
     private TitleBar mTitleBar;
     private boolean mFragClickable = false;  //dialog数据请求错误,相对于dialog不允许弹窗,不然会闪退
+    private HashMap mDialogItemMap;
     private TextView tv_01_age_type;
     private ClearEditText et_01_check_num, et_01_name, et_01_sex_type, et_01_age, et_01_jop, et_01_fee, et_01_get_check_doctor,
             et_01_i_tell_you, et_01_bad_tell;
     private ClearEditText et_02_mirror_see, et_02_mirror_result, et_02_live_check, et_02_cytology, et_02_test, et_02_pathology, et_02_advice, et_02_check_doctor;
     private ClearEditText et_03_door_num, et_03_protection_num, et_03_section, et_03_device, et_03_case_num, et_03_in_hospital_num, et_03_case_area_num, et_03_case_bed_num, et_03_native_place, et_03_ming_zu, et_03_is_married, et_03_tel, et_03_address, et_03_my_id_num, et_03_case_history, et_03_family_case_history;
-    private HashMap mDialogItemMap;
+    private HashMap<String, String> mParamsMap;
 
     @Override
     protected int getLayoutId() {
@@ -85,25 +88,138 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
 
             @Override
             public void onRightClick(View view) {
-                sendRequest();
+                checkDataAndRequest();
             }
         });
+    }
+
+    private void checkDataAndRequest() {
+        String Name = et_01_name.getText().toString().trim();
+        if (!Name.isEmpty()) {
+            getElseCanSelected();
+        } else {
+            toast("用户名不能为空!");
+        }
+    }
+
+    /**
+     * 获取其他可选参数
+     */
+    private void getElseCanSelected() {
+        mParamsMap = new HashMap<>();
+        String Married = et_03_is_married.getText().toString().trim();       //婚否 （已婚，未婚）
+        if (!"其他".equals(Married)) {
+            mParamsMap.put("Married", Married);
+        }
+        String Sex = et_01_sex_type.getText().toString().trim();       //性别 （男，女）
+        if (!"性别".equals(Married)) {
+            mParamsMap.put("Sex", Sex);
+        }
+
+        String Tel = et_03_tel.getText().toString().trim();       //电话
+        String Address = et_03_address.getText().toString().trim();       //住址
+//        String PatientNo = et_01_check_num.getText().toString().trim();       //病人编号---检查号???
+        String CardID = et_03_my_id_num.getText().toString().trim();       //身份证号
+        String MedHistory = et_03_case_history.getText().toString().trim();       //医疗病史
+        String FamilyHistory = et_03_family_case_history.getText().toString().trim();       //家族病史
+        String Race = et_03_ming_zu.getText().toString().trim();       //民族种族
+        if (!"民族".equals(Race)) {
+            mParamsMap.put("Race", Race);
+        }
+        String Occupatior = et_01_jop.getText().toString().trim();       //职业
+        if (!"职业".equals(Occupatior)) {
+            mParamsMap.put("Occupatior", Occupatior);
+        }
+        String InsuranceID = et_03_protection_num.getText().toString().trim();       //社保卡ID
+        String NativePlace = et_03_native_place.getText().toString().trim();       //籍贯
+//        String IsInHospital = et_03_in_hospital_num.getText().toString().trim();       //是否还在医院住院  ???
+//        String LastCheckUserID = et_03_tel.getText().toString().trim();       //最后一个来查房的医生  ???
+//        String DOB = et_.getText().toString().trim();       //生日                                  ???
+        String PatientAge = et_01_age.getText().toString().trim();       //患者年龄
+        String AgeUnit = tv_01_age_type.getText().toString().trim();       //年龄单位 （岁，月，天）
+//        String ReturnVisit = et_03_tel.getText().toString().trim();       //初复诊 （0-初诊 1-复诊）  ???
+        String BedID = et_03_case_bed_num.getText().toString().trim();       //病床号
+        String WardID = et_03_case_area_num.getText().toString().trim();       //病区号
+        String CaseID = et_03_case_num.getText().toString().trim();       //病历号
+//        String SubmitDoctor = et_03_tel.getText().toString().trim();       //申请医生        ???
+        String Department = et_03_section.getText().toString().trim();       //科室
+
+        if (!"科室".equals(Department)) {
+            mParamsMap.put("Department", Department);
+        }
+        String Device = et_03_device.getText().toString().trim();       //设备
+
+        if (!"设备".equals(Device)) {
+            mParamsMap.put("Device", Device);
+        }
+        String Fee = et_01_fee.getText().toString().trim();       //收费
+//        String FeeType = et_03_tel.getText().toString().trim();       //收费类型         ???
+        String ChiefComplaint = et_01_i_tell_you.getText().toString().trim();       //主诉
+        String Test = et_02_test.getText().toString().trim();       //试验
+        String Advice = et_02_advice.getText().toString().trim();       //建议
+        String InpatientID = et_03_in_hospital_num.getText().toString().trim();       //住院号
+        String OutpatientID = et_03_door_num.getText().toString().trim();       //门诊号
+        String Biopsy = et_02_live_check.getText().toString().trim();       //活检
+        String Ctology = et_02_cytology.getText().toString().trim();       //细胞学
+        String Pathology = et_02_pathology.getText().toString().trim();       //病理学
+        String ExaminingPhysician = et_02_live_check.getText().toString().trim();       //检查医生
+        String ClinicalDiagnosis = et_01_bad_tell.getText().toString().trim();       //临床诊断
+        String CheckContent = et_02_mirror_see.getText().toString().trim();       //检查内容（镜检所见）
+        String CheckDiagnosis = et_02_mirror_result.getText().toString().trim();       //镜检诊断
+
+
+        //添加三个必须添加的参数
+        String UserName = (String) SharePreferenceUtil.get(AddCaseActivity.this, SharePreferenceUtil.Current_Login_UserName, "Admin");
+        String EndoType = (String) SharePreferenceUtil.get(AddCaseActivity.this, SharePreferenceUtil.Current_EndoType, "3");
+        mParamsMap.put("Name", et_01_name.getText().toString().trim());
+        mParamsMap.put("UserName", UserName);
+        mParamsMap.put("EndoType", EndoType);
+        mParamsMap.put("Tel", Tel);
+        mParamsMap.put("Address", Address);
+        mParamsMap.put("CardID", CardID);
+        mParamsMap.put("MedHistory", MedHistory);
+        mParamsMap.put("FamilyHistory", FamilyHistory);
+        mParamsMap.put("Race", Race);
+        mParamsMap.put("InsuranceID", InsuranceID);
+        mParamsMap.put("NativePlace", NativePlace);
+        mParamsMap.put("PatientAge", PatientAge);
+        mParamsMap.put("AgeUnit", AgeUnit);
+        mParamsMap.put("BedID", BedID);
+        mParamsMap.put("WardID", WardID);
+        mParamsMap.put("CaseID", CaseID);
+        mParamsMap.put("Department", Department);
+        mParamsMap.put("Fee", Fee);
+        mParamsMap.put("ChiefComplaint", ChiefComplaint);
+        mParamsMap.put("Test", Test);
+        mParamsMap.put("Advice", Advice);
+        mParamsMap.put("InpatientID", InpatientID);
+        mParamsMap.put("OutpatientID", OutpatientID);
+        mParamsMap.put("Biopsy", Biopsy);
+        mParamsMap.put("Ctology", Ctology);
+        mParamsMap.put("Pathology", Pathology);
+        mParamsMap.put("ExaminingPhysician", ExaminingPhysician);
+        mParamsMap.put("ClinicalDiagnosis", ClinicalDiagnosis);
+        mParamsMap.put("CheckContent", CheckContent);
+        mParamsMap.put("CheckDiagnosis", CheckDiagnosis);
+        sendRequest();
+
+
     }
 
     /**
      * 添加病例
      */
     private void sendRequest() {
+        LogUtils.e("添加病例=== mParamsMap.toString()===" + mParamsMap.toString());
         showLoading();
         OkHttpUtils.post()
                 .url(mBaseUrl + HttpConstant.CaseManager_AddCase)
-                .addParams("Name", "张大仙")
-                .addParams("UserName", "Admin")
-                .addParams("EndoType", "3")  //目前默认是3  耳鼻喉治疗台
+                .params(mParamsMap)
                 .build()
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
+                        LogUtils.e("添加病例===onError===" + e);
                         showError(listener -> {
                             sendRequest();
                         });
@@ -112,6 +228,8 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
                     @Override
                     public void onResponse(String response, int id) {
                         if ("" != response) {
+                            LogUtils.e("添加病例===onError===" + response);
+
                             AddCaseBean mBean = mGson.fromJson(response, AddCaseBean.class);
                             if (0 == mBean.getCode()) {  //成功
                                 showComplete();
@@ -131,7 +249,6 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
                         }
                     }
                 });
-
 
     }
 
@@ -201,18 +318,18 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
 
                         }
 
-                        Iterator<Map.Entry<String, ArrayList<DialogItemBean>>> entries = mDialogItemMap.entrySet().iterator();
-                        while (entries.hasNext()) {
-                            Map.Entry<String, ArrayList<DialogItemBean>> entry = entries.next();
-                            String key = entry.getKey();
-                            ArrayList<DialogItemBean> value = entry.getValue();
-                            LogUtils.e("对话框数据====key====" + key);
-
-                            for (int i = 0; i < value.size(); i++) {
-                                DialogItemBean bean = value.get(i);
-                                LogUtils.e("对话框数据====value====" + bean.getDictItem());
-                            }
-                        }
+//                        Iterator<Map.Entry<String, ArrayList<DialogItemBean>>> entries = mDialogItemMap.entrySet().iterator();
+//                        while (entries.hasNext()) {
+//                            Map.Entry<String, ArrayList<DialogItemBean>> entry = entries.next();
+//                            String key = entry.getKey();
+//                            ArrayList<DialogItemBean> value = entry.getValue();
+//                            LogUtils.e("对话框数据====key====" + key);
+//
+//                            for (int i = 0; i < value.size(); i++) {
+//                                DialogItemBean bean = value.get(i);
+//                                LogUtils.e("对话框数据====value====" + bean.getDictItem());
+//                            }
+//                        }
                     }
                 });
 
@@ -222,58 +339,58 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.et_01_sex_type:  //性别
-                showMenuDialog("100");
+                showMenuDialog(et_01_sex_type, "100");
                 break;
             case R.id.tv_01_age_type:  //年龄类别  --本地写数据List
                 showMenuElseDialog();
                 break;
             case R.id.et_01_jop:        //职业
-                showMenuDialog("5");
+                showMenuDialog(et_01_jop, "5");
                 break;
             case R.id.et_01_get_check_doctor://送检医生
-                showMenuDialog("8");
+                showMenuDialog(et_01_get_check_doctor, "8");
                 break;
             case R.id.et_01_i_tell_you:    //主诉
-                showMenuDialog("11");
+                showMenuDialog(et_01_i_tell_you, "11");
                 break;
             case R.id.et_01_bad_tell:     //临床诊断
-                showMenuDialog("12");
+                showMenuDialog(et_01_bad_tell, "12");
                 break;
             case R.id.et_02_mirror_see:   //镜检所见
-                showMenuDialog("13");
+                showMenuDialog(et_02_mirror_see, "13");
                 break;
             case R.id.et_02_mirror_result://镜检诊断
-                showMenuDialog("14");
+                showMenuDialog(et_02_mirror_result, "14");
                 break;
             case R.id.et_02_live_check://活检
-                showMenuDialog("15");
+                showMenuDialog(et_02_live_check, "15");
                 break;
             case R.id.et_02_cytology://细胞学
-                showMenuDialog("16");
+                showMenuDialog(et_02_cytology, "16");
                 break;
             case R.id.et_02_test://试验
-                showMenuDialog("17");
+                showMenuDialog(et_02_test, "17");
                 break;
             case R.id.et_02_pathology://病理学
-                showMenuDialog("18");
+                showMenuDialog(et_02_pathology, "18");
                 break;
             case R.id.et_02_advice://建议
-                showMenuDialog("19");
+                showMenuDialog(et_02_advice, "19");
                 break;
             case R.id.et_02_check_doctor://检查医生
-                showMenuDialog("20");
+                showMenuDialog(et_02_check_doctor, "20");
                 break;
             case R.id.et_03_section: //科室
-                showMenuDialog("9");
+                showMenuDialog(et_03_section, "9");
                 break;
             case R.id.et_03_device://设备
-                showMenuDialog("10");
+                showMenuDialog(et_03_device, "10");
                 break;
             case R.id.et_03_ming_zu://民族
-                showMenuDialog("23");
+                showMenuDialog(et_03_ming_zu, "23");
                 break;
             case R.id.et_03_is_married://婚否
-                showMenuDialog("101");
+                showMenuDialog(et_03_is_married, "101");
                 break;
 
         }
@@ -304,7 +421,7 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
     }
 
 
-    private void showMenuDialog(String key) {
+    private void showMenuDialog(ClearEditText mEdit, String key) {
         if (mFragClickable && null != mDialogItemMap) {
             ArrayList<DialogItemBean> mDataList = (ArrayList<DialogItemBean>) mDialogItemMap.get(key);
 
@@ -326,6 +443,7 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
                             String s = stringList.get(position);
                             LogUtils.e("MenuDialog====位置：" + position + "，文本：" + data);
                             LogUtils.e("MenuDialog===s==" + s); //{0=HD3}
+                            mEdit.setText("" + s);
 
                         }
 
