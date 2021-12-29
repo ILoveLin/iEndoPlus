@@ -28,9 +28,7 @@ import com.zhy.http.okhttp.callback.StringCallback;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import okhttp3.Call;
 
@@ -39,7 +37,7 @@ import okhttp3.Call;
  * github : https://github.com/getActivity/AndroidProject
  * time   : 2018/10/18
  * desc   : 添加病例
- *
+ * * todo 新增和更新接口的CaseNo  需要传递 不不然报错
  */
 public final class AddCaseActivity extends AppActivity implements StatusAction {
     private StatusLayout mStatusLayout;
