@@ -699,7 +699,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
 
         }
         if (null != mDBBean) {
-            LogUtils.e("添加病例=== mDBBean.toString()===" +  mDBBean.getUsemsg01());   //通过此字段判断EndoType
+            LogUtils.e("添加病例=== mDBBean.toString()===" + mDBBean.getUsemsg01());   //通过此字段判断EndoType
             switch (mDBBean.getUsemsg01()) {
                 case "HD3":
                     SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_EndoType, null != mDBBean.getEndoType() ? mDBBean.getEndoType() : "1");
@@ -712,10 +712,23 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                     break;
 
             }
-            LogUtils.e("添加病例=== mDBBean.getEndoType()===" +  mDBBean.getEndoType() );
+            String endotype = (String) SharePreferenceUtil.get(DeviceActivity.this, SharePreferenceUtil.Current_EndoType, "5");
+            LogUtils.e("选择的设备=== 存入的设备类型是===" + endotype);
+            LogUtils.e("选择的设备=== mDBBean.getEndoType()===" + mDBBean.getEndoType());
+            LogUtils.e("选择的设备=== mDBBean.getDeviceID()===" + mDBBean.getDeviceID());
+            LogUtils.e("选择的设备=== mDBBean.toString===" + mDBBean.toString());
             //这个主键ID是需要绑定用户表中的deviceID,确保是这个设备下,离线模式能通过id查询绑定用户
             SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_MainID, mDBBean.getId() + "");
-            SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_DeviceID, null != mDBBean.getDeviceID() ? mDBBean.getDeviceID() : "1");  //为null的时候全部给1表示
+            /**
+             * 设备ID
+             * 这个用户是在哪个设备上的     用户和病例都是和设备绑定的
+             * 当前选中设备的主键id,因为离线模式下就能通过这个主键id查找这个设备下的所有用户
+             * 主键id==deviceID---->下载图片的时候文件夹: 文件夹（设备ID-病例ID）
+             */
+            SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_DeviceID, mDBBean.getId() + "");
+            String o = (String) SharePreferenceUtil.get(DeviceActivity.this, SharePreferenceUtil.Current_DeviceID, "");
+            LogUtils.e("选择的设备=== 存入的设备id是===" + o);
+
             SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_IP, mDBBean.getIp());
             SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_HttpPort, mDBBean.getHttpPort());
             SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_SocketPort, null != mDBBean.getSocketPort() ? mDBBean.getSocketPort() : "1");

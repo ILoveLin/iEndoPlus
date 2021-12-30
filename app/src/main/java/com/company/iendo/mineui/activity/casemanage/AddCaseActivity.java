@@ -38,6 +38,7 @@ import okhttp3.Call;
  * time   : 2018/10/18
  * desc   : 添加病例
  * * todo 新增和更新接口的CaseNo  需要传递 不不然报错
+ *
  */
 public final class AddCaseActivity extends AppActivity implements StatusAction {
     private StatusLayout mStatusLayout;
@@ -50,6 +51,7 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
     private ClearEditText et_02_mirror_see, et_02_mirror_result, et_02_live_check, et_02_cytology, et_02_test, et_02_pathology, et_02_advice, et_02_check_doctor;
     private ClearEditText et_03_door_num, et_03_protection_num, et_03_section, et_03_device, et_03_case_num, et_03_in_hospital_num, et_03_case_area_num, et_03_case_bed_num, et_03_native_place, et_03_ming_zu, et_03_is_married, et_03_tel, et_03_address, et_03_my_id_num, et_03_case_history, et_03_family_case_history;
     private HashMap<String, String> mParamsMap;
+    private ArrayList ageList;
 
     @Override
     protected int getLayoutId() {
@@ -401,12 +403,13 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
                 //.setCancel(getString(R.string.common_cancel))
                 // 设置点击按钮后不关闭对话框
                 //.setAutoDismiss(false)
-                .setList("岁", "月", "天")
+                .setList(ageList)
                 .setListener(new MenuDialog.OnListener<String>() {
 
                     @Override
                     public void onSelected(BaseDialog dialog, int position, String string) {
-                        toast("位置：" + position + "，文本：" + string);
+                        tv_01_age_type.setText(""+ageList.get(position));
+
                     }
 
                     @Override
@@ -461,6 +464,10 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
     }
 
     private void initLayoutViewDate() {
+        ageList = new ArrayList<>();
+        ageList.add("岁");
+        ageList.add("月");
+        ageList.add("天");
         /**
          * 获取基本信息id
          */

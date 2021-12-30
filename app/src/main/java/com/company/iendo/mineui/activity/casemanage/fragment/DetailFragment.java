@@ -22,6 +22,7 @@ import com.company.iendo.manager.ActivityManager;
 import com.company.iendo.mineui.activity.MainActivity;
 import com.company.iendo.mineui.activity.casemanage.AddCaseActivity;
 import com.company.iendo.mineui.activity.casemanage.DetailCaseActivity;
+import com.company.iendo.mineui.activity.login.device.DeviceActivity;
 import com.company.iendo.other.HttpConstant;
 import com.company.iendo.ui.dialog.MenuDialog;
 import com.company.iendo.ui.dialog.MessageDialog;
@@ -56,6 +57,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
     private AppCompatTextView mTV;
     private StatusLayout mStatusLayout;
     private Boolean mEditStatus = false;    //编辑状态为true,不可编辑状态为flase
+    private Boolean isFatherExit = false;   //父类Activity 是否主动退出的标识,主动退出需要请求保存fragment的更新数据
     private DetailCaseActivity mActivity;
     private CaseDetailBean mBean;
     private String mBaseUrl;
@@ -71,6 +73,9 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
             et_03_case_area_num, et_03_case_bed_num, et_03_native_place, et_03_ming_zu, et_03_is_married, et_03_tel, et_03_address,
             et_03_my_id_num, et_03_case_history, et_03_family_case_history;
     private ArrayList<ClearEditText> mEditList;
+    private String mDeviceID;
+    private String currentItemCaseID;
+    private ArrayList<String> ageList;
 
     public static DetailFragment newInstance() {
         return new DetailFragment();
@@ -85,6 +90,8 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
     protected void initView() {
         mStatusLayout = findViewById(R.id.detail_hint);
         mBaseUrl = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_BaseUrl, "192.168.132.102");
+        mDeviceID = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_DeviceID, "");
+        currentItemCaseID = MainActivity.getCurrentItemID();
         initLayoutViewDate();
         setEditStatus();
         //年纪类别的List数据本地写:岁,月,天,
@@ -93,7 +100,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                 R.id.et_02_advice, R.id.et_02_check_doctor, R.id.et_03_section, R.id.et_03_device, R.id.et_03_ming_zu, R.id.et_03_is_married);
 
 
-        sendRequest(MainActivity.getCurrentItemID());
+        sendRequest(currentItemCaseID);
     }
 
     @Override
@@ -149,6 +156,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
     private void setLayoutData(CaseDetailBean mBean) {
         CaseDetailBean.DataDTO mDataBean = mBean.getData();
         LogUtils.e("病例详情界面数据====" + mDataBean);
+        et_01_check_num.setText(mDataBean.getCaseNo());     //检查号也叫病例编号
         et_01_name.setText(mDataBean.getName());
         et_03_is_married.setText("" + mDataBean.getMarried());
         et_01_sex_type.setText("" + mDataBean.getSex());
@@ -227,6 +235,9 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         if (!mEditStatus) {//切换到了不可编辑模式,发送请求
             checkDataAndRequest();
         }
+        if (isFatherExit) {//父类界面主动退出,保存当前数据
+            checkDataAndRequest();
+        }
 
     }
 
@@ -236,8 +247,9 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
      * @param status
      */
     @Override
-    public void onEditStatus(boolean status) {
+    public void onEditStatus(boolean status, boolean isFatherExit) {
         this.mEditStatus = status;
+        this.isFatherExit = isFatherExit;
         setEditStatus();
     }
 
@@ -259,10 +271,14 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 //                            Log.e("adapter", "item==path==" + "http://192.168.64.28:7001/" + mID + "/" + item.getImagePath());
 //                            String path = "http://192.168.64.28:7001/" + mID + "/" + item.getImagePath();
 //                            https://images.csdn.net/20150817/1.jpg
-                            File toLocalFile = new File(Environment.getExternalStorageDirectory() +
-                                    "/MyData/Images/" + MainActivity.getCurrentItemID());
+//                            mDeviceID
+//                            File toLocalFile = new File(Environment.getExternalStorageDirectory() +
+//                                    "/MyData/Images/" + MainActivity.getCurrentItemID());
 
-                            //创建本地的/MyData/Images/mID文件夹  再把图片下载到这个文件夹下
+                            //创建本地的/MyData/Images/mID文件夹  再把图片下载到这个文件夹下  文件夹（设备ID-病例ID）
+                            String dirName = "/MyDownImages/" + mDeviceID + "_" + currentItemCaseID;
+                            File toLocalFile = new File(Environment.getExternalStorageDirectory() +
+                                    dirName);
 
                             sendGetPictureRequest();
 
@@ -292,7 +308,10 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         File toLocalFile = new File(Environment.getExternalStorageDirectory() +
                 "/MyData/Images/" + MainActivity.getCurrentItemID());
 
-        //创建本地的/MyData/Images/mID文件夹  再把图片下载到这个文件夹下
+        /**
+         * 本地文件夹命名规则:文件夹（设备ID-病例ID）
+         */
+        //创建本地的/MyData/Images/mID文件夹  再把图片下载到这个文件夹下    文件夹（设备ID-病例ID）
         String url = "http://images.csdn.net/20150817/1.jpg";
         if (!toLocalFile.exists()) {
             toLocalFile.mkdir();
@@ -466,17 +485,16 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                     //.setCancel(getString(R.string.common_cancel))
                     // 设置点击按钮后不关闭对话框
                     //.setAutoDismiss(false)
-                    .setList("岁", "月", "天")
+                    .setList(ageList)
                     .setListener(new MenuDialog.OnListener<String>() {
 
                         @Override
                         public void onSelected(BaseDialog dialog, int position, String string) {
-                            toast("位置：" + position + "，文本：" + string);
+                            tv_01_age_type.setText("" + ageList.get(position));
                         }
 
                         @Override
                         public void onCancel(BaseDialog dialog) {
-                            toast("取消了");
                         }
                     })
                     .show();
@@ -512,7 +530,6 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 
                         @Override
                         public void onCancel(BaseDialog dialog) {
-                            toast("取消了");
                         }
                     })
                     .show();
@@ -599,6 +616,11 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 
 
     private void initLayoutViewDate() {
+
+        ageList = new ArrayList<>();
+        ageList.add("岁");
+        ageList.add("月");
+        ageList.add("天");
         /**
          * 获取基本信息id
          */
@@ -678,8 +700,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         et_03_family_case_history = findViewById(R.id.et_03_family_case_history);
 
         mEditList = new ArrayList<>();
-        mEditList.add(et_01_check_num);
-        mEditList.add(et_01_name);
+
         mEditList.add(et_01_sex_type);
         mEditList.add(et_01_age);
         mEditList.add(et_01_jop);
@@ -711,6 +732,8 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         mEditList.add(et_03_my_id_num);
         mEditList.add(et_03_case_history);
         mEditList.add(et_03_family_case_history);
+        mEditList.add(et_01_check_num);
+        mEditList.add(et_01_name);
 
 
     }
@@ -723,7 +746,8 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 
     private void checkDataAndRequest() {
         String Name = et_01_name.getText().toString().trim();
-        if (!Name.isEmpty()) {
+        String CaseNo = et_01_check_num.getText().toString().trim();
+        if (!Name.isEmpty() && !CaseNo.isEmpty()) {
             getElseCanSelected();
         } else {
             toast("用户名不能为空!");
@@ -800,7 +824,9 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         //添加三个必须添加的参数
         String UserName = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_Login_UserName, "Admin");
         String EndoType = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_EndoType, "3");
+        mParamsMap.put("ID", MainActivity.getCurrentItemID());
         mParamsMap.put("Name", et_01_name.getText().toString().trim());
+        mParamsMap.put("CaseNo", et_01_check_num.getText().toString().trim());
         mParamsMap.put("UserName", UserName);
         mParamsMap.put("EndoType", EndoType);
         mParamsMap.put("Tel", Tel);
@@ -864,7 +890,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                             AddCaseBean mBean = mGson.fromJson(response, AddCaseBean.class);
                             if (0 == mBean.getCode()) {  //成功
                                 showComplete();
-                                toast("" + mBean.getMsg());
+                                toast("保存成功!");
                                 ActivityManager.getInstance().finishActivity(AddCaseActivity.class);
 
                             } else {

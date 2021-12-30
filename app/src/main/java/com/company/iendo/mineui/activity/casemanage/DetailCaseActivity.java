@@ -38,6 +38,7 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
     private TextView mDelete;
     private TextView mReport;
     private TextView mPicture;
+    private Boolean mFatherExit;   //父类Activity 是否主动退出的标识,主动退出需要请求保存fragment的更新数据
 
     @Override
     protected int getLayoutId() {
@@ -53,7 +54,7 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
         mReport = findViewById(R.id.case_report);
         mDelete = findViewById(R.id.case_delete);
         mDown = findViewById(R.id.case_down);
-
+        mFatherExit = false;
         FragmentPagerAdapter mPagerAdapter = new FragmentPagerAdapter<>(this);
         mPagerAdapter.addFragment(DetailFragment.newInstance(), "详情");
         mPagerAdapter.addFragment(PictureFragment.newInstance(), "图片");
@@ -64,8 +65,13 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
         mTitlebar.setOnTitleBarListener(new OnTitleBarListener() {
             @Override
             public void onLeftClick(View view) {
-                finish();
-
+                //退出界面的时候必须保存数据
+                if (null != mOnEditStatusListener) {
+                    mOnEditStatusListener.onEditStatus(true,true);
+                }
+                postDelayed(()->{
+                    finish();
+                },300);
             }
 
             @Override
@@ -77,7 +83,7 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
             public void onRightClick(View view) {
                 if (mTitlebar.getRightTitle().equals("编辑")) {
                     if (null != mOnEditStatusListener) {
-                        mOnEditStatusListener.onEditStatus(true);
+                        mOnEditStatusListener.onEditStatus(true,false);
                     }
                     mTitlebar.setRightTitle("编辑中...");
                     mTitlebar.setRightTitleColor(getResources().getColor(R.color.red));
@@ -85,7 +91,7 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
                     mTitlebar.setRightTitle("编辑");
                     mTitlebar.setRightTitleColor(getResources().getColor(R.color.black));
                     if (null != mOnEditStatusListener) {
-                        mOnEditStatusListener.onEditStatus(false);
+                        mOnEditStatusListener.onEditStatus(false,false);
                     }
                 }
             }
@@ -126,8 +132,8 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
                     mOnEditStatusListener.onGetReport();
                     Intent intent = new Intent(this, ReportActivity.class);
                     Bundle bundle = new Bundle();
-                    bundle.putInt("A",1);
-                    bundle.putString("B","B");
+                    bundle.putInt("A", 1);
+                    bundle.putString("B", "B");
                     intent.putExtras(bundle);
                     startActivity(intent);
 
@@ -162,7 +168,7 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
 
     public interface OnEditStatusListener {
         //activity制作发送的提示,具体操作全部在DetailFragment里面实现
-        void onEditStatus(boolean status);
+        void onEditStatus(boolean status,boolean isFatherExit);
 
         //下载用户数据
         void onDown(boolean userInfo, boolean userPicture);

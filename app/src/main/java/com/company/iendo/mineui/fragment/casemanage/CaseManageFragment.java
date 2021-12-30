@@ -58,6 +58,7 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
     private List<CaseManageListBean.DataDTO> mDataLest = new ArrayList<>();
     private String mBaseUrl;
     private TextView mTitle;
+    private String currentChoseDate;
 
     public static CaseManageFragment newInstance() {
         return new CaseManageFragment();
@@ -75,6 +76,7 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
         mTitle = findViewById(R.id.tv_title);
         mStatusLayout = findViewById(R.id.b_hint);
         mTitle.setText(DateUtil.getSystemDate());
+        currentChoseDate = mTitle.getText().toString().trim();
         setOnClickListener(R.id.ib_right, R.id.ib_left, R.id.tv_title);
 
     }
@@ -99,6 +101,7 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
         }
     }
 
+
     @Override
     protected void initData() {
         mAdapter = new CaseManageAdapter(getAttachActivity());
@@ -113,8 +116,14 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
     @Override
     public void onResume() {
         super.onResume();
-        mBaseUrl = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_BaseUrl, "111");
-        sendRequest(DateUtil.getSystemDate());
+        mBaseUrl = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_BaseUrl, "192.168.132.102");
+        LogUtils.e("currentChoseDate=====" + mTitle.getText().toString().trim());
+        if (!mTitle.getText().toString().trim().isEmpty()) {
+            sendRequest(mTitle.getText().toString().trim());
+        } else {
+            sendRequest(currentChoseDate);
+
+        }
 //        showDateDialog();
     }
 
