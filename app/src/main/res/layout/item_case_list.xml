@@ -15,8 +15,10 @@
         android:orientation="horizontal">
 
         <TextView
+            android:lines="1"
+            android:singleLine="true"
             android:id="@+id/tv_case_name"
-            android:layout_width="wrap_content"
+            android:layout_width="@dimen/dp_50"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:gravity="center_vertical"
@@ -25,7 +27,7 @@
             android:textSize="@dimen/sp_14" />
 
         <ImageView
-            android:paddingLeft="8dp"
+            android:paddingLeft="5dp"
             android:src="@mipmap/icon_sex_man"
             android:id="@+id/iv_sex_logo"
             android:layout_width="@dimen/dp_17"

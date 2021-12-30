@@ -120,9 +120,8 @@
             android:id="@+id/relative_username_00"
             android:layout_width="match_parent"
             android:layout_height="@dimen/dp_70"
-            android:layout_marginLeft="40dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="40dp">
+            android:layout_marginLeft="@dimen/dp_37"
+            android:layout_marginRight="@dimen/dp_37">
 
             <EditText
                 android:id="@+id/et_login_phone"
@@ -162,9 +161,8 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="@dimen/dp_70"
-            android:layout_marginLeft="40dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="40dp">
+            android:layout_marginLeft="@dimen/dp_37"
+            android:layout_marginRight="@dimen/dp_37">
 
             <com.hjq.widget.view.PasswordEditText
                 android:id="@+id/et_login_password"

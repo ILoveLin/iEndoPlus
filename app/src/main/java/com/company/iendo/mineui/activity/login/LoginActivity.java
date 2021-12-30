@@ -47,6 +47,7 @@ import com.company.iendo.ui.dialog.WaitDialog;
 import com.company.iendo.ui.popup.ListPopup;
 import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.MD5ChangeUtil;
+import com.company.iendo.utils.ScreenSizeUtil;
 import com.company.iendo.utils.SharePreferenceUtil;
 import com.gyf.immersionbar.ImmersionBar;
 import com.hjq.base.BasePopupWindow;
@@ -122,6 +123,7 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
             }
         }
     };
+    private int screenWidth;
 
     private void initRememberPassword() {
         Boolean isSave = (Boolean) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Flag_UserDBSave, false);
@@ -171,6 +173,7 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
         mTopLogoAnim = findViewById(R.id.linear_top_logo);
         mCheckbox = findViewById(R.id.checkbox_remember);
         setOnClickListener(R.id.btn_login_commit, R.id.btn_login_setting, R.id.checkbox_remember, R.id.login_type);
+        screenWidth = ScreenSizeUtil.getScreenWidth(LoginActivity.this);
         mPasswordView.setOnEditorActionListener(this);
         InputTextManager.with(this)
                 .addView(mPhoneView)
@@ -245,6 +248,7 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
 
     private ListPopup.Builder historyBuilder;
 
+    @SuppressLint("ResourceType")
     private void showHistoryDialog() {
 
         username_right.setImageResource(R.drawable.login_icon_down);
@@ -260,14 +264,27 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                     username_right.setTag("close");
                     username_right.setImageResource(R.drawable.login_icon_down);
                 }
+
+                LogUtils.e("==========screenWidth======screenWidth===" + screenWidth);
+
+                String string = getResources().getString(R.dimen.dp_74);
+                String dip = string.replace("dip", "");
+                Float mFloatDate=  Float.valueOf(dip).floatValue();
+                LogUtils.e("==========screenWidth======mPhoneView===" + mPhoneView.getWidth());
+                LogUtils.e("==========screenWidth======string===" + dip);
+                LogUtils.e("==========screenWidth======mFloatDate===" + mFloatDate);
+                LogUtils.e("==========screenWidth======screenWidth - mFloatDate===" + (screenWidth - mFloatDate));
+
                 historyBuilder = new ListPopup.Builder(LoginActivity.this);
                 historyBuilder.setList(getListData())
                         .setGravity(Gravity.CENTER_VERTICAL)
                         .setAutoDismiss(true)
-                        .setOutsideTouchable(false)
-                        .setWidth(mPhoneViewWidth + 60)
-                        .setXOffset(-30)
-                        .setHeight(650)
+                        .setOutsideTouchable(false) //80dp
+                        .setWidth(mPhoneView.getWidth())
+//                        .setWidth((int) (screenWidth - mFloatDate))
+//                        .setWidth(mPhoneViewWidth + 60)
+//                        .setXOffset(-30)
+//                        .setHeight(650)
                         .setAnimStyle(AnimAction.ANIM_SCALE)
                         .setListener((ListPopup.OnListener<String>) (popupWindow, position, str) -> {
                                     Message tempMsg = mHandler.obtainMessage();
@@ -278,6 +295,23 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
 
                         )
                         .showAsDropDown(mPhoneView);
+//                historyBuilder.setList(getListData())
+//                        .setGravity(Gravity.CENTER_VERTICAL)
+//                        .setAutoDismiss(true)
+//                        .setOutsideTouchable(false)
+//                        .setWidth(mPhoneViewWidth + 60)
+//                        .setXOffset(-30)
+//                        .setHeight(650)
+//                        .setAnimStyle(AnimAction.ANIM_SCALE)
+//                        .setListener((ListPopup.OnListener<String>) (popupWindow, position, str) -> {
+//                                    Message tempMsg = mHandler.obtainMessage();
+//                                    tempMsg.what = 1;
+//                                    tempMsg.obj = str;
+//                                    mHandler.sendMessage(tempMsg);
+//                                }
+//
+//                        )
+//                        .showAsDropDown(mPhoneView);
 
 
                 historyBuilder.getPopupWindow().addOnDismissListener(new BasePopupWindow.OnDismissListener() {

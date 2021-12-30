@@ -269,7 +269,6 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                         LogUtils.e("下载===size=" + size);
                         if (size == 2) {//下载用户信息和图片信息
 //                            https://images.csdn.net/20150817/1.jpg
-
                             //下载图片
                             sendGetPictureRequest();
 
@@ -319,7 +318,6 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                         LogUtils.e("下载图片==onError==" + e);
                         //下载失败
                     }
-
                     @Override
                     public void onResponse(File response, int id) {
                         LogUtils.e("下载图片==onResponse==" + response.toString());
