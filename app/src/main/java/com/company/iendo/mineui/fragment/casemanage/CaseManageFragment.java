@@ -59,6 +59,7 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
     private String mBaseUrl;
     private TextView mTitle;
     private String currentChoseDate;
+    private String endoType;
 
     public static CaseManageFragment newInstance() {
         return new CaseManageFragment();
@@ -71,6 +72,7 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
 
     @Override
     protected void initView() {
+        endoType = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_EndoType, "3");
         mRefreshLayout = findViewById(R.id.rl_b_refresh);
         mRecyclerView = findViewById(R.id.rv_b_recyclerview);
         mTitle = findViewById(R.id.tv_title);
@@ -167,12 +169,13 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
         OkHttpUtils.get()
                 .url(mBaseUrl + HttpConstant.CaseManager_List)
                 .addParams("datetime", mChoiceDate)
-                .addParams("EndoType", "3")  //目前默认是3  耳鼻喉治疗台
+//                .addParams("EndoType", "4")  //目前默认是3  耳鼻喉治疗台
+                .addParams("EndoType", endoType)  //目前默认是3  耳鼻喉治疗台
                 .build()
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
-                        LogUtils.e("=TAG=hy=onError==" + e.toString());
+                        LogUtils.e("=病例列表=hy=onError==" + e.toString());
                         showError(listener -> {
                             sendRequest(mChoiceDate);
                         });
@@ -183,10 +186,10 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
                         try {
                             if ("" != response) {
                                 CaseManageListBean mBean = mGson.fromJson(response, CaseManageListBean.class);
-                                LogUtils.e("=TAG=hy=onError==Code===" + mBean.getCode());
-                                LogUtils.e("=TAG=hy=onError==size===" + mBean.getData().size());
+                                LogUtils.e("=病例列表=hy=response==response===" + response);
+                                LogUtils.e("=病例列表=hy=response==size===" + mBean.getData().size());
                                 for (int i = 0; i < mBean.getData().size(); i++) {
-                                    LogUtils.e("=TAG=hy=time==" + mBean.getData().get(i).getID());
+                                    LogUtils.e("=病例列表=hy=time==" + mBean.getData().get(i).getID());
                                 }
                                 if (0 == mBean.getCode()) {  //成功
                                     if (mBean.getData().size() != 0) {

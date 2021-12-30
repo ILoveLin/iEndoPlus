@@ -90,7 +90,6 @@ public class VideoFragment extends TitleBarFragment<MainActivity> implements Sta
                         if ("" != response) {
                             DetailVideoBean mBean = mGson.fromJson(response, DetailVideoBean.class);
                             List<DetailVideoBean.DataDTO> data = mBean.getData();
-                            toast(mBean.getMsg());
                             if (0 == mBean.getCode()) {  //成功
                                 showComplete();
                                 if (mBean.getData().size()!=0){
@@ -130,7 +129,6 @@ public class VideoFragment extends TitleBarFragment<MainActivity> implements Sta
     @Override
     public void onItemClick(RecyclerView recyclerView, View itemView, int position) {
         DetailVideoBean.DataDTO item = mAdapter.getItem(position);
-        toast(item.getFilePath());
     }
 
     /**

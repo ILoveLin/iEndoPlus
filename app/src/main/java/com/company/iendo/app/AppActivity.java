@@ -46,6 +46,7 @@ public abstract class AppActivity extends BaseActivity
     private int mDialogCount;
     public Gson mGson;
     public String mBaseUrl;  //当前用户的头部url
+    public String endoType;
 
     /**
      * 当前加载对话框是否在显示中
@@ -106,8 +107,8 @@ public abstract class AppActivity extends BaseActivity
         }
 
 
-        mBaseUrl = (String) SharePreferenceUtil.get(AppActivity.this, SharePreferenceUtil.Current_BaseUrl, "111");
-        String  mEndoType = (String) SharePreferenceUtil.get(AppActivity.this, SharePreferenceUtil.Current_EndoType, "耳鼻喉治疗台");
+        mBaseUrl = (String) SharePreferenceUtil.get(AppActivity.this, SharePreferenceUtil.Current_BaseUrl, "192.167.132.102");
+        endoType = (String) SharePreferenceUtil.get(AppActivity.this, SharePreferenceUtil.Current_EndoType, "3");
 
 
         // 初始化沉浸式状态栏

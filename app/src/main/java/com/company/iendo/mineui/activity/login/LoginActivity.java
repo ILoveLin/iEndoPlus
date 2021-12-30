@@ -129,18 +129,34 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
         Boolean isSave = (Boolean) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Flag_UserDBSave, false);
         LogUtils.e("initRememberPassword====isSave:" + isSave);
         String userName = mPhoneView.getText().toString().trim();
-        if (isSave && !"".equals(userName)) {//存过设备之后才能查询本地数据库用户表--并且选中了当前用户
-            if (UserDBUtils.queryListIsExist(getApplicationContext(), userName)) {
-                UserDBBean userDBBean = UserDBUtils.queryListByName(getApplicationContext(), userName);
+        LogUtils.e("initRememberPassword====isSave:" + isSave);
+
+        if (isSave) {//存过设备之后才能查询本地数据库用户表--并且选中了当前用户
+            List<UserDBBean> userDBBeans = UserDBUtils.queryAll(getApplicationContext());
+            if (!userDBBeans.isEmpty()) {
+                UserDBBean userDBBean = userDBBeans.get(0);
                 mCheckbox.setChecked(true);
                 mPhoneView.setText("" + userDBBean.getUserName());
                 mPasswordView.setText("" + userDBBean.getPassword());
             }
+
         } else {
             mCheckbox.setChecked(false);
             mPhoneView.setText("");
             mPasswordView.setText("");
         }
+//        if (isSave && !"".equals(userName)) {//存过设备之后才能查询本地数据库用户表--并且选中了当前用户
+//            if (UserDBUtils.queryListIsExist(getApplicationContext(), userName)) {
+//                UserDBBean userDBBean = UserDBUtils.queryListByName(getApplicationContext(), userName);
+//                mCheckbox.setChecked(true);
+//                mPhoneView.setText("" + userDBBean.getUserName());
+//                mPasswordView.setText("" + userDBBean.getPassword());
+//            }
+//        } else {
+//            mCheckbox.setChecked(false);
+//            mPhoneView.setText("");
+//            mPasswordView.setText("");
+//        }
 
     }
 
@@ -269,32 +285,34 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
 
                 String string = getResources().getString(R.dimen.dp_74);
                 String dip = string.replace("dip", "");
-                Float mFloatDate=  Float.valueOf(dip).floatValue();
+                Float mFloatDate = Float.valueOf(dip).floatValue();
                 LogUtils.e("==========screenWidth======mPhoneView===" + mPhoneView.getWidth());
                 LogUtils.e("==========screenWidth======string===" + dip);
                 LogUtils.e("==========screenWidth======mFloatDate===" + mFloatDate);
                 LogUtils.e("==========screenWidth======screenWidth - mFloatDate===" + (screenWidth - mFloatDate));
 
-                historyBuilder = new ListPopup.Builder(LoginActivity.this);
-                historyBuilder.setList(getListData())
-                        .setGravity(Gravity.CENTER_VERTICAL)
-                        .setAutoDismiss(true)
-                        .setOutsideTouchable(false) //80dp
-                        .setWidth(mPhoneView.getWidth())
-//                        .setWidth((int) (screenWidth - mFloatDate))
-//                        .setWidth(mPhoneViewWidth + 60)
-//                        .setXOffset(-30)
-//                        .setHeight(650)
-                        .setAnimStyle(AnimAction.ANIM_SCALE)
-                        .setListener((ListPopup.OnListener<String>) (popupWindow, position, str) -> {
-                                    Message tempMsg = mHandler.obtainMessage();
-                                    tempMsg.what = 1;
-                                    tempMsg.obj = str;
-                                    mHandler.sendMessage(tempMsg);
-                                }
+                if (!getListData().isEmpty()) {
+                    historyBuilder = new ListPopup.Builder(LoginActivity.this);
+                    historyBuilder.setList(getListData())
+                            .setGravity(Gravity.CENTER_VERTICAL)
+                            .setAutoDismiss(true)
+                            .setOutsideTouchable(false) //80dp
+                            .setWidth(mPhoneView.getWidth())
+                            .setAnimStyle(AnimAction.ANIM_SCALE)
+                            .setListener((ListPopup.OnListener<String>) (popupWindow, position, str) -> {
+                                        Message tempMsg = mHandler.obtainMessage();
+                                        tempMsg.what = 1;
+                                        tempMsg.obj = str;
+                                        mHandler.sendMessage(tempMsg);
+                                    }
 
-                        )
-                        .showAsDropDown(mPhoneView);
+                            )
+                            .showAsDropDown(mPhoneView);
+                } else {
+                    toast("暂无数据哦!");
+
+                }
+
 //                historyBuilder.setList(getListData())
 //                        .setGravity(Gravity.CENTER_VERTICAL)
 //                        .setAutoDismiss(true)
@@ -312,15 +330,15 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
 //
 //                        )
 //                        .showAsDropDown(mPhoneView);
-
-
-                historyBuilder.getPopupWindow().addOnDismissListener(new BasePopupWindow.OnDismissListener() {
-                    @Override
-                    public void onDismiss(BasePopupWindow popupWindow) {
-                        username_right.setTag("close");
-                        username_right.setImageResource(R.drawable.login_icon_down);
-                    }
-                });
+                if (null != historyBuilder) {
+                    historyBuilder.getPopupWindow().addOnDismissListener(new BasePopupWindow.OnDismissListener() {
+                        @Override
+                        public void onDismiss(BasePopupWindow popupWindow) {
+                            username_right.setTag("close");
+                            username_right.setImageResource(R.drawable.login_icon_down);
+                        }
+                    });
+                }
             }
         });
 
@@ -411,7 +429,6 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                 mCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        toast(isChecked);
                     }
                 });
                 break;
@@ -546,6 +563,14 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
 
         String mType = (String) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Current_Type, "耳鼻喉治疗台");
         mDeviceType.setText("" + mType);
+
+
+        /**
+         * 这里判断
+         *
+         */
+        //选择设备之后,回到此界面默认会写记住密码的第一个用户
+        initRememberPassword();
 
     }
 

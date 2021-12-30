@@ -22,10 +22,12 @@ import com.company.iendo.bean.SearchListBean;
  */
 public class PictureAdapter extends AppAdapter<DetailPictureBean.DataDTO> {
     private String mID;
+    private String mBaseUrl;
 
-    public PictureAdapter(Context context, String mID) {
+    public PictureAdapter(Context context, String mID, String mBaseUrl) {
         super(context);
         this.mID = mID;
+        this.mBaseUrl = mBaseUrl;
 
     }
 
@@ -48,13 +50,17 @@ public class PictureAdapter extends AppAdapter<DetailPictureBean.DataDTO> {
         public void onBindView(int position) {
             DetailPictureBean.DataDTO item = getItem(position);
 //            http://192.168.64.28:7001/ID/ImagePath
-            Log.e("adapter", "item==path==" + "http://192.168.64.28:7001/" + mID + "/" + item.getImagePath());
+//            Log.e("adapter", "item==path==" + "http://192.168.64.28:7001/" + mID + "/" + item.getImagePath());
 
-            String path = "http://192.168.64.28:7001/" + mID + "/" + item.getImagePath();
+            String path = "http://192.168.64.56:7001/" + mID + "/" + item.getImagePath();
+            String url = "http://images.csdn.net/20150817/1.jpg";
+            Log.e("adapter", "item==path==" + "http://192.168.64.56:7001/" + mID + "/" + item.getImagePath());
+            Log.e("adapter", "item==path=mBaseUrl=" + mBaseUrl + "/" + mID + "/" + item.getImagePath());
+//            http://192.168.64.56:7001/3/001.jpg
 //            mImageView.setText("Path:" + item.getImagePath() + "ID:" + item.getID());
             Glide.with(getContext())
                     .load(path)
-                    .error(R.mipmap.icon_case_btn)
+                    .error(R.mipmap.bg_loading_error)
                     .into(mImageView);
         }
     }

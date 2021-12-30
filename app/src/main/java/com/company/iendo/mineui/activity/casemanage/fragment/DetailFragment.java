@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -16,13 +17,13 @@ import com.company.iendo.app.TitleBarFragment;
 import com.company.iendo.bean.AddCaseBean;
 import com.company.iendo.bean.CaseDetailBean;
 import com.company.iendo.bean.DeleteBean;
+import com.company.iendo.bean.DetailPictureBean;
 import com.company.iendo.bean.DialogItemBean;
 import com.company.iendo.bean.ListDialogDateBean;
 import com.company.iendo.manager.ActivityManager;
 import com.company.iendo.mineui.activity.MainActivity;
 import com.company.iendo.mineui.activity.casemanage.AddCaseActivity;
 import com.company.iendo.mineui.activity.casemanage.DetailCaseActivity;
-import com.company.iendo.mineui.activity.login.device.DeviceActivity;
 import com.company.iendo.other.HttpConstant;
 import com.company.iendo.ui.dialog.MenuDialog;
 import com.company.iendo.ui.dialog.MessageDialog;
@@ -56,11 +57,13 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 
     private AppCompatTextView mTV;
     private StatusLayout mStatusLayout;
+    private Boolean mFirstIn = true;    //第一次进入界面---->解决  首次进来 tosat 提示
     private Boolean mEditStatus = false;    //编辑状态为true,不可编辑状态为flase
     private Boolean isFatherExit = false;   //父类Activity 是否主动退出的标识,主动退出需要请求保存fragment的更新数据
     private DetailCaseActivity mActivity;
     private CaseDetailBean mBean;
     private String mBaseUrl;
+
     private TextView tv_01_age_type;
     private boolean mFragClickable = false;  //dialog数据请求错误,相对于dialog不允许弹窗,不然会闪退
     private HashMap<String, String> mParamsMap;
@@ -73,9 +76,12 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
             et_03_case_area_num, et_03_case_bed_num, et_03_native_place, et_03_ming_zu, et_03_is_married, et_03_tel, et_03_address,
             et_03_my_id_num, et_03_case_history, et_03_family_case_history;
     private ArrayList<ClearEditText> mEditList;
+    private ArrayList<ClearEditText> mNotFocusableEditList;   //解决编辑状态点击两次弹窗Bug
     private String mDeviceID;
     private String currentItemCaseID;
     private ArrayList<String> ageList;
+    private ArrayList<String> mNameList;
+    private HashMap<String, String> mPathMap;
 
     public static DetailFragment newInstance() {
         return new DetailFragment();
@@ -111,7 +117,62 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         mActivity.setOnEditStatusListener(this);
     }
 
+
     private void sendRequest(String currentItemID) {
+
+        //获取图片并且把用户名添加到集合当中,以备下载需要
+        OkHttpUtils.get()
+                .url(mBaseUrl + HttpConstant.CaseManager_CasePictures)
+                .addParams("ID", currentItemID)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        LogUtils.e("图片" + "初始化图片路径保存失败===" + e);////原图路径
+
+                        showError(listener -> {
+                            sendRequest(currentItemID);
+                        });
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        mPathMap = new HashMap<>();
+                        if ("" != response) {
+                            DetailPictureBean mBean = mGson.fromJson(response, DetailPictureBean.class);
+                            List<DetailPictureBean.DataDTO> data = mBean.getData();
+                            LogUtils.e("图片" + "response===" + response);////原图路径
+
+                            if (0 == mBean.getCode()) {  //成功
+                                showComplete();
+                                if (mBean.getData().size() != 0) {
+                                    for (int i = 0; i < mBean.getData().size(); i++) {
+                                        String imageName = mBean.getData().get(i).getImagePath();
+                                        String url = mBaseUrl + "/" + MainActivity.getCurrentItemID() + "/" + imageName;
+                                        LogUtils.e("详情界面---获取到当前图片name===" + imageName);
+                                        LogUtils.e("详情界面---获取到当前图片path===" + url);
+                                        //例如imageName=001.jpg  url=http://192.168.64.56:7001/3/001.jpg
+                                        mPathMap.put(imageName, url);
+
+                                    }
+                                } else {
+                                    showEmpty();
+                                }
+
+                            } else {
+                                showError(listener -> {
+                                    sendRequest(currentItemID);
+                                });
+                            }
+                        } else {
+                            showError(listener -> {
+                                sendRequest(currentItemID);
+                            });
+                        }
+                    }
+                });
+
+
         showLoading();
         OkHttpUtils.get()
                 .url(mBaseUrl + HttpConstant.CaseManager_CaseInfo)
@@ -145,6 +206,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                         }
                     }
                 });
+
 
     }
 
@@ -223,7 +285,8 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                     mEditList.get(i).setFocusableInTouchMode(true);
                     mEditList.get(i).setFocusable(true);
                     mEditList.get(i).requestFocus();
-
+                    //android:focusable="false"
+                    //谈对话框的不能获取焦点
                 } else {
                     //设置不可编辑状态
                     mEditList.get(i).setFocusable(false);
@@ -231,9 +294,22 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 
                 }
             }
+
+            if (mEditStatus) {
+                for (int i = 0; i < mNotFocusableEditList.size(); i++) {
+                    mNotFocusableEditList.get(i).setFocusableInTouchMode(false);
+                    mNotFocusableEditList.get(i).setFocusable(false);
+                }
+            }
+
         }
         if (!mEditStatus) {//切换到了不可编辑模式,发送请求
-            checkDataAndRequest();
+            if (mFirstIn) {  //解决  首次进来 tosat 提示
+                mFirstIn = false;
+            } else {
+                checkDataAndRequest();
+
+            }
         }
         if (isFatherExit) {//父类界面主动退出,保存当前数据
             checkDataAndRequest();
@@ -250,6 +326,8 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
     public void onEditStatus(boolean status, boolean isFatherExit) {
         this.mEditStatus = status;
         this.isFatherExit = isFatherExit;
+
+
         setEditStatus();
     }
 
@@ -270,7 +348,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                         if (size == 2) {//下载用户信息和图片信息
 //                            https://images.csdn.net/20150817/1.jpg
                             //下载图片
-                            sendGetPictureRequest();
+                            startDownPicture();
 
                         } else {//筛选下载哪种信息
                             int i = string.indexOf("=");
@@ -290,7 +368,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 
     }
 
-    private void sendGetPictureRequest() {
+    private void startDownPicture() {
 
 //      Log.e("adapter", "item==path==" + "http://192.168.64.28:7001/" + mID + "/" + item.getImagePath());
 //      String path = "http://192.168.64.28:7001/" + mID + "/" + item.getImagePath();
@@ -303,35 +381,51 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         String dirName = Environment.getExternalStorageDirectory() + "/MyDownImages/" + mDeviceID + "_" + currentItemCaseID;
         LogUtils.e("文件下载=====文件夹名字===" + dirName);
         File toLocalFile = new File(dirName);
-        String url = "http://images.csdn.net/20150817/1.jpg";
         if (!toLocalFile.exists()) {
             toLocalFile.mkdir();
         }
-        OkHttpUtils//
-                .get()//
-                .url(url)//
-                .build()//
-                .execute(new FileCallBack(toLocalFile.getAbsolutePath(), "1.jpg") {
+        LogUtils.e("详情界面---mPathMap===" + mPathMap.isEmpty());
+        if (null != mPathMap && !mPathMap.isEmpty()) {
+            for (String key : mPathMap.keySet()) {
+                LogUtils.e("文件下载=====entry.getKey()===" + key);
+                LogUtils.e("文件下载=====entry.getValue()===" + mPathMap.get(key));
+                int size = mPathMap.keySet().size();
+                sendPictureRequest(toLocalFile, mPathMap.get(key), key, false);
+            }
+
+        }
+    }
+
+    private void sendPictureRequest(File toLocalFile, String path, String pictureName, Boolean lastPicture) {
+//        String url = "http://images.csdn.net/20150817/1.jpg";
+        if (!toLocalFile.exists()) {
+            toLocalFile.mkdir();
+        }
+        OkHttpUtils.get()
+                .url(path)
+                .build()
+                .execute(new FileCallBack(toLocalFile.getAbsolutePath(), pictureName) {
 
                     @Override
                     public void onError(Call call, Exception e, int id) {
                         LogUtils.e("下载图片==onError==" + e);
                         //下载失败
                     }
+
                     @Override
                     public void onResponse(File response, int id) {
                         LogUtils.e("下载图片==onResponse==" + response.toString());
+                        LogUtils.e("下载图片==更新相册图片==" + toLocalFile.getAbsolutePath() + "/" + pictureName);
+                        //=====/storage/emulated/0/MyDownImages/2_3/004.jpg
                         //刷新相册
                         try {
-                            MediaStore.Images.Media.insertImage(getActivity().getContentResolver(), toLocalFile.getAbsolutePath() + "/1.jpg", "", "");
+                            MediaStore.Images.Media.insertImage(getActivity().getContentResolver(), toLocalFile.getAbsolutePath() + "/" + pictureName, pictureName, "");
                         } catch (FileNotFoundException e) {
                             e.printStackTrace();
                         }
 
                     }
                 });
-
-
     }
 
     @Override
@@ -528,6 +622,8 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
     @Override
     public void onResume() {
         super.onResume();
+        isFatherExit = false;
+        mFirstIn = true;
         sendListDictsRequest();
 
     }
@@ -539,7 +635,8 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         //获取Dialog item的数据
         OkHttpUtils.get()
                 .url(mBaseUrl + HttpConstant.CaseManager_CaseDialogDate)
-                .addParams("EndoType", "3")
+                .addParams("EndoType",endoType)
+//                .addParams("EndoType", "4")
                 .build()
                 .execute(new StringCallback() {
                     @Override
@@ -688,9 +785,10 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         et_03_family_case_history = findViewById(R.id.et_03_family_case_history);
 
         mEditList = new ArrayList<>();
+        mNotFocusableEditList = new ArrayList<>();   //不能获取焦点的edit
 
         mEditList.add(et_01_sex_type);
-        mEditList.add(et_01_age);
+        mEditList.add(et_01_age);//et_01_age
         mEditList.add(et_01_jop);
         mEditList.add(et_01_fee);
         mEditList.add(et_01_get_check_doctor);
@@ -724,6 +822,29 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         mEditList.add(et_01_name);
 
 
+        mNotFocusableEditList.add(et_01_sex_type);
+        mNotFocusableEditList.add(et_01_jop);
+        mNotFocusableEditList.add(et_01_get_check_doctor);
+        mNotFocusableEditList.add(et_01_i_tell_you);
+        mNotFocusableEditList.add(et_01_bad_tell);
+        mNotFocusableEditList.add(et_02_mirror_see);
+        mNotFocusableEditList.add(et_02_mirror_result);
+        mNotFocusableEditList.add(et_02_live_check);
+        mNotFocusableEditList.add(et_02_cytology);
+        mNotFocusableEditList.add(et_02_pathology);
+        mNotFocusableEditList.add(et_02_test);
+        mNotFocusableEditList.add(et_02_advice);
+        mNotFocusableEditList.add(et_02_check_doctor);
+        mNotFocusableEditList.add(et_03_section);
+        mNotFocusableEditList.add(et_03_device);
+        mNotFocusableEditList.add(et_03_ming_zu);
+        mNotFocusableEditList.add(et_03_is_married);
+        mNotFocusableEditList.add(et_03_section);
+        mNotFocusableEditList.add(et_03_section);
+        mNotFocusableEditList.add(et_03_section);
+        mNotFocusableEditList.add(et_03_section);
+
+
     }
 
 
@@ -734,8 +855,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 
     private void checkDataAndRequest() {
         String Name = et_01_name.getText().toString().trim();
-        String CaseNo = et_01_check_num.getText().toString().trim();
-        if (!Name.isEmpty() && !CaseNo.isEmpty()) {
+        if (!Name.isEmpty()) {
             getElseCanSelected();
         } else {
             toast("用户名不能为空!");
@@ -856,7 +976,6 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
      */
     private void sendUpdateRequest() {
         LogUtils.e("发送更新病例请求=== mParamsMap.toString()===" + mParamsMap.toString());
-        showLoading();
         OkHttpUtils.post()
                 .url(mBaseUrl + HttpConstant.CaseManager_ChangeCase)
                 .params(mParamsMap)

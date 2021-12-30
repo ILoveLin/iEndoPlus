@@ -37,7 +37,6 @@ import okhttp3.Call;
  * github : https://github.com/getActivity/AndroidProject
  * time   : 2018/10/18
  * desc   : 添加病例
- * * todo 新增和更新接口的CaseNo  需要传递 不不然报错
  *
  */
 public final class AddCaseActivity extends AppActivity implements StatusAction {
@@ -173,7 +172,7 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
         String EndoType = (String) SharePreferenceUtil.get(AddCaseActivity.this, SharePreferenceUtil.Current_EndoType, "3");
         mParamsMap.put("Name", et_01_name.getText().toString().trim());
         mParamsMap.put("UserName", UserName);
-        mParamsMap.put("EndoType", EndoType);
+        mParamsMap.put("EndoType", "EndoType");
         mParamsMap.put("Tel", Tel);
         mParamsMap.put("Address", Address);
         mParamsMap.put("CardID", CardID);
@@ -272,7 +271,8 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
         //获取Dialog item的数据
         OkHttpUtils.get()
                 .url(mBaseUrl + HttpConstant.CaseManager_CaseDialogDate)
-                .addParams("EndoType", "3")
+//                .addParams("EndoType", "4")
+                .addParams("EndoType", endoType)
                 .build()
                 .execute(new StringCallback() {
                     @Override

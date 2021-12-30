@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.company.iendo.utils.SharePreferenceUtil;
 import com.google.gson.Gson;
 import com.gyf.immersionbar.ImmersionBar;
 import com.hjq.bar.TitleBar;
@@ -28,6 +29,7 @@ public abstract class TitleBarFragment<A extends AppActivity> extends AppFragmen
     /** 状态栏沉浸 */
     private ImmersionBar mImmersionBar;
     public  Gson mGson;
+    public String endoType;
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -48,6 +50,9 @@ public abstract class TitleBarFragment<A extends AppActivity> extends AppFragmen
                 ImmersionBar.setTitleBar(this, getTitleBar());
             }
         }
+
+        endoType = (String) SharePreferenceUtil.get(getAttachActivity(), SharePreferenceUtil.Current_EndoType, "3");
+
     }
 
     @Override

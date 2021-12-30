@@ -17,6 +17,7 @@ import com.company.iendo.mineui.activity.casemanage.fragment.DetailFragment;
 import com.company.iendo.mineui.activity.casemanage.fragment.PictureFragment;
 import com.company.iendo.mineui.activity.casemanage.fragment.VideoFragment;
 import com.company.iendo.ui.adapter.TabAdapter;
+import com.company.iendo.utils.LogUtils;
 import com.gyf.immersionbar.ImmersionBar;
 import com.hjq.bar.OnTitleBarListener;
 import com.hjq.bar.TitleBar;
@@ -85,7 +86,7 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
                     if (null != mOnEditStatusListener) {
                         mOnEditStatusListener.onEditStatus(true,false);
                     }
-                    mTitlebar.setRightTitle("编辑中...");
+                    mTitlebar.setRightTitle("保存");
                     mTitlebar.setRightTitleColor(getResources().getColor(R.color.red));
                 } else {
                     mTitlebar.setRightTitle("编辑");
@@ -101,6 +102,11 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
         mTabAdapter = new TabAdapter(this);
         mTabView.setAdapter(mTabAdapter);
 
+
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
 
     }
 
@@ -183,6 +189,7 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
         void onGetPicture();
 
     }
+
 
 
     @NonNull
