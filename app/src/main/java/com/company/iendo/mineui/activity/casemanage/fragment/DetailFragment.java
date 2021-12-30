@@ -268,18 +268,9 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                         int size = data.size();
                         LogUtils.e("下载===size=" + size);
                         if (size == 2) {//下载用户信息和图片信息
-//                            Log.e("adapter", "item==path==" + "http://192.168.64.28:7001/" + mID + "/" + item.getImagePath());
-//                            String path = "http://192.168.64.28:7001/" + mID + "/" + item.getImagePath();
 //                            https://images.csdn.net/20150817/1.jpg
-//                            mDeviceID
-//                            File toLocalFile = new File(Environment.getExternalStorageDirectory() +
-//                                    "/MyData/Images/" + MainActivity.getCurrentItemID());
 
-                            //创建本地的/MyData/Images/mID文件夹  再把图片下载到这个文件夹下  文件夹（设备ID-病例ID）
-                            String dirName = "/MyDownImages/" + mDeviceID + "_" + currentItemCaseID;
-                            File toLocalFile = new File(Environment.getExternalStorageDirectory() +
-                                    dirName);
-
+                            //下载图片
                             sendGetPictureRequest();
 
                         } else {//筛选下载哪种信息
@@ -305,19 +296,18 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 //      Log.e("adapter", "item==path==" + "http://192.168.64.28:7001/" + mID + "/" + item.getImagePath());
 //      String path = "http://192.168.64.28:7001/" + mID + "/" + item.getImagePath();
 //      https://images.csdn.net/20150817/1.jpg
-        File toLocalFile = new File(Environment.getExternalStorageDirectory() +
-                "/MyData/Images/" + MainActivity.getCurrentItemID());
 
         /**
          * 本地文件夹命名规则:文件夹（设备ID-病例ID）
          */
-        //创建本地的/MyData/Images/mID文件夹  再把图片下载到这个文件夹下    文件夹（设备ID-病例ID）
+        //创建本地的/MyData/Images/mID文件夹  再把图片下载到这个文件夹下  文件夹（设备ID-病例ID）
+        String dirName = Environment.getExternalStorageDirectory() + "/MyDownImages/" + mDeviceID + "_" + currentItemCaseID;
+        LogUtils.e("文件下载=====文件夹名字===" + dirName);
+        File toLocalFile = new File(dirName);
         String url = "http://images.csdn.net/20150817/1.jpg";
         if (!toLocalFile.exists()) {
             toLocalFile.mkdir();
         }
-
-
         OkHttpUtils//
                 .get()//
                 .url(url)//

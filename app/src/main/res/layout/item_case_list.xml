@@ -2,8 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
     android:background="@drawable/selector_item_ffffff"
+    android:orientation="vertical"
 
     android:paddingLeft="@dimen/dp_10"
     android:paddingRight="@dimen/dp_10">
@@ -23,6 +23,16 @@
             android:text="张大仙"
             android:textColor="@color/black90"
             android:textSize="@dimen/sp_14" />
+
+        <ImageView
+            android:paddingLeft="8dp"
+            android:src="@mipmap/icon_sex_man"
+            android:id="@+id/iv_sex_logo"
+            android:layout_width="@dimen/dp_17"
+            android:layout_height="@dimen/dp_17"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
+            />
 
         <View
             android:layout_width="0dp"
