@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.company.iendo.ui.activity.CopyActivity">
+
+            <cn.bingoogolapple.qrcode.zxing.ZXingView
+                android:id="@+id/zxing_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:qrcv_animTime="1000"
+                app:qrcv_barCodeTipText="将条码放入框内，即可自动扫描"
+                app:qrcv_barcodeRectHeight="@dimen/dp_120"
+                app:qrcv_borderColor="@android:color/white"
+                app:qrcv_borderSize="@dimen/dp_1"
+                app:qrcv_cornerColor="@color/colorPrimaryDark"
+                app:qrcv_cornerDisplayType="center"
+                app:qrcv_cornerLength="@dimen/dp_20"
+                app:qrcv_cornerSize="@dimen/dp_3"
+                app:qrcv_customScanLineDrawable="@drawable/scan_icon_scanline"
+                app:qrcv_isAutoZoom="true"
+                app:qrcv_isBarcode="false"
+                app:qrcv_isOnlyDecodeScanBoxArea="false"
+                app:qrcv_isScanLineReverse="true"
+                app:qrcv_isShowDefaultGridScanLineDrawable="false"
+                app:qrcv_isShowDefaultScanLineDrawable="true"
+                app:qrcv_isShowLocationPoint="true"
+                app:qrcv_isShowTipBackground="true"
+                app:qrcv_isShowTipTextAsSingleLine="false"
+                app:qrcv_isTipTextBelowRect="false"
+                app:qrcv_maskColor="#33FFFFFF"
+                app:qrcv_qrCodeTipText="将二维码放入框内，即可自动扫描"
+                app:qrcv_rectWidth="@dimen/dp_200"
+                app:qrcv_scanLineColor="@color/colorPrimaryDark"
+                app:qrcv_scanLineMargin="0dp"
+                app:qrcv_scanLineSize="@dimen/dp_0_5"
+                app:qrcv_tipTextColor="@android:color/white"
+                app:qrcv_tipTextSize="@dimen/sp_12"
+                app:qrcv_toolbarHeight="@dimen/dp_56"
+                app:qrcv_verticalBias="-1" />
+
+            <TextView
+                android:id="@+id/text111"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="@dimen/dp_80"
+                android:gravity="center"
+                android:text="text111"
+                android:textColor="@color/white"
+                android:visibility="invisible" />
+
+            <ImageView
+                android:id="@+id/zx_back"
+                android:layout_width="@dimen/dp_48"
+                android:layout_height="@dimen/dp_48"
+                android:paddingLeft="@dimen/dp_10"
+                android:scaleType="centerInside"
+                android:src="@drawable/video_back"
+                android:visibility="visible" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_50"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="@dimen/dp_20"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/open_light"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="打开闪光灯"
+                    android:textColor="@color/white" />
+
+                <TextView
+                    android:id="@+id/close_light"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="关闭闪光灯"
+                    android:textColor="@color/white" />
+
+<!--                <TextView-->
+<!--                    android:id="@+id/choose_picture"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:layout_weight="1"-->
+<!--                    android:gravity="center"-->
+<!--                    android:text="打开相册"-->
+<!--                    android:textColor="@color/white" />-->
+
+            </LinearLayout>
+
+</RelativeLayout>

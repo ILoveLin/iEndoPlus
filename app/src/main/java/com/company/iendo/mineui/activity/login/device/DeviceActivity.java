@@ -1,5 +1,6 @@
 package com.company.iendo.mineui.activity.login.device;
 
+import android.content.Intent;
 import android.view.View;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -7,9 +8,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.company.iendo.R;
 import com.company.iendo.action.StatusAction;
 import com.company.iendo.app.AppActivity;
+import com.company.iendo.bean.RefreshEvent;
 import com.company.iendo.green.db.DeviceDBBean;
 import com.company.iendo.green.db.DeviceDBUtils;
-import com.company.iendo.mineui.activity.login.LoginActivity;
+import com.company.iendo.mineui.activity.ZXingActivity;
 import com.company.iendo.mineui.activity.login.device.adapter.DeviceAdapter;
 import com.company.iendo.ui.dialog.InputDeviceDialog;
 import com.company.iendo.ui.dialog.MessageDialog;
@@ -24,9 +26,16 @@ import com.hjq.bar.OnTitleBarListener;
 import com.hjq.bar.TitleBar;
 import com.hjq.base.BaseAdapter;
 import com.hjq.base.BaseDialog;
+import com.hjq.permissions.OnPermissionCallback;
+import com.hjq.permissions.Permission;
+import com.hjq.permissions.XXPermissions;
 import com.hjq.widget.layout.WrapRecyclerView;
 import com.hjq.widget.view.ClearEditText;
 import com.scwang.smart.refresh.layout.SmartRefreshLayout;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,11 +46,10 @@ import java.util.List;
  * author： LoveLin
  * time：2021/11/1 15:59
  * desc：设备添加界面
- *  设备类型（一代一体机）     endtype 3     扫码的结果对应数字是7
- *  设备类型（耳鼻喉治疗台）   endtype 3     扫码的结果对应数字是8
- *  设备类型（妇科治疗台）    //4            扫码的结果对应数字是9
- *  设备类型（泌尿治疗台）   //6            扫码的结果对应数字是10
- *
+ * 设备类型（一代一代一体机）     endtype 3     扫码的结果对应数字是7
+ * 设备类型（耳鼻喉治疗台）   endtype 3     扫码的结果对应数字是8
+ * 设备类型（妇科治疗台）    //4            扫码的结果对应数字是9
+ * 设备类型（泌尿治疗台）   //6            扫码的结果对应数字是10
  */
 public class DeviceActivity extends AppActivity implements StatusAction, BaseAdapter.OnItemClickListener, BaseAdapter.OnChildClickListener {
 
@@ -65,6 +73,8 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
 
     @Override
     protected void initView() {
+        EventBus.getDefault().register(this);
+
         mRefreshLayout = findViewById(R.id.rl_device_refresh);
         mRecyclerView = findViewById(R.id.rv_device_recyclerview);
         mStatusLayout = findViewById(R.id.device_hint);
@@ -120,12 +130,44 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                     if ("填一填".equals(str)) {
                         showMultiDialog(str);
                     } else {
-                        toast("扫一扫");
+                        GoToZXingInput();
+
                     }
                 })
                 .showAsDropDown(view);
 
 
+    }
+
+    private void GoToZXingInput() {
+        XXPermissions.with(this)
+                // 不适配 Android 11 可以这样写
+                //.permission(Permission.Group.STORAGE)
+                // 适配 Android 11 需要这样写，这里无需再写 Permission.Group.STORAGE
+                .permission(Permission.MANAGE_EXTERNAL_STORAGE)
+                .permission(Permission.CAMERA)
+                .request(new OnPermissionCallback() {
+
+                    @Override
+                    public void onGranted(List<String> permissions, boolean all) {
+                        if (all) {
+                            Intent intent = new Intent(getActivity(), ZXingActivity.class);
+//                            intent.putExtra("currentUsername", currentUsername);
+                            startActivity(intent);
+                        }
+                    }
+
+                    @Override
+                    public void onDenied(List<String> permissions, boolean never) {
+                        if (never) {
+                            toast("被永久拒绝授权，请手动授予存储权限");
+                            // 如果是被永久拒绝就跳转到应用权限系统设置页面
+                            XXPermissions.startPermissionActivity(getActivity(), permissions);
+                        } else {
+                            toast("获取存储权限失败");
+                        }
+                    }
+                });
     }
 
     /**
@@ -138,7 +180,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
         // 单选对话框
         new SelectDialog.Builder(this)
                 .setTitle("请选择设备类型")
-                .setList("HD3", "一体机", "耳鼻喉治疗台")
+                .setList("一代一体机", "耳鼻喉治疗台", "妇科治疗台", "泌尿治疗台")
                 // 设置单选模式
                 .setSingleSelect()
                 // 设置默认选中
@@ -147,10 +189,10 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
 
                     @Override
                     public void onSelected(BaseDialog dialog, HashMap<Integer, String> data) {
-                        LogUtils.e("showMultiDialog===" + data.toString()); //{0=HD3}
+                        LogUtils.e("showMultiDialog===" + data.toString()); //{0=妇科治疗台}
                         int start = data.toString().indexOf("=");
                         String str = data.toString().substring(start + 1, data.toString().length() - 1);
-                        LogUtils.e("showMultiDialog===str==" + str); //{0=HD3}
+                        LogUtils.e("showMultiDialog===str==" + str); //{0=妇科治疗台}
                         showMulti2Dialog(str);
                     }
 
@@ -170,19 +212,21 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
      */
     private void showMulti2Dialog(String str) {
         switch (str) {
-            case "HD3":
+            case "妇科治疗台":
                 // 输入对话框
                 mCurrentChoseDialog = new InputDeviceDialog.Builder(this);
                 // 标题可以不用填写
                 mCurrentChoseDialog.setTitle("添加设备")
                         // 内容可以不用填写
-                        .setDeviceNameContent("HD3")
-                        .setDeviceNoteContent("HD3备注信息")
+                        .setDeviceNameContent("妇科治疗台")
+                        .setDeviceNoteContent("妇科治疗台备注信息")
                         .setDeviceIPContent("192.168.1.200")
-                        .setAccountContent("Admin")
-                        .setPasswordContent("12345")
-                        .setLivePortContent("80")
-                        .setTypeContent("HD3")
+                        .setAccountContent("root")
+                        .setPasswordContent("root")
+                        .setHttpPortContent("7001")
+                        .setLivePortContent("7788")
+                        .setMicPortContent("7789")
+                        .setTypeContent("妇科治疗台")
                         // 提示可以不用填写
                         // 确定按钮文本
                         .setConfirm(getString(R.string.common_confirm))
@@ -197,7 +241,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                             public void onConfirm(BaseDialog dialog, String mDeviceName, String mDeviceCode, String mDeviceNoteMessage,
                                                   String mDeviceIP, String mDeviceAccount, String mDevicePassword, String mHttpPort,
                                                   String mSocketPort, String mLivePort, String mMicPort, String mDeviceType) {
-                                //添加设备HD3
+                                //添加设备妇科治疗台
                                 DeviceDBBean deviceDBBean = new DeviceDBBean();
                                 deviceDBBean.setUsemsg01(mDeviceName);  //设备名
                                 deviceDBBean.setUsername(mDeviceCode); //设备码
@@ -224,33 +268,33 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
 
 
                 //再次选择设备类型的时候,弹出对话框选择
-                ClearEditText hd3TypeView = mCurrentChoseDialog.getDeviceTypeView();
+                ClearEditText et = mCurrentChoseDialog.getDeviceTypeView();
                 //让EditText失去焦点，然后获取点击事件
-                hd3TypeView.setFocusable(false);
-                hd3TypeView.setOnClickListener(new View.OnClickListener() {
+                et.setFocusable(false);
+                et.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        showModifyTypeDialog(hd3TypeView.getText().toString(), "添加类型");
+                        showModifyTypeDialog(et.getText().toString(), "添加类型");
                     }
                 });
 
 
                 break;
-            case "一体机":
+            case "一代一体机":
                 // 输入对话框  mOneDeviceDialog
                 mCurrentChoseDialog = new InputDeviceDialog.Builder(this);
                 // 标题可以不用填写
                 mCurrentChoseDialog.setTitle("添加设备")
                         // 内容可以不用填写
-                        .setDeviceNameContent("一体机")
-                        .setDeviceNoteContent("一体机备注信息")
+                        .setDeviceNameContent("一代一体机")
+                        .setDeviceNoteContent("一代一体机备注信息")
                         .setDeviceIPContent("192.168.1.200")
                         .setAccountContent("root")
                         .setPasswordContent("root")
-                        .setHttpPortContent("3000")
+                        .setHttpPortContent("7001")
                         .setLivePortContent("7788")
                         .setMicPortContent("7789")
-                        .setTypeContent("一体机")
+                        .setTypeContent("一代一体机")
                         // 提示可以不用填写
                         // 确定按钮文本
                         .setConfirm(getString(R.string.common_confirm))
@@ -265,7 +309,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                             public void onConfirm(BaseDialog dialog, String mDeviceName, String mDeviceCode, String mDeviceNoteMessage,
                                                   String mDeviceIP, String mDeviceAccount, String mDevicePassword, String mHttpPort,
                                                   String mSocketPort, String mLivePort, String mMicPort, String mDeviceType) {
-                                //添加设备HD3
+                                //添加设备妇科治疗台
                                 DeviceDBBean deviceDBBean = new DeviceDBBean();
                                 deviceDBBean.setUsemsg01(mDeviceName);  //设备名
                                 deviceDBBean.setUsername(mDeviceCode); //设备码
@@ -310,7 +354,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                         .setDeviceIPContent("192.168.1.200")
                         .setAccountContent("root")
                         .setPasswordContent("root")
-                        .setHttpPortContent("3000")
+                        .setHttpPortContent("7001")
                         .setLivePortContent("7788")
                         .setMicPortContent("7789")
                         .setTypeContent("耳鼻喉治疗台")
@@ -328,7 +372,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                             public void onConfirm(BaseDialog dialog, String mDeviceName, String mDeviceCode, String mDeviceNoteMessage,
                                                   String mDeviceIP, String mDeviceAccount, String mDevicePassword, String mHttpPort,
                                                   String mSocketPort, String mLivePort, String mMicPort, String mDeviceType) {
-                                //添加设备HD3
+                                //添加设备妇科治疗台
                                 DeviceDBBean deviceDBBean = new DeviceDBBean();
                                 deviceDBBean.setUsemsg01(mDeviceName);  //设备名
                                 deviceDBBean.setUsername(mDeviceCode); //设备码
@@ -361,6 +405,70 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                     @Override
                     public void onClick(View v) {
                         showModifyTypeDialog(eyeProjectDialog.getText().toString(), "添加类型");
+                    }
+                });
+                break;
+            case "泌尿治疗台":
+                // 输入对话框
+                mCurrentChoseDialog = new InputDeviceDialog.Builder(this);
+                mCurrentChoseDialog.setTitle("添加设备")
+                        // 内容可以不用填写
+                        .setDeviceNameContent("泌尿治疗台")
+                        .setDeviceNoteContent("泌尿治疗台备注信息")
+                        .setDeviceIPContent("192.168.1.200")
+                        .setAccountContent("root")
+                        .setPasswordContent("root")
+                        .setHttpPortContent("7001")
+                        .setLivePortContent("7788")
+                        .setMicPortContent("7789")
+                        .setTypeContent("泌尿治疗台")
+                        // 提示可以不用填写
+                        // 确定按钮文本
+                        .setConfirm(getString(R.string.common_confirm))
+                        // 设置 null 表示不显示取消按钮
+                        .setCancel(getString(R.string.common_cancel))
+                        // 设置点击按钮后不关闭对话框
+                        //.setAutoDismiss(false)
+                        .setCanceledOnTouchOutside(false)
+                        .setListener(new InputDeviceDialog.OnListener() {
+
+                            @Override
+                            public void onConfirm(BaseDialog dialog, String mDeviceName, String mDeviceCode, String mDeviceNoteMessage,
+                                                  String mDeviceIP, String mDeviceAccount, String mDevicePassword, String mHttpPort,
+                                                  String mSocketPort, String mLivePort, String mMicPort, String mDeviceType) {
+                                //添加设备泌尿治疗台
+                                DeviceDBBean deviceDBBean = new DeviceDBBean();
+                                deviceDBBean.setUsemsg01(mDeviceName);  //设备名
+                                deviceDBBean.setUsername(mDeviceCode); //设备码
+                                deviceDBBean.setMsg(mDeviceNoteMessage);//备注信息
+                                deviceDBBean.setIp(mDeviceIP);          //ip
+                                deviceDBBean.setUsername(mDeviceAccount);//设备账号
+                                deviceDBBean.setPassword(mDevicePassword);//设备密码
+                                deviceDBBean.setHttpPort(mHttpPort);    //http端口
+                                deviceDBBean.setSocketPort(mSocketPort);//socket端口
+                                deviceDBBean.setLivePort(mLivePort);   //直播端口
+                                deviceDBBean.setMicPort(mMicPort);     //语音端口
+                                deviceDBBean.setType(mDeviceType);     //设备类型
+                                deviceDBBean.setMSelected(false);
+                                DeviceDBUtils.insertOrReplaceInTx(DeviceActivity.this, deviceDBBean);
+                                refreshRecycleViewData();
+                            }
+
+                            @Override
+                            public void onCancel(BaseDialog dialog) {
+                            }
+                        })
+                        .show();
+
+
+                //再次选择设备类型的时候,弹出对话框选择
+                ClearEditText ett = mCurrentChoseDialog.getDeviceTypeView();
+                //让EditText失去焦点，然后获取点击事件
+                ett.setFocusable(false);
+                ett.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showModifyTypeDialog(ett.getText().toString(), "添加类型");
                     }
                 });
                 break;
@@ -568,11 +676,11 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
     private void showModifyTypeDialog(String deviceType, String type) {
         new SelectModifyTypeDialog.Builder(this)
                 .setTitle("请选择设备类型")
-                .setList("HD3", "一体机", "耳鼻喉治疗台")
+                .setList("一代一体机", "耳鼻喉治疗台", "妇科治疗台", "泌尿治疗台")
                 // 设置单选模式
                 .setSingleSelect()
                 // 设置默认选中
-                .setSelect(2)
+                .setSelect(1)
                 .setBackgroundDimEnabled(false)
 //                .setWidth(ScreenSizeUtil.getScreenWidth(this) /2)
                 .setCanceledOnTouchOutside(false)
@@ -580,10 +688,10 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
 
                     @Override
                     public void onSelected(BaseDialog dialog, HashMap<Integer, String> data) {
-                        LogUtils.e("showMultiDialog===" + data.toString()); //{0=HD3}
+                        LogUtils.e("showMultiDialog===" + data.toString()); //{0=妇科治疗台}
                         int start = data.toString().indexOf("=");
                         String str = data.toString().substring(start + 1, data.toString().length() - 1);
-                        LogUtils.e("showMultiDialog===str==" + str); //{0=HD3}
+                        LogUtils.e("showMultiDialog===str==" + str); //{0=妇科治疗台}
 
                         //刷新选择类型后,的默认数据---修改类型,或者添加类型
                         post(() -> {
@@ -605,55 +713,85 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
      */
     private void setChangeTypeData(String str, String type) {
         switch (str) {
-            case "HD3":
+            case "妇科治疗台":
                 if ("修改类型".equals(type)) {
-                    mChangeDialog.setDeviceNameContent("HD3")
+                    mChangeDialog.setDeviceNameContent("妇科治疗台")
                             .setDeviceNoteContent("")
-                            .setDeviceNoteContent("HD3备注信息")
+                            .setDeviceNoteContent("妇科治疗台备注信息")
                             .setDeviceIPContent("192.168.1.200")
-                            .setAccountContent("Admin")
-                            .setPasswordContent("12345")
-                            .setLivePortContent("80")
-                            .setTypeContent("HD3")
+                            .setAccountContent("root")
+                            .setPasswordContent("root")
+                            .setHttpPortContent("7001")
+                            .setLivePortContent("7788")
+                            .setMicPortContent("7789")
+                            .setTypeContent("妇科治疗台")
                             .show();
                 } else {
-                    mCurrentChoseDialog.setDeviceNameContent("HD3")
-                            .setDeviceNoteContent("HD3备注信息")
+                    mCurrentChoseDialog.setDeviceNameContent("妇科治疗台")
+                            .setDeviceNoteContent("妇科治疗台备注信息")
                             .setDeviceIPContent("192.168.1.200")
-                            .setAccountContent("Admin")
-                            .setPasswordContent("12345")
-                            .setLivePortContent("80")
-                            .setTypeContent("HD3")
+                            .setAccountContent("root")
+                            .setPasswordContent("root")
+                            .setHttpPortContent("7001")
+                            .setLivePortContent("7788")
+                            .setMicPortContent("7789")
+                            .setTypeContent("妇科治疗台")
                             .show();
                 }
 
                 break;
-            case "一体机":
+            case "泌尿治疗台":
                 if ("修改类型".equals(type)) {
-                    mChangeDialog.setDeviceNameContent("一体机")
+                    mChangeDialog.setDeviceNameContent("泌尿治疗台")
                             .setDeviceNoteContent("")
-                            .setDeviceNoteContent("一体机备注信息")
+                            .setDeviceNoteContent("泌尿治疗台备注信息")
                             .setDeviceIPContent("192.168.1.200")
                             .setAccountContent("root")
                             .setPasswordContent("root")
-                            .setHttpPortContent("3000")
+                            .setHttpPortContent("7001")
                             .setLivePortContent("7788")
                             .setMicPortContent("7789")
-                            .setTypeContent("一体机")
+                            .setTypeContent("泌尿治疗台")
                             .show();
                 } else {
-                    mCurrentChoseDialog.setDeviceNameContent("一体机")
-                            .setDeviceNoteContent("一体机备注信息")
+                    mCurrentChoseDialog.setDeviceNameContent("泌尿治疗台")
+                            .setDeviceNoteContent("泌尿治疗台备注信息")
                             .setDeviceIPContent("192.168.1.200")
                             .setAccountContent("root")
                             .setPasswordContent("root")
-                            .setHttpPortContent("3000")
+                            .setHttpPortContent("7001")
                             .setLivePortContent("7788")
                             .setMicPortContent("7789")
-                            .setTypeContent("一体机")
+                            .setTypeContent("泌尿治疗台")
                             .show();
                 }
 
+                break;
+            case "一代一体机":
+                if ("修改类型".equals(type)) {
+                    mChangeDialog.setDeviceNameContent("一代一体机")
+                            .setDeviceNoteContent("")
+                            .setDeviceNoteContent("一代一体机备注信息")
+                            .setDeviceIPContent("192.168.1.200")
+                            .setAccountContent("root")
+                            .setPasswordContent("root")
+                            .setHttpPortContent("7001")
+                            .setLivePortContent("7788")
+                            .setMicPortContent("7789")
+                            .setTypeContent("一代一体机")
+                            .show();
+                } else {
+                    mCurrentChoseDialog.setDeviceNameContent("一代一体机")
+                            .setDeviceNoteContent("一代一体机备注信息")
+                            .setDeviceIPContent("192.168.1.200")
+                            .setAccountContent("root")
+                            .setPasswordContent("root")
+                            .setHttpPortContent("7001")
+                            .setLivePortContent("7788")
+                            .setMicPortContent("7789")
+                            .setTypeContent("一代一体机")
+                            .show();
+                }
 
                 break;
             case "耳鼻喉治疗台":
@@ -665,7 +803,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                             .setDeviceIPContent("192.168.1.200")
                             .setAccountContent("root")
                             .setPasswordContent("root")
-                            .setHttpPortContent("3000")
+                            .setHttpPortContent("7001")
                             .setLivePortContent("7788")
                             .setMicPortContent("7789")
                             .setTypeContent("耳鼻喉治疗台")
@@ -676,13 +814,12 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                             .setDeviceIPContent("192.168.1.200")
                             .setAccountContent("root")
                             .setPasswordContent("root")
-                            .setHttpPortContent("3000")
+                            .setHttpPortContent("7001")
                             .setLivePortContent("7788")
                             .setMicPortContent("7789")
                             .setTypeContent("耳鼻喉治疗台")
                             .show();
                 }
-
                 break;
         }
 
@@ -692,6 +829,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        EventBus.getDefault().unregister(this);
         LogUtils.e("========当前设备的备注信息~~~~====DeviceActivity==onDestroy===");
         //把当前选择的itembean的数据信息存到sp里面去
         List<DeviceDBBean> deviceDBBeans = DeviceDBUtils.queryAll(DeviceActivity.this);
@@ -704,19 +842,37 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
 
         }
         if (null != mDBBean) {
-            LogUtils.e("添加病例=== mDBBean.toString()===" + mDBBean.getUsemsg01());   //通过此字段判断EndoType
-            switch (mDBBean.getUsemsg01()) {
-                case "HD3":
-                    SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_EndoType, null != mDBBean.getEndoType() ? mDBBean.getEndoType() : "1");
+            LogUtils.e("添加病例=== mDBBean.toString()===" + mDBBean.toString());   //通过此字段判断EndoType
+            LogUtils.e("添加病例=== mDBBean.getUsemsg01()===" + mDBBean.getUsemsg01());   //通过此字段判断EndoType
+            LogUtils.e("添加病例=== mDBBean.getType()===" + mDBBean.getType());   //通过此字段判断EndoType
+            switch (mDBBean.getType()) {
+                case "妇科治疗台":
+                    SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_EndoType, "4");//妇科
+                    SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_Type,  "妇科治疗台");
+
                     break;
-                case "一体机":
-                    SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_EndoType, null != mDBBean.getEndoType() ? mDBBean.getEndoType() : "2");
+                case "一代一体机":
+                    SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_EndoType, "3");//一体机
+                    SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_Type,  "一代一体机");
+
                     break;
                 case "耳鼻喉治疗台":
-                    SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_EndoType, null != mDBBean.getEndoType() ? mDBBean.getEndoType() : "3");
+                    SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_EndoType, "3");//耳鼻喉
+                    SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_Type,  "耳鼻喉治疗台");
+
+                    break;
+                case "泌尿治疗台":
+                    SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_EndoType, "6");//泌尿
+                    SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_Type,  "泌尿治疗台");
+
                     break;
 
             }
+            EventBus.getDefault().post(new RefreshEvent("refresh"));
+
+
+            LogUtils.e("添加病例=== mDBBean.getType()===" + mDBBean.getType());   //通过此字段判断EndoType
+
             String endotype = (String) SharePreferenceUtil.get(DeviceActivity.this, SharePreferenceUtil.Current_EndoType, "5");
             LogUtils.e("选择的设备=== 存入的设备类型是===" + endotype);
             LogUtils.e("选择的设备=== mDBBean.getEndoType()===" + mDBBean.getEndoType());
@@ -741,7 +897,6 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
             SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_MicPort, null != mDBBean.getMicPort() ? mDBBean.getMicPort() : "1");
             SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_DeviceUsername, mDBBean.getUsername());
             SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_DevicePassword, mDBBean.getPassword());
-            SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_Type, mDBBean.getType());
             SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_Usemsg01, mDBBean.getUsemsg01());
             SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_MSelected, mDBBean.getMSelected());
 
@@ -751,6 +906,30 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
             LogUtils.e("========当前设备的备注信息~~~~====DeviceActivity==mBaseUrl===" + mBaseUrl);
         }
 
+    }
+
+    /**
+     * eventbus 刷新扫码数据
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onRefreshEvent(RefreshEvent event) {
+
+        List<DeviceDBBean> deviceDBBeans = DeviceDBUtils.queryAll(DeviceActivity.this);
+        LogUtils.e("========当前设备的备注信息~~~~====DeviceActivity==mDataLest===" + mDataLest.size());
+        LogUtils.e("========当前设备的备注信息~~~~====DeviceActivity==deviceDBBeans===" + deviceDBBeans.size());
+
+        mDataLest.clear();
+        LogUtils.e("========当前设备的备注信息~~~~====DeviceActivity==mBaseUrl===" + mDataLest.size());
+        LogUtils.e("========当前设备的备注信息~~~~====DeviceActivity==deviceDBBeans===" + deviceDBBeans.size());
+
+
+        if (deviceDBBeans.size() == 0) {
+            showEmpty();
+
+        } else {
+            showComplete();
+            mAdapter.setData(deviceDBBeans);
+        }
     }
 
     //

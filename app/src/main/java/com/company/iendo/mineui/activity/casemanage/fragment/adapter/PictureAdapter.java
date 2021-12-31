@@ -52,7 +52,7 @@ public class PictureAdapter extends AppAdapter<DetailPictureBean.DataDTO> {
 //            http://192.168.64.28:7001/ID/ImagePath
 //            Log.e("adapter", "item==path==" + "http://192.168.64.28:7001/" + mID + "/" + item.getImagePath());
 
-            String path = "http://192.168.64.56:7001/" + mID + "/" + item.getImagePath();
+            String path =  mBaseUrl + "/" + mID + "/" + item.getImagePath();
             String url = "http://images.csdn.net/20150817/1.jpg";
             Log.e("adapter", "item==path==" + "http://192.168.64.56:7001/" + mID + "/" + item.getImagePath());
             Log.e("adapter", "item==path=mBaseUrl=" + mBaseUrl + "/" + mID + "/" + item.getImagePath());

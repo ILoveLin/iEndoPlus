@@ -3,6 +3,7 @@ package com.company.iendo.green.db;
 import android.content.Context;
 import android.util.Log;
 
+import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.db.DBManager;
 
 import org.greenrobot.greendao.query.Query;
@@ -23,6 +24,16 @@ public class DeviceDBUtils {
         DBManager.getDaoSession(context).getDeviceDBBeanDao().insertOrReplaceInTx(bean);
     }
 
+    //插入或者替换,如果没有,插入,如果有,替换
+    public static void insertOrReplace(Context context, DeviceDBBean bean) {
+        LogUtils.e("========当前设备的备注信息~~~~====ZXingActivity==insertOrReplaceData==start=");
+
+        DBManager.getDaoSession(context).getDeviceDBBeanDao().insertOrReplace(bean);
+        LogUtils.e("========当前设备的备注信息~~~~====ZXingActivity==insertOrReplaceData==OK=");
+
+
+    }
+
     //更新
     public static void update(Context context, DeviceDBBean bean) {
         DBManager.getDaoSession(context).getDeviceDBBeanDao().update(bean);
@@ -32,6 +43,7 @@ public class DeviceDBUtils {
     public static void delete(Context context, DeviceDBBean bean) {
         DBManager.getDaoSession(context).getDeviceDBBeanDao().delete(bean);
     }
+
     //删除
     public static void deleteAll(Context context) {
         DBManager.getDaoSession(context).getDeviceDBBeanDao().deleteAll();
@@ -56,7 +68,6 @@ public class DeviceDBUtils {
     }
 
     /**
-     *
      * @param context
      * @param id
      * @return
@@ -80,7 +91,6 @@ public class DeviceDBUtils {
 //        qb.or(Properties.YearOfBirth.gt(1970),
 //        qb.and(Properties.YearOfBirth.eq(1970), Properties.MonthOfBirth.ge(10))));
 //    List youngJoes = qb.list();
-
 
 
 //    private void queryThread(Context context) {

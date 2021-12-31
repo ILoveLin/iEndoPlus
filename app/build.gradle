@@ -238,7 +238,13 @@ dependencies {
     implementation 'com.makeramen:roundedimageview:2.3.0'
 
     // 日志调试：https://github.com/getActivity/Logcat    app里面会有个小按钮
+
 //    debugImplementation 'com.hjq:logcat:8.2'
+    //ZXing 二维码扫描
+    implementation 'cn.bingoogolapple:bga-qrcode-zxing:1.3.7'
+    //图片选择二维码
+    implementation 'cn.bingoogolapple:bga-photopicker:1.2.8@aar'
+    implementation 'cn.bingoogolapple:bga-baseadapter:1.2.9@aar'
 
 
     // 多语种：https://github.com/getActivity/MultiLanguages

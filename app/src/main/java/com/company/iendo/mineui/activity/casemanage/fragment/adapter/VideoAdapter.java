@@ -48,9 +48,9 @@ public class VideoAdapter extends AppAdapter<DetailVideoBean.DataDTO> {
         public void onBindView(int position) {
             DetailVideoBean.DataDTO item = getItem(position);
 //            http://192.168.64.28:7001/ID/FilePath
-            Log.e("adapter", ""+"Path:" + item.getFilePath());
+            Log.e("adapter", "" + "Path:" + item.getFilePath());
 
-            mTextView.setText("Path:" + item.getFilePath());
+            mTextView.setText("" + item.getFilePath());
 
         }
     }

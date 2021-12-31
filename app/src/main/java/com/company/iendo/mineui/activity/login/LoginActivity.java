@@ -31,7 +31,10 @@ import com.company.iendo.aop.Log;
 import com.company.iendo.aop.SingleClick;
 import com.company.iendo.app.AppActivity;
 import com.company.iendo.bean.LoginBean;
+import com.company.iendo.bean.RefreshEvent;
 import com.company.iendo.bean.UserListBean;
+import com.company.iendo.green.db.DeviceDBBean;
+import com.company.iendo.green.db.DeviceDBUtils;
 import com.company.iendo.green.db.UserDBBean;
 import com.company.iendo.green.db.UserDBUtils;
 import com.company.iendo.http.glide.GlideApp;
@@ -57,6 +60,10 @@ import com.hjq.umeng.UmengLogin;
 import com.hjq.widget.view.PasswordEditText;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -179,6 +186,7 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
 
     @Override
     protected void initView() {
+        EventBus.getDefault().register(this);
         mLogoView = findViewById(R.id.iv_login_logo);
         mBodyLayout = findViewById(R.id.ll_login_body);
         mPhoneView = findViewById(R.id.et_login_phone);
@@ -434,7 +442,7 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                 });
                 break;
             case R.id.login_type:
-                toast("功能暂定!");
+                toast("功能待开发!");
                 break;
             case R.id.btn_login_setting:
                 startActivity(DeviceActivity.class);
@@ -472,6 +480,12 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
 
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().register(this);
+
+    }
 
     /**
      * 授权成功的回调
@@ -572,6 +586,17 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
          */
         //选择设备之后,回到此界面默认会写记住密码的第一个用户
         initRememberPassword();
+
+    }
+    /**
+     * eventbus 刷新数据
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onRefreshEvent(RefreshEvent event) {
+        String mType = (String) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Current_Type, "耳鼻喉治疗台");
+        mDeviceType.setText("" + mType);
+        LogUtils.e("========当前设备的备注信息~~~~====eventbus==eventbus===" + mType);
+
 
     }
 

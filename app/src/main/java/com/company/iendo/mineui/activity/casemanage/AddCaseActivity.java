@@ -172,7 +172,7 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
         String EndoType = (String) SharePreferenceUtil.get(AddCaseActivity.this, SharePreferenceUtil.Current_EndoType, "3");
         mParamsMap.put("Name", et_01_name.getText().toString().trim());
         mParamsMap.put("UserName", UserName);
-        mParamsMap.put("EndoType", "EndoType");
+        mParamsMap.put("EndoType", endoType);
         mParamsMap.put("Tel", Tel);
         mParamsMap.put("Address", Address);
         mParamsMap.put("CardID", CardID);

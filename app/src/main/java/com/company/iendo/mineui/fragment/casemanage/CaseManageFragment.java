@@ -11,6 +11,7 @@ import com.company.iendo.R;
 import com.company.iendo.action.StatusAction;
 import com.company.iendo.app.TitleBarFragment;
 import com.company.iendo.bean.CaseManageListBean;
+import com.company.iendo.bean.ZXBean;
 import com.company.iendo.mineui.activity.MainActivity;
 import com.company.iendo.mineui.activity.casemanage.AddCaseActivity;
 import com.company.iendo.mineui.activity.casemanage.DetailCaseActivity;
@@ -25,6 +26,8 @@ import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.SharePreferenceUtil;
 import com.company.iendo.widget.MyItemDecoration;
 import com.company.iendo.widget.StatusLayout;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.gyf.immersionbar.ImmersionBar;
 import com.hjq.base.BaseAdapter;
 import com.hjq.base.BaseDialog;
@@ -36,6 +39,7 @@ import com.scwang.smart.refresh.layout.listener.OnRefreshLoadMoreListener;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
+import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -188,21 +192,35 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
                             showComplete();
                             if ("" != response) {
                                 mGson = GsonFactory.getSingletonGson();
-                                CaseManageListBean mBean = mGson.fromJson(response, CaseManageListBean.class);
                                 LogUtils.e("=病例列表=hy=response==response===" + response);
-                                LogUtils.e("=病例列表=hy=response==mBean===" + mBean.toString());
+                                Gson gson = new Gson();
+                                Type type = new TypeToken<CaseManageListBean>() {
+                                }.getType();
+                                CaseManageListBean mBean = gson.fromJson(response, type);
+//                                CaseManageListBean mBean = mGson.fromJson(response, CaseManageListBean.class);
+                                LogUtils.e("=病例列表=hy=response==response===" + mBean.toString());
+                                LogUtils.e("=病例列表=hy=response==getEmpty===" + mBean.getEmpty());
+                                LogUtils.e("=病例列表=hy=response==getCode()===" + mBean.getCode());
+                                LogUtils.e("=病例列表=hy=response==getData===" + mBean.getData());
+                                if (null == mBean) {
+                                    LogUtils.e("=病例列表=hy=response==mBean==null=");
+
+                                }
 //                                for (int i = 0; i < mBean.getData().size(); i++) {
 //                                    LogUtils.e("=病例列表=hy=time==" + mBean.getData().get(i).getID());
 //                                }
-                                if (0 == mBean.getCode()) {  //成功
-                                    if (mBean.getEmpty()) {
-                                        showEmpty();
 
-                                    }else {
-                                        mDataLest.clear();
-                                        mDataLest.addAll(mBean.getData());
-                                        mAdapter.setData(mDataLest);
-                                    }
+
+                                if (0 == mBean.getCode()) {  //成功
+
+//                                    if (null==mBean.getEmpty()) {
+//                                        showEmpty();
+//
+//                                    } else {
+//                                        mDataLest.clear();
+//                                        mDataLest.addAll(mBean.getData());
+//                                        mAdapter.setData(mDataLest);
+//                                    }
 //                                    if (mBean.getData().isEmpty()){
 //                                        showEmpty();
 //                                    }else {
@@ -210,18 +228,18 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
 //                                        mDataLest.addAll(mBean.getData());
 //                                        mAdapter.setData(mDataLest);
 //                                    }
-//                                    if (mBean.getData().size() != 0) {
-//                                        LogUtils.e("=病例列表=hy= 0 0 0 0 0 0==" );
-//
-//                                        mDataLest.clear();
-//                                        mDataLest.addAll(mBean.getData());
-//                                        mAdapter.setData(mDataLest);
-//                                    } else {
-//                                        LogUtils.e("=病例列表=hy= 111111111==" );
-//                                        showEmpty();
-//                                    }
+                                    if (mBean.getData().size() != 0) {
+                                        LogUtils.e("=病例列表=hy= 0 0 0 0 0 0==" );
+
+                                        mDataLest.clear();
+                                        mDataLest.addAll(mBean.getData());
+                                        mAdapter.setData(mDataLest);
+                                    } else {
+                                        LogUtils.e("=病例列表=hy= 111111111==" );
+                                        showEmpty();
+                                    }
                                 } else {
-                                    LogUtils.e("=病例列表=hy= 22222222==" );
+                                    LogUtils.e("=病例列表=hy= 22222222==");
 
                                     showError(listener -> {
                                         sendRequest(mChoiceDate);
