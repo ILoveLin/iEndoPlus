@@ -126,6 +126,7 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
     private int screenWidth;
 
     private void initRememberPassword() {
+
         Boolean isSave = (Boolean) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Flag_UserDBSave, false);
         LogUtils.e("initRememberPassword====isSave:" + isSave);
         String userName = mPhoneView.getText().toString().trim();

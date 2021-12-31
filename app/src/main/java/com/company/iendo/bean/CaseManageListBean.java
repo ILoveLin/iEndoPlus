@@ -13,6 +13,7 @@ public class CaseManageListBean {
 
     private int code;
     private String msg;
+    private Boolean isEmpty;
     private List<DataDTO> data;
 
     public int getCode() {
@@ -37,6 +38,14 @@ public class CaseManageListBean {
 
     public void setData(List<DataDTO> data) {
         this.data = data;
+    }
+
+    public Boolean getEmpty() {
+        return isEmpty;
+    }
+
+    public void setEmpty(Boolean empty) {
+        isEmpty = empty;
     }
 
     public static class DataDTO {

@@ -37,6 +37,11 @@ import java.util.List;
  * author： LoveLin
  * time：2021/11/1 15:59
  * desc：设备添加界面
+ *  设备类型（一代一体机）     endtype 3     扫码的结果对应数字是7
+ *  设备类型（耳鼻喉治疗台）   endtype 3     扫码的结果对应数字是8
+ *  设备类型（妇科治疗台）    //4            扫码的结果对应数字是9
+ *  设备类型（泌尿治疗台）   //6            扫码的结果对应数字是10
+ *
  */
 public class DeviceActivity extends AppActivity implements StatusAction, BaseAdapter.OnItemClickListener, BaseAdapter.OnChildClickListener {
 
@@ -137,7 +142,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                 // 设置单选模式
                 .setSingleSelect()
                 // 设置默认选中
-                .setSelect(0)
+                .setSelect(2)
                 .setListener(new SelectDialog.OnListener<String>() {
 
                     @Override
@@ -567,7 +572,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                 // 设置单选模式
                 .setSingleSelect()
                 // 设置默认选中
-                .setSelect(0)
+                .setSelect(2)
                 .setBackgroundDimEnabled(false)
 //                .setWidth(ScreenSizeUtil.getScreenWidth(this) /2)
                 .setCanceledOnTouchOutside(false)

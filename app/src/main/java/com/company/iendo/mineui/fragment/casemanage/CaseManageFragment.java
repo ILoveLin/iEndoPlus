@@ -28,6 +28,7 @@ import com.company.iendo.widget.StatusLayout;
 import com.gyf.immersionbar.ImmersionBar;
 import com.hjq.base.BaseAdapter;
 import com.hjq.base.BaseDialog;
+import com.hjq.gson.factory.GsonFactory;
 import com.hjq.widget.layout.WrapRecyclerView;
 import com.scwang.smart.refresh.layout.SmartRefreshLayout;
 import com.scwang.smart.refresh.layout.api.RefreshLayout;
@@ -184,23 +185,44 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
                     @Override
                     public void onResponse(String response, int id) {
                         try {
+                            showComplete();
                             if ("" != response) {
+                                mGson = GsonFactory.getSingletonGson();
                                 CaseManageListBean mBean = mGson.fromJson(response, CaseManageListBean.class);
                                 LogUtils.e("=病例列表=hy=response==response===" + response);
-                                LogUtils.e("=病例列表=hy=response==size===" + mBean.getData().size());
-                                for (int i = 0; i < mBean.getData().size(); i++) {
-                                    LogUtils.e("=病例列表=hy=time==" + mBean.getData().get(i).getID());
-                                }
+                                LogUtils.e("=病例列表=hy=response==mBean===" + mBean.toString());
+//                                for (int i = 0; i < mBean.getData().size(); i++) {
+//                                    LogUtils.e("=病例列表=hy=time==" + mBean.getData().get(i).getID());
+//                                }
                                 if (0 == mBean.getCode()) {  //成功
-                                    if (mBean.getData().size() != 0) {
-                                        showComplete();
+                                    if (mBean.getEmpty()) {
+                                        showEmpty();
+
+                                    }else {
                                         mDataLest.clear();
                                         mDataLest.addAll(mBean.getData());
                                         mAdapter.setData(mDataLest);
-                                    } else {
-                                        showEmpty();
                                     }
+//                                    if (mBean.getData().isEmpty()){
+//                                        showEmpty();
+//                                    }else {
+//                                        mDataLest.clear();
+//                                        mDataLest.addAll(mBean.getData());
+//                                        mAdapter.setData(mDataLest);
+//                                    }
+//                                    if (mBean.getData().size() != 0) {
+//                                        LogUtils.e("=病例列表=hy= 0 0 0 0 0 0==" );
+//
+//                                        mDataLest.clear();
+//                                        mDataLest.addAll(mBean.getData());
+//                                        mAdapter.setData(mDataLest);
+//                                    } else {
+//                                        LogUtils.e("=病例列表=hy= 111111111==" );
+//                                        showEmpty();
+//                                    }
                                 } else {
+                                    LogUtils.e("=病例列表=hy= 22222222==" );
+
                                     showError(listener -> {
                                         sendRequest(mChoiceDate);
                                     });

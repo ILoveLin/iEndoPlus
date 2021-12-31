@@ -1,7 +1,7 @@
-apply plugin : 'com.android.application'
-apply plugin : 'android-aspectjx'
+apply plugin: 'com.android.application'
+apply plugin: 'android-aspectjx'
 apply plugin: 'org.greenrobot.greendao' // apply plugin
-apply from : '../common.gradle'
+apply from: '../common.gradle'
 //apply plugin: 'org.greenrobot.greendao' // apply plugin
 
 // Android 代码规范文档：https://github.com/getActivity/AndroidCodeStandard
@@ -62,7 +62,7 @@ android {
             signingConfig signingConfigs.config
             // 添加清单占位符
             addManifestPlaceholders([
-                    'app_name'    :    'iEndo Debug 版'
+                    'app_name': 'iEndo Debug 版'
             ])
             // 调试模式下只保留一种架构的 so 库，提升打包速度
             ndk {
@@ -75,7 +75,7 @@ android {
             applicationIdSuffix ''
             // 添加清单占位符
             addManifestPlaceholders([
-                    'app_name'    :    'iEndo Preview 版'
+                    'app_name': 'iEndo Preview 版'
             ])
         }
 
@@ -93,7 +93,7 @@ android {
             signingConfig signingConfigs.config
             // 添加清单占位符
             addManifestPlaceholders([
-                    'app_name'    :    '@string/app_name'
+                    'app_name': '@string/app_name'
             ])
             // 仅保留两种架构的 so 库，根据 Bugly 统计得出
             ndk {
@@ -156,6 +156,7 @@ dependencies {
     //vlc
     implementation project(':libvlc')
 
+
     // 权限请求框架：https://github.com/getActivity/XXPermissions
     implementation 'com.github.getActivity:XXPermissions:12.3'
 
@@ -194,6 +195,7 @@ dependencies {
     implementation 'com.github.Baseflow:PhotoView:2.3.0'
 
     // Bugly 异常捕捉：https://bugly.qq.com/docs/user-guide/instruction-manual-android/?v=20190418140644
+    // Bugly crashreport：已经集成了更新功能
     implementation 'com.tencent.bugly:crashreport:3.4.4'
     implementation 'com.tencent.bugly:nativecrashreport:3.9.2'
 
@@ -219,7 +221,6 @@ dependencies {
     previewImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'
 
 
-
     implementation 'com.zhy:okhttputils:2.6.2'
     implementation 'com.squareup.okhttp3:okhttp:3.3.0' //okttp依赖
     //https://www.jianshu.com/p/721381cf974f     okhttputils使用链接
@@ -235,9 +236,14 @@ dependencies {
     implementation 'com.github.arcadefire:nice-spinner:1.4.4'
     //内外环ImageView
     implementation 'com.makeramen:roundedimageview:2.3.0'
+
+    // 日志调试：https://github.com/getActivity/Logcat    app里面会有个小按钮
+//    debugImplementation 'com.hjq:logcat:8.2'
+
+
     // 多语种：https://github.com/getActivity/MultiLanguages
     // 悬浮窗：https://github.com/getActivity/XToast
-    // 日志输出：https://github.com/getActivity/Logcat
+//     日志输出：https://github.com/getActivity/Logcat
     // 工具类：https://github.com/Blankj/AndroidUtilCode
     // 轮播图：https://github.com/bingoogolapple/BGABanner-Android
     // 二维码：https://github.com/bingoogolapple/BGAQRCode-Android

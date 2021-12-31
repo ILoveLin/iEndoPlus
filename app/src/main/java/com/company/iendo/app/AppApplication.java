@@ -38,6 +38,7 @@ import com.hjq.http.EasyConfig;
 import com.hjq.toast.ToastUtils;
 import com.hjq.umeng.UmengClient;
 import com.scwang.smart.refresh.layout.SmartRefreshLayout;
+import com.tencent.bugly.Bugly;
 import com.tencent.bugly.crashreport.CrashReport;
 import com.tencent.mmkv.MMKV;
 import com.zhy.http.okhttp.OkHttpUtils;
@@ -82,6 +83,7 @@ public final class AppApplication extends Application {
         initSdk(this);
         initOkHttp();
         initGreenDao();
+//        Bugly.init(getApplicationContext(), "ed2196268b", false);
 
     }
 
@@ -113,9 +115,9 @@ public final class AppApplication extends Application {
         OkHttpClient.Builder okHttpClientBuilder = new OkHttpClient.Builder()
                 .sslSocketFactory(sslParams.sSLSocketFactory, sslParams.trustManager)
                 .cookieJar(new CookieJarImpl(new MemoryCookieStore()))                  //内存存储cookie
-                .connectTimeout(10000L, TimeUnit.MILLISECONDS)
+                .connectTimeout(6000L, TimeUnit.MILLISECONDS)
                 .addInterceptor(new MyInterceptor(this))                      //拦截器,可以添加header 一些信息
-                .readTimeout(10000L, TimeUnit.MILLISECONDS)
+                .readTimeout(6000L, TimeUnit.MILLISECONDS)
 
                 .hostnameVerifier(new HostnameVerifier() {//允许访问https网站,并忽略证书
                     @Override
