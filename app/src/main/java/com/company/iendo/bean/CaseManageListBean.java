@@ -1,5 +1,7 @@
 package com.company.iendo.bean;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.List;
 
 /**
@@ -10,10 +12,13 @@ import java.util.List;
  */
 public class CaseManageListBean {
 
-
+    @SerializedName("code")
     private int code;
+    @SerializedName("msg")
     private String msg;
-    private Boolean isEmpty;
+    @SerializedName("isEmpty")
+    private boolean isEmpty;
+    @SerializedName("data")
     private List<DataDTO> data;
 
     public int getCode() {
@@ -32,6 +37,14 @@ public class CaseManageListBean {
         this.msg = msg;
     }
 
+    public boolean isIsEmpty() {
+        return isEmpty;
+    }
+
+    public void setIsEmpty(boolean isEmpty) {
+        this.isEmpty = isEmpty;
+    }
+
     public List<DataDTO> getData() {
         return data;
     }
@@ -40,80 +53,138 @@ public class CaseManageListBean {
         this.data = data;
     }
 
-    public Boolean getEmpty() {
-        return isEmpty;
-    }
-
-    public void setEmpty(Boolean empty) {
-        isEmpty = empty;
-    }
-
     public static class DataDTO {
+        @SerializedName("check_date")
         private String check_date;
+        @SerializedName("record_date")
         private String record_date;
+        @SerializedName("update_time")
         private String update_time;
+        @SerializedName("ID")
         private int ID;
+        @SerializedName("RecordType")
         private String RecordType;
+        @SerializedName("PatientID")
         private String PatientID;
+        @SerializedName("Married")
         private String Married;
+        @SerializedName("Name")
         private String Name;
+        @SerializedName("Sex")
         private String Sex;
+        @SerializedName("Tel")
         private String Tel;
+        @SerializedName("Address")
         private String Address;
+        @SerializedName("PatientNo")
         private String PatientNo;
+        @SerializedName("CardID")
         private String CardID;
+        @SerializedName("MedHistory")
         private String MedHistory;
+        @SerializedName("FamilyHistory")
         private String FamilyHistory;
+        @SerializedName("Race")
         private String Race;
+        @SerializedName("Occupatior")
         private String Occupatior;
+        @SerializedName("InsuranceID")
         private String InsuranceID;
+        @SerializedName("NativePlace")
         private String NativePlace;
+        @SerializedName("IsInHospital")
         private boolean IsInHospital;
+        @SerializedName("LastCheckUserID")
         private int LastCheckUserID;
+        @SerializedName("DOB")
         private String DOB;
+        @SerializedName("PatientAge")
         private int PatientAge;
+        @SerializedName("AgeUnit")
         private String AgeUnit;
+        @SerializedName("CaseNo")
         private String CaseNo;
+        @SerializedName("ReturnVisit")
         private boolean ReturnVisit;
+        @SerializedName("BedID")
         private String BedID;
+        @SerializedName("WardID")
         private String WardID;
+        @SerializedName("CaseID")
         private String CaseID;
+        @SerializedName("SubmitDoctor")
         private String SubmitDoctor;
+        @SerializedName("Department")
         private String Department;
+        @SerializedName("Device")
         private String Device;
+        @SerializedName("Fee")
         private String Fee;
+        @SerializedName("FeeType")
         private String FeeType;
+        @SerializedName("ChiefComplaint")
         private String ChiefComplaint;
+        @SerializedName("Test")
         private String Test;
+        @SerializedName("Advice")
         private String Advice;
+        @SerializedName("InpatientID")
         private String InpatientID;
+        @SerializedName("OutpatientID")
         private String OutpatientID;
+        @SerializedName("Others")
         private String Others;
+        @SerializedName("Await1")
         private String Await1;
+        @SerializedName("Await2")
         private String Await2;
+        @SerializedName("Await3")
         private String Await3;
+        @SerializedName("Await4")
         private String Await4;
+        @SerializedName("Await5")
         private int Await5;
+        @SerializedName("Biopsy")
         private String Biopsy;
+        @SerializedName("Ctology")
         private String Ctology;
+        @SerializedName("Pathology")
         private String Pathology;
+        @SerializedName("CheckDate")
         private String CheckDate;
+        @SerializedName("RecordDate")
         private String RecordDate;
+        @SerializedName("Printed")
         private boolean Printed;
+        @SerializedName("Upload")
         private boolean Upload;
+        @SerializedName("Bespeak")
         private boolean Bespeak;
-        private String Images;
-        private String ReportStyle;
+        @SerializedName("Images")
+        private Object Images;
+        @SerializedName("ReportStyle")
+        private Object ReportStyle;
+        @SerializedName("UserName")
         private String UserName;
-        private String StudyInstanceUID;
-        private String SeriesInstanceUID;
+        @SerializedName("StudyInstanceUID")
+        private Object StudyInstanceUID;
+        @SerializedName("SeriesInstanceUID")
+        private Object SeriesInstanceUID;
+        @SerializedName("ReportSeriesInstanceUID")
         private Object ReportSeriesInstanceUID;
+        @SerializedName("ImageCount")
         private int ImageCount;
+        @SerializedName("UpdateTime")
         private String UpdateTime;
+        @SerializedName("EndoType")
         private int EndoType;
+        @SerializedName("ExaminingPhysician")
         private String ExaminingPhysician;
+        @SerializedName("ClinicalDiagnosis")
         private String ClinicalDiagnosis;
+        @SerializedName("CheckContent")
         private String CheckContent;
+        @SerializedName("CheckDiagnosis")
         private String CheckDiagnosis;
 
         public String getCheck_date() {
@@ -540,19 +611,19 @@ public class CaseManageListBean {
             this.Bespeak = Bespeak;
         }
 
-        public String getImages() {
+        public Object getImages() {
             return Images;
         }
 
-        public void setImages(String Images) {
+        public void setImages(Object Images) {
             this.Images = Images;
         }
 
-        public String getReportStyle() {
+        public Object getReportStyle() {
             return ReportStyle;
         }
 
-        public void setReportStyle(String ReportStyle) {
+        public void setReportStyle(Object ReportStyle) {
             this.ReportStyle = ReportStyle;
         }
 
@@ -564,19 +635,19 @@ public class CaseManageListBean {
             this.UserName = UserName;
         }
 
-        public String getStudyInstanceUID() {
+        public Object getStudyInstanceUID() {
             return StudyInstanceUID;
         }
 
-        public void setStudyInstanceUID(String StudyInstanceUID) {
+        public void setStudyInstanceUID(Object StudyInstanceUID) {
             this.StudyInstanceUID = StudyInstanceUID;
         }
 
-        public String getSeriesInstanceUID() {
+        public Object getSeriesInstanceUID() {
             return SeriesInstanceUID;
         }
 
-        public void setSeriesInstanceUID(String SeriesInstanceUID) {
+        public void setSeriesInstanceUID(Object SeriesInstanceUID) {
             this.SeriesInstanceUID = SeriesInstanceUID;
         }
 
@@ -643,5 +714,13 @@ public class CaseManageListBean {
         public void setCheckDiagnosis(String CheckDiagnosis) {
             this.CheckDiagnosis = CheckDiagnosis;
         }
+    }
+
+    public boolean isEmpty() {
+        return isEmpty;
+    }
+
+    public void setEmpty(boolean empty) {
+        isEmpty = empty;
     }
 }

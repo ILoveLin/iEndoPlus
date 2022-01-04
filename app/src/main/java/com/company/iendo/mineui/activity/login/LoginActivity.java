@@ -483,7 +483,8 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        EventBus.getDefault().register(this);
+
+        EventBus.getDefault().unregister(this);
 
     }
 
@@ -588,13 +589,19 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
         initRememberPassword();
 
     }
+
     /**
      * eventbus 刷新数据
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onRefreshEvent(RefreshEvent event) {
         String mType = (String) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Current_Type, "耳鼻喉治疗台");
-        mDeviceType.setText("" + mType);
+        if (mDeviceType != null) {
+            mDeviceType.setText("" + mType);
+        } else {
+            mDeviceType.setText("未选择设备!");
+
+        }
         LogUtils.e("========当前设备的备注信息~~~~====eventbus==eventbus===" + mType);
 
 

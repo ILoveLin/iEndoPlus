@@ -224,7 +224,6 @@ dependencies {
     implementation 'com.zhy:okhttputils:2.6.2'
     implementation 'com.squareup.okhttp3:okhttp:3.3.0' //okttp依赖
     //https://www.jianshu.com/p/721381cf974f     okhttputils使用链接
-    implementation 'com.google.code.gson:gson:2.8.4'
 
 
     //greendao 数据库
@@ -246,6 +245,11 @@ dependencies {
     implementation 'cn.bingoogolapple:bga-photopicker:1.2.8@aar'
     implementation 'cn.bingoogolapple:bga-baseadapter:1.2.9@aar'
 
+
+    // Gson 解析容错：https://github.com/getActivity/GsonFactory
+    implementation 'com.github.getActivity:GsonFactory:5.2'
+    // Json 解析框架：https://github.com/google/gson
+    implementation 'com.google.code.gson:gson:2.8.5'
 
     // 多语种：https://github.com/getActivity/MultiLanguages
     // 悬浮窗：https://github.com/getActivity/XToast

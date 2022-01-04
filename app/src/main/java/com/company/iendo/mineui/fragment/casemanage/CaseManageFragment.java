@@ -1,6 +1,7 @@
 package com.company.iendo.mineui.fragment.casemanage;
 
 import android.content.Intent;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -28,14 +29,17 @@ import com.company.iendo.widget.MyItemDecoration;
 import com.company.iendo.widget.StatusLayout;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonToken;
 import com.gyf.immersionbar.ImmersionBar;
 import com.hjq.base.BaseAdapter;
 import com.hjq.base.BaseDialog;
 import com.hjq.gson.factory.GsonFactory;
+import com.hjq.gson.factory.JsonCallback;
 import com.hjq.widget.layout.WrapRecyclerView;
 import com.scwang.smart.refresh.layout.SmartRefreshLayout;
 import com.scwang.smart.refresh.layout.api.RefreshLayout;
 import com.scwang.smart.refresh.layout.listener.OnRefreshLoadMoreListener;
+import com.tencent.bugly.crashreport.CrashReport;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -188,30 +192,43 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
 
                     @Override
                     public void onResponse(String response, int id) {
-                        try {
+//                        try {
                             showComplete();
                             if ("" != response) {
-                                mGson = GsonFactory.getSingletonGson();
-                                LogUtils.e("=病例列表=hy=response==response===" + response);
-                                Gson gson = new Gson();
-                                Type type = new TypeToken<CaseManageListBean>() {
-                                }.getType();
-                                CaseManageListBean mBean = gson.fromJson(response, type);
-//                                CaseManageListBean mBean = mGson.fromJson(response, CaseManageListBean.class);
-                                LogUtils.e("=病例列表=hy=response==response===" + mBean.toString());
-                                LogUtils.e("=病例列表=hy=response==getEmpty===" + mBean.getEmpty());
-                                LogUtils.e("=病例列表=hy=response==getCode()===" + mBean.getCode());
-                                LogUtils.e("=病例列表=hy=response==getData===" + mBean.getData());
-                                if (null == mBean) {
-                                    LogUtils.e("=病例列表=hy=response==mBean==null=");
 
+                            mGson = GsonFactory.getSingletonGson();
+                            // 设置 Json 解析容错监听
+                            GsonFactory.setJsonCallback(new JsonCallback() {
+
+                                @Override
+                                public void onTypeException(TypeToken<?> typeToken, String fieldName, JsonToken jsonToken) {
+                                     Log.e("GsonFactory", "病例列表===类型解析异常：" + typeToken + "#" + fieldName + "，后台返回的类型为：" + jsonToken);
+                                    // 上报到 Bugly 错误列表
+                                    CrashReport.postCatchedException(new IllegalArgumentException("类型解析异常：" + typeToken + "#" + fieldName + "，后台返回的类型为：" + jsonToken));
                                 }
+                            });
+                            LogUtils.e("=病例列表=hy=response==response===" + response);
+//                            Gson gson = new Gson();
+//                            Type type = new TypeToken<CaseManageListBean>() {
+//                            }.getType();
+                            CaseManageListBean bean = mGson.fromJson(response, CaseManageListBean.class);
+                            if (null == bean) {
+                                LogUtils.e("=病例列表=hy=response==mBean==null=");
+
+                            }
+//                            CaseManageListBean mBean = gson.fromJson(response, type);
+                                CaseManageListBean mBean = mGson.fromJson(response, CaseManageListBean.class);
+                            LogUtils.e("=病例列表=hy=response==response===" + mBean.toString());
+                            LogUtils.e("=病例列表=hy=response==getEmpty===" + mBean.isIsEmpty());
+                            LogUtils.e("=病例列表=hy=response==getCode()===" + mBean.getCode());
+                            LogUtils.e("=病例列表=hy=response==getData===" + mBean.getData());
+
 //                                for (int i = 0; i < mBean.getData().size(); i++) {
 //                                    LogUtils.e("=病例列表=hy=time==" + mBean.getData().get(i).getID());
 //                                }
 
 
-                                if (0 == mBean.getCode()) {  //成功
+                            if (0 == mBean.getCode()) {  //成功
 
 //                                    if (null==mBean.getEmpty()) {
 //                                        showEmpty();
@@ -228,32 +245,32 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
 //                                        mDataLest.addAll(mBean.getData());
 //                                        mAdapter.setData(mDataLest);
 //                                    }
-                                    if (mBean.getData().size() != 0) {
-                                        LogUtils.e("=病例列表=hy= 0 0 0 0 0 0==" );
+                                if (mBean.getData().size() != 0) {
+                                    LogUtils.e("=病例列表=hy= 0 0 0 0 0 0==");
 
-                                        mDataLest.clear();
-                                        mDataLest.addAll(mBean.getData());
-                                        mAdapter.setData(mDataLest);
-                                    } else {
-                                        LogUtils.e("=病例列表=hy= 111111111==" );
-                                        showEmpty();
-                                    }
+                                    mDataLest.clear();
+                                    mDataLest.addAll(mBean.getData());
+                                    mAdapter.setData(mDataLest);
                                 } else {
-                                    LogUtils.e("=病例列表=hy= 22222222==");
-
-                                    showError(listener -> {
-                                        sendRequest(mChoiceDate);
-                                    });
+                                    LogUtils.e("=病例列表=hy= 111111111==");
+                                    showEmpty();
                                 }
                             } else {
+                                LogUtils.e("=病例列表=hy= 22222222==");
+
                                 showError(listener -> {
                                     sendRequest(mChoiceDate);
                                 });
                             }
-                        } catch (Exception e) {
-                            LogUtils.e("=TAG=hy=Exception==size===" + e.toString());
-
+                        } else{
+                            showError(listener -> {
+                                sendRequest(mChoiceDate);
+                            });
                         }
+//                        } catch (Exception e) {
+//                            LogUtils.e("=TAG=hy=Exception==size===" + e.toString());
+//
+//                        }
 
 
                     }

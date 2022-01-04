@@ -169,7 +169,7 @@ public final class ZXingActivity extends AppActivity implements QRCodeView.Deleg
 
         DeviceDBBean deviceDBBean = new DeviceDBBean();
         deviceDBBean.setDeviceID("" + mBean.getDeviceID());//
-        deviceDBBean.setUsemsg02("" + mBean.getDeviceType());//PC端 对应的endotype  比如我们这边耳鼻喉治疗台是3   这个对应是8
+        deviceDBBean.setEndoType("" + mBean.getDeviceType());//PC端 对应的endotype  比如我们这边耳鼻喉治疗台是3   这个对应是8
         deviceDBBean.setDeviceName("" + mBean.getTitle());//设备名字
         deviceDBBean.setHttpPort("" + mBean.getHttpPort());//
         deviceDBBean.setIp("" + mBean.getIp());//
@@ -182,14 +182,8 @@ public final class ZXingActivity extends AppActivity implements QRCodeView.Deleg
         deviceDBBean.setTitle("" + mBean.getTitle());//
         deviceDBBean.setUsername("" + mBean.getUsername());//
         deviceDBBean.setMSelected(false);//
-        String deviceType = mBean.getDeviceType() + "";
+        String deviceType = mBean.getDeviceType() + "";   //比如耳鼻喉PC端是8 手机端是3
 
-        long min = 1;
-        long max = 100000000;
-        long threadLongBound = ThreadLocalRandom.current().nextLong(min, max);
-        deviceDBBean.setId(threadLongBound);
-
-        LogUtils.e("========当前设备的备注信息~~~~====ZXingActivity==Arrays.toString(a)===" + threadLongBound);
 
 
         //备注,我们确定当前选中设备是通过后去数据库bean的type 字段判断的 (type=一代一体机=endoType=3=扫码的结果对应数字是7)
