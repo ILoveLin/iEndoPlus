@@ -243,7 +243,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                                                   String mSocketPort, String mLivePort, String mMicPort, String mDeviceType) {
                                 //添加设备妇科治疗台
                                 DeviceDBBean deviceDBBean = new DeviceDBBean();
-                                deviceDBBean.setUsemsg01(mDeviceName);  //设备名
+                                deviceDBBean.setDeviceName(mDeviceName);  //设备名
                                 deviceDBBean.setUsername(mDeviceCode); //设备码
                                 deviceDBBean.setMsg(mDeviceNoteMessage);//备注信息
                                 deviceDBBean.setIp(mDeviceIP);          //ip
@@ -311,7 +311,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                                                   String mSocketPort, String mLivePort, String mMicPort, String mDeviceType) {
                                 //添加设备妇科治疗台
                                 DeviceDBBean deviceDBBean = new DeviceDBBean();
-                                deviceDBBean.setUsemsg01(mDeviceName);  //设备名
+                                deviceDBBean.setDeviceName(mDeviceName);  //设备名
                                 deviceDBBean.setUsername(mDeviceCode); //设备码
                                 deviceDBBean.setMsg(mDeviceNoteMessage);//备注信息
                                 deviceDBBean.setIp(mDeviceIP);          //ip
@@ -374,7 +374,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                                                   String mSocketPort, String mLivePort, String mMicPort, String mDeviceType) {
                                 //添加设备妇科治疗台
                                 DeviceDBBean deviceDBBean = new DeviceDBBean();
-                                deviceDBBean.setUsemsg01(mDeviceName);  //设备名
+                                deviceDBBean.setDeviceName(mDeviceName);  //设备名
                                 deviceDBBean.setUsername(mDeviceCode); //设备码
                                 deviceDBBean.setMsg(mDeviceNoteMessage);//备注信息
                                 deviceDBBean.setIp(mDeviceIP);          //ip
@@ -438,7 +438,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                                                   String mSocketPort, String mLivePort, String mMicPort, String mDeviceType) {
                                 //添加设备泌尿治疗台
                                 DeviceDBBean deviceDBBean = new DeviceDBBean();
-                                deviceDBBean.setUsemsg01(mDeviceName);  //设备名
+                                deviceDBBean.setDeviceName(mDeviceName);  //设备名
                                 deviceDBBean.setUsername(mDeviceCode); //设备码
                                 deviceDBBean.setMsg(mDeviceNoteMessage);//备注信息
                                 deviceDBBean.setIp(mDeviceIP);          //ip
@@ -500,7 +500,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
 
     @Override
     public void onItemClick(RecyclerView recyclerView, View itemView, int position) {
-        toast(mAdapter.getItem(position).getUsemsg01() + "~~~");
+        toast(mAdapter.getItem(position).getDeviceName() + "~~~");
     }
 
     private int mSelectedPos = -1;
@@ -607,7 +607,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
         LogUtils.e("修改设备=====getMsg=====" + item.toString());
         mChangeDialog = new ModifyDeviceDialog.Builder(this);
         mChangeDialog.setTitle("修改设备")
-                .setDeviceNameContent(item.getUsemsg01())
+                .setDeviceNameContent(item.getDeviceName())
                 .setDeviceCodeContent(item.getDeviceID())
                 .setDeviceNoteContent(item.getMsg())
                 .setDeviceIPContent(item.getIp())
@@ -631,7 +631,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                         LogUtils.e("不管是更换还是不变都update 数据库,再次刷新界面====");
                         LogUtils.e("不管是更换还是不变都update 数据库,再次刷新界面====");
                         //不管是更换还是不变都update 数据库,再次刷新界面
-                        item.setUsemsg01(mDeviceName);  //设备名
+                        item.setDeviceName(mDeviceName);  //设备名
                         item.setUsername(mDeviceCode); //设备码
                         item.setMsg(mDeviceNoteMessage);//备注信息
                         item.setIp(mDeviceIP);          //ip
@@ -843,7 +843,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
         }
         if (null != mDBBean) {
             LogUtils.e("添加病例=== mDBBean.toString()===" + mDBBean.toString());   //通过此字段判断EndoType
-            LogUtils.e("添加病例=== mDBBean.getUsemsg01()===" + mDBBean.getUsemsg01());   //通过此字段判断EndoType
+            LogUtils.e("添加病例=== mDBBean.getDeviceName()===" + mDBBean.getDeviceName());   //通过此字段判断EndoType
             LogUtils.e("添加病例=== mDBBean.getType()===" + mDBBean.getType());   //通过此字段判断EndoType
             switch (mDBBean.getType()) {
                 case "妇科治疗台":
@@ -897,7 +897,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
             SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_MicPort, null != mDBBean.getMicPort() ? mDBBean.getMicPort() : "1");
             SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_DeviceUsername, mDBBean.getUsername());
             SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_DevicePassword, mDBBean.getPassword());
-            SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_Usemsg01, mDBBean.getUsemsg01());
+            SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_DeviceName, mDBBean.getDeviceName());
             SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_MSelected, mDBBean.getMSelected());
 
             //http://192.168.66.42:8008

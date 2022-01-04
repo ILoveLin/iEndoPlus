@@ -35,9 +35,9 @@ public class DeviceDBBeanDao extends AbstractDao<DeviceDBBean, Long> {
         public final static Property Msg = new Property(10, String.class, "msg", false, "MSG");
         public final static Property Type = new Property(11, String.class, "type", false, "TYPE");
         public final static Property EndoType = new Property(12, String.class, "endoType", false, "ENDO_TYPE");
-        public final static Property Usemsg01 = new Property(13, String.class, "usemsg01", false, "USEMSG01");
-        public final static Property Usemsg02 = new Property(14, String.class, "usemsg02", false, "USEMSG02");
-        public final static Property IsSelected = new Property(15, String.class, "isSelected", false, "IS_SELECTED");
+        public final static Property DeviceName = new Property(13, String.class, "deviceName", false, "DEVICE_NAME");
+        public final static Property Usemsg01 = new Property(14, String.class, "usemsg01", false, "USEMSG01");
+        public final static Property Usemsg02 = new Property(15, String.class, "usemsg02", false, "USEMSG02");
         public final static Property MSelected = new Property(16, Boolean.class, "mSelected", false, "M_SELECTED");
     }
 
@@ -55,7 +55,7 @@ public class DeviceDBBeanDao extends AbstractDao<DeviceDBBean, Long> {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"DEVICE_DBBEAN\" (" + //
                 "\"_id\" INTEGER PRIMARY KEY AUTOINCREMENT ," + // 0: id
-                "\"DEVICE_ID\" TEXT UNIQUE ," + // 1: deviceID
+                "\"DEVICE_ID\" TEXT," + // 1: deviceID
                 "\"IP\" TEXT," + // 2: ip
                 "\"HTTP_PORT\" TEXT," + // 3: httpPort
                 "\"SOCKET_PORT\" TEXT," + // 4: socketPort
@@ -67,9 +67,9 @@ public class DeviceDBBeanDao extends AbstractDao<DeviceDBBean, Long> {
                 "\"MSG\" TEXT," + // 10: msg
                 "\"TYPE\" TEXT," + // 11: type
                 "\"ENDO_TYPE\" TEXT," + // 12: endoType
-                "\"USEMSG01\" TEXT," + // 13: usemsg01
-                "\"USEMSG02\" TEXT," + // 14: usemsg02
-                "\"IS_SELECTED\" TEXT," + // 15: isSelected
+                "\"DEVICE_NAME\" TEXT," + // 13: deviceName
+                "\"USEMSG01\" TEXT," + // 14: usemsg01
+                "\"USEMSG02\" TEXT," + // 15: usemsg02
                 "\"M_SELECTED\" INTEGER);"); // 16: mSelected
     }
 
@@ -148,19 +148,19 @@ public class DeviceDBBeanDao extends AbstractDao<DeviceDBBean, Long> {
             stmt.bindString(13, endoType);
         }
  
+        String deviceName = entity.getDeviceName();
+        if (deviceName != null) {
+            stmt.bindString(14, deviceName);
+        }
+ 
         String usemsg01 = entity.getUsemsg01();
         if (usemsg01 != null) {
-            stmt.bindString(14, usemsg01);
+            stmt.bindString(15, usemsg01);
         }
  
         String usemsg02 = entity.getUsemsg02();
         if (usemsg02 != null) {
-            stmt.bindString(15, usemsg02);
-        }
- 
-        String isSelected = entity.getIsSelected();
-        if (isSelected != null) {
-            stmt.bindString(16, isSelected);
+            stmt.bindString(16, usemsg02);
         }
  
         Boolean mSelected = entity.getMSelected();
@@ -238,19 +238,19 @@ public class DeviceDBBeanDao extends AbstractDao<DeviceDBBean, Long> {
             stmt.bindString(13, endoType);
         }
  
+        String deviceName = entity.getDeviceName();
+        if (deviceName != null) {
+            stmt.bindString(14, deviceName);
+        }
+ 
         String usemsg01 = entity.getUsemsg01();
         if (usemsg01 != null) {
-            stmt.bindString(14, usemsg01);
+            stmt.bindString(15, usemsg01);
         }
  
         String usemsg02 = entity.getUsemsg02();
         if (usemsg02 != null) {
-            stmt.bindString(15, usemsg02);
-        }
- 
-        String isSelected = entity.getIsSelected();
-        if (isSelected != null) {
-            stmt.bindString(16, isSelected);
+            stmt.bindString(16, usemsg02);
         }
  
         Boolean mSelected = entity.getMSelected();
@@ -280,9 +280,9 @@ public class DeviceDBBeanDao extends AbstractDao<DeviceDBBean, Long> {
             cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10), // msg
             cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11), // type
             cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12), // endoType
-            cursor.isNull(offset + 13) ? null : cursor.getString(offset + 13), // usemsg01
-            cursor.isNull(offset + 14) ? null : cursor.getString(offset + 14), // usemsg02
-            cursor.isNull(offset + 15) ? null : cursor.getString(offset + 15), // isSelected
+            cursor.isNull(offset + 13) ? null : cursor.getString(offset + 13), // deviceName
+            cursor.isNull(offset + 14) ? null : cursor.getString(offset + 14), // usemsg01
+            cursor.isNull(offset + 15) ? null : cursor.getString(offset + 15), // usemsg02
             cursor.isNull(offset + 16) ? null : cursor.getShort(offset + 16) != 0 // mSelected
         );
         return entity;
@@ -303,9 +303,9 @@ public class DeviceDBBeanDao extends AbstractDao<DeviceDBBean, Long> {
         entity.setMsg(cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10));
         entity.setType(cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11));
         entity.setEndoType(cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12));
-        entity.setUsemsg01(cursor.isNull(offset + 13) ? null : cursor.getString(offset + 13));
-        entity.setUsemsg02(cursor.isNull(offset + 14) ? null : cursor.getString(offset + 14));
-        entity.setIsSelected(cursor.isNull(offset + 15) ? null : cursor.getString(offset + 15));
+        entity.setDeviceName(cursor.isNull(offset + 13) ? null : cursor.getString(offset + 13));
+        entity.setUsemsg01(cursor.isNull(offset + 14) ? null : cursor.getString(offset + 14));
+        entity.setUsemsg02(cursor.isNull(offset + 15) ? null : cursor.getString(offset + 15));
         entity.setMSelected(cursor.isNull(offset + 16) ? null : cursor.getShort(offset + 16) != 0);
      }
     

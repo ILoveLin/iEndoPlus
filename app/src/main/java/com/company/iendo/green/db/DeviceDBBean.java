@@ -18,7 +18,6 @@ public class DeviceDBBean {
     @Id(autoincrement = true)
     private Long id;  //这个主键ID是需要绑定用户表中的deviceID,确保是这个设备下,离线模式能通过id查询绑定用户
     //设备唯一标识
-    @Unique
     private String deviceID;
     //设备ip
     private String ip;
@@ -39,23 +38,23 @@ public class DeviceDBBean {
     //设备描述
     private String msg;
     //设备类型
-    private String type;
+    private String type;  //34567  数字对应  比如3是耳鼻喉治疗台
     //工作站类型
     private String endoType;
     //备用字段-设备名字
-    private String usemsg01;  //设备名字
+    private String deviceName;  //设备名字
+    //备用字段1
+    private String usemsg01;  //备用字段1
     //备用字段2
     private String usemsg02;  //备用字段2
-    //作废字段
-    private String isSelected;  //;//作废字段
     //是否被选中
     private Boolean mSelected;    //是否被选中    :0未选中,1被选中
 
-    @Generated(hash = 1595823383)
+    @Generated(hash = 881305765)
     public DeviceDBBean(Long id, String deviceID, String ip, String httpPort, String socketPort,
-            String livePort, String micPort, String username, String password, String title, String msg,
-            String type, String endoType, String usemsg01, String usemsg02, String isSelected,
-            Boolean mSelected) {
+                        String livePort, String micPort, String username, String password, String title, String msg,
+                        String type, String endoType, String deviceName, String usemsg01, String usemsg02,
+                        Boolean mSelected) {
         this.id = id;
         this.deviceID = deviceID;
         this.ip = ip;
@@ -69,9 +68,9 @@ public class DeviceDBBean {
         this.msg = msg;
         this.type = type;
         this.endoType = endoType;
+        this.deviceName = deviceName;
         this.usemsg01 = usemsg01;
         this.usemsg02 = usemsg02;
-        this.isSelected = isSelected;
         this.mSelected = mSelected;
     }
 
@@ -217,17 +216,8 @@ public class DeviceDBBean {
                 ", endoType='" + endoType + '\'' +
                 ", usemsg01='" + usemsg01 + '\'' +
                 ", usemsg02='" + usemsg02 + '\'' +
-                ", isSelected='" + isSelected + '\'' +
                 ", mSelected=" + mSelected +
                 '}';
-    }
-
-    public String getIsSelected() {
-        return this.isSelected;
-    }
-
-    public void setIsSelected(String isSelected) {
-        this.isSelected = isSelected;
     }
 
     public Boolean getMSelected() {
@@ -236,5 +226,13 @@ public class DeviceDBBean {
 
     public void setMSelected(Boolean mSelected) {
         this.mSelected = mSelected;
+    }
+
+    public String getDeviceName() {
+        return this.deviceName;
+    }
+
+    public void setDeviceName(String deviceName) {
+        this.deviceName = deviceName;
     }
 }

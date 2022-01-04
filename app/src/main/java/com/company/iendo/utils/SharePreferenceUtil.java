@@ -55,7 +55,7 @@ public class SharePreferenceUtil {
     public static final String Current_DevicePassword = "Current_DevicePassword";    //设备密码(直播)
     public static final String Current_Type = "Current_Type";                        //设备类型
     public static final String Current_EndoType = "Current_EndoType";                //工作站类型
-    public static final String Current_Usemsg01 = "Current_Usemsg01";                //设备名字
+    public static final String Current_DeviceName = "Current_Usemsg01";                //设备名字
     public static final String Current_MSelected = "Current_MSelected";              //是否被选中:0未选中,1被选中
 
 

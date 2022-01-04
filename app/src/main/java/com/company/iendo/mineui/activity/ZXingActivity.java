@@ -170,7 +170,7 @@ public final class ZXingActivity extends AppActivity implements QRCodeView.Deleg
         DeviceDBBean deviceDBBean = new DeviceDBBean();
         deviceDBBean.setDeviceID("" + mBean.getDeviceID());//
         deviceDBBean.setUsemsg02("" + mBean.getDeviceType());//PC端 对应的endotype  比如我们这边耳鼻喉治疗台是3   这个对应是8
-        deviceDBBean.setUsemsg01("" + mBean.getTitle());//设备名字
+        deviceDBBean.setDeviceName("" + mBean.getTitle());//设备名字
         deviceDBBean.setHttpPort("" + mBean.getHttpPort());//
         deviceDBBean.setIp("" + mBean.getIp());//
         deviceDBBean.setMsg("" + mBean.getMakemsg());//

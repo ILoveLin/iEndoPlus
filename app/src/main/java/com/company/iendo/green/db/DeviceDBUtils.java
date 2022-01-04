@@ -26,11 +26,7 @@ public class DeviceDBUtils {
 
     //插入或者替换,如果没有,插入,如果有,替换
     public static void insertOrReplace(Context context, DeviceDBBean bean) {
-        LogUtils.e("========当前设备的备注信息~~~~====ZXingActivity==insertOrReplaceData==start=");
-
         DBManager.getDaoSession(context).getDeviceDBBeanDao().insertOrReplace(bean);
-        LogUtils.e("========当前设备的备注信息~~~~====ZXingActivity==insertOrReplaceData==OK=");
-
 
     }
 
