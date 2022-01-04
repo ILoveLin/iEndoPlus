@@ -192,85 +192,40 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
 
                     @Override
                     public void onResponse(String response, int id) {
-//                        try {
+                        try {
                             showComplete();
                             if ("" != response) {
-
-                            mGson = GsonFactory.getSingletonGson();
-                            // 设置 Json 解析容错监听
-                            GsonFactory.setJsonCallback(new JsonCallback() {
-
-                                @Override
-                                public void onTypeException(TypeToken<?> typeToken, String fieldName, JsonToken jsonToken) {
-                                     Log.e("GsonFactory", "病例列表===类型解析异常：" + typeToken + "#" + fieldName + "，后台返回的类型为：" + jsonToken);
-                                    // 上报到 Bugly 错误列表
-                                    CrashReport.postCatchedException(new IllegalArgumentException("类型解析异常：" + typeToken + "#" + fieldName + "，后台返回的类型为：" + jsonToken));
-                                }
-                            });
-                            LogUtils.e("=病例列表=hy=response==response===" + response);
-//                            Gson gson = new Gson();
-//                            Type type = new TypeToken<CaseManageListBean>() {
-//                            }.getType();
-                            CaseManageListBean bean = mGson.fromJson(response, CaseManageListBean.class);
-                            if (null == bean) {
-                                LogUtils.e("=病例列表=hy=response==mBean==null=");
-
-                            }
-//                            CaseManageListBean mBean = gson.fromJson(response, type);
+                                mGson = GsonFactory.getSingletonGson();
+                                LogUtils.e("=病例列表=hy=response==response===" + response);
                                 CaseManageListBean mBean = mGson.fromJson(response, CaseManageListBean.class);
-                            LogUtils.e("=病例列表=hy=response==response===" + mBean.toString());
-                            LogUtils.e("=病例列表=hy=response==getEmpty===" + mBean.isIsEmpty());
-                            LogUtils.e("=病例列表=hy=response==getCode()===" + mBean.getCode());
-                            LogUtils.e("=病例列表=hy=response==getData===" + mBean.getData());
+                                LogUtils.e("=病例列表=hy=response==response===" + mBean.toString());
+                                LogUtils.e("=病例列表=hy=response==getEmpty===" + mBean.isIsEmpty());
+                                LogUtils.e("=病例列表=hy=response==getCode()===" + mBean.getCode());
+                                LogUtils.e("=病例列表=hy=response==getData===" + mBean.getData());
 
-//                                for (int i = 0; i < mBean.getData().size(); i++) {
-//                                    LogUtils.e("=病例列表=hy=time==" + mBean.getData().get(i).getID());
-//                                }
-
-
-                            if (0 == mBean.getCode()) {  //成功
-
-//                                    if (null==mBean.getEmpty()) {
-//                                        showEmpty();
-//
-//                                    } else {
-//                                        mDataLest.clear();
-//                                        mDataLest.addAll(mBean.getData());
-//                                        mAdapter.setData(mDataLest);
-//                                    }
-//                                    if (mBean.getData().isEmpty()){
-//                                        showEmpty();
-//                                    }else {
-//                                        mDataLest.clear();
-//                                        mDataLest.addAll(mBean.getData());
-//                                        mAdapter.setData(mDataLest);
-//                                    }
-                                if (mBean.getData().size() != 0) {
-                                    LogUtils.e("=病例列表=hy= 0 0 0 0 0 0==");
-
-                                    mDataLest.clear();
-                                    mDataLest.addAll(mBean.getData());
-                                    mAdapter.setData(mDataLest);
+                                if (0 == mBean.getCode()) {  //成功
+                                    if (mBean.getData().size() != 0) {
+                                        mDataLest.clear();
+                                        mDataLest.addAll(mBean.getData());
+                                        mAdapter.setData(mDataLest);
+                                    } else {
+                                        showEmpty();
+                                    }
                                 } else {
-                                    LogUtils.e("=病例列表=hy= 111111111==");
-                                    showEmpty();
+
+                                    showError(listener -> {
+                                        sendRequest(mChoiceDate);
+                                    });
                                 }
                             } else {
-                                LogUtils.e("=病例列表=hy= 22222222==");
-
                                 showError(listener -> {
                                     sendRequest(mChoiceDate);
                                 });
                             }
-                        } else{
-                            showError(listener -> {
-                                sendRequest(mChoiceDate);
-                            });
+                        } catch (Exception e) {
+                            toast("数据解析错误!");
+
                         }
-//                        } catch (Exception e) {
-//                            LogUtils.e("=TAG=hy=Exception==size===" + e.toString());
-//
-//                        }
 
 
                     }
