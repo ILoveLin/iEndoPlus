@@ -10,6 +10,53 @@ import org.greenrobot.greendao.annotation.Unique;
  * author： LoveLin
  * time：2021/11/16 15:13
  * desc：数据库设备表
+ *
+ *
+ * //////////////////////////////////////////////////////////////////////////
+ * //  EndoType.h 版本：v1.01
+ * //  修订时间：2021年12月29日 最后修订人:dzh
+ * //
+ * //  定义软件的应用科室或应用场景（内镜类型）
+ * //////////////////////////////////////////////////////////////////////////
+ *
+ * #pragma once
+ *
+ * #define  ALL_TYPE_NEW 			      -1 //全科室 新状态 不会 出现 选择其他 科室的 按钮
+ * #define  ALL_TYPE					  0 //全科室 默认状态   会 出现 选择其他 科室的 按钮
+ * #define  UNKNOWN_TYPE				  0 //未知科室
+ * //内镜科室
+ * #define  GASTROSCOPY                  1 //胃镜
+ * #define  COLONOSCOPY                  2 //肠镜
+ * #define  ENT                          3 //耳鼻喉镜
+ * #define  HYSTEROSCOPY				  4 //宫腔镜
+ * #define  CHOLEDOCHOSCOPE              5 //胆道镜
+ * #define  CYSTOSCOPY					  6 //膀胱镜
+ * #define  DUODENOSCOPY				  7 //十二指肠镜
+ * #define  BRONCHOSCOPY                 8 //支气管镜
+ * #define  ULTRASOUND                   9 //超声
+ * #define  DUCTOSCOPY                   10 //乳管镜
+ * #define  GASTROINTESTINAL_ENDOSCOPY   11//胃肠镜
+ *
+ *
+ *
+ * #define  GYNECOLOGICAL_LAPAROSCOPY   100 //妇科腹腔镜
+ * #define  LAPAROSCOPY                 101 //腹腔镜
+ * #define  FETOSCOPY					 102 //胎儿镜
+ * #define  MICROSCOPY                  103 //显微镜
+ * #define  OPHTHALMOLOGY               104 //眼科
+ * #define  RESECTOSCOPY				 105 //前列腺电切镜
+ * #define  URETERSCOPY				 106 //输尿管镜
+ * #define  NEURO_SURGERY               107 //神经外科镜
+ * #define  CEREBRAL_SURGERY            108 //脑外科
+ * #define  CARDIOTHORACIC_SURGERY      109 //心胸外科
+ * #define  AESTHETIC_ENDOSCOPY         110 //美容镜
+ * #define  ARTHROSCOPY                 111 //关节镜
+ * #define  TRANSCUTANEOUS_NEPHROSCOPY  112 //经皮肾镜
+ * #define  TRANSFORAMINAL_ENDOSCOPY    113 //椎间孔镜
+ * #define  HYSTEROSCOPY_LAPAROSCOPY    114 //宫腹腔镜
+ *
+ *
+ *
  */
 
 @Entity

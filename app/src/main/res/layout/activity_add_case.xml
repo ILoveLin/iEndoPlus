@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/transparent"
     android:orientation="vertical"
     tools:context="com.company.iendo.ui.activity.CopyActivity">
 
@@ -22,8 +23,7 @@
         <androidx.core.widget.NestedScrollView
             style="@style/nestedscrollview_vertical_style"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/white">
+            android:layout_height="match_parent">
 
             <RelativeLayout
                 android:layout_width="match_parent"

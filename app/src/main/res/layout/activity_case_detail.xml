@@ -14,80 +14,168 @@
         app:rightTitle="编辑"
         app:title="病例详情" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/dp_100"
-        android:background="@color/white"
-        android:gravity="center"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/case_picture"
-            android:layout_margin="@dimen/dp_10"
-            android:background="@color/common_line_color"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="图像采集"
-            android:textSize="@dimen/sp_16" />
-
-        <TextView
-            android:id="@+id/case_report"
-            android:layout_margin="@dimen/dp_10"
-            android:background="@color/common_line_color"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="获取报告"
-            android:textSize="@dimen/sp_16" />
-
-        <TextView
-            android:id="@+id/case_delete"
-            android:layout_margin="@dimen/dp_10"
-            android:background="@color/common_line_color"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="删除"
-            android:textSize="@dimen/sp_16" />
-
-        <TextView
-            android:id="@+id/case_down"
-            android:layout_margin="@dimen/dp_10"
-            android:background="@color/common_line_color"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="下载"
-            android:textSize="@dimen/sp_16" />
-
-
-    </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-        android:background="@color/common_line_color" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_detail_tab"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white"
-        android:orientation="vertical"
-        tools:itemCount="3"
-        tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-        tools:listitem="@layout/tab_item_design"
-        tools:spanCount="3" />
-
-    <com.hjq.widget.layout.NestedViewPager
-        android:id="@+id/vp_detail_pager"
+    <com.scwang.smart.refresh.layout.SmartRefreshLayout
+        android:id="@+id/smartRefresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-      />
+        app:srlAccentColor="@color/gray"
+        app:srlEnableNestedScrolling="false"
+        app:srlEnablePureScrollMode="true">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_70"
+                android:layout_marginTop="@dimen/dp_10"
+                android:layout_marginBottom="@dimen/dp_10">
+
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="@dimen/dp_10"
+                    android:layout_marginRight="@dimen/dp_5"
+                    android:layout_weight="1"
+                    android:background="@drawable/shape_detail_bg_01"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="@dimen/dp_40"
+                        android:layout_height="@dimen/dp_40"
+                        android:paddingTop="@dimen/dp_10"
+                        android:src="@drawable/ic_icon_detail_picture" />
+
+                    <TextView
+                        android:id="@+id/case_picture"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dp_6"
+                        android:layout_marginBottom="@dimen/dp_5"
+                        android:text="图像采集"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/sp_12" />
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="@dimen/dp_5"
+                    android:layout_marginRight="@dimen/dp_5"
+                    android:layout_weight="1"
+                    android:background="@drawable/shape_detail_bg_02"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="@dimen/dp_40"
+                        android:layout_height="@dimen/dp_40"
+                        android:paddingTop="@dimen/dp_10"
+                        android:src="@drawable/ic_icon_detail_report" />
+
+                    <TextView
+
+                        android:id="@+id/case_report"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dp_6"
+                        android:layout_marginBottom="@dimen/dp_5"
+                        android:gravity="center"
+                        android:text="获取报告"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/sp_12" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="@dimen/dp_5"
+                    android:layout_marginRight="@dimen/dp_5"
+                    android:layout_weight="1"
+                    android:background="@drawable/shape_detail_bg_03"
+                    android:gravity="center"
+
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="@dimen/dp_40"
+                        android:layout_height="@dimen/dp_40"
+                        android:paddingTop="@dimen/dp_10"
+                        android:src="@drawable/ic_icon_detail_delete_cases" />
+
+                    <TextView
+                        android:id="@+id/case_delete"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dp_6"
+                        android:layout_marginBottom="@dimen/dp_5"
+                        android:gravity="center"
+                        android:text="删除"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/sp_12" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="@dimen/dp_5"
+                    android:layout_marginRight="@dimen/dp_10"
+                    android:layout_weight="1"
+                    android:background="@drawable/shape_detail_bg_04"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="@dimen/dp_40"
+                        android:layout_height="@dimen/dp_40"
+                        android:paddingTop="@dimen/dp_10"
+                        android:src="@drawable/ic_icon_detail_down_cases" />
+
+                    <TextView
+                        android:id="@+id/case_down"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dp_6"
+                        android:layout_marginBottom="@dimen/dp_5"
+                        android:gravity="center"
+                        android:text="下载"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/sp_12" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="@color/common_line_color" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_detail_tab"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:orientation="vertical"
+                tools:itemCount="3"
+                tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                tools:listitem="@layout/tab_item_design"
+                tools:spanCount="3" />
+
+            <com.hjq.widget.layout.NestedViewPager
+                android:id="@+id/vp_detail_pager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </LinearLayout>
+
+    </com.scwang.smart.refresh.layout.SmartRefreshLayout>
+
 
 </LinearLayout>

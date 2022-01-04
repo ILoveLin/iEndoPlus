@@ -30,6 +30,7 @@ import com.company.iendo.ui.dialog.MessageDialog;
 import com.company.iendo.ui.dialog.SelectDialog;
 import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.SharePreferenceUtil;
+import com.company.iendo.widget.LinesEditView;
 import com.company.iendo.widget.StatusLayout;
 import com.hjq.base.BaseDialog;
 import com.hjq.widget.view.ClearEditText;
@@ -63,13 +64,13 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
     private DetailCaseActivity mActivity;
     private CaseDetailBean mBean;
     private String mBaseUrl;
-
+    private LinesEditView et_01_i_tell_you, et_01_bad_tell;
     private TextView tv_01_age_type;
     private boolean mFragClickable = false;  //dialog数据请求错误,相对于dialog不允许弹窗,不然会闪退
     private HashMap<String, String> mParamsMap;
     private HashMap mDialogItemMap;
-    private ClearEditText et_01_check_num, et_01_name, et_01_sex_type, et_01_age, et_01_jop, et_01_fee, et_01_get_check_doctor,
-            et_01_i_tell_you, et_01_bad_tell;
+    private ClearEditText et_01_check_num, et_01_name, et_01_sex_type, et_01_age, et_01_jop, et_01_fee, et_01_get_check_doctor;
+    //            et_01_i_tell_you, et_01_bad_tell;
     private ClearEditText et_02_mirror_see, et_02_mirror_result, et_02_live_check, et_02_cytology, et_02_test, et_02_pathology,
             et_02_advice, et_02_check_doctor;
     private ClearEditText et_03_door_num, et_03_protection_num, et_03_section, et_03_device, et_03_case_num, et_03_in_hospital_num,
@@ -82,6 +83,9 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
     private ArrayList<String> ageList;
     private ArrayList<String> mNameList;
     private HashMap<String, String> mPathMap;
+    private ArrayList<LinesEditView> linesEditViewList;
+    private ClearEditText lines_edit_01_i_tell_you;
+    private ClearEditText lines_edit_01_i_bad_tell;
 
     public static DetailFragment newInstance() {
         return new DetailFragment();
@@ -100,13 +104,35 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         currentItemCaseID = MainActivity.getCurrentItemID();
         initLayoutViewDate();
         setEditStatus();
+        responseListener();
+
+
+        sendRequest(currentItemCaseID);
+    }
+
+    private void responseListener() {
+
+
         //年纪类别的List数据本地写:岁,月,天,
-        setOnClickListener(R.id.et_01_sex_type, R.id.tv_01_age_type, R.id.et_01_jop, R.id.et_01_get_check_doctor, R.id.et_01_i_tell_you, R.id.et_01_bad_tell,
+        setOnClickListener(R.id.et_01_sex_type, R.id.tv_01_age_type, R.id.et_01_jop, R.id.et_01_get_check_doctor,
                 R.id.et_02_mirror_see, R.id.et_02_mirror_result, R.id.et_02_live_check, R.id.et_02_cytology, R.id.et_02_test, R.id.et_02_pathology,
                 R.id.et_02_advice, R.id.et_02_check_doctor, R.id.et_03_section, R.id.et_03_device, R.id.et_03_ming_zu, R.id.et_03_is_married);
 
 
-        sendRequest(currentItemCaseID);
+        lines_edit_01_i_tell_you.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showITellyouMenuDialog(et_01_i_tell_you, "11");
+
+            }
+        });
+        lines_edit_01_i_bad_tell.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showITellyouMenuDialog(et_01_bad_tell, "12");
+
+            }
+        });
     }
 
     @Override
@@ -246,7 +272,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         et_03_device.setText("" + mDataBean.getDevice());
         et_01_fee.setText("" + mDataBean.getFee());
         //        String FeeType = et_03_tel.getText().toString().trim();       //收费类型         ???
-        et_01_i_tell_you.setText("" + mDataBean.getChiefComplaint());
+        et_01_i_tell_you.setContentText("" + mDataBean.getChiefComplaint());
         et_02_test.setText("" + mDataBean.getTest());
         et_02_advice.setText("" + mDataBean.getAdvice());
         et_03_in_hospital_num.setText("" + mDataBean.getInpatientID());
@@ -255,7 +281,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         et_02_cytology.setText("" + mDataBean.getCtology());
         et_02_pathology.setText("" + mDataBean.getPathology());
         et_02_live_check.setText("" + mDataBean.getExaminingPhysician());
-        et_01_bad_tell.setText("" + mDataBean.getClinicalDiagnosis());
+        et_01_bad_tell.setContentText("" + mDataBean.getClinicalDiagnosis());
         et_02_mirror_see.setText("" + mDataBean.getCheckContent());
         et_02_mirror_result.setText("" + mDataBean.getCheckDiagnosis());
 
@@ -295,13 +321,13 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                 }
             }
 
+
             if (mEditStatus) {
                 for (int i = 0; i < mNotFocusableEditList.size(); i++) {
                     mNotFocusableEditList.get(i).setFocusableInTouchMode(false);
                     mNotFocusableEditList.get(i).setFocusable(false);
                 }
             }
-
         }
         if (!mEditStatus) {//切换到了不可编辑模式,发送请求
             if (mFirstIn) {  //解决  首次进来 tosat 提示
@@ -512,11 +538,11 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
             case R.id.et_01_get_check_doctor://送检医生
                 showMenuDialog(et_01_get_check_doctor, "8");
                 break;
-            case R.id.et_01_i_tell_you:    //主诉
-                showMenuDialog(et_01_i_tell_you, "11");
+            case R.id.et_01_i_tell_you:    //主诉--带字数限制的
+//                showITellyouMenuDialog(et_01_i_tell_you, "11");
                 break;
-            case R.id.et_01_bad_tell:     //临床诊断
-                showMenuDialog(et_01_bad_tell, "12");
+            case R.id.et_01_bad_tell:     //临床诊断--带字数限制的
+//                showITellyouMenuDialog(et_01_bad_tell, "12");
                 break;
             case R.id.et_02_mirror_see:   //镜检所见
                 showMenuDialog(et_02_mirror_see, "13");
@@ -584,6 +610,37 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 
     }
 
+    private void showITellyouMenuDialog(LinesEditView mEdit, String key) {
+        if (mFragClickable && null != mDialogItemMap && mEditStatus) {//有dialog数据,集合不为空,可编辑状态
+            ArrayList<DialogItemBean> mDataList = (ArrayList<DialogItemBean>) mDialogItemMap.get(key);
+            ArrayList<String> stringList = new ArrayList<>();
+            for (int i = 0; i < mDataList.size(); i++) {
+                stringList.add(mDataList.get(i).getDictItem());
+            }
+            // 底部选择框
+            new MenuDialog.Builder(getActivity())
+                    // 设置 null 表示不显示取消按钮
+                    //.setCancel(getString(R.string.common_cancel))
+                    // 设置点击按钮后不关闭对话框
+                    //.setAutoDismiss(false)
+                    .setList(stringList)
+                    .setListener(new MenuDialog.OnListener<String>() {
+
+                        @Override
+                        public void onSelected(BaseDialog dialog, int position, String string) {
+                            String s = stringList.get(position);
+                            mEdit.setContentText(mEdit.getContentText() + "" + s);
+
+                        }
+
+                        @Override
+                        public void onCancel(BaseDialog dialog) {
+                            toast("取消了");
+                        }
+                    })
+                    .show();
+        }
+    }
 
     private void showMenuDialog(ClearEditText mEdit, String key) {
         if (mFragClickable && null != mDialogItemMap && mEditStatus) {//有dialog数据,集合不为空,可编辑状态
@@ -635,7 +692,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         //获取Dialog item的数据
         OkHttpUtils.get()
                 .url(mBaseUrl + HttpConstant.CaseManager_CaseDialogDate)
-                .addParams("EndoType",endoType)
+                .addParams("EndoType", endoType)
 //                .addParams("EndoType", "4")
                 .build()
                 .execute(new StringCallback() {
@@ -729,6 +786,11 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         et_01_i_tell_you = findViewById(R.id.et_01_i_tell_you);
         //临床诊断
         et_01_bad_tell = findViewById(R.id.et_01_bad_tell);
+
+        //主诉---多行显示的edit
+        lines_edit_01_i_tell_you = et_01_i_tell_you.getContentEdit();
+        //临床诊断---多行显示的edit
+        lines_edit_01_i_bad_tell = et_01_bad_tell.getContentEdit();
         /**
          *获取镜信息id
          */
@@ -792,8 +854,9 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         mEditList.add(et_01_jop);
         mEditList.add(et_01_fee);
         mEditList.add(et_01_get_check_doctor);
-        mEditList.add(et_01_i_tell_you);
-        mEditList.add(et_01_bad_tell);
+
+//        mEditList.add(et_01_i_tell_you);
+//        mEditList.add(et_01_bad_tell);
         mEditList.add(et_02_mirror_see);
         mEditList.add(et_02_mirror_result);
         mEditList.add(et_02_live_check);
@@ -821,12 +884,11 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         mEditList.add(et_01_check_num);
         mEditList.add(et_01_name);
 
-
+        mNotFocusableEditList.add(lines_edit_01_i_tell_you);
+        mNotFocusableEditList.add(lines_edit_01_i_bad_tell);
         mNotFocusableEditList.add(et_01_sex_type);
         mNotFocusableEditList.add(et_01_jop);
         mNotFocusableEditList.add(et_01_get_check_doctor);
-        mNotFocusableEditList.add(et_01_i_tell_you);
-        mNotFocusableEditList.add(et_01_bad_tell);
         mNotFocusableEditList.add(et_02_mirror_see);
         mNotFocusableEditList.add(et_02_mirror_result);
         mNotFocusableEditList.add(et_02_live_check);
@@ -843,6 +905,10 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         mNotFocusableEditList.add(et_03_section);
         mNotFocusableEditList.add(et_03_section);
         mNotFocusableEditList.add(et_03_section);
+
+        linesEditViewList = new ArrayList<>();
+        linesEditViewList.add(et_01_i_tell_you);
+        linesEditViewList.add(et_01_bad_tell);
 
 
     }
@@ -915,7 +981,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         }
         String Fee = et_01_fee.getText().toString().trim();       //收费
 //        String FeeType = et_03_tel.getText().toString().trim();       //收费类型         ???
-        String ChiefComplaint = et_01_i_tell_you.getText().toString().trim();       //主诉
+        String ChiefComplaint = et_01_i_tell_you.getContentText().toString().trim();       //主诉
         String Test = et_02_test.getText().toString().trim();       //试验
         String Advice = et_02_advice.getText().toString().trim();       //建议
         String InpatientID = et_03_in_hospital_num.getText().toString().trim();       //住院号
@@ -924,7 +990,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         String Ctology = et_02_cytology.getText().toString().trim();       //细胞学
         String Pathology = et_02_pathology.getText().toString().trim();       //病理学
         String ExaminingPhysician = et_02_live_check.getText().toString().trim();       //检查医生
-        String ClinicalDiagnosis = et_01_bad_tell.getText().toString().trim();       //临床诊断
+        String ClinicalDiagnosis = et_01_bad_tell.getContentText().toString().trim();       //临床诊断
         String CheckContent = et_02_mirror_see.getText().toString().trim();       //检查内容（镜检所见）
         String CheckDiagnosis = et_02_mirror_result.getText().toString().trim();       //镜检诊断
 

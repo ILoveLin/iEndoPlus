@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical">
+
+    <com.hjq.widget.view.ClearEditText
+        android:id="@+id/id_et_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:gravity="top"
+        android:focusable="false"
+        android:hint="请输入文字描述…"
+        android:inputType="textMultiLine"
+        android:padding="@dimen/dp_10"
+        android:selectAllOnFocus="true"
+        android:textColor="#DE000000"
+        android:textSize="@dimen/sp_14" />
+<!--    <EditText-->
+<!--        android:id="@+id/id_et_input"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:background="@android:color/transparent"-->
+<!--        android:gravity="top"-->
+<!--        android:hint="请输入文字描述…"-->
+<!--        android:inputType="textMultiLine"-->
+<!--        android:padding="@dimen/dp_10"-->
+<!--        android:selectAllOnFocus="true"-->
+<!--        android:textColor="#DE000000"-->
+<!--        android:textSize="@dimen/sp_18" />-->
+
+    <TextView
+        android:id="@+id/id_tv_input"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:layout_marginBottom="@dimen/dp_5"
+        android:layout_marginRight="@dimen/dp_7"
+        android:text="100/100"
+        android:textColor="#8A000000"
+        android:textSize="@dimen/sp_14" />
+</LinearLayout>

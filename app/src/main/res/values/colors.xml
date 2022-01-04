@@ -308,9 +308,11 @@
     <color name="color_f2f2f3">#f2f2f3</color>
     <color name="color_9f000000">#9f000000</color>
     <color name="color_409bf0">#409bf0</color>
+    <color name="color_709BE0">#709BE0</color>
     <color name="color_4870b7">#4870b7</color>
     <color name="color_e4e4e4">#e4e4e4</color>
     <color name="color_fe5151">#fe5151</color>
+    <color name="color_ED6C7">#ED6C70</color>
     <color name="color_f23030">#f23030</color>
     <color name="color_f51f1f">#f51f1f</color>
     <color name="color_006bce">#006bce</color>
@@ -321,6 +323,7 @@
     <color name="color_4a91e1">#4a91e1</color>
     <color name="color_1765bd">#1765bd</color>
     <color name="color_75aff0">#75aff0</color>
+    <color name="color_74CBE7">#74CBE7</color>
     <color name="color_88000000">#88000000</color>
     <color name="color_851212">#851212</color>
     <color name="color_e4b162">#e4b162</color>
@@ -366,6 +369,7 @@
     <color name="viewfinder_mask">#60000000</color>
     <color name="possible_result_points">#c0ffff00</color>
     <color name="result_points">#c000ff00</color>
+    <color name="result_A4DE7A">#A4DE7A</color>
     <color name="result_text">#ffffffff</color>
     <color name="result_view">#b0000000</color>
     <color name="white">#ffffffff</color>

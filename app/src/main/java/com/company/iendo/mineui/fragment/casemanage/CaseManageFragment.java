@@ -212,7 +212,6 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
                                         showEmpty();
                                     }
                                 } else {
-
                                     showError(listener -> {
                                         sendRequest(mChoiceDate);
                                     });
