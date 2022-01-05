@@ -25,12 +25,10 @@
         android:orientation="vertical">
         <!--01=检查号-->
         <LinearLayout
-
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingLeft="@dimen/dp_5"
-            android:paddingRight="@dimen/dp_5">
+            android:paddingLeft="@dimen/dp_10">
 
             <TextView
                 style="@style/CaseTextViewStyle"
@@ -59,14 +57,15 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1px"
+            android:layout_marginLeft="@dimen/dp_10"
+            android:layout_marginRight="@dimen/dp_10"
             android:background="@color/common_line_color" />
         <!--02=姓名-->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingLeft="@dimen/dp_5"
-            android:paddingRight="@dimen/dp_5">
+            android:paddingLeft="@dimen/dp_10">
 
 
             <TextView
@@ -94,6 +93,8 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1px"
+            android:layout_marginLeft="@dimen/dp_10"
+            android:layout_marginRight="@dimen/dp_10"
             android:background="@color/common_line_color" />
 
         <!--03=性别-->
@@ -101,8 +102,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingLeft="@dimen/dp_5"
-            android:paddingRight="@dimen/dp_5">
+            android:paddingLeft="@dimen/dp_10">
 
             <TextView
                 style="@style/CaseTextViewStyle"
@@ -117,7 +117,6 @@
                 android:gravity="right|center_vertical"
                 android:hint=""
                 android:lines="1"
-
                 android:paddingLeft="@dimen/dp_10"
                 android:paddingRight="@dimen/dp_10"
                 android:singleLine="true"
@@ -132,6 +131,8 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1px"
+            android:layout_marginLeft="@dimen/dp_10"
+            android:layout_marginRight="@dimen/dp_10"
             android:background="@color/common_line_color" />
 
 
@@ -141,8 +142,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingLeft="@dimen/dp_5"
-            android:paddingRight="@dimen/dp_5">
+            android:paddingLeft="@dimen/dp_10">
 
             <TextView
                 style="@style/CaseTextViewStyle"
@@ -165,8 +165,6 @@
                     android:gravity="right|center_vertical"
                     android:hint="请输入年龄"
                     android:lines="1"
-                    android:paddingLeft="@dimen/dp_10"
-                    android:paddingRight="@dimen/dp_10"
                     android:singleLine="true"
                     android:text=""
                     android:textColor="@color/black80"
@@ -182,16 +180,10 @@
                     android:gravity="right"
                     android:paddingRight="@dimen/dp_10"
                     android:text="岁"
-
                     android:textColor="@color/black"
                     android:textSize="@dimen/sp_14" />
 
             </LinearLayout>
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="1dp"
-                android:layout_weight="1" />
 
 
         </LinearLayout>
@@ -199,16 +191,16 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1px"
+            android:layout_marginLeft="@dimen/dp_10"
+            android:layout_marginRight="@dimen/dp_10"
             android:background="@color/common_line_color" />
-
 
         <!--05=职业-->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingLeft="@dimen/dp_5"
-            android:paddingRight="@dimen/dp_5">
+            android:paddingLeft="@dimen/dp_10">
 
             <TextView
                 style="@style/CaseTextViewStyle"
@@ -238,16 +230,16 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1px"
+            android:layout_marginLeft="@dimen/dp_10"
+            android:layout_marginRight="@dimen/dp_10"
             android:background="@color/common_line_color" />
-
 
         <!--06=收费-->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingLeft="@dimen/dp_5"
-            android:paddingRight="@dimen/dp_5">
+            android:paddingLeft="@dimen/dp_10">
 
             <TextView
                 style="@style/CaseTextViewStyle"
@@ -275,15 +267,17 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1px"
+            android:layout_marginLeft="@dimen/dp_10"
+            android:layout_marginRight="@dimen/dp_10"
             android:background="@color/common_line_color" />
+
 
         <!--07=送检医生-->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingLeft="@dimen/dp_5"
-            android:paddingRight="@dimen/dp_5">
+            android:paddingLeft="@dimen/dp_10">
 
             <TextView
                 style="@style/CaseTextViewStyle"
@@ -315,7 +309,6 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/dp_10"
         android:layout_marginRight="@dimen/dp_10"
@@ -327,7 +320,7 @@
             android:layout_width="wrap_content"
             android:layout_height="@dimen/dp_35"
             android:gravity="center_vertical"
-            android:paddingLeft="@dimen/dp_5"
+            android:paddingLeft="@dimen/dp_10"
             android:text="主诉"
             android:textColor="@color/black"
             android:textSize="@dimen/sp_14" />
@@ -335,12 +328,13 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1px"
+            android:layout_marginLeft="@dimen/dp_10"
+            android:layout_marginRight="@dimen/dp_10"
             android:background="@color/common_line_color" />
 
         <com.company.iendo.widget.LinesEditView
             android:id="@+id/et_01_i_tell_you"
             android:layout_width="match_parent"
-
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/dp_10"
             app:classic_showPositive="false" />
@@ -380,7 +374,7 @@
             android:layout_width="wrap_content"
             android:layout_height="@dimen/dp_35"
             android:gravity="center_vertical"
-            android:paddingLeft="@dimen/dp_5"
+            android:paddingLeft="@dimen/dp_10"
             android:text="临床诊断"
             android:textColor="@color/black"
             android:textSize="@dimen/sp_14" />
@@ -388,14 +382,16 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1px"
+            android:layout_marginLeft="@dimen/dp_10"
+            android:layout_marginRight="@dimen/dp_10"
             android:background="@color/common_line_color" />
 
         <com.company.iendo.widget.LinesEditView
             android:id="@+id/et_01_bad_tell"
             android:layout_width="match_parent"
-            android:focusable="false"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/dp_10"
+            android:focusable="false"
             app:classic_showPositive="false" />
 
 
@@ -416,6 +412,7 @@
 
 
     </LinearLayout>
+
 
 
 </LinearLayout>

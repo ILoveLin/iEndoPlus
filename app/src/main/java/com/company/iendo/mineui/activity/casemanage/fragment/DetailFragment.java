@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -42,9 +41,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import okhttp3.Call;
 
@@ -71,6 +68,8 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
     private HashMap mDialogItemMap;
     private ClearEditText et_01_check_num, et_01_name, et_01_sex_type, et_01_age, et_01_jop, et_01_fee, et_01_get_check_doctor;
     //            et_01_i_tell_you, et_01_bad_tell;
+    private LinesEditView etlines_02_mirror_see, etlines_02_mirror_result, etlines_02_live_check, etlines_02_cytology, etlines_02_test,
+            etlines_02_pathology, etlines_02_advice;
     private ClearEditText et_02_mirror_see, et_02_mirror_result, et_02_live_check, et_02_cytology, et_02_test, et_02_pathology,
             et_02_advice, et_02_check_doctor;
     private ClearEditText et_03_door_num, et_03_protection_num, et_03_section, et_03_device, et_03_case_num, et_03_in_hospital_num,
@@ -133,6 +132,60 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 
             }
         });
+
+        //02-layout
+
+        et_02_mirror_see.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showITellyouMenuDialog(etlines_02_mirror_see, "13");
+
+            }
+        });
+        et_02_mirror_result.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showITellyouMenuDialog(etlines_02_mirror_result, "14");
+
+            }
+        });
+        et_02_live_check.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showITellyouMenuDialog(etlines_02_live_check, "15");
+
+            }
+        });
+        et_02_cytology.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showITellyouMenuDialog(etlines_02_cytology, "16");
+
+            }
+        });
+        et_02_test.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showITellyouMenuDialog(etlines_02_test, "17");
+
+            }
+        });
+        et_02_pathology.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showITellyouMenuDialog(etlines_02_pathology, "18");
+
+            }
+        });
+        et_02_advice.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showITellyouMenuDialog(etlines_02_advice, "19");
+
+            }
+        });
+
+
     }
 
     @Override
@@ -273,17 +326,17 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         et_01_fee.setText("" + mDataBean.getFee());
         //        String FeeType = et_03_tel.getText().toString().trim();       //收费类型         ???
         et_01_i_tell_you.setContentText("" + mDataBean.getChiefComplaint());
-        et_02_test.setText("" + mDataBean.getTest());
-        et_02_advice.setText("" + mDataBean.getAdvice());
+        etlines_02_test.setContentText("" + mDataBean.getTest());
+        etlines_02_advice.setContentText("" + mDataBean.getAdvice());
         et_03_in_hospital_num.setText("" + mDataBean.getInpatientID());
         et_03_door_num.setText("" + mDataBean.getOutpatientID());
-        et_02_live_check.setText("" + mDataBean.getBiopsy());
-        et_02_cytology.setText("" + mDataBean.getCtology());
-        et_02_pathology.setText("" + mDataBean.getPathology());
-        et_02_live_check.setText("" + mDataBean.getExaminingPhysician());
+        etlines_02_live_check.setContentText("" + mDataBean.getBiopsy());
+        etlines_02_cytology.setContentText("" + mDataBean.getCtology());
+        etlines_02_pathology.setContentText("" + mDataBean.getPathology());
+        etlines_02_live_check.setContentText("" + mDataBean.getExaminingPhysician());
         et_01_bad_tell.setContentText("" + mDataBean.getClinicalDiagnosis());
-        et_02_mirror_see.setText("" + mDataBean.getCheckContent());
-        et_02_mirror_result.setText("" + mDataBean.getCheckDiagnosis());
+        etlines_02_mirror_see.setContentText("" + mDataBean.getCheckContent());
+        etlines_02_mirror_result.setContentText("" + mDataBean.getCheckDiagnosis());
 
     }
 
@@ -544,27 +597,27 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
             case R.id.et_01_bad_tell:     //临床诊断--带字数限制的
 //                showITellyouMenuDialog(et_01_bad_tell, "12");
                 break;
-            case R.id.et_02_mirror_see:   //镜检所见
-                showMenuDialog(et_02_mirror_see, "13");
-                break;
-            case R.id.et_02_mirror_result://镜检诊断
-                showMenuDialog(et_02_mirror_result, "14");
-                break;
-            case R.id.et_02_live_check://活检
-                showMenuDialog(et_02_live_check, "15");
-                break;
-            case R.id.et_02_cytology://细胞学
-                showMenuDialog(et_02_cytology, "16");
-                break;
-            case R.id.et_02_test://试验
-                showMenuDialog(et_02_test, "17");
-                break;
-            case R.id.et_02_pathology://病理学
-                showMenuDialog(et_02_pathology, "18");
-                break;
-            case R.id.et_02_advice://建议
-                showMenuDialog(et_02_advice, "19");
-                break;
+//            case R.id.et_02_mirror_see:   //镜检所见
+//                showMenuDialog(etlines_02_mirror_see, "13");
+//                break;
+//            case R.id.et_02_mirror_result://镜检诊断
+//                showMenuDialog(etlines_02_mirror_result, "14");
+//                break;
+//            case R.id.et_02_live_check://活检
+//                showMenuDialog(etlines_02_live_check, "15");
+//                break;
+//            case R.id.et_02_cytology://细胞学
+//                showMenuDialog(etlines_02_cytology, "16");
+//                break;
+//            case R.id.et_02_test://试验
+//                showMenuDialog(etlines_02_test, "17");
+//                break;
+//            case R.id.et_02_pathology://病理学
+//                showMenuDialog(etlines_02_pathology, "18");
+//                break;
+//            case R.id.et_02_advice://建议
+//                showMenuDialog(etlines_02_advice, "19");
+//                break;
             case R.id.et_02_check_doctor://检查医生
                 showMenuDialog(et_02_check_doctor, "20");
                 break;
@@ -587,7 +640,6 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
     private void showMenuElseDialog() {
         // 底部选择框
         if (mFragClickable && mEditStatus) {//有dialog数据,集合不为空,可编辑状态
-
             new MenuDialog.Builder(getActivity())
                     // 设置 null 表示不显示取消按钮
                     //.setCancel(getString(R.string.common_cancel))
@@ -795,21 +847,31 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
          *获取镜信息id
          */
         //镜检所见
-        et_02_mirror_see = findViewById(R.id.et_02_mirror_see);
+        etlines_02_mirror_see = findViewById(R.id.et_02_mirror_see);
         //镜检诊断
-        et_02_mirror_result = findViewById(R.id.et_02_mirror_result);
+        etlines_02_mirror_result = findViewById(R.id.et_02_mirror_result);
         //活检
-        et_02_live_check = findViewById(R.id.et_02_live_check);
+        etlines_02_live_check = findViewById(R.id.et_02_live_check);
         //细胞学
-        et_02_cytology = findViewById(R.id.et_02_cytology);
+        etlines_02_cytology = findViewById(R.id.et_02_cytology);
         //试验
-        et_02_test = findViewById(R.id.et_02_test);
+        etlines_02_test = findViewById(R.id.et_02_test);
         //病理学
-        et_02_pathology = findViewById(R.id.et_02_pathology);
+        etlines_02_pathology = findViewById(R.id.et_02_pathology);
         //建议
-        et_02_advice = findViewById(R.id.et_02_advice);
+        etlines_02_advice = findViewById(R.id.et_02_advice);
         //检查医生
         et_02_check_doctor = findViewById(R.id.et_02_check_doctor);
+
+        et_02_mirror_see = etlines_02_mirror_see.getContentEdit();
+        et_02_mirror_result = etlines_02_mirror_result.getContentEdit();
+        et_02_live_check = etlines_02_live_check.getContentEdit();
+        et_02_cytology = etlines_02_cytology.getContentEdit();
+        et_02_test = etlines_02_test.getContentEdit();
+        et_02_pathology = etlines_02_pathology.getContentEdit();
+        et_02_advice = etlines_02_advice.getContentEdit();
+
+
         /**
          * 获取其他信息id
          */
@@ -864,6 +926,8 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         mEditList.add(et_02_test);
         mEditList.add(et_02_pathology);
         mEditList.add(et_02_advice);
+
+
         mEditList.add(et_02_check_doctor);
         mEditList.add(et_03_door_num);
         mEditList.add(et_03_protection_num);
@@ -889,6 +953,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         mNotFocusableEditList.add(et_01_sex_type);
         mNotFocusableEditList.add(et_01_jop);
         mNotFocusableEditList.add(et_01_get_check_doctor);
+
         mNotFocusableEditList.add(et_02_mirror_see);
         mNotFocusableEditList.add(et_02_mirror_result);
         mNotFocusableEditList.add(et_02_live_check);
@@ -896,6 +961,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         mNotFocusableEditList.add(et_02_pathology);
         mNotFocusableEditList.add(et_02_test);
         mNotFocusableEditList.add(et_02_advice);
+
         mNotFocusableEditList.add(et_02_check_doctor);
         mNotFocusableEditList.add(et_03_section);
         mNotFocusableEditList.add(et_03_device);
@@ -982,17 +1048,17 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         String Fee = et_01_fee.getText().toString().trim();       //收费
 //        String FeeType = et_03_tel.getText().toString().trim();       //收费类型         ???
         String ChiefComplaint = et_01_i_tell_you.getContentText().toString().trim();       //主诉
-        String Test = et_02_test.getText().toString().trim();       //试验
-        String Advice = et_02_advice.getText().toString().trim();       //建议
+        String Test = etlines_02_test.getContentText().toString().trim();       //试验
+        String Advice = etlines_02_advice.getContentText().toString().trim();       //建议
         String InpatientID = et_03_in_hospital_num.getText().toString().trim();       //住院号
         String OutpatientID = et_03_door_num.getText().toString().trim();       //门诊号
-        String Biopsy = et_02_live_check.getText().toString().trim();       //活检
-        String Ctology = et_02_cytology.getText().toString().trim();       //细胞学
-        String Pathology = et_02_pathology.getText().toString().trim();       //病理学
-        String ExaminingPhysician = et_02_live_check.getText().toString().trim();       //检查医生
+        String Biopsy = etlines_02_live_check.getContentText().toString().trim();       //活检
+        String Ctology = etlines_02_cytology.getContentText().toString().trim();       //细胞学
+        String Pathology = etlines_02_pathology.getContentText().toString().trim();       //病理学
+        String ExaminingPhysician = etlines_02_live_check.getContentText().toString().trim();       //检查医生
         String ClinicalDiagnosis = et_01_bad_tell.getContentText().toString().trim();       //临床诊断
-        String CheckContent = et_02_mirror_see.getText().toString().trim();       //检查内容（镜检所见）
-        String CheckDiagnosis = et_02_mirror_result.getText().toString().trim();       //镜检诊断
+        String CheckContent = etlines_02_mirror_see.getContentText().toString().trim();       //检查内容（镜检所见）
+        String CheckDiagnosis = etlines_02_mirror_result.getContentText().toString().trim();       //镜检诊断
 
 
         //添加三个必须添加的参数

@@ -166,7 +166,7 @@
                 android:orientation="vertical"
                 tools:itemCount="3"
                 tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                tools:listitem="@layout/tab_item_design"
+                tools:listitem="@layout/tab_item_detail_design"
                 tools:spanCount="3" />
 
             <com.hjq.widget.layout.NestedViewPager

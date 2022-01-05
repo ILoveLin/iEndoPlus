@@ -48,6 +48,8 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
     private LinesEditView et_01_i_tell_you, et_01_bad_tell;
     private ClearEditText et_01_check_num, et_01_name, et_01_sex_type, et_01_age, et_01_jop, et_01_fee, et_01_get_check_doctor;
 
+    private LinesEditView etlines_02_mirror_see, etlines_02_mirror_result, etlines_02_live_check, etlines_02_cytology,
+            etlines_02_test, etlines_02_pathology, etlines_02_advice;
     private ClearEditText et_02_mirror_see, et_02_mirror_result, et_02_live_check, et_02_cytology, et_02_test, et_02_pathology, et_02_advice, et_02_check_doctor;
     private ClearEditText et_03_door_num, et_03_protection_num, et_03_section, et_03_device, et_03_case_num, et_03_in_hospital_num, et_03_case_area_num, et_03_case_bed_num, et_03_native_place, et_03_ming_zu, et_03_is_married, et_03_tel, et_03_address, et_03_my_id_num, et_03_case_history, et_03_family_case_history;
     private HashMap<String, String> mParamsMap;
@@ -77,6 +79,7 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
                 R.id.et_02_mirror_see, R.id.et_02_mirror_result, R.id.et_02_live_check, R.id.et_02_cytology, R.id.et_02_test, R.id.et_02_pathology,
                 R.id.et_02_advice, R.id.et_02_check_doctor, R.id.et_03_section, R.id.et_03_device, R.id.et_03_ming_zu, R.id.et_03_is_married);
 
+        //01--layout
         lines_edit_01_i_tell_you.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -91,6 +94,59 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
 
             }
         });
+        //02-layout
+
+        et_02_mirror_see.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showITellyouMenuDialog(etlines_02_mirror_see, "13");
+
+            }
+        });
+        et_02_mirror_result.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showITellyouMenuDialog(etlines_02_mirror_result, "14");
+
+            }
+        });
+        et_02_live_check.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showITellyouMenuDialog(etlines_02_live_check, "15");
+
+            }
+        });
+        et_02_cytology.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showITellyouMenuDialog(etlines_02_cytology, "16");
+
+            }
+        });
+        et_02_test.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showITellyouMenuDialog(etlines_02_test, "17");
+
+            }
+        });
+        et_02_pathology.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showITellyouMenuDialog(etlines_02_pathology, "18");
+
+            }
+        });
+        et_02_advice.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showITellyouMenuDialog(etlines_02_advice, "19");
+
+            }
+        });
+
+
         mTitleBar.setOnTitleBarListener(new OnTitleBarListener() {
             @Override
             public void onLeftClick(View view) {
@@ -172,18 +228,18 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
 //        String FeeType = et_03_tel.getText().toString().trim();       //收费类型         ???
         String ChiefComplaint = et_01_i_tell_you.getContentText().trim();       //主诉
 //        String ChiefComplaint = et_01_i_tell_you.getText().toString().trim();       //主诉
-        String Test = et_02_test.getText().toString().trim();       //试验
-        String Advice = et_02_advice.getText().toString().trim();       //建议
+        String Test = etlines_02_test.getContentText().toString().trim();       //试验
+        String Advice = etlines_02_advice.getContentText().toString().trim();       //建议
         String InpatientID = et_03_in_hospital_num.getText().toString().trim();       //住院号
         String OutpatientID = et_03_door_num.getText().toString().trim();       //门诊号
-        String Biopsy = et_02_live_check.getText().toString().trim();       //活检
-        String Ctology = et_02_cytology.getText().toString().trim();       //细胞学
-        String Pathology = et_02_pathology.getText().toString().trim();       //病理学
-        String ExaminingPhysician = et_02_live_check.getText().toString().trim();       //检查医生
+        String Biopsy = etlines_02_live_check.getContentText().toString().trim();       //活检
+        String Ctology = etlines_02_cytology.getContentText().toString().trim();       //细胞学
+        String Pathology = etlines_02_pathology.getContentText().toString().trim();       //病理学
+        String ExaminingPhysician = etlines_02_live_check.getContentText().toString().trim();       //检查医生
         String ClinicalDiagnosis = et_01_bad_tell.getContentText().trim();       //临床诊断
 //        String ClinicalDiagnosis = et_01_bad_tell.getText().toString().trim();       //临床诊断
-        String CheckContent = et_02_mirror_see.getText().toString().trim();       //检查内容（镜检所见）
-        String CheckDiagnosis = et_02_mirror_result.getText().toString().trim();       //镜检诊断
+        String CheckContent = etlines_02_mirror_see.getContentText().toString().trim();       //检查内容（镜检所见）
+        String CheckDiagnosis = etlines_02_mirror_result.getContentText().toString().trim();       //镜检诊断
 
 
         //添加三个必须添加的参数
@@ -369,33 +425,33 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
             case R.id.et_01_get_check_doctor://送检医生
                 showMenuDialog(et_01_get_check_doctor, "8");
                 break;
-            case R.id.et_01_i_tell_you:    //主诉---带字数限制edit
+//            case R.id.et_01_i_tell_you:    //主诉---带字数限制edit
 //                showITellyouMenuDialog(et_01_i_tell_you, "11");
-                break;
-            case R.id.et_01_bad_tell:     //临床诊断---带字数限制edit
+//                break;
+//            case R.id.et_01_bad_tell:     //临床诊断---带字数限制edit
 //                showITellyouMenuDialog(et_01_bad_tell, "12");
-                break;
-            case R.id.et_02_mirror_see:   //镜检所见
-                showMenuDialog(et_02_mirror_see, "13");
-                break;
-            case R.id.et_02_mirror_result://镜检诊断
-                showMenuDialog(et_02_mirror_result, "14");
-                break;
-            case R.id.et_02_live_check://活检
-                showMenuDialog(et_02_live_check, "15");
-                break;
-            case R.id.et_02_cytology://细胞学
-                showMenuDialog(et_02_cytology, "16");
-                break;
-            case R.id.et_02_test://试验
-                showMenuDialog(et_02_test, "17");
-                break;
-            case R.id.et_02_pathology://病理学
-                showMenuDialog(et_02_pathology, "18");
-                break;
-            case R.id.et_02_advice://建议
-                showMenuDialog(et_02_advice, "19");
-                break;
+//                break;
+//            case R.id.et_02_mirror_see:   //镜检所见
+//                showMenuDialog(etlines_02_mirror_see, "13");
+//                break;
+//            case R.id.et_02_mirror_result://镜检诊断
+//                showMenuDialog(etlines_02_mirror_result, "14");
+//                break;
+//            case R.id.et_02_live_check://活检
+//                showMenuDialog(etlines_02_live_check, "15");
+//                break;
+//            case R.id.et_02_cytology://细胞学
+//                showMenuDialog(etlines_02_cytology, "16");
+//                break;
+//            case R.id.et_02_test://试验
+//                showMenuDialog(etlines_02_test, "17");
+//                break;
+//            case R.id.et_02_pathology://病理学
+//                showMenuDialog(etlines_02_pathology, "18");
+//                break;
+//            case R.id.et_02_advice://建议
+//                showMenuDialog(etlines_02_advice, "19");
+//                break;
             case R.id.et_02_check_doctor://检查医生
                 showMenuDialog(et_02_check_doctor, "20");
                 break;
@@ -500,7 +556,7 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
                             String s = stringList.get(position);
                             LogUtils.e("MenuDialog====位置：" + position + "，文本：" + data);
                             LogUtils.e("MenuDialog===s==" + s); //{0=HD3}
-                            mEdit.setText("" + s);
+                            mEdit.setText(mEdit.getText().toString() + "" + s);
 
                         }
 
@@ -551,21 +607,30 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
          *获取镜信息id
          */
         //镜检所见
-        et_02_mirror_see = findViewById(R.id.et_02_mirror_see);
+        etlines_02_mirror_see = findViewById(R.id.et_02_mirror_see);
         //镜检诊断
-        et_02_mirror_result = findViewById(R.id.et_02_mirror_result);
+        etlines_02_mirror_result = findViewById(R.id.et_02_mirror_result);
         //活检
-        et_02_live_check = findViewById(R.id.et_02_live_check);
+        etlines_02_live_check = findViewById(R.id.et_02_live_check);
         //细胞学
-        et_02_cytology = findViewById(R.id.et_02_cytology);
+        etlines_02_cytology = findViewById(R.id.et_02_cytology);
         //试验
-        et_02_test = findViewById(R.id.et_02_test);
+        etlines_02_test = findViewById(R.id.et_02_test);
         //病理学
-        et_02_pathology = findViewById(R.id.et_02_pathology);
+        etlines_02_pathology = findViewById(R.id.et_02_pathology);
         //建议
-        et_02_advice = findViewById(R.id.et_02_advice);
+        etlines_02_advice = findViewById(R.id.et_02_advice);
         //检查医生
-        et_02_check_doctor = findViewById(R.id.et_02_check_doctor);
+        et_02_check_doctor = findViewById(R.id.et_02_check_doctor);//常规的edittext
+
+        et_02_mirror_see = etlines_02_mirror_see.getContentEdit();
+        et_02_mirror_result = etlines_02_mirror_result.getContentEdit();
+        et_02_live_check = etlines_02_live_check.getContentEdit();
+        et_02_cytology = etlines_02_cytology.getContentEdit();
+        et_02_test = etlines_02_test.getContentEdit();
+        et_02_pathology = etlines_02_pathology.getContentEdit();
+        et_02_advice = etlines_02_advice.getContentEdit();
+
         /**
          * 获取其他信息id
          */
