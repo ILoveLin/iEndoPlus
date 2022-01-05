@@ -48,6 +48,7 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
     private SettingBar current_user;
     private String mLoginUserName;
     private String mBaseUrl;
+    private SettingBar memory_bar;
 
     public static SettingFragment newInstance() {
         return new SettingFragment();
@@ -60,11 +61,11 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
 
     @Override
     protected void initView() {
-        SettingBar memory_bar = findViewById(R.id.memory_bar);
+        memory_bar = findViewById(R.id.memory_bar);
         current_user = findViewById(R.id.current_user);
-        memory_bar.setRightText(FileUtil.getROMAvailableSize(getActivity()));
-        mBaseUrl = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_BaseUrl, "111");
+        mBaseUrl = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_BaseUrl, "192.168.312.102");
         setOnClickListener(R.id.params_bar, R.id.hospital_bar, R.id.user_bar, R.id.about_bar, R.id.memory_bar, R.id.password_bar, R.id.exit_bar);
+
     }
 
     @Override
@@ -73,6 +74,9 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
         mLoginPassword = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_Login_Password, "");
         mLoginUserName = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_Login_UserName, "");
         current_user.setLeftText("" + mLoginUserName);
+        String romAvailableSize = FileUtil.getROMAvailableSize(getActivity());
+        memory_bar.setRightText(romAvailableSize);
+
     }
 
 

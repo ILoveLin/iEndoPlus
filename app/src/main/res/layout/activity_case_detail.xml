@@ -37,6 +37,7 @@
 
 
                 <LinearLayout
+                    android:id="@+id/linear_get_picture"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_marginLeft="@dimen/dp_10"

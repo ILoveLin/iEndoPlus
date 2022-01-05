@@ -74,7 +74,6 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
     @Override
     protected void initView() {
         EventBus.getDefault().register(this);
-
         mRefreshLayout = findViewById(R.id.rl_device_refresh);
         mRecyclerView = findViewById(R.id.rv_device_recyclerview);
         mStatusLayout = findViewById(R.id.device_hint);
@@ -478,18 +477,24 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
     }
 
     private void refreshRecycleViewData() {
-        List<DeviceDBBean> deviceDBBeans = DeviceDBUtils.queryAll(DeviceActivity.this);
-        showComplete();
-        mAdapter.setData(deviceDBBeans);
-        mAdapter.notifyDataSetChanged();
-        int count = mAdapter.getCount();
-        if (0 == count) {
-            showEmpty();
-            SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_BaseUrl, "http://192.168.1.200:3000");
+        post(new Runnable() {
+            @Override
+            public void run() {
+                List<DeviceDBBean> deviceDBBeans = DeviceDBUtils.queryAll(DeviceActivity.this);
+                showComplete();
+                mAdapter.setData(deviceDBBeans);
+                mAdapter.notifyDataSetChanged();
+                int count = mAdapter.getCount();
+                if (0 == count) {
+                    showEmpty();
+                    SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_BaseUrl, "http://192.168.1.200:3000");
 
-        } else {
-            showComplete();
-        }
+                } else {
+                    showComplete();
+                }
+            }
+        });
+
     }
 
 
@@ -848,22 +853,22 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
             switch (mDBBean.getType()) {
                 case "妇科治疗台":
                     SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_EndoType, "4");//妇科
-                    SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_Type,  "妇科治疗台");
+                    SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_Type, "妇科治疗台");
 
                     break;
                 case "一代一体机":
                     SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_EndoType, "3");//一体机
-                    SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_Type,  "一代一体机");
+                    SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_Type, "一代一体机");
 
                     break;
                 case "耳鼻喉治疗台":
                     SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_EndoType, "3");//耳鼻喉
-                    SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_Type,  "耳鼻喉治疗台");
+                    SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_Type, "耳鼻喉治疗台");
 
                     break;
                 case "泌尿治疗台":
                     SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_EndoType, "6");//泌尿
-                    SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_Type,  "泌尿治疗台");
+                    SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_Type, "泌尿治疗台");
 
                     break;
 

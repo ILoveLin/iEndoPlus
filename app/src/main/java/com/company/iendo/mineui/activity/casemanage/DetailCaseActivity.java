@@ -16,6 +16,7 @@ import com.company.iendo.mineui.activity.MainActivity;
 import com.company.iendo.mineui.activity.casemanage.fragment.DetailFragment;
 import com.company.iendo.mineui.activity.casemanage.fragment.PictureFragment;
 import com.company.iendo.mineui.activity.casemanage.fragment.VideoFragment;
+import com.company.iendo.mineui.activity.vlc.GetPictureActivity;
 import com.company.iendo.ui.adapter.TabAdapter;
 import com.company.iendo.utils.LogUtils;
 import com.gyf.immersionbar.ImmersionBar;
@@ -62,7 +63,7 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
         mPagerAdapter.addFragment(VideoFragment.newInstance(), "视频");
         mViewPager.setAdapter(mPagerAdapter);
         mViewPager.addOnPageChangeListener(this);
-        setOnClickListener(R.id.case_picture, R.id.case_report, R.id.case_delete, R.id.case_down);
+        setOnClickListener(R.id.linear_get_picture, R.id.case_report, R.id.case_delete, R.id.case_down);
         mTitlebar.setOnTitleBarListener(new OnTitleBarListener() {
             @Override
             public void onLeftClick(View view) {
@@ -131,8 +132,9 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
     public void onClick(View view) {
         if (null != mOnEditStatusListener) {
             switch (view.getId()) {
-                case R.id.case_picture://图像采集
+                case R.id.linear_get_picture://图像采集
                     mOnEditStatusListener.onGetPicture();
+                    startActivity(GetPictureActivity.class);
                     break;
                 case R.id.case_report://获取报告
                     mOnEditStatusListener.onGetReport();

@@ -46,10 +46,10 @@ public class CaseManageAdapter extends AppAdapter<CaseManageListBean.DataDTO> {
         @Override
         public void onBindView(int position) {
             CaseManageListBean.DataDTO item = getItem(position);
-            mName.setText(item.getName());
+            mName.setText(item.getName()+"");
             mAge.setText(item.getPatientAge() + " "+item.getAgeUnit());
             mNum.setText("病例编号: " + item.getCaseNo());
-            mCheckDate.setText(item.getCheck_date());
+            mCheckDate.setText(item.getCheck_date()+"");
             if ("男".equals(item.getSex())) {
                 mSexLogo.setImageDrawable(getResources().getDrawable(R.drawable.icon_sex_man));
             } else {

@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.company.iendo.ui.activity.CopyActivity">
+
+    <com.hjq.bar.TitleBar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:title="图像采集" />
+
+    <com.company.iendo.widget.StatusLayout
+        android:id="@+id/picture_status_hint"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <RelativeLayout
+            android:id="@+id/relative_all"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+            <RelativeLayout
+                android:id="@+id/ff_player_all"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_250"
+                android:layout_marginTop="@dimen/dp_20">
+
+
+                <com.company.iendo.widget.MyVlcVideoView
+                    android:id="@+id/player"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dp_250"
+                    android:background="@color/black"
+                    android:clickable="true" />
+
+                <TextView
+                    android:id="@+id/full_change"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentBottom="true"
+                    android:drawableRight="@drawable/nur_ic_fangda"
+                    android:gravity="center"
+                    android:minEms="3"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="@dimen/dp_20"
+                    android:paddingBottom="@dimen/dp_20"
+                    android:text=""
+                    android:textColor="@android:color/white"
+                    android:textSize="17sp" />
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/linear_bottom"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_80"
+                android:layout_below="@+id/ff_player_all"
+                android:layout_marginTop="@dimen/dp_20"
+                android:layout_marginBottom="@dimen/dp_10">
+
+
+                <LinearLayout
+                    android:id="@+id/linear_picture"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="@dimen/dp_34"
+                    android:layout_marginRight="@dimen/dp_17"
+                    android:layout_weight="1"
+                    android:background="@drawable/shape_bg_picture_01"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="@dimen/dp_40"
+                        android:layout_height="@dimen/dp_40"
+                        android:paddingTop="@dimen/dp_10"
+                        android:src="@drawable/ic_icon_get_the_picture" />
+
+                    <TextView
+                        android:id="@+id/case_picture"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dp_6"
+                        android:text="采图"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/sp_15" />
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/linear_cold"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="@dimen/dp_17"
+                    android:layout_marginRight="@dimen/dp_17"
+                    android:layout_weight="1"
+                    android:background="@drawable/shape_bg_cold_02"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="@dimen/dp_40"
+                        android:layout_height="@dimen/dp_40"
+                        android:paddingTop="@dimen/dp_10"
+                        android:src="@drawable/ic_icon_cold" />
+
+                    <TextView
+
+                        android:id="@+id/case_report"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dp_6"
+                        android:gravity="center"
+                        android:text="冻结"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/sp_15" />
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:id="@+id/linear_mic"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="@dimen/dp_17"
+                    android:layout_marginRight="@dimen/dp_34"
+                    android:layout_weight="1"
+                    android:background="@drawable/shape_bg_mic_03"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="@dimen/dp_40"
+                        android:layout_height="@dimen/dp_40"
+                        android:paddingTop="@dimen/dp_10"
+                        android:src="@drawable/ic_icon_voice_calls" />
+
+                    <TextView
+                        android:id="@+id/case_down"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dp_6"
+                        android:gravity="center"
+                        android:text="语音通话"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/sp_15" />
+                </LinearLayout>
+
+            </LinearLayout>
+        </RelativeLayout>
+
+
+    </com.company.iendo.widget.StatusLayout>
+</LinearLayout>

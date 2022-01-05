@@ -176,6 +176,12 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
+        <!--获取图片界面-->
+        <activity
+            android:name=".mineui.activity.vlc.GetPictureActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
         <!--   已下是中台界面     -->
         <!--   已下是中台界面     -->
         <!--   已下是中台界面     -->
