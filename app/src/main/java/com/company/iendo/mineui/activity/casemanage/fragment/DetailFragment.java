@@ -531,7 +531,6 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 
     @Override
     public void onGetPicture() {
-        toast("图像采集");
 
     }
 

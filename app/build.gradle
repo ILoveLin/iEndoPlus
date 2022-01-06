@@ -66,7 +66,10 @@ android {
             ])
             // 调试模式下只保留一种架构的 so 库，提升打包速度
             ndk {
-                abiFilters 'armeabi-v7a'
+                // armeabi：万金油架构平台（占用率：0%）
+                // armeabi-v7a：曾经主流的架构平台（占用率：10%）
+                // arm64-v8a：目前主流架构平台（占用率：95%）
+                abiFilters 'armeabi-v7a', 'arm64-v8a'
             }
         }
 
@@ -77,6 +80,12 @@ android {
             addManifestPlaceholders([
                     'app_name': 'iEndo Preview 版'
             ])
+            ndk {
+                // armeabi：万金油架构平台（占用率：0%）
+                // armeabi-v7a：曾经主流的架构平台（占用率：10%）
+                // arm64-v8a：目前主流架构平台（占用率：95%）
+                abiFilters 'armeabi-v7a', 'arm64-v8a'
+            }
         }
 
         release {
@@ -102,6 +111,8 @@ android {
                 // arm64-v8a：目前主流架构平台（占用率：95%）
                 abiFilters 'armeabi-v7a', 'arm64-v8a'
             }
+
+
         }
     }
 
@@ -250,7 +261,8 @@ dependencies {
     implementation 'com.github.getActivity:GsonFactory:5.2'
     // Json 解析框架：https://github.com/google/gson
     implementation 'com.google.code.gson:gson:2.8.5'
-
+    //RTMP  RTSP  推流
+    implementation 'com.github.pedroSG94.rtmp-rtsp-stream-client-java:rtplibrary:2.0.2'
     // 多语种：https://github.com/getActivity/MultiLanguages
     // 悬浮窗：https://github.com/getActivity/XToast
 //     日志输出：https://github.com/getActivity/Logcat

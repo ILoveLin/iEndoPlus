@@ -1,4 +1,4 @@
-package com.company.iendo.widget;
+package com.company.iendo.widget.vlc;
 
 /**
  * company：江西神州医疗设备有限公司
@@ -52,6 +52,14 @@ public class MyVlcVideoView extends RelativeLayout implements GestureDetector.On
     }
 
 
+
+    public RelativeLayout getRootView() {
+        return mRootLayout;
+    }
+    public OnTouchListener   getOnTouchVideoListener() {
+        return  mOnTouchVideoListener ;
+    }
+
     private void initView(Context context) {
         mContext = context;
         LayoutInflater.from(context).inflate(R.layout.vlc_videoview_layout, this);
@@ -92,11 +100,28 @@ public class MyVlcVideoView extends RelativeLayout implements GestureDetector.On
     //private long mCurDownPlayingTime = 0;
     private float mDownX = 0;
     private float mDownY = 0;
+
+    // 两次点击按钮之间的点击间隔不能少于2000毫秒
+    private static final int MIN_CLICK_DELAY_TIME = 2000;
+    private static long lastClickTime;
+
+//    public static boolean isFastClick() {
+//        long curClickTime = System.currentTimeMillis();
+//        if ((curClickTime - lastClickTime) >= MIN_CLICK_DELAY_TIME) {
+//            flag = true;
+//        }
+//        lastClickTime = curClickTime;
+//        return flag;
+//    }
+
+
     /*视频播放 - Start*/
     private OnTouchListener mOnTouchVideoListener = new OnTouchListener() {
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
+
             if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+
                 mDownX = motionEvent.getX();
                 mDownY = motionEvent.getY();
                 mIsFirstScroll = true;  // 设定是触摸屏幕后第一次scroll的标志
@@ -109,6 +134,7 @@ public class MyVlcVideoView extends RelativeLayout implements GestureDetector.On
                     mCurrentBrightness = ((Activity) mContext).getWindow().getAttributes().screenBrightness;
                 }
             } else if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
+
                 float upX = motionEvent.getX();
                 float upY = motionEvent.getY();
                 GESTURE_FLAG = 0;// 手指离开屏幕后，重置调节音量或进度的标志
@@ -122,6 +148,12 @@ public class MyVlcVideoView extends RelativeLayout implements GestureDetector.On
             return mGestureDetector.onTouchEvent(motionEvent);
         }
     };
+
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        return super.onTouchEvent(event);
+    }
 
     @Override
     public boolean onDown(MotionEvent e) {
