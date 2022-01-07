@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.company.iendo.ui.activity.CopyActivity">
+
+    <com.hjq.bar.TitleBar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:title="视频播放" />
+
+    <com.company.iendo.widget.StatusLayout
+        android:id="@+id/status_hint"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:id="@+id/relative_all"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+            <RelativeLayout
+                android:id="@+id/ff_player_all"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/black">
+
+                <!--视频界面-->
+                <com.company.iendo.widget.vlc.MyVlcVideoView
+                    android:id="@+id/player"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/black"
+                    android:clickable="true" />
+
+
+                <!--                <ImageView-->
+                <!--                    android:id="@+id/lock_screen"-->
+                <!--                    android:layout_width="@dimen/dp_20"-->
+                <!--                    android:layout_height="@dimen/dp_20"-->
+                <!--                    android:layout_alignParentLeft="true"-->
+                <!--                    android:layout_centerVertical="true"-->
+                <!--                    android:layout_marginLeft="@dimen/dp_10"-->
+                <!--                    android:layout_marginRight="50dp"-->
+                <!--                    android:background="@drawable/shape_bg_vlc_lock"-->
+                <!--                    android:padding="@dimen/dp_2"-->
+                <!--                    android:scaleType="centerInside"-->
+                <!--                    android:src="@drawable/video_lock_open_ic"-->
+                <!--                    android:tag="unLock"-->
+                <!--                    android:visibility="visible" />-->
+
+
+                <com.company.iendo.widget.vlc.ENDownloadView
+                    android:id="@+id/control_load_view"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:visibility="visible" />
+
+                <com.company.iendo.widget.vlc.ENPlayView
+                    android:id="@+id/control_start_view"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center_vertical"
+                    android:visibility="invisible" />
+                <!--时间 全屏-->
+                <RelativeLayout
+                    android:id="@+id/relative_bottom_control"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dp_40"
+                    android:layout_alignParentBottom="true">
+
+                    <TextView
+                        android:id="@+id/tv_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="@dimen/dp_10"
+                        android:gravity="bottom"
+                        android:paddingLeft="@dimen/dp_10"
+                        android:text="00:00"
+                        android:textColor="@color/white" />
+
+                    <TextView
+                        android:id="@+id/full_change"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginBottom="@dimen/dp_10"
+                        android:drawableRight="@drawable/nur_ic_fangda"
+                        android:gravity="bottom"
+                        android:paddingLeft="@dimen/dp_10"
+                        android:paddingRight="@dimen/dp_10" />
+
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+    </com.company.iendo.widget.StatusLayout>
+</LinearLayout>

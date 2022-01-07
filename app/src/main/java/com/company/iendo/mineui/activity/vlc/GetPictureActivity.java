@@ -57,9 +57,9 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
     private TitleBar mTitle;
     private RelativeLayout mRelativePlayerAll;
     private MyVlcVideoView mPlayer;
+    private VlcVideoView mVLCView;
     private RelativeLayout rootView;
     private TextView mTime;
-    private VlcVideoView mVLCView;
     private View.OnTouchListener onTouchVideoListener;
     private ENDownloadView mLoadingView;
     private ENPlayView mStartView;

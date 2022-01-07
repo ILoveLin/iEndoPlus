@@ -1,5 +1,6 @@
 package com.company.iendo.mineui.activity.casemanage.fragment;
 
+import android.content.Intent;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -11,6 +12,7 @@ import com.company.iendo.app.TitleBarFragment;
 import com.company.iendo.bean.DetailVideoBean;
 import com.company.iendo.mineui.activity.MainActivity;
 import com.company.iendo.mineui.activity.casemanage.fragment.adapter.VideoAdapter;
+import com.company.iendo.mineui.activity.vlc.VideoActivity;
 import com.company.iendo.other.HttpConstant;
 import com.company.iendo.utils.SharePreferenceUtil;
 import com.company.iendo.widget.MyItemDecoration;
@@ -129,6 +131,13 @@ public class VideoFragment extends TitleBarFragment<MainActivity> implements Sta
     @Override
     public void onItemClick(RecyclerView recyclerView, View itemView, int position) {
         DetailVideoBean.DataDTO item = mAdapter.getItem(position);
+        Intent intent = new Intent(getActivity(), VideoActivity.class);
+//        http://192.168.64.28:7001/ID/FilePath
+//        mBaseUrl=http://192.168.132.102:7001
+        String mUrl = mBaseUrl + "/" + item.getID() + "/" + item.getFilePath();
+//        intent.putExtra("mUrl","http://9890.vod.myqcloud.com/9890_4e292f9a3dd011e6b4078980237cc3d3.f20.mp4");
+        intent.putExtra("mUrl",mUrl);
+        startActivity(intent);
     }
 
     /**
