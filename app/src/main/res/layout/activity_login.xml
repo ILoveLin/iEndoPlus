@@ -33,7 +33,7 @@
         <androidx.appcompat.widget.AppCompatImageView
             android:layout_width="@dimen/dp_55"
             android:layout_height="@dimen/dp_55"
-            app:srcCompat="@mipmap/login_newlogo" />
+            app:srcCompat="@drawable/ic_logo_svg" />
 
         <TextView
             android:id="@+id/btn_login_setting"
@@ -61,7 +61,7 @@
             android:layout_width="@dimen/dp_100"
             android:layout_height="@dimen/dp_100"
             android:layout_marginVertical="@dimen/dp_10"
-            app:srcCompat="@mipmap/login_newlogo" />
+            app:srcCompat="@drawable/ic_logo_svg" />
 
         <TextView
             android:id="@+id/btn_device_type"

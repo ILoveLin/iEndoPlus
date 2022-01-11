@@ -8,9 +8,13 @@
     tools:context="com.company.iendo.ui.activity.CopyActivity">
 
     <com.hjq.bar.TitleBar
+        android:id="@+id/titlebar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:title="搜索" />
+        app:rightTitle="重置"
+        app:rightTitleColor="@color/color_FF2525"
+        app:rightTitleSize="@dimen/sp_14"
+        app:title="病例搜索" />
 
     <com.company.iendo.widget.StatusLayout
         android:id="@+id/status_hint"
@@ -21,423 +25,601 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <LinearLayout
+            <androidx.core.widget.NestedScrollView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="@dimen/dp_10"
-                android:layout_marginRight="@dimen/dp_10"
-                android:orientation="vertical">
-                <!--检查时间-->
+                android:layout_height="match_parent">
 
-                <RelativeLayout
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/dp_50"
-                    android:gravity="center_vertical">
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/tv_chek_date"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:text="检查时间"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/sp_14" />
-
-                    <TextView
-                        android:id="@+id/tv_mid"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerInParent="true" />
-
-                    <TextView
-                        android:id="@+id/tv_right"
-                        android:layout_marginLeft="@dimen/dp_10"
-                        android:layout_marginRight="@dimen/dp_10"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerInParent="true"
-                        android:layout_toRightOf="@+id/tv_mid"
-                        android:text="至"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/sp_14" />
-
-                    <com.hjq.shape.view.ShapeTextView
-                        android:layout_marginLeft="@dimen/dp_10"
-                        android:id="@+id/sp_start_date"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_toLeftOf="@+id/tv_mid"
-                        android:layout_toRightOf="@+id/tv_chek_date"
-                        android:gravity="center"
-                        android:text="2021-12-26"
-                        android:padding="10dp"
-
-                        android:textColor="@android:color/black"
-                        android:textSize="14sp"
-                        app:shape="rectangle"
-                        app:shape_strokeColor="@color/black40"
-                        app:shape_strokeWidth="1dp" />
-
-                    <com.hjq.shape.view.ShapeTextView
-                        android:id="@+id/sp_end_date"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_toRightOf="@+id/tv_right"
-                        android:gravity="center"
-                        android:padding="10dp"
-                        android:text="2021-12-28"
-                        android:textColor="@android:color/black"
-                        android:textSize="14sp"
-                        app:shape="rectangle"
-                        app:shape_strokeColor="@color/black40"
-                        app:shape_strokeWidth="1dp" />
-
-                </RelativeLayout>
-
-                <!--检查号,姓名-->
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/dp_50">
-
-                    <TextView
-                        android:id="@+id/tv_chek_num"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:text="检查号"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/sp_14" />
-
-                    <TextView
-                        android:id="@+id/text_01"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerInParent="true" />
-
-                    <TextView
-                        android:id="@+id/tv_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="@dimen/dp_20"
-                        android:layout_toRightOf="@+id/text_01"
-                        android:text="姓名"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/sp_14" />
-
-                    <EditText
-                        android:id="@+id/edit_check_num"
-                        android:layout_width="wrap_content"
-                        android:layout_height="@dimen/dp_35"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="@dimen/dp_5"
-                        android:layout_marginRight="@dimen/dp_5"
-                        android:layout_toLeftOf="@+id/text_01"
-                        android:layout_toRightOf="@+id/tv_chek_num"
-                        android:background="@drawable/shape_cme_login" />
-
-                    <EditText
-                        android:id="@+id/edit_check_name"
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="@dimen/dp_35"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="@dimen/dp_5"
-                        android:layout_marginRight="@dimen/dp_5"
-                        android:layout_toRightOf="@+id/tv_name"
-                        android:background="@drawable/shape_cme_login" />
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="@dimen/dp_15"
+                        android:layout_marginRight="@dimen/dp_15"
+                        android:orientation="vertical">
+                        <!--检查时间-->
 
-
-                </RelativeLayout>
-                <!--年龄,性别-->
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/dp_50">
-                    <!--年龄-->
-                    <LinearLayout
-                        android:id="@+id/linear_age"
-                        android:layout_width="wrap_content"
-                        android:layout_height="@dimen/dp_50"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:id="@+id/tv_age"
-                            android:layout_width="wrap_content"
+                        <LinearLayout
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:text="年龄"
-                            android:textColor="@color/black"
-                            android:textSize="@dimen/sp_14" />
+                            android:layout_marginTop="@dimen/dp_15"
+                            android:background="@drawable/shape_bg_writh"
+                            android:orientation="vertical"
+                            android:paddingLeft="@dimen/dp_15"
+                            android:paddingRight="@dimen/dp_15">
 
-                        <EditText
-                            android:id="@+id/edit_start_age"
-                            android:layout_width="@dimen/dp_32"
-                            android:layout_height="@dimen/dp_35"
-                            android:layout_centerVertical="true"
-                            android:layout_marginLeft="@dimen/dp_5"
-                            android:background="@drawable/shape_cme_login"
-                            android:inputType="phone" />
+                            <TextView
+                                android:id="@+id/tv_chek_date"
+                                android:layout_width="wrap_content"
+                                android:layout_height="@dimen/dp_40"
+                                android:layout_centerVertical="true"
+                                android:gravity="center_vertical"
+                                android:text="检查时间"
+                                android:textColor="@color/black_000000"
+                                android:textSize="@dimen/sp_15" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1px"
+                                android:layout_marginLeft="@dimen/dp_10"
+                                android:layout_marginRight="@dimen/dp_10"
+                                android:background="@color/common_line_color" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/dp_40"
+                                android:gravity="center_vertical">
+
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:gravity="center_vertical"
+                                    android:orientation="horizontal">
+
+                                    <ImageView
+                                        android:layout_width="@dimen/dp_14"
+                                        android:layout_height="@dimen/dp_14"
+                                        android:src="@drawable/ic_icon_check_thetime" />
+
+
+                                    <com.hjq.shape.view.ShapeTextView
+                                        android:id="@+id/sp_start_date"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="@dimen/dp_40"
+                                        android:layout_marginLeft="@dimen/dp_20"
+                                        android:layout_marginRight="@dimen/dp_9"
+                                        android:gravity="center_vertical"
+                                        android:text="2021-12-26"
+                                        android:textColor="@color/color_9A9A9A"
+                                        android:textSize="@dimen/sp_13"
+                                        app:shape="rectangle"
+                                        app:shape_strokeColor="@color/color_9A9A9A" />
+
+                                    <ImageView
+                                        android:layout_width="@dimen/dp_12"
+                                        android:layout_height="@dimen/dp_7"
+                                        android:src="@drawable/ic_icon_an" />
+
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:gravity="center_vertical"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        android:id="@+id/tv_right"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginLeft="@dimen/dp_10"
+                                        android:layout_marginRight="@dimen/dp_10"
+                                        android:text="至"
+                                        android:textColor="@color/black_000000"
+                                        android:textSize="@dimen/sp_13" />
+
+
+                                    <com.hjq.shape.view.ShapeTextView
+                                        android:id="@+id/sp_end_date"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="@dimen/dp_40"
+                                        android:layout_centerVertical="true"
+                                        android:layout_marginLeft="@dimen/dp_10"
+                                        android:layout_marginRight="@dimen/dp_9"
+                                        android:gravity="center"
+                                        android:text="2021-12-28"
+                                        android:textColor="@color/color_9A9A9A"
+                                        android:textSize="@dimen/sp_13"
+                                        app:shape="rectangle"
+                                        app:shape_strokeColor="@color/color_9A9A9A" />
+
+                                    <ImageView
+                                        android:layout_width="@dimen/dp_12"
+                                        android:layout_height="@dimen/dp_7"
+                                        android:src="@drawable/ic_icon_an" />
+
+                                </LinearLayout>
+
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/dp_5"
-                            android:text="至"
-                            android:textColor="@color/black"
-                            android:textSize="@dimen/sp_14" />
+                            android:layout_marginTop="@dimen/dp_15"
+                            android:background="@drawable/shape_bg_writh"
+                            android:orientation="vertical"
+                            android:paddingLeft="@dimen/dp_15"
+                            android:paddingRight="@dimen/dp_15">
 
-                        <EditText
-                            android:id="@+id/edit_end_age"
-                            android:layout_width="@dimen/dp_32"
-                            android:layout_height="@dimen/dp_35"
-                            android:layout_centerVertical="true"
-                            android:layout_marginLeft="@dimen/dp_5"
-                            android:background="@drawable/shape_cme_login"
-                            android:inputType="phone" />
+                            <!--检查号,姓名-->
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical">
 
-                        <TextView
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="@dimen/dp_40"
+                                    android:gravity="center_vertical"
+                                    android:orientation="horizontal">
 
-                            android:id="@+id/tv_age_type"
-                            android:layout_width="wrap_content"
-                            android:layout_height="@dimen/dp_35"
-                            android:layout_marginLeft="@dimen/dp_10"
-                            android:drawablePadding="@dimen/dp_5"
-                            android:background="@drawable/shape_cme_login"
-                            android:drawableRight="@drawable/icon_search_down"
-                            android:gravity="center_vertical"
-                            android:paddingRight="@dimen/dp_5"
-                            android:paddingLeft="@dimen/dp_10"
-                            android:text="岁"
-                            android:textColor="@color/black"
-                            android:textSize="@dimen/sp_14" />
+                                    <TextView
+                                        android:id="@+id/tv_chek_num"
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_centerVertical="true"
+                                        android:layout_weight="1"
+                                        android:text="检查号"
+                                        android:textColor="@color/black_000000"
+                                        android:textSize="@dimen/sp_15" />
+
+                                    <TextView
+                                        android:id="@+id/tv_name"
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_centerVertical="true"
+                                        android:layout_toRightOf="@+id/text_01"
+                                        android:layout_weight="1"
+                                        android:text="姓名"
+                                        android:textColor="@color/black_000000"
+                                        android:textSize="@dimen/sp_15" />
+                                </LinearLayout>
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:orientation="horizontal">
+
+
+                                <ImageView
+                                    android:layout_width="@dimen/dp_14"
+                                    android:layout_height="@dimen/dp_9"
+                                    android:layout_gravity="center"
+                                    android:layout_marginRight="@dimen/dp_1"
+                                    android:src="@drawable/ic_icon_checkno_" />
+
+
+                                <EditText
+                                    android:id="@+id/edit_check_num"
+                                    android:layout_width="0dp"
+                                    android:layout_height="@dimen/dp_35"
+                                    android:layout_centerVertical="true"
+                                    android:layout_weight="1"
+                                    android:background="@null"
+                                    android:hint="请输入检查号"
+                                    android:lines="1"
+                                    android:singleLine="true"
+                                    android:textColor="@color/color_9A9A9A"
+                                    android:textColorHint="@color/color_9A9A9A"
+                                    android:textSize="@dimen/sp_13" />
+
+                                <ImageView
+
+                                    android:layout_width="@dimen/dp_14"
+                                    android:layout_height="@dimen/dp_17"
+                                    android:layout_gravity="center"
+                                    android:layout_marginRight="@dimen/dp_1"
+                                    android:src="@drawable/ic_icon_name" />
+
+                                <EditText
+                                    android:id="@+id/edit_check_name"
+                                    android:layout_width="0dp"
+                                    android:layout_height="@dimen/dp_35"
+                                    android:layout_centerVertical="true"
+                                    android:layout_weight="1"
+                                    android:background="@null"
+                                    android:hint="请输入姓名"
+                                    android:singleLine="true"
+                                    android:textColor="@color/color_9A9A9A"
+                                    android:textColorHint="@color/color_9A9A9A"
+                                    android:textSize="@dimen/sp_13" />
+                            </LinearLayout>
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1px"
+                                android:background="@color/common_line_color" />
+
+                            <!--年龄,性别-->
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/dp_40"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/tv_age"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerVertical="true"
+                                    android:layout_weight="1"
+                                    android:text="年龄"
+                                    android:textColor="@color/black_000000"
+                                    android:textSize="@dimen/sp_14" />
+
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="性别"
+                                    android:textColor="@color/black_000000"
+                                    android:textSize="@dimen/sp_14" />
+
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+
+                                android:layout_height="@dimen/dp_40"
+                                android:gravity="center"
+                                android:orientation="horizontal">
+
+                                <ImageView
+                                    android:layout_width="@dimen/dp_14"
+                                    android:layout_height="@dimen/dp_11"
+                                    android:layout_gravity="center"
+                                    android:layout_marginRight="@dimen/dp_1"
+                                    android:src="@drawable/ic_icon_age" />
+
+                                <EditText
+                                    android:id="@+id/edit_end_age"
+                                    android:layout_width="0dp"
+                                    android:layout_height="@dimen/dp_35"
+                                    android:layout_weight="1"
+                                    android:background="@null"
+                                    android:hint="请输入年龄"
+                                    android:inputType="phone"
+                                    android:textColor="@color/color_9A9A9A"
+                                    android:textColorHint="@color/color_9A9A9A"
+                                    android:textSize="@dimen/sp_13" />
+
+                                <ImageView
+                                    android:layout_width="@dimen/dp_14"
+                                    android:layout_height="@dimen/dp_13"
+                                    android:layout_gravity="center"
+                                    android:layout_marginRight="@dimen/dp_1"
+                                    android:src="@drawable/ic_icon_gender" />
+
+                                <TextView
+                                    android:id="@+id/tv_sex_type"
+                                    android:layout_width="0dp"
+                                    android:layout_height="@dimen/dp_35"
+                                    android:layout_weight="1"
+                                    android:gravity="center_vertical"
+                                    android:text="请选择性别"
+                                    android:textColor="@color/color_9A9A9A"
+                                    android:textSize="@dimen/sp_13" />
+
+
+                            </LinearLayout>
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1px"
+                                android:background="@color/common_line_color" />
+
+                            <!--职业,婚否-->
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/dp_40"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/tv_worker"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerVertical="true"
+                                    android:layout_weight="1"
+                                    android:text="职业"
+                                    android:textColor="@color/black_000000"
+                                    android:textSize="@dimen/sp_14" />
+
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="婚否"
+                                    android:textColor="@color/black_000000"
+                                    android:textSize="@dimen/sp_14" />
+
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/dp_40"
+                                android:gravity="center"
+                                android:orientation="horizontal">
+
+                                <ImageView
+                                    android:layout_width="@dimen/dp_7"
+                                    android:layout_height="@dimen/dp_17"
+                                    android:layout_gravity="center"
+                                    android:layout_marginRight="@dimen/dp_1"
+                                    android:src="@drawable/ic_icon_professional" />
+
+                                <EditText
+                                    android:id="@+id/edit_worker"
+                                    android:layout_width="0dp"
+                                    android:layout_height="@dimen/dp_35"
+                                    android:layout_weight="1"
+                                    android:background="@null"
+                                    android:hint="请输入职业"
+                                    android:inputType="phone"
+                                    android:textColor="@color/color_9A9A9A"
+                                    android:textColorHint="@color/color_9A9A9A"
+                                    android:textSize="@dimen/sp_13" />
+
+                                <ImageView
+                                    android:layout_width="@dimen/dp_14"
+                                    android:layout_height="@dimen/dp_12"
+                                    android:layout_gravity="center"
+                                    android:layout_marginRight="@dimen/dp_1"
+                                    android:src="@drawable/ic_icon_maritalstatus" />
+
+                                <TextView
+                                    android:id="@+id/tv_married_type"
+                                    android:layout_width="0dp"
+                                    android:layout_height="@dimen/dp_35"
+                                    android:layout_weight="1"
+                                    android:gravity="center_vertical"
+                                    android:text="请选择婚否"
+                                    android:textColor="@color/color_9A9A9A"
+                                    android:textSize="@dimen/sp_13" />
+
+
+                            </LinearLayout>
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1px"
+                                android:background="@color/common_line_color" />
+
+
+                            <!--科室,设备-->
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/dp_40"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/tv_section"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerVertical="true"
+                                    android:layout_weight="1"
+                                    android:text="科室"
+                                    android:textColor="@color/black_000000"
+                                    android:textSize="@dimen/sp_14" />
+
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="设备"
+                                    android:textColor="@color/black_000000"
+                                    android:textSize="@dimen/sp_14" />
+
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/dp_40"
+                                android:gravity="center"
+                                android:orientation="horizontal">
+
+                                <ImageView
+                                    android:layout_width="@dimen/dp_14"
+                                    android:layout_height="@dimen/dp_13"
+                                    android:layout_gravity="center"
+                                    android:layout_marginRight="@dimen/dp_1"
+                                    android:src="@drawable/ic_icon_department" />
+
+
+                                <EditText
+                                    android:id="@+id/edit_section"
+                                    android:layout_width="0dp"
+                                    android:layout_height="@dimen/dp_35"
+                                    android:layout_weight="1"
+                                    android:background="@null"
+                                    android:hint="请输入科室"
+                                    android:inputType="phone"
+                                    android:textColor="@color/color_9A9A9A"
+                                    android:textColorHint="@color/color_9A9A9A"
+                                    android:textSize="@dimen/sp_13" />
+
+                                <ImageView
+                                    android:layout_width="@dimen/dp_14"
+                                    android:layout_height="@dimen/dp_13"
+                                    android:layout_gravity="center"
+                                    android:layout_marginRight="@dimen/dp_1"
+                                    android:src="@drawable/ic_icon_equipment" />
+
+                                <EditText
+                                    android:id="@+id/edit_device"
+                                    android:layout_width="0dp"
+                                    android:layout_height="@dimen/dp_35"
+                                    android:layout_weight="1"
+                                    android:background="@null"
+                                    android:gravity="center_vertical"
+                                    android:hint="请输入设备"
+                                    android:inputType="phone"
+                                    android:textColor="@color/color_9A9A9A"
+                                    android:textColorHint="@color/color_9A9A9A"
+                                    android:textSize="@dimen/sp_13" />
+
+
+                            </LinearLayout>
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1px"
+                                android:background="@color/common_line_color" />
+
+
+                            <!--检查医生,送检医生-->
+
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/dp_40"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+
+                                <TextView
+                                    android:id="@+id/tv_check_doctor"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerVertical="true"
+                                    android:layout_weight="1"
+                                    android:text="检查医生"
+                                    android:textColor="@color/black_000000"
+                                    android:textSize="@dimen/sp_14" />
+
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="送检医生"
+                                    android:textColor="@color/black_000000"
+                                    android:textSize="@dimen/sp_14" />
+
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/dp_40"
+                                android:gravity="center"
+                                android:orientation="horizontal">
+
+                                <ImageView
+                                    android:layout_width="@dimen/dp_13"
+                                    android:layout_height="@dimen/dp_15"
+                                    android:layout_gravity="center"
+                                    android:layout_marginRight="@dimen/dp_1"
+                                    android:src="@drawable/ic_icon_checkthedoctor" />
+
+
+                                <EditText
+                                    android:id="@+id/edit_check_doctor"
+                                    android:layout_width="0dp"
+                                    android:layout_height="@dimen/dp_35"
+                                    android:layout_weight="1"
+                                    android:background="@null"
+                                    android:hint="请输入检查医生"
+                                    android:inputType="phone"
+                                    android:textColor="@color/color_9A9A9A"
+                                    android:textColorHint="@color/color_9A9A9A"
+                                    android:textSize="@dimen/sp_13" />
+
+                                <ImageView
+                                    android:layout_width="@dimen/dp_14"
+                                    android:layout_height="@dimen/dp_16"
+                                    android:layout_gravity="center"
+                                    android:layout_marginRight="@dimen/dp_1"
+                                    android:src="@drawable/ic_icon_reviewthedoctor" />
+
+                                <EditText
+                                    android:id="@+id/edit_get_doctor"
+                                    android:layout_width="0dp"
+                                    android:layout_height="@dimen/dp_35"
+                                    android:layout_weight="1"
+                                    android:background="@null"
+                                    android:gravity="center_vertical"
+                                    android:hint="请输入送检医生"
+                                    android:inputType="phone"
+                                    android:text=""
+                                    android:textColor="@color/color_9A9A9A"
+                                    android:textColorHint="@color/color_9A9A9A"
+                                    android:textSize="@dimen/sp_13" />
+
+
+                            </LinearLayout>
+
+
+                        </LinearLayout>
 
 
                     </LinearLayout>
 
-
-
                     <LinearLayout
-
-                        android:layout_width="wrap_content"
-                        android:layout_height="@dimen/dp_50"
-                        android:layout_alignParentRight="true"
-                        android:layout_marginRight="@dimen/dp_30"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/dp_40"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginLeft="@dimen/dp_15"
+                        android:layout_marginTop="@dimen/dp_15"
+                        android:layout_marginRight="@dimen/dp_15"
+                        android:layout_marginBottom="@dimen/dp_30"
                         android:gravity="center_vertical"
                         android:orientation="horizontal">
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="性别"
-                            android:textColor="@color/black"
-                            android:textSize="@dimen/sp_14" />
 
-                        <TextView
-                            android:id="@+id/tv_sex_type"
-                            android:layout_width="wrap_content"
-                            android:layout_height="@dimen/dp_35"
-                            android:layout_marginLeft="@dimen/dp_15"
-                            android:background="@drawable/shape_cme_login"
-                            android:drawableRight="@drawable/icon_search_down"
-                            android:gravity="center_vertical"
-                            android:paddingLeft="@dimen/dp_10"
-                            android:text="全部"
-                            android:textColor="@color/black"
-                            android:textSize="@dimen/sp_14" />
+                        <com.hjq.shape.view.ShapeButton
+                            android:id="@+id/sp_search"
+                            android:layout_width="0dp"
+                            android:layout_height="@dimen/dp_40"
+                            android:layout_weight="1"
+                            android:clickable="true"
+                            android:gravity="center"
+                            android:padding="10dp"
+                            android:text="搜索"
+                            android:textColor="@color/color_25A5FF"
+                            android:textSize="18sp"
+                            app:shape="rectangle"
+                            app:shape_radius="@dimen/dp_8"
+                            app:shape_solidColor="@color/white"
+                            app:shape_solidPressedColor="#AA5A8DDF" />
 
 
                     </LinearLayout>
 
-                </RelativeLayout>
-
-                <!--职业,婚否-->
-                <!--年龄-->
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/dp_50"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/tv_worker"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:text="职业"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/sp_14" />
-
-                    <EditText
-                        android:id="@+id/edit_worker"
-                        android:layout_width="@dimen/dp_100"
-                        android:layout_height="@dimen/dp_35"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="@dimen/dp_5"
-                        android:background="@drawable/shape_cme_login" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/dp_20"
-                        android:text="婚否"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/sp_14" />
-
-
-                    <TextView
-                        android:id="@+id/tv_married_type"
-                        android:layout_width="wrap_content"
-                        android:layout_height="@dimen/dp_35"
-                        android:layout_marginLeft="@dimen/dp_10"
-                        android:background="@drawable/shape_cme_login"
-                        android:drawableRight="@drawable/icon_search_down"
-                        android:gravity="center_vertical"
-                        android:paddingLeft="@dimen/dp_5"
-                        android:text="全部"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/sp_14" />
-
-
-                </LinearLayout>
-
-                <!--科室,设备-->
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/dp_50"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/tv_section"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:text="科室"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/sp_14" />
-
-                    <EditText
-                        android:id="@+id/edit_section"
-                        android:layout_width="@dimen/dp_100"
-                        android:layout_height="@dimen/dp_35"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="@dimen/dp_5"
-                        android:background="@drawable/shape_cme_login" />
-
-                    <TextView
-                        android:id="@+id/tv_device"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="@dimen/dp_20"
-                        android:text="设备"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/sp_14" />
-
-                    <EditText
-                        android:id="@+id/edit_device"
-                        android:layout_width="@dimen/dp_100"
-                        android:layout_height="@dimen/dp_35"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="@dimen/dp_5"
-                        android:background="@drawable/shape_cme_login" />
-
-
-                </LinearLayout>
-                <!--检查医生,送检医生-->
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/dp_50"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/tv_check_doctor"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:text="检查医生"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/sp_14" />
-
-                    <EditText
-                        android:id="@+id/edit_check_doctor"
-                        android:layout_width="@dimen/dp_100"
-                        android:layout_height="@dimen/dp_35"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="@dimen/dp_5"
-                        android:background="@drawable/shape_cme_login" />
-
-                    <TextView
-                        android:id="@+id/tv_get_doctor"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="@dimen/dp_20"
-                        android:text="送检医生"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/sp_14" />
-
-                    <EditText
-                        android:id="@+id/edit_get_doctor"
-                        android:layout_width="@dimen/dp_100"
-                        android:layout_height="@dimen/dp_35"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="@dimen/dp_5"
-                        android:background="@drawable/shape_cme_login" />
-
-
                 </LinearLayout>
 
 
-            </LinearLayout>
+            </androidx.core.widget.NestedScrollView>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/dp_50"
-                android:layout_alignParentBottom="true"
-                android:layout_marginBottom="@dimen/dp_30"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <com.hjq.shape.view.ShapeButton
-                    android:id="@+id/sp_restart"
-                    android:layout_width="0dp"
-                    android:layout_height="@dimen/dp_50"
-                    android:layout_margin="10dp"
-                    android:layout_weight="1"
-                    android:clickable="true"
-                    android:gravity="center"
-                    android:padding="10dp"
-                    android:text="重置"
-                    android:textColor="@android:color/white"
-                    android:textSize="18sp"
-                    app:shape="rectangle"
-                    app:shape_radius="20dp"
-                    app:shape_solidColor="#5A8DDF"
-                    app:shape_solidPressedColor="#AA5A8DDF" />
-
-                <com.hjq.shape.view.ShapeButton
-                    android:id="@+id/sp_search"
-                    android:layout_width="0dp"
-                    android:layout_height="@dimen/dp_50"
-                    android:layout_margin="10dp"
-                    android:layout_weight="1"
-                    android:clickable="true"
-                    android:gravity="center"
-                    android:padding="10dp"
-                    android:text="搜索"
-                    android:textColor="@android:color/white"
-                    android:textSize="18sp"
-                    app:shape="rectangle"
-                    app:shape_radius="20dp"
-                    app:shape_solidColor="#5A8DDF"
-                    app:shape_solidPressedColor="#AA5A8DDF" />
-
-
-            </LinearLayout>
 
         </RelativeLayout>
 

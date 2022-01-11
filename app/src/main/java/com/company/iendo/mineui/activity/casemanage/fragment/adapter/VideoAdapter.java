@@ -37,6 +37,7 @@ public class VideoAdapter extends AppAdapter<DetailVideoBean.DataDTO> {
 
     private final class ViewHolder extends AppAdapter<?>.ViewHolder {
 
+
         private final AppCompatTextView mTextView;
 
         private ViewHolder() {
