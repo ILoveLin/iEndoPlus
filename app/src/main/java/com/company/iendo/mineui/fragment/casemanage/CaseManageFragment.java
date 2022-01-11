@@ -1,18 +1,22 @@
 package com.company.iendo.mineui.fragment.casemanage;
 
 import android.content.Intent;
+import android.graphics.Rect;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.company.iendo.R;
 import com.company.iendo.action.StatusAction;
 import com.company.iendo.app.TitleBarFragment;
 import com.company.iendo.bean.CaseManageListBean;
 import com.company.iendo.bean.ZXBean;
+import com.company.iendo.http.glide.GlideRequest;
 import com.company.iendo.mineui.activity.MainActivity;
 import com.company.iendo.mineui.activity.casemanage.AddCaseActivity;
 import com.company.iendo.mineui.activity.casemanage.DetailCaseActivity;
@@ -24,7 +28,9 @@ import com.company.iendo.other.HttpConstant;
 import com.company.iendo.ui.dialog.DateDialog;
 import com.company.iendo.utils.DateUtil;
 import com.company.iendo.utils.LogUtils;
+import com.company.iendo.utils.ScreenSizeUtil;
 import com.company.iendo.utils.SharePreferenceUtil;
+import com.company.iendo.widget.GridSpaceItemDecoration;
 import com.company.iendo.widget.MyItemDecoration;
 import com.company.iendo.widget.StatusLayout;
 import com.google.gson.Gson;
@@ -42,6 +48,9 @@ import com.scwang.smart.refresh.layout.listener.OnRefreshLoadMoreListener;
 import com.tencent.bugly.crashreport.CrashReport;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
+
+
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
@@ -118,8 +127,14 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
         mAdapter = new CaseManageAdapter(getAttachActivity());
         mAdapter.setOnItemClickListener(this);
         mAdapter.setData(mDataLest);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 2);
+        mRecyclerView.setLayoutManager(gridLayoutManager);
+
+//        mRecyclerView.addItemDecoration(new GridSpaceItemDecoration(2, 30, true));
+//        mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.addItemDecoration(new MyItemDecoration(getActivity(), 1, R.drawable.shape_divideritem_decoration));
+
+//        mRecyclerView.addItemDecoration(new MyItemDecoration(getActivity(), 1, R.drawable.shape_divideritem_decoration));
 
 
     }

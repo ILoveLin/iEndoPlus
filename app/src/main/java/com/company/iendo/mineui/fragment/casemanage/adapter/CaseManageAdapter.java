@@ -31,16 +31,16 @@ public class CaseManageAdapter extends AppAdapter<CaseManageListBean.DataDTO> {
 
     private final class ViewHolder extends AppAdapter<?>.ViewHolder {
 
-        private final TextView mName, mAge, mNum, mCheckDate;
-        private ImageView mSexLogo;
+        private final TextView mName, mAge, mNum;
+        private TextView mSexLogo;
 
         private ViewHolder() {
-            super(R.layout.item_case_list);
+            super(R.layout.item_case_listv2);
             mName = findViewById(R.id.tv_case_name);
             mSexLogo = findViewById(R.id.iv_sex_logo);
             mAge = findViewById(R.id.tv_case_age);
             mNum = findViewById(R.id.tv_case_num);
-            mCheckDate = findViewById(R.id.tv_check_date);
+//            mCheckDate = findViewById(R.id.tv_check_date);
         }
 
         @Override
@@ -49,12 +49,12 @@ public class CaseManageAdapter extends AppAdapter<CaseManageListBean.DataDTO> {
             mName.setText(item.getName()+"");
             mAge.setText(item.getPatientAge() + " "+item.getAgeUnit());
             mNum.setText("病例编号: " + item.getCaseNo());
-            mCheckDate.setText(item.getCheck_date()+"");
-            if ("男".equals(item.getSex())) {
-                mSexLogo.setImageDrawable(getResources().getDrawable(R.drawable.icon_sex_man));
-            } else {
-                mSexLogo.setImageDrawable(getResources().getDrawable(R.drawable.icon_sex_woman));
-            }
+            mSexLogo.setText(item.getSex()+"");
+//            if ("男".equals(item.getSex())) {
+//                mSexLogo.setImageDrawable(getResources().getDrawable(R.drawable.icon_sex_man));
+//            } else {
+//                mSexLogo.setImageDrawable(getResources().getDrawable(R.drawable.icon_sex_woman));
+//            }
         }
     }
 }
