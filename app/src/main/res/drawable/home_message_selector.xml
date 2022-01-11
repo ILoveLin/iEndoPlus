@@ -2,9 +2,9 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!-- 选中状态 -->
-    <item android:drawable="@drawable/home_message_on_ic" android:state_selected="true" />
+    <item android:drawable="@drawable/ic_icon_setuptheclick" android:state_selected="true" />
 
     <!-- 默认状态 -->
-    <item android:drawable="@drawable/home_message_off_ic" />
+    <item android:drawable="@drawable/ic_icon_setupthe" />
 
 </selector>
