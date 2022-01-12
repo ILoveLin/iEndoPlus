@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/linear_device_all"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
+
+
+    <RelativeLayout
+        android:id="@+id/relative_item"
+        android:layout_width="@dimen/dp_150"
+        android:layout_height="@dimen/dp_150"
+        android:layout_margin="@dimen/dp_10"
+        android:background="@drawable/shape_bg_device_all_nor">
+
+
+        <ImageView
+            android:id="@+id/iv_current_chose_image"
+            android:layout_width="@dimen/dp_50"
+            android:layout_height="@dimen/dp_150"
+            android:layout_centerInParent="true"
+            android:src="@drawable/icon_yitiji" />
+
+        <TextView
+            android:id="@+id/tv_current_chose_msg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:background="@drawable/shape_bg_device_chose"
+            android:paddingLeft="@dimen/dp_5"
+            android:paddingTop="@dimen/dp_2"
+            android:paddingRight="@dimen/dp_5"
+            android:paddingBottom="@dimen/dp_2"
+            android:text="当前选中的设备"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sp_12"
+            android:visibility="invisible" />
+
+        <LinearLayout
+            android:id="@+id/linear_status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:orientation="vertical"
+            android:visibility="invisible">
+
+
+            <TextView
+                android:id="@+id/tv_change"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_25"
+                android:background="@drawable/shape_bg_device_reinput"
+                android:gravity="center"
+                android:text="修改"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sp_14" />
+
+            <TextView
+                android:id="@+id/tv_delete"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_25"
+                android:background="@drawable/shape_bg_device_delete"
+                android:gravity="center"
+                android:text="删除"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sp_14" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+
+    <!--    <LinearLayout-->
+    <!--        android:clickable="true"-->
+    <!--        android:id="@+id/linear_item"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:background="@drawable/selector_item_ffffff"-->
+    <!--        android:orientation="vertical"-->
+    <!--        android:paddingLeft="@dimen/dp_15">-->
+
+    <!--        <LinearLayout-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="@dimen/dp_67"-->
+    <!--            android:gravity="center_vertical"-->
+    <!--            android:orientation="horizontal">-->
+
+    <!--            <ImageView-->
+    <!--                android:layout_width="wrap_content"-->
+    <!--                android:layout_height="wrap_content"-->
+    <!--                android:layout_gravity="center"-->
+    <!--                android:layout_marginTop="@dimen/dp_19"-->
+    <!--                android:layout_marginBottom="@dimen/dp_32"-->
+    <!--                android:src="@mipmap/icon_video" />-->
+
+    <!--            <LinearLayout-->
+    <!--                android:layout_width="wrap_content"-->
+    <!--                android:layout_height="match_parent"-->
+    <!--                android:orientation="vertical"-->
+    <!--                android:paddingLeft="@dimen/dp_15">-->
+
+    <!--                <TextView-->
+    <!--                    android:id="@+id/tv_video_title"-->
+    <!--                    android:layout_width="wrap_content"-->
+    <!--                    android:layout_height="wrap_content"-->
+    <!--                    android:layout_marginTop="@dimen/dp_10"-->
+    <!--                    android:lines="1"-->
+    <!--                    android:text=""-->
+    <!--                    android:textColor="@color/black333333"-->
+    <!--                    android:textSize="@dimen/sp_17" />-->
+
+    <!--                <LinearLayout-->
+    <!--                    android:layout_width="wrap_content"-->
+    <!--                    android:layout_height="wrap_content"-->
+    <!--                    android:layout_marginTop="@dimen/dp_8"-->
+    <!--                    android:orientation="horizontal">-->
+
+    <!--                    <TextView-->
+    <!--                        android:id="@+id/tv_video_make"-->
+    <!--                        android:layout_width="@dimen/dp_150"-->
+    <!--                        android:layout_height="wrap_content"-->
+    <!--                        android:layout_gravity="center"-->
+    <!--                        android:lines="1"-->
+    <!--                        android:text=""-->
+    <!--                        android:textColor="@color/color_999999"-->
+    <!--                        android:textSize="@dimen/sp_15" />-->
+    <!--                    <TextView-->
+    <!--                        android:id="@+id/tv_video_type"-->
+    <!--                        android:layout_width="@dimen/dp_100"-->
+    <!--                        android:layout_height="wrap_content"-->
+    <!--                        android:layout_gravity="center"-->
+    <!--                        android:lines="1"-->
+    <!--                        android:text=""-->
+    <!--                        android:textColor="@color/color_999999"-->
+    <!--                        android:textSize="@dimen/sp_15" />-->
+
+
+    <!--                </LinearLayout>-->
+
+
+    <!--            </LinearLayout>-->
+
+    <!--            <View-->
+    <!--                android:layout_width="0dp"-->
+    <!--                android:layout_height="wrap_content"-->
+    <!--                android:layout_weight="1" />-->
+
+    <!--            <ImageView-->
+    <!--                android:id="@+id/iv_item_select"-->
+    <!--                android:layout_width="wrap_content"-->
+    <!--                android:layout_height="wrap_content"-->
+    <!--                android:layout_marginStart="10dp"-->
+    <!--                android:layout_marginRight="@dimen/dp_10"-->
+    <!--                android:background="@drawable/bg_item_check" />-->
+
+
+    <!--        </LinearLayout>-->
+
+    <!--        <View-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="1px"-->
+    <!--            android:layout_marginRight="@dimen/dp_10"-->
+    <!--            android:background="@color/color_DDDDDD" />-->
+
+
+    <!--    </LinearLayout>-->
+
+
+    <!--    <Button-->
+    <!--        android:id="@+id/reInputBtn"-->
+    <!--        android:layout_width="@dimen/dp_80"-->
+    <!--        android:layout_height="match_parent"-->
+    <!--        android:background="@color/colorAccent"-->
+    <!--        android:text="修改"-->
+    <!--        android:textColor="@color/white"-->
+    <!--        android:textSize="@dimen/sp_15" />-->
+
+    <!--    <Button-->
+    <!--        android:id="@+id/delBtn"-->
+    <!--        android:layout_width="@dimen/dp_80"-->
+    <!--        android:layout_height="match_parent"-->
+    <!--        android:background="@color/red"-->
+    <!--        android:text="删除"-->
+    <!--        android:textColor="@color/white"-->
+    <!--        android:textSize="@dimen/sp_15" />-->
+
+</LinearLayout>

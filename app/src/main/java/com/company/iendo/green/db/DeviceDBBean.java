@@ -91,7 +91,7 @@ public class DeviceDBBean {
     //备用字段-设备名字
     private String deviceName;  //设备名字
     //备用字段1
-    private String usemsg01;  //备用字段1
+    private String usemsg01;  //备用字段1    是否长按选中了,显示修改和删除功能  true为选中
     //备用字段2
     private String usemsg02;  //备用字段2
     //是否被选中

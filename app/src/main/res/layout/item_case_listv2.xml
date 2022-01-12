@@ -9,13 +9,13 @@
     <!--    android:background="@drawable/selector_item_ffffff"-->
 
     <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/dp_10"
         android:orientation="vertical"
         app:cardBackgroundColor="@color/white"
-        app:cardCornerRadius="10dp"
-        app:cardElevation="10dp"
-        android:layout_margin="@dimen/dp_10"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        app:cardCornerRadius="@dimen/dp_10"
+        app:cardElevation="@dimen/dp_5">
 
         <RelativeLayout
             android:layout_width="match_parent"

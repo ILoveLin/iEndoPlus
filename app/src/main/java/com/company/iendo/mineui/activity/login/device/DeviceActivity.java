@@ -3,6 +3,7 @@ package com.company.iendo.mineui.activity.login.device;
 import android.content.Intent;
 import android.view.View;
 
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.company.iendo.R;
@@ -51,8 +52,7 @@ import java.util.List;
  * 设备类型（妇科治疗台）    //4            扫码的结果对应数字是9
  * 设备类型（泌尿治疗台）   //6            扫码的结果对应数字是10
  */
-public class DeviceActivity extends AppActivity implements StatusAction, BaseAdapter.OnItemClickListener, BaseAdapter.OnChildClickListener {
-
+public class DeviceActivity extends AppActivity implements StatusAction, BaseAdapter.OnItemClickListener, BaseAdapter.OnChildClickListener, BaseAdapter.OnChildLongClickListener {
     private SmartRefreshLayout mRefreshLayout;
     private WrapRecyclerView mRecyclerView;
     private StatusLayout mStatusLayout;
@@ -87,21 +87,24 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
         mDataLest.addAll(deviceDBBeans);
         mAdapter = new DeviceAdapter(this, mRecyclerView, mDataLest);
         mAdapter.setOnItemClickListener(this);
-        mAdapter.setOnChildClickListener(R.id.linear_item, this);
-        mAdapter.setOnChildClickListener(R.id.tv_video_title, this);
-        mAdapter.setOnChildClickListener(R.id.tv_video_type, this);
-        mAdapter.setOnChildClickListener(R.id.tv_video_make, this);
-        mAdapter.setOnChildClickListener(R.id.delBtn, this);
-        mAdapter.setOnChildClickListener(R.id.reInputBtn, this);
-//        mAdapter.setOnChildClickListener(R.id.iv_item_select, this);
+        mAdapter.setOnChildLongClickListener(R.id.relative_item, this);
+        mAdapter.setOnChildLongClickListener(R.id.iv_current_chose_image, this);
+        mAdapter.setOnChildClickListener(R.id.relative_item, this);
+        mAdapter.setOnChildClickListener(R.id.iv_current_chose_image, this);
+        mAdapter.setOnChildClickListener(R.id.tv_current_chose_msg, this);
+        mAdapter.setOnChildClickListener(R.id.tv_change, this);
+        mAdapter.setOnChildClickListener(R.id.tv_delete, this);
         mAdapter.setData(mDataLest);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(DeviceActivity.this, 2);
+        mRecyclerView.setLayoutManager(gridLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
         refreshRecycleViewData();
         mDeviceBar.setOnTitleBarListener(new OnTitleBarListener() {
             @Override
             public void onLeftClick(View view) {
+                //退出界面清除修改删除功能布局
+                dismissChangeDeleteLayout();
                 finish();
-
             }
 
             @Override
@@ -114,6 +117,50 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                 showSelectDialog(view);
             }
         });
+    }
+
+    /**
+     * @param recyclerView RecyclerView 对象
+     * @param childView    被点击的条目子 View
+     * @param position     被点击的条目位置
+     * @return
+     * @des 不管是长按还是点击
+     * 其他item都不必须隐藏修改和删除功能!
+     * //点击的item  是当前选择的item 删除修改布局存在,则不隐藏
+     */
+    @Override
+    public boolean onChildLongClick(RecyclerView recyclerView, View childView, int position) {
+        dismissChangeDeleteLayout();
+        showChangeDeleteLayout(position);
+        setChoseItem(position);
+        return false;
+    }
+
+
+    @Override
+    public void onChildClick(RecyclerView recyclerView, View childView, int position) {
+        DeviceDBBean item = mAdapter.getItem(position);
+        switch (childView.getId()) {
+            case R.id.relative_item:
+            case R.id.iv_current_chose_image:
+                /**
+                 * 点击的item  是当前选择的item 删除修改布局存在,则不隐藏
+                 */
+                if (!"true".equals(item.getUsemsg01())) {
+                    dismissChangeDeleteLayout();
+                }
+                dismissChangeDeleteLayout();
+                setChoseItem(position);
+
+                break;
+            case R.id.tv_change:
+                showModifyItemDialog(mAdapter.getItem(position));
+                break;
+            case R.id.tv_delete:
+                showDeleteItemDialog(mAdapter.getItem(position));
+                break;
+        }
+
     }
 
     /**
@@ -510,74 +557,6 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
 
     private int mSelectedPos = -1;
 
-    @Override
-    public void onChildClick(RecyclerView recyclerView, View childView, int position) {
-        switch (childView.getId()) {
-
-            case R.id.tv_video_title:
-
-                break;
-            case R.id.linear_item:
-
-                List<DeviceDBBean> deviceDBBeans = DeviceDBUtils.queryAll(DeviceActivity.this);
-                DeviceDBBean selectedItemBean = mAdapter.getItem(position);
-                //点击就是选中
-                selectedItemBean.setId(selectedItemBean.getId());
-                selectedItemBean.setMSelected(true);
-                DeviceDBUtils.insertOrReplaceInTx(DeviceActivity.this, selectedItemBean);
-
-
-                List<DeviceDBBean> deviceDBBeans1 = DeviceDBUtils.queryAll(DeviceActivity.this);
-                DeviceDBBean deviceDBBean1 = deviceDBBeans1.get(0);
-                LogUtils.e(deviceDBBean1.toString() + "========AAAAA===选中开始点击了===");
-
-                String id = selectedItemBean.getId() + "";
-                LogUtils.e(id + "========id===选中开始点击了===");
-
-                for (int i = 0; i < deviceDBBeans.size(); i++) {
-
-
-                    DeviceDBBean deviceDBBean = deviceDBBeans.get(i);
-                    String currentID = deviceDBBean.getId() + "";
-                    LogUtils.e(currentID + "========currentID===选中开始点击了===");
-
-                    if (currentID.equals(id)) {
-                        deviceDBBean.setMSelected(true);
-                        DeviceDBUtils.insertOrReplaceInTx(DeviceActivity.this, deviceDBBean);
-                    } else {
-                        deviceDBBean.setMSelected(false);
-                        DeviceDBUtils.insertOrReplaceInTx(DeviceActivity.this, deviceDBBean);
-
-                    }
-//                    LogUtils.e(deviceDBBean.getId() + "========其他ID===选中开始点击了===");
-//
-//                    Boolean mSelected = deviceDBBean.getMSelected();
-//                    if (!mSelected) {
-//                        deviceDBBean.setMSelected(false);
-//
-//                        DeviceDBUtils.insertOrReplaceInTx(DeviceActivity.this, deviceDBBean);
-//                    }
-
-                }
-                refreshRecycleViewData();
-                break;
-            case R.id.tv_video_type:
-
-                break;
-            case R.id.tv_video_make:
-
-
-                break;
-            case R.id.delBtn:
-                showDeleteItemDialog(mAdapter.getItem(position));
-                break;
-            case R.id.reInputBtn:
-                showModifyItemDialog(mAdapter.getItem(position));
-                break;
-        }
-
-    }
-
 
     //删除当前数据
     private void showDeleteItemDialog(DeviceDBBean item) {
@@ -937,6 +916,60 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
         }
     }
 
+    /**
+     * 选择item为当前的设备
+     */
+    private void setChoseItem(int position) {
+        List<DeviceDBBean> deviceDBBeans = DeviceDBUtils.queryAll(DeviceActivity.this);
+        DeviceDBBean selectedItemBean = mAdapter.getItem(position);
+        //点击就是选中
+        selectedItemBean.setId(selectedItemBean.getId());
+        selectedItemBean.setMSelected(true);
+        DeviceDBUtils.insertOrReplaceInTx(DeviceActivity.this, selectedItemBean);
+        List<DeviceDBBean> deviceDBBeans1 = DeviceDBUtils.queryAll(DeviceActivity.this);
+        DeviceDBBean deviceDBBean1 = deviceDBBeans1.get(0);
+        LogUtils.e(deviceDBBean1.toString() + "========AAAAA===选中开始点击了===");
+        String id = selectedItemBean.getId() + "";
+        LogUtils.e(id + "========id===选中开始点击了===");
+        for (int i = 0; i < deviceDBBeans.size(); i++) {
+            DeviceDBBean deviceDBBean = deviceDBBeans.get(i);
+            String currentID = deviceDBBean.getId() + "";
+            LogUtils.e(currentID + "========currentID===选中开始点击了===");
+            if (currentID.equals(id)) {
+                deviceDBBean.setMSelected(true);
+                DeviceDBUtils.insertOrReplaceInTx(DeviceActivity.this, deviceDBBean);
+            } else {
+                deviceDBBean.setMSelected(false);
+                DeviceDBUtils.insertOrReplaceInTx(DeviceActivity.this, deviceDBBean);
+
+            }
+        }
+        refreshRecycleViewData();
+    }
+    //展示删除和修改功能布局
+    private void showChangeDeleteLayout(int position) {
+        DeviceDBBean selectedItemBean = mAdapter.getItem(position);
+        //点击就是选中
+        selectedItemBean.setId(selectedItemBean.getId());
+        selectedItemBean.setUsemsg01("true");
+        DeviceDBUtils.insertOrReplaceInTx(DeviceActivity.this, selectedItemBean);
+
+        refreshRecycleViewData();
+    }
+    //隐藏删除和修改功能布局
+    private void dismissChangeDeleteLayout() {
+        List<DeviceDBBean> deviceDBBeans = DeviceDBUtils.queryAll(DeviceActivity.this);
+
+        for (int i = 0; i < deviceDBBeans.size(); i++) {
+            DeviceDBBean deviceDBBean = deviceDBBeans.get(i);
+            String currentID = deviceDBBean.getId() + "";
+            LogUtils.e(currentID + "========currentID===选中开始点击了===");
+            deviceDBBean.setUsemsg01("false");
+            DeviceDBUtils.insertOrReplaceInTx(DeviceActivity.this, deviceDBBean);
+
+        }
+        refreshRecycleViewData();
+    }
     //
 //
 //    @Override
