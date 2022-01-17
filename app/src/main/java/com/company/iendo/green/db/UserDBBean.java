@@ -9,6 +9,8 @@ import org.greenrobot.greendao.annotation.Generated;
  * author： LoveLin
  * time：2021/12/28 17:56
  * desc  数据库用户Bean
+ *
+ * 所有的用户都是绑定设备的也就是说用户表的deviceID==设备表的主键id
  */
 @Entity
 public class UserDBBean {
@@ -22,7 +24,7 @@ public class UserDBBean {
      * 这个用户是在哪个设备上的     用户和病例都是和设备绑定的
      * 当前选中设备的主键id,因为离线模式下就能通过这个主键id查找这个设备下的所有用户
      */
-    private String deviceID;     //把本身的主键id赋值给deviceID(相当于他是主键ID)
+    private String deviceID;     //把设备表的主键id赋值给deviceID(相当于他是主键ID)
 
     //设备上主键ID   ---设备返回的ID      登录或者查询的时候后台返回的ID   用来修改密码等等接口请求使用这个ID
     private String deviceUserID;       //接口返回的userID

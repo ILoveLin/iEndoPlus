@@ -167,6 +167,7 @@
                     android:lines="1"
                     android:singleLine="true"
                     android:text=""
+                    android:inputType="phone"
                     android:textColor="@color/black80"
                     android:textColorHint="@color/black20"
                     android:textSize="@dimen/sp_14" />

@@ -33,15 +33,16 @@ import com.company.iendo.app.AppActivity;
 import com.company.iendo.bean.LoginBean;
 import com.company.iendo.bean.RefreshEvent;
 import com.company.iendo.bean.UserListBean;
-import com.company.iendo.green.db.DeviceDBBean;
-import com.company.iendo.green.db.DeviceDBUtils;
+import com.company.iendo.green.db.CaseDBUtils;
 import com.company.iendo.green.db.UserDBBean;
 import com.company.iendo.green.db.UserDBUtils;
+import com.company.iendo.green.db.downcase.CaseDBBean;
+import com.company.iendo.green.db.downcase.CaseImageListBean;
 import com.company.iendo.http.glide.GlideApp;
 import com.company.iendo.manager.InputTextManager;
 import com.company.iendo.mineui.activity.MainActivity;
 import com.company.iendo.mineui.activity.login.device.DeviceActivity;
-import com.company.iendo.mineui.fragment.AFragment;
+import com.company.iendo.mineui.offline.AFragment;
 import com.company.iendo.other.Constants;
 import com.company.iendo.other.HttpConstant;
 import com.company.iendo.other.KeyboardWatcher;
@@ -410,6 +411,12 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                                         SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Flag_UserDBSave, true);
                                         SharePreferenceUtil.put(LoginActivity.this, Constants.Is_Logined, true);
                                         saveRememberPassword(mBean);
+                                        /**
+                                         * 测试离线病例显示
+                                         *
+                                         */
+
+                                        setTestOffCaseData();
                                         MainActivity.start(getContext(), AFragment.class);
                                         finish();
 //                                        postDelayed(() -> {
@@ -450,6 +457,21 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
         }
 
 
+    }
+
+    //存点假数据
+    private void setTestOffCaseData() {
+        List<CaseDBBean> mCaseDBList = CaseDBUtils.queryAll(getActivity());
+        if (0 == mCaseDBList.size()) {
+            for (int i = 0; i < 10; i++) {
+                CaseDBBean caseDBBean = new CaseDBBean();
+                caseDBBean.setDeviceCaseID(i + "");  //用户表和设备表进行绑定, //用户表和设备表进行绑定, //用户表和设备表进行绑定
+                caseDBBean.setName("姓名"+i);    // 姓名
+                caseDBBean.setOccupatior(i + "--职业");    // 职业
+                caseDBBean.setRecord_date("2022-01-" + i);    // 创建时间
+                CaseDBUtils.insertOrReplaceInTx(getActivity(), caseDBBean);
+            }
+        }
     }
 
     /**

@@ -230,7 +230,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                 // 设置单选模式
                 .setSingleSelect()
                 // 设置默认选中
-                .setSelect(2)
+                .setSelect(1)
                 .setListener(new SelectDialog.OnListener<String>() {
 
                     @Override

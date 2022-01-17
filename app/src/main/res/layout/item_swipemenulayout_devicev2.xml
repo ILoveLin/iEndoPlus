@@ -22,7 +22,7 @@
             android:layout_width="@dimen/dp_50"
             android:layout_height="@dimen/dp_150"
             android:layout_centerInParent="true"
-            android:src="@drawable/icon_yitiji" />
+            android:src="@mipmap/icon_yitiji" />
 
         <TextView
             android:id="@+id/tv_current_chose_msg"

@@ -52,6 +52,8 @@ public class DeviceAdapter extends AppAdapter<DeviceDBBean> {
     @NonNull
     @Override
     public DeviceAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+
+
         return new DeviceAdapter.ViewHolder();
     }
 
@@ -73,6 +75,7 @@ public class DeviceAdapter extends AppAdapter<DeviceDBBean> {
 
         @Override
         public void onBindView(int position) {
+
             DeviceDBBean mDBBean = getItem(position);
             if (null != mDBBean.getUsemsg01()) {
                 if ("false".equals(mDBBean.getUsemsg01())) {

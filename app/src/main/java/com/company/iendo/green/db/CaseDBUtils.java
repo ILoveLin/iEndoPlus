@@ -36,7 +36,7 @@ public class CaseDBUtils {
     }
 
     //查询全部
-    public static List<CaseDBBean> queryAll(Context context, CaseDBBean bean) {
+    public static List<CaseDBBean> queryAll(Context context) {
         //查询所有数据
         List<CaseDBBean> list = DBManager.getDaoSession(context).getCaseDBBeanDao().queryBuilder().list();
         return list;

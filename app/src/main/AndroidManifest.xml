@@ -45,7 +45,7 @@
 
     <!-- Application 节点详解：https://developer.android.google.cn/guide/topics/manifest/application-element -->
     <!-- Activity 节点详解：https://developer.android.google.cn/guide/topics/manifest/activity-element -->
-    <application
+    <application xmlns:tools="http://schemas.android.com/tools"
         android:name="com.company.iendo.app.AppApplication"
         android:allowBackup="false"
         android:icon="@mipmap/launcher_ic"
@@ -58,7 +58,7 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="AllowBackup,LockedOrientationActivity"
-        tools:replace="android:allowBackup,android:supportsRtl"
+        tools:replace="android:allowBackup,android:supportsRtl,label"
         tools:targetApi="n">
 
         <!-- 表示当前已经适配了分区存储 -->
@@ -82,6 +82,10 @@
         <!-- 方案界面 -->
         <activity
             android:name=".mineui.activity.choice.ProgramActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.CopyActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         <!-- 方案选择界面 -->

@@ -15,6 +15,7 @@ import com.company.iendo.mineui.activity.login.LoginActivity;
 import com.company.iendo.mineui.activity.setting.HospitalActivity;
 import com.company.iendo.other.Constants;
 import com.company.iendo.other.HttpConstant;
+import com.company.iendo.ui.activity.CopyActivity;
 import com.company.iendo.ui.dialog.Input2Dialog;
 import com.company.iendo.ui.dialog.InputDialog;
 import com.company.iendo.ui.dialog.MessageAboutDialog;
@@ -64,7 +65,7 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
         memory_bar = findViewById(R.id.memory_bar);
         current_user = findViewById(R.id.current_user);
         mBaseUrl = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_BaseUrl, "192.168.312.102");
-        setOnClickListener(R.id.params_bar, R.id.hospital_bar, R.id.user_bar, R.id.about_bar, R.id.memory_bar, R.id.password_bar, R.id.exit_bar);
+        setOnClickListener(R.id.tv_text, R.id.params_bar, R.id.hospital_bar, R.id.user_bar, R.id.about_bar, R.id.memory_bar, R.id.password_bar, R.id.exit_bar);
 
     }
 
@@ -83,6 +84,10 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.tv_text:
+                startActivity(CopyActivity.class);
+                toast("设备参数");
+                break;
             case R.id.params_bar:
                 toast("设备参数");
                 break;
@@ -189,7 +194,7 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
     private void sendChangeMineRequest(String oldPassword, String newPassword) {
         showLoading();
         OkHttpUtils.post()
-                .url(mBaseUrl+HttpConstant.UserManager_ChangeMinePassword)
+                .url(mBaseUrl + HttpConstant.UserManager_ChangeMinePassword)
                 .addParams("UserID", mLoginUserID)//自己的ID
                 .addParams("oldPassword", oldPassword)//原来的密码
                 .addParams("newPassword", newPassword)//新密码

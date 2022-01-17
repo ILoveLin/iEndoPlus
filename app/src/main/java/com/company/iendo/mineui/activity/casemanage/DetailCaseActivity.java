@@ -63,17 +63,17 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
         mPagerAdapter.addFragment(VideoFragment.newInstance(), "视频");
         mViewPager.setAdapter(mPagerAdapter);
         mViewPager.addOnPageChangeListener(this);
-        setOnClickListener(R.id.linear_get_picture, R.id.case_report, R.id.case_delete, R.id.case_down);
+        setOnClickListener(R.id.linear_get_picture, R.id.case_report, R.id.case_delete, R.id.case_down, R.id.linear_down);
         mTitlebar.setOnTitleBarListener(new OnTitleBarListener() {
             @Override
             public void onLeftClick(View view) {
                 //退出界面的时候必须保存数据
                 if (null != mOnEditStatusListener) {
-                    mOnEditStatusListener.onEditStatus(true,true);
+                    mOnEditStatusListener.onEditStatus(true, true);
                 }
-                postDelayed(()->{
+                postDelayed(() -> {
                     finish();
-                },300);
+                }, 300);
             }
 
             @Override
@@ -85,7 +85,7 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
             public void onRightClick(View view) {
                 if (mTitlebar.getRightTitle().equals("编辑")) {
                     if (null != mOnEditStatusListener) {
-                        mOnEditStatusListener.onEditStatus(true,false);
+                        mOnEditStatusListener.onEditStatus(true, false);
                     }
                     mTitlebar.setRightTitle("保存");
                     mTitlebar.setRightTitleColor(getResources().getColor(R.color.red));
@@ -93,7 +93,7 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
                     mTitlebar.setRightTitle("编辑");
                     mTitlebar.setRightTitleColor(getResources().getColor(R.color.black));
                     if (null != mOnEditStatusListener) {
-                        mOnEditStatusListener.onEditStatus(false,false);
+                        mOnEditStatusListener.onEditStatus(false, false);
                     }
                 }
             }
@@ -105,6 +105,7 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
 
 
     }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -150,7 +151,7 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
                     mOnEditStatusListener.onDelete();
 
                     break;
-                case R.id.case_down://下载
+                case R.id.linear_down://下载
                     mOnEditStatusListener.onDown(true, true);
                     break;
             }
@@ -176,7 +177,7 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
 
     public interface OnEditStatusListener {
         //activity制作发送的提示,具体操作全部在DetailFragment里面实现
-        void onEditStatus(boolean status,boolean isFatherExit);
+        void onEditStatus(boolean status, boolean isFatherExit);
 
         //下载用户数据
         void onDown(boolean userInfo, boolean userPicture);
@@ -191,7 +192,6 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
         void onGetPicture();
 
     }
-
 
 
     @NonNull

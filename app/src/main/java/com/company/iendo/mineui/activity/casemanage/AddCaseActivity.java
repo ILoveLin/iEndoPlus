@@ -167,10 +167,18 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
 
     private void checkDataAndRequest() {
         String Name = et_01_name.getText().toString().trim();
-        if (!Name.isEmpty()) {
-            getElseCanSelected();
+        String age = et_01_age.getText().toString().trim();
+        String sex = et_01_sex_type.getText().toString().trim();
+
+        if (Name.isEmpty()) {
+            toast("姓名不能为空!");
+        } else if (age.isEmpty()) {
+            toast("年龄不能为空!");
+        } else if (sex.isEmpty()) {
+            toast("性别不能为空!");
         } else {
-            toast("用户名不能为空!");
+            getElseCanSelected();
+
         }
     }
 
@@ -499,7 +507,6 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
 
                         @Override
                         public void onCancel(BaseDialog dialog) {
-                            toast("取消了");
                         }
                     })
                     .show();
@@ -526,7 +533,7 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
 
                     @Override
                     public void onCancel(BaseDialog dialog) {
-                        toast("取消了");
+
                     }
                 })
                 .show();
@@ -562,7 +569,7 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
 
                         @Override
                         public void onCancel(BaseDialog dialog) {
-                            toast("取消了");
+
                         }
                     })
                     .show();

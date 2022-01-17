@@ -43,6 +43,7 @@ android {
         }
     }
 
+
     // 构建配置：https://developer.android.google.cn/studio/build/build-variants
     buildTypes {
 
@@ -263,6 +264,10 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.5'
     //RTMP  RTSP  推流
     implementation 'com.github.pedroSG94.rtmp-rtsp-stream-client-java:rtplibrary:2.0.2'
+    //GroupedRecyclerViewAdapter   吸附效果
+    implementation 'com.github.donkingliang:GroupedRecyclerViewAdapter:2.4.1'
+    //进度条
+    implementation 'com.github.Jay-Goo:RangeSeekBar:v3.0.0'
     // 多语种：https://github.com/getActivity/MultiLanguages
     // 悬浮窗：https://github.com/getActivity/XToast
 //     日志输出：https://github.com/getActivity/Logcat

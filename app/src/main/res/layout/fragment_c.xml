@@ -168,6 +168,16 @@
                     app:bar_lineVisible="true"
                     app:bar_rightDrawable="@drawable/arrows_right_ic"
                     app:bar_rightTextColor="@color/color_999999" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:background="@color/black"
+                    android:text="测试"
+                    android:gravity="center"
+                    android:id="@+id/tv_text"
+                    android:textSize="@dimen/sp_20"
+                    android:textColor="@color/white"
+                    android:layout_height="@dimen/dp_50"/>
             </LinearLayout>
     </com.scwang.smart.refresh.layout.SmartRefreshLayout>
 </LinearLayout>

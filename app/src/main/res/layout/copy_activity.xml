@@ -12,4 +12,65 @@
         android:layout_height="wrap_content"
         app:title="标题" />
 
+    <!--    <com.jaygoo.widget.RangeSeekBar-->
+    <!--        android:id="@+id/sb_range_5"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_marginTop="@dimen/dp_50"-->
+    <!--        app:rsb_gravity="center"-->
+    <!--        app:rsb_indicator_height="wrap_content"-->
+    <!--        app:rsb_indicator_margin="@dimen/dp_5"-->
+    <!--        app:rsb_indicator_padding_bottom="10dp"-->
+    <!--        app:rsb_indicator_padding_left="15dp"-->
+    <!--        app:rsb_indicator_padding_right="15dp"-->
+    <!--        app:rsb_indicator_padding_top="10dp"-->
+    <!--        app:rsb_indicator_show_mode="alwaysShow"-->
+    <!--        app:rsb_indicator_width="@dimen/dp_30"-->
+    <!--        app:rsb_mode="single"-->
+    <!--        app:rsb_progress_color="@color/colorAccent"-->
+    <!--        app:rsb_thumb_drawable="@drawable/thumb_activated"-->
+    <!--        app:rsb_thumb_inactivated_drawable="@drawable/thumb_inactivated"-->
+    <!--        app:rsb_tick_mark_mode="number" />-->
+
+    <com.jaygoo.widget.RangeSeekBar
+        android:id="@+id/sb_single5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/dp_10"
+        app:rsb_gravity="bottom"
+        app:rsb_indicator_height="wrap_content"
+        app:rsb_indicator_padding_bottom="@dimen/dp_5"
+        app:rsb_indicator_padding_left="@dimen/dp_7"
+        app:rsb_indicator_padding_right="@dimen/dp_7"
+        app:rsb_indicator_padding_top="@dimen/dp_5"
+        app:rsb_indicator_radius="5dp"
+        app:rsb_indicator_show_mode="alwaysShow"
+        app:rsb_indicator_text_size="@dimen/sp_10"
+        app:rsb_mode="single"
+        app:rsb_progress_color="@color/colorAccent"
+        app:rsb_progress_default_color="@color/rsbColorSeekBarDefault"
+        app:rsb_thumb_drawable="@drawable/thumb_activated"
+        app:rsb_thumb_inactivated_drawable="@drawable/thumb_inactivated"
+        app:rsb_tick_mark_mode="number"
+ />
+
+    <com.jaygoo.widget.RangeSeekBar
+        android:id="@+id/sb_single6"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:rsb_gravity="bottom"
+        app:rsb_indicator_background_color="@color/red"
+        app:rsb_indicator_height="wrap_content"
+        app:rsb_indicator_padding_bottom="10dp"
+        app:rsb_indicator_padding_left="15dp"
+        app:rsb_indicator_padding_right="15dp"
+        app:rsb_indicator_padding_top="10dp"
+        app:rsb_indicator_radius="5dp"
+        app:rsb_indicator_show_mode="showWhenTouch"
+        app:rsb_indicator_text_size="12sp"
+        app:rsb_indicator_width="50dp"
+        app:rsb_mode="single"
+        app:rsb_progress_color="@color/red"
+        app:rsb_progress_default_color="@color/rsbColorSeekBarDefault"
+        app:rsb_tick_mark_mode="number" />
 </LinearLayout>

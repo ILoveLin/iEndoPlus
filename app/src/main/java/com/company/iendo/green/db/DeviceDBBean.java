@@ -10,17 +10,17 @@ import org.greenrobot.greendao.annotation.Unique;
  * author： LoveLin
  * time：2021/11/16 15:13
  * desc：数据库设备表
- *
- *
+ * <p>
+ * <p>
  * //////////////////////////////////////////////////////////////////////////
  * //  EndoType.h 版本：v1.01
  * //  修订时间：2021年12月29日 最后修订人:dzh
  * //
  * //  定义软件的应用科室或应用场景（内镜类型）
  * //////////////////////////////////////////////////////////////////////////
- *
+ * <p>
  * #pragma once
- *
+ * <p>
  * #define  ALL_TYPE_NEW 			      -1 //全科室 新状态 不会 出现 选择其他 科室的 按钮
  * #define  ALL_TYPE					  0 //全科室 默认状态   会 出现 选择其他 科室的 按钮
  * #define  UNKNOWN_TYPE				  0 //未知科室
@@ -36,9 +36,9 @@ import org.greenrobot.greendao.annotation.Unique;
  * #define  ULTRASOUND                   9 //超声
  * #define  DUCTOSCOPY                   10 //乳管镜
  * #define  GASTROINTESTINAL_ENDOSCOPY   11//胃肠镜
- *
- *
- *
+ * <p>
+ * <p>
+ * <p>
  * #define  GYNECOLOGICAL_LAPAROSCOPY   100 //妇科腹腔镜
  * #define  LAPAROSCOPY                 101 //腹腔镜
  * #define  FETOSCOPY					 102 //胎儿镜
@@ -54,16 +54,16 @@ import org.greenrobot.greendao.annotation.Unique;
  * #define  TRANSCUTANEOUS_NEPHROSCOPY  112 //经皮肾镜
  * #define  TRANSFORAMINAL_ENDOSCOPY    113 //椎间孔镜
  * #define  HYSTEROSCOPY_LAPAROSCOPY    114 //宫腹腔镜
- *
- *
- *
+ * <p>
+ * <p>
+ * 通过设备表查找用户
  */
 
 @Entity
 public class DeviceDBBean {
     //主键
     @Id(autoincrement = true)
-    private Long id;  //这个主键ID是需要绑定用户表中的deviceID,确保是这个设备下,离线模式能通过id查询绑定用户
+    private Long id;            //这个主键ID是需要绑定用户表中的deviceID,确保是这个设备下,离线模式能通过id查询绑定用户
     //设备唯一标识
     private String deviceID;
     //设备ip
