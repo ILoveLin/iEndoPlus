@@ -161,7 +161,7 @@
                     android:layout_height="@dimen/dp_39"
                     android:layout_marginTop="@dimen/dp_3"
                     android:layout_marginBottom="@dimen/dp_3"
-                    app:bar_leftDrawable="@drawable/ic_icon_changethepassword"
+                    app:bar_leftDrawable="@drawable/ic_icon_device_params"
                     app:bar_leftDrawablePadding="@dimen/dp_12"
                     app:bar_leftText="设备参数"
                     app:bar_leftTextColor="@color/black333333"

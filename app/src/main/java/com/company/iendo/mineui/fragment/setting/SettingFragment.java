@@ -13,6 +13,7 @@ import com.company.iendo.manager.CacheDataManager;
 import com.company.iendo.mineui.activity.MainActivity;
 import com.company.iendo.mineui.activity.UserListActivity;
 import com.company.iendo.mineui.activity.login.LoginActivity;
+import com.company.iendo.mineui.activity.setting.DeviceParamsActivity;
 import com.company.iendo.mineui.activity.setting.HospitalActivity;
 import com.company.iendo.other.Constants;
 import com.company.iendo.other.HttpConstant;
@@ -106,11 +107,11 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_text:
-                startActivity(CopyActivity.class);
                 toast("设备参数");
+                startActivity(CopyActivity.class);
                 break;
             case R.id.params_bar:
-                toast("设备参数");
+                startActivity(DeviceParamsActivity.class);
                 break;
             case R.id.hospital_bar:
                 startActivity(HospitalActivity.class);

@@ -66,6 +66,8 @@ public class DeviceDBBean {
     private Long id;            //这个主键ID是需要绑定用户表中的deviceID,确保是这个设备下,离线模式能通过id查询绑定用户
     //设备唯一标识
     private String deviceID;
+    //设备码
+    private String deviceCode;  //  这个是智能搜索之后返回过来的设备码//  这个是智能搜索之后返回过来的设备码//  这个是智能搜索之后返回过来的设备码
     //设备ip
     private String ip;
     //设备http端口
@@ -88,7 +90,7 @@ public class DeviceDBBean {
     private String type;  //34567  数字对应  比如3是耳鼻喉治疗台
     //工作站类型
     private String endoType;
-    //备用字段-设备名字
+    ////mDeviceCode  这个是智能搜索之后返回过来的设备码
     private String deviceName;  //设备名字
     //备用字段1
     private String usemsg01;  //备用字段1    是否长按选中了,显示修改和删除功能  true为选中
@@ -97,13 +99,13 @@ public class DeviceDBBean {
     //是否被选中
     private Boolean mSelected;    //是否被选中    :0未选中,1被选中
 
-    @Generated(hash = 881305765)
-    public DeviceDBBean(Long id, String deviceID, String ip, String httpPort, String socketPort,
-                        String livePort, String micPort, String username, String password, String title, String msg,
-                        String type, String endoType, String deviceName, String usemsg01, String usemsg02,
-                        Boolean mSelected) {
+    @Generated(hash = 1981403596)
+    public DeviceDBBean(Long id, String deviceID, String deviceCode, String ip, String httpPort, String socketPort,
+            String livePort, String micPort, String username, String password, String title, String msg, String type,
+            String endoType, String deviceName, String usemsg01, String usemsg02, Boolean mSelected) {
         this.id = id;
         this.deviceID = deviceID;
+        this.deviceCode = deviceCode;
         this.ip = ip;
         this.httpPort = httpPort;
         this.socketPort = socketPort;
@@ -281,5 +283,13 @@ public class DeviceDBBean {
 
     public void setDeviceName(String deviceName) {
         this.deviceName = deviceName;
+    }
+
+    public String getDeviceCode() {
+        return this.deviceCode;
+    }
+
+    public void setDeviceCode(String deviceCode) {
+        this.deviceCode = deviceCode;
     }
 }

@@ -72,6 +72,7 @@
     <color name="color_ffffff_00">#00ffffff</color>
     <color name="color_ffffff">#ffffff</color>
     <color name="color_0C0C0C">#0C0C0C</color>
+
     <color name="color_30ffffff">#30ffffff</color>
     <color name="color_fffaf3">#fffaf3</color>
     <color name="color_ea7322">#ea7322</color>
@@ -386,6 +387,7 @@
     <!--zbar end-->
     <!-- 分割线的颜色 -->
     <color name="colorLine">#ECECEC</color>
+    <color name="color_FF2525">#FF2525</color>
 
     <color name="color_ff1e1e">#ff1e1e</color>
     <color name="color_fd7b08">#fd7b08</color>
@@ -415,6 +417,7 @@
     <color name="black">#FF000000</color>
     <color name="black_000000">#000000</color>
     <color name="color_9A9A9A">#9A9A9A</color>
+    <color name="color_F6F6F6">#F6F6F6</color>
     <color name="black90">#EE000000</color>
     <color name="black80">#CC000000</color>
     <color name="black70">#BB000000</color>

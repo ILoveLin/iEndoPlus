@@ -283,14 +283,14 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                         .setCanceledOnTouchOutside(false)
                         .setListener(new InputDeviceDialog.OnListener() {
 
-                            @Override
+                            //                            @Override  //mDeviceCode  这个是智能搜索之后返回过来的设备码
                             public void onConfirm(BaseDialog dialog, String mDeviceName, String mDeviceCode, String mDeviceNoteMessage,
                                                   String mDeviceIP, String mDeviceAccount, String mDevicePassword, String mHttpPort,
                                                   String mSocketPort, String mLivePort, String mMicPort, String mDeviceType) {
                                 //添加设备妇科治疗台
                                 DeviceDBBean deviceDBBean = new DeviceDBBean();
                                 deviceDBBean.setDeviceName(mDeviceName);  //设备名
-                                deviceDBBean.setUsername(mDeviceCode); //设备码
+                                deviceDBBean.setDeviceCode(mDeviceCode); //设备码---//mDeviceCode  这个是智能搜索之后返回过来的设备码
                                 deviceDBBean.setMsg(mDeviceNoteMessage);//备注信息
                                 deviceDBBean.setIp(mDeviceIP);          //ip
                                 deviceDBBean.setUsername(mDeviceAccount);//设备账号
@@ -358,7 +358,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                                 //添加设备妇科治疗台
                                 DeviceDBBean deviceDBBean = new DeviceDBBean();
                                 deviceDBBean.setDeviceName(mDeviceName);  //设备名
-                                deviceDBBean.setUsername(mDeviceCode); //设备码
+                                deviceDBBean.setDeviceCode(mDeviceCode); //设备码---//mDeviceCode  这个是智能搜索之后返回过来的设备码
                                 deviceDBBean.setMsg(mDeviceNoteMessage);//备注信息
                                 deviceDBBean.setIp(mDeviceIP);          //ip
                                 deviceDBBean.setUsername(mDeviceAccount);//设备账号
@@ -421,7 +421,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                                 //添加设备妇科治疗台
                                 DeviceDBBean deviceDBBean = new DeviceDBBean();
                                 deviceDBBean.setDeviceName(mDeviceName);  //设备名
-                                deviceDBBean.setUsername(mDeviceCode); //设备码
+                                deviceDBBean.setDeviceCode(mDeviceCode); //设备码---//mDeviceCode  这个是智能搜索之后返回过来的设备码
                                 deviceDBBean.setMsg(mDeviceNoteMessage);//备注信息
                                 deviceDBBean.setIp(mDeviceIP);          //ip
                                 deviceDBBean.setUsername(mDeviceAccount);//设备账号
@@ -485,7 +485,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                                 //添加设备泌尿治疗台
                                 DeviceDBBean deviceDBBean = new DeviceDBBean();
                                 deviceDBBean.setDeviceName(mDeviceName);  //设备名
-                                deviceDBBean.setUsername(mDeviceCode); //设备码
+                                deviceDBBean.setDeviceCode(mDeviceCode); //设备码---//mDeviceCode  这个是智能搜索之后返回过来的设备码
                                 deviceDBBean.setMsg(mDeviceNoteMessage);//备注信息
                                 deviceDBBean.setIp(mDeviceIP);          //ip
                                 deviceDBBean.setUsername(mDeviceAccount);//设备账号
@@ -827,7 +827,11 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
         }
         if (null != mDBBean) {
             LogUtils.e("添加病例=== mDBBean.toString()===" + mDBBean.toString());   //通过此字段判断EndoType
-            LogUtils.e("添加病例=== mDBBean.getDeviceName()===" + mDBBean.getDeviceName());   //通过此字段判断EndoType
+            /**
+             *mDeviceCode 这个是智能搜索之后返回过来的设备码
+             * 需要再搜索完成后创建dialog的时候设置上去,不然为null
+             */
+            LogUtils.e("添加病例=== mDBBean.getDeviceName()===" + mDBBean.getDeviceCode());   ///
             LogUtils.e("添加病例=== mDBBean.getType()===" + mDBBean.getType());   //通过此字段判断EndoType
             switch (mDBBean.getType()) {
                 case "妇科治疗台":
@@ -880,8 +884,10 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
             SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_LivePort, mDBBean.getLivePort());
             SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_MicPort, null != mDBBean.getMicPort() ? mDBBean.getMicPort() : "1");
             SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_DeviceUsername, mDBBean.getUsername());
+            SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_DeviceUsername, mDBBean.getDeviceName());//mDBBean.getDeviceName()
             SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_DevicePassword, mDBBean.getPassword());
             SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_DeviceName, mDBBean.getDeviceName());
+            SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_DeviceCode, null != mDBBean.getDeviceCode() ? mDBBean.getDeviceCode() : "code码为空");
             SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_MSelected, mDBBean.getMSelected());
 
             //http://192.168.66.42:8008
@@ -946,6 +952,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
         }
         refreshRecycleViewData();
     }
+
     //展示删除和修改功能布局
     private void showChangeDeleteLayout(int position) {
         DeviceDBBean selectedItemBean = mAdapter.getItem(position);
@@ -956,6 +963,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
 
         refreshRecycleViewData();
     }
+
     //隐藏删除和修改功能布局
     private void dismissChangeDeleteLayout() {
         List<DeviceDBBean> deviceDBBeans = DeviceDBUtils.queryAll(DeviceActivity.this);

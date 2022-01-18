@@ -22,10 +22,10 @@ import androidx.annotation.Nullable;
 import com.hjq.widget.R;
 
 /**
- *    author : Android 轮子哥
- *    github : https://github.com/getActivity/AndroidProject
- *    time   : 2019/02/20
- *    desc   : 高仿 ios 开关按钮
+ * author : Android 轮子哥
+ * github : https://github.com/getActivity/AndroidProject
+ * time   : 2019/02/20
+ * desc   : 高仿 ios 开关按钮
  */
 public final class SwitchButton extends View {
 
@@ -43,34 +43,59 @@ public final class SwitchButton extends View {
     private float mAnim1, mAnim2;
     private RadialGradient mShadowGradient;
 
-    /** 按钮宽高形状比率(0,1] 不推荐大幅度调整 */
+    /**
+     * 按钮宽高形状比率(0,1] 不推荐大幅度调整
+     */
     protected final float mAspectRatio = 0.68f;
-    /** (0,1] */
+    /**
+     * (0,1]
+     */
     protected final float mAnimationSpeed = 0.1f;
 
-    /** 上一个选中状态 */
+    /**
+     * 上一个选中状态
+     */
     private int mLastCheckedState;
-    /** 当前的选中状态 */
+    /**
+     * 当前的选中状态
+     */
     private int mCheckedState;
 
     private boolean mCanVisibleDrawing = false;
 
-    /** 是否显示按钮阴影 */
+    /**
+     * 是否显示按钮阴影
+     */
     protected boolean mShadow;
-    /** 是否选中 */
+    /**
+     * 是否选中
+     */
     protected boolean mChecked;
 
-    /** 开启状态背景色 */
-    protected int mAccentColor = 0xFF4BD763;
-    /** 开启状态按钮描边色 */
-    protected int mPrimaryDarkColor = 0xFF3AC652;
-    /** 关闭状态描边色 */
+    /**
+     * 开启状态背景色
+     */   //#007AFF  ==0,122,255
+    protected int mAccentColor = 0xFF25A5FF;
+    /**
+     * 开启状态按钮描边色
+     */
+    protected int mPrimaryDarkColor = 0xFF25A5FF;
+//    protected int mPrimaryDarkColor = 0xFF3AC652;
+    /**
+     * 关闭状态描边色
+     */
     protected int mOffColor = 0xFFE3E3E3;
-    /** 关闭状态按钮描边色 */
+    /**
+     * 关闭状态按钮描边色
+     */
     protected int mOffDarkColor = 0xFFBFBFBF;
-    /** 按钮阴影色 */
+    /**
+     * 按钮阴影色
+     */
     protected int mShadowColor = 0xFF333333;
-    /** 监听器 */
+    /**
+     * 监听器
+     */
     @Nullable
     private OnCheckedChangeListener mListener;
 
@@ -487,8 +512,8 @@ public final class SwitchButton extends View {
         /**
          * 回调监听
          *
-         * @param button            切换按钮
-         * @param checked           是否选中
+         * @param button  切换按钮
+         * @param checked 是否选中
          */
         void onCheckedChanged(SwitchButton button, boolean checked);
     }

@@ -53,10 +53,15 @@ public class SharePreferenceUtil {
     public static final String Current_MicPort = "Current_MicPort";                  //语音端口
     public static final String Current_DeviceUsername = "Current_DeviceUsername";    //设备账号(直播)
     public static final String Current_DevicePassword = "Current_DevicePassword";    //设备密码(直播)
-    public static final String Current_Type = "Current_Type";                        //设备类型
+    public static final String Current_Type = "Current_Type";                        //设备类型  --一体机 ,耳鼻喉治疗台等等类型
     public static final String Current_EndoType = "Current_EndoType";                //工作站类型
-    public static final String Current_DeviceName = "Current_Usemsg01";                //设备名字
-    public static final String Current_MSelected = "Current_MSelected";              //是否被选中:0未选中,1被选中
+    /**
+     *mDeviceCode  mDBBean.getDeviceName----这个是智能搜索之后返回过来的设备码
+     * 需要再搜索完成后创建dialog的时候设置上去,不然为null
+     */
+    public static final String Current_DeviceCode = "Current_DeviceCode";             //设备码--后台返回
+    public static final String Current_DeviceName = "Current_Usemsg01";               //
+    public static final String Current_MSelected = "Current_MSelected";               //是否被选中:0未选中,1被选中
 
 
     /**
