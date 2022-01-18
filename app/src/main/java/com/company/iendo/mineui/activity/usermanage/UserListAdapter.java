@@ -1,7 +1,10 @@
 package com.company.iendo.mineui.activity.usermanage;
 
 import android.content.Context;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -17,9 +20,11 @@ import com.company.iendo.bean.UserListBean;
  * desc：病例列表适配器
  */
 public class UserListAdapter extends AppAdapter<UserListBean.DataDTO> {
+    private String mLoginUserName;
 
-    public UserListAdapter(Context context) {
+    public UserListAdapter(Context context, String mLoginUserName) {
         super(context);
+        this.mLoginUserName = mLoginUserName;
     }
 
     @NonNull
@@ -30,23 +35,51 @@ public class UserListAdapter extends AppAdapter<UserListBean.DataDTO> {
 
     private final class ViewHolder extends AppAdapter<?>.ViewHolder {
 
-        private final TextView mName;
-        private final TextView mRelo;
-        private final TextView mPassword;
-        private final TextView mDelete;
+        private final TextView mName, mCurrentFlag,mRelo;
+        private final Button mChangeRelo, mDelete, mPassword;
+        private final RelativeLayout mItemView;
 
         private ViewHolder() {
             super(R.layout.item_user_list);
+            mItemView = findViewById(R.id.item_relative_all);
             mName = findViewById(R.id.tv_name);
-            mRelo = findViewById(R.id.tv_change_relo);
+            mRelo = findViewById(R.id.tv_current_relo);
+            mChangeRelo = findViewById(R.id.tv_change_relo);
             mPassword = findViewById(R.id.tv_change_password);
             mDelete = findViewById(R.id.tv_delete);
+            mCurrentFlag = findViewById(R.id.tv_current_flag);
         }
 
         @Override
         public void onBindView(int position) {
             UserListBean.DataDTO item = getItem(position);
-            mName.setText("Name:"+item.getUserName()+"角色:"+item.getRole());
+            //    // 角色 0-超级管理员 1-管理员 2-操作员 3-查询员 4-自定义
+            String userName = item.getUserName();
+            if (mLoginUserName.equals(userName)) {
+                mItemView.setBackgroundResource(R.drawable.shape_item_user_pre);
+                mCurrentFlag.setVisibility(View.VISIBLE);
+            } else {
+                mItemView.setBackgroundResource(R.drawable.shape_item_user_nor);
+                mCurrentFlag.setVisibility(View.INVISIBLE);
+            }
+            mName.setText("" + item.getUserName());
+            switch (item.getRole()) {
+                case 0:
+                    mRelo.setText("超级管理员");
+                    break;
+                case 1:
+                    mRelo.setText("管理员");
+                    break;
+                case 2:
+                    mRelo.setText("操作员");
+                    break;
+                case 3:
+                    mRelo.setText("查询员");
+                    break;
+                case 4:
+                    mRelo.setText("自定义");
+                    break;
+            }
         }
     }
 }

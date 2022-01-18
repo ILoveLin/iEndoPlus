@@ -44,8 +44,6 @@ public final class CopyActivity extends AppActivity implements StatusAction {
                 double round = Math.round(leftValue);
                 toast("round==="+round);
 
-                LogUtils.e("progress==leftValue=="+leftValue);
-                LogUtils.e("progress==round======="+round);
             }
 
             @Override
@@ -56,6 +54,9 @@ public final class CopyActivity extends AppActivity implements StatusAction {
             @Override
             public void onStopTrackingTouch(RangeSeekBar view,  boolean isLeft) {
                 //stop tracking touch
+                float progress = view.getLeftSeekBar().getProgress();
+                double round = Math.round(progress);
+                LogUtils.e("progress==leftValue=="+round);
             }
         });
     }
