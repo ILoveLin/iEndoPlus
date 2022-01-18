@@ -36,7 +36,7 @@ public class UserListAdapter extends AppAdapter<UserListBean.DataDTO> {
     private final class ViewHolder extends AppAdapter<?>.ViewHolder {
 
         private final TextView mName, mCurrentFlag,mRelo;
-        private final Button mChangeRelo, mDelete, mPassword;
+//        private final Button mChangeRelo, mDelete, mPassword;
         private final RelativeLayout mItemView;
 
         private ViewHolder() {
@@ -44,9 +44,9 @@ public class UserListAdapter extends AppAdapter<UserListBean.DataDTO> {
             mItemView = findViewById(R.id.item_relative_all);
             mName = findViewById(R.id.tv_name);
             mRelo = findViewById(R.id.tv_current_relo);
-            mChangeRelo = findViewById(R.id.tv_change_relo);
-            mPassword = findViewById(R.id.tv_change_password);
-            mDelete = findViewById(R.id.tv_delete);
+//            mChangeRelo = findViewById(R.id.tv_change_relo);
+//            mPassword = findViewById(R.id.tv_change_password);
+//            mDelete = findViewById(R.id.tv_delete);
             mCurrentFlag = findViewById(R.id.tv_current_flag);
         }
 

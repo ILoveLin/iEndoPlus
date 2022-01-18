@@ -3,6 +3,7 @@ package com.company.iendo.mineui.fragment.setting;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.view.View;
+import android.widget.TextView;
 
 import com.company.iendo.R;
 import com.company.iendo.app.TitleBarFragment;
@@ -45,11 +46,13 @@ import okhttp3.Call;
 public class SettingFragment extends TitleBarFragment<MainActivity> {
 
     private String mLoginUserID;
-    private String mLoginPassword;
+    private String mLoginPassword, mLoginReol;
     private SettingBar current_user;
     private String mLoginUserName;
     private String mBaseUrl;
     private SettingBar memory_bar;
+    private TextView mUserName;
+    private TextView mRelo;
 
     public static SettingFragment newInstance() {
         return new SettingFragment();
@@ -63,7 +66,8 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
     @Override
     protected void initView() {
         memory_bar = findViewById(R.id.memory_bar);
-        current_user = findViewById(R.id.current_user);
+        mUserName = findViewById(R.id.tv_current_name);
+        mRelo = findViewById(R.id.tv_current_relo);
         mBaseUrl = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_BaseUrl, "192.168.312.102");
         setOnClickListener(R.id.tv_text, R.id.params_bar, R.id.hospital_bar, R.id.user_bar, R.id.about_bar, R.id.memory_bar, R.id.password_bar, R.id.exit_bar);
 
@@ -74,10 +78,27 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
         mLoginUserID = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_Login_UserID, "");
         mLoginPassword = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_Login_Password, "");
         mLoginUserName = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_Login_UserName, "");
-        current_user.setLeftText("" + mLoginUserName);
+        mLoginReol = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_Login_Role, "");
         String romAvailableSize = FileUtil.getROMAvailableSize(getActivity());
         memory_bar.setRightText(romAvailableSize);
-
+        mUserName.setText("" + mLoginUserName);
+        switch (mLoginReol) {
+            case "0":
+                mRelo.setText("超级管理员");
+                break;
+            case "1":
+                mRelo.setText("管理员");
+                break;
+            case "2":
+                mRelo.setText("操作员");
+                break;
+            case "3":
+                mRelo.setText("查询员");
+                break;
+            case "4":
+                mRelo.setText("自定义");
+                break;
+        }
     }
 
 

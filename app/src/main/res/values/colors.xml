@@ -50,6 +50,9 @@
     <color name="base_btn_pre">#60ffffff</color>
     <color name="base_btn_color">#1aa98c</color>
     <color name="white_85">#21ffffff</color>
+    <color name="color_F7B942">#F7B942</color>
+    <color name="color_F79342">#F79342</color>
+    <color name="color_F44044">#F44044</color>
 
     <color name="border_search_goods">#dfdfdf</color>
     <color name="light_gray">#bfbfbf</color>

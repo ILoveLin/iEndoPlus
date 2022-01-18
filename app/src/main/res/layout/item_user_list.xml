@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.company.iendo.widget.SwipeMenuLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/dp_50"
+    android:layout_height="@dimen/dp_65"
     android:layout_marginLeft="@dimen/dp_10"
     android:layout_marginTop="@dimen/dp_10"
     android:layout_marginRight="@dimen/dp_10"
@@ -10,7 +10,7 @@
     <RelativeLayout
         android:id="@+id/item_relative_all"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/dp_50"
+        android:layout_height="@dimen/dp_65"
         android:background="@drawable/shape_item_user_nor">
 
         <TextView
@@ -36,25 +36,26 @@
             android:paddingRight="@dimen/dp_10">
 
             <ImageView
-                android:gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:layout_width="@dimen/dp_18"
-                android:layout_height="@dimen/dp_18"
+                android:gravity="center"
                 android:src="@drawable/ic_icon_theuser" />
 
             <TextView
-                android:layout_gravity="center"
                 android:id="@+id/tv_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
+                android:layout_gravity="center"
                 android:background="@color/white"
                 android:clickable="false"
                 android:gravity="center"
-                android:paddingLeft="@dimen/dp_5"
+                android:paddingLeft="@dimen/dp_10"
                 android:paddingRight="@dimen/dp_5"
-                android:text="姓名:张三" />
+                android:text="姓名:张三"
+                android:textSize="@dimen/sp_14" />
 
             <View
                 android:layout_width="0dp"
@@ -62,11 +63,11 @@
                 android:layout_weight="1" />
 
             <TextView
-                android:layout_gravity="center"
                 android:id="@+id/tv_current_relo"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_centerVertical="true"
+                android:layout_gravity="center"
                 android:layout_margin="@dimen/dp_8"
                 android:layout_toLeftOf="@+id/tv_delete"
                 android:background="@color/white"
@@ -79,31 +80,71 @@
 
     </RelativeLayout>
 
-
-    <Button
-        android:id="@+id/tv_change_password"
+    <LinearLayout
         android:layout_width="@dimen/dp_75"
         android:layout_height="match_parent"
-        android:background="@color/base_btn_color"
-        android:text="修改密码"
-        android:textColor="@color/white"
-        android:textSize="@dimen/sp_15" />
+        android:background="@color/color_F79342"
+        android:gravity="center_vertical|center_horizontal"
+        android:orientation="vertical">
 
-    <Button
-        android:id="@+id/tv_change_relo"
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_icon_deleteuser" />
+
+        <TextView
+            android:id="@+id/tv_change_relo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_8"
+            android:text="修改权限"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sp_15" />
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="@dimen/dp_75"
         android:layout_height="match_parent"
-        android:background="@color/colorAccent"
-        android:text="修改权限"
-        android:textColor="@color/white"
-        android:textSize="@dimen/sp_15" />
+        android:background="@color/color_F7B942"
+        android:gravity="center_vertical|center_horizontal"
+        android:orientation="vertical">
 
-    <Button
-        android:id="@+id/tv_delete"
-        android:layout_width="@dimen/dp_50"
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_icon_changethepassword" />
+
+        <TextView
+            android:id="@+id/tv_change_password"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_8"
+            android:text="修改密码"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sp_14" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="@dimen/dp_75"
         android:layout_height="match_parent"
-        android:background="@color/red"
-        android:text="删除"
-        android:textColor="@color/white"
-        android:textSize="@dimen/sp_15" />
+        android:background="@color/color_F44044"
+        android:gravity="center_vertical|center_horizontal"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_icon_modifythepermissions" />
+
+        <TextView
+            android:id="@+id/tv_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_8"
+            android:text="删除"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sp_15" />
+    </LinearLayout>
+
+
 </com.company.iendo.widget.SwipeMenuLayout>
