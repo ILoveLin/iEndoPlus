@@ -55,6 +55,7 @@ public final class ListPopup {
             new ArrowDrawable.Builder(context)
                     .setArrowOrientation(Gravity.TOP)
                     .setArrowGravity(Gravity.RIGHT)
+//                    .setArrowOffsetY((int) getResources().getDimension(R.dimen.dp_10))
                     .setShadowSize((int) getResources().getDimension(R.dimen.dp_10))
                     .setBackgroundColor(0xFFFFFFFF)
                     .apply(recyclerView);
@@ -140,18 +141,24 @@ public final class ListPopup {
             ViewHolder() {
                 super(new TextView(getContext()));
                 mTextView = (TextView) getItemView();
+                mTextView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                mTextView.setGravity(Gravity.CENTER_HORIZONTAL);
                 mTextView.setTextColor(getColor(R.color.black50));
-                mTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.sp_16));
+                mTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.sp_15));
             }
 
             @Override
             public void onBindView(int position) {
                 mTextView.setText(getItem(position).toString());
-
-                mTextView.setPaddingRelative((int) getResources().getDimension(R.dimen.dp_12),
-                        (position == 0 ? (int) getResources().getDimension(R.dimen.dp_12) : 0),
-                        (int) getResources().getDimension(R.dimen.dp_12),
-                        (int) getResources().getDimension(R.dimen.dp_10));
+                mTextView.setPadding((int)getResources().getDimension(R.dimen.dp_6),
+                        (int)getResources().getDimension(R.dimen.dp_6),
+                        (int)getResources().getDimension(R.dimen.dp_6),
+                        (int)getResources().getDimension(R.dimen.dp_6));
+//                mTextView.setPaddingRelative((int) getResources().getDimension(R.dimen.dp_12),
+//                        (position == 0 ? (int) getResources().getDimension(R.dimen.dp_12) : 0),
+//                        (int) getResources().getDimension(R.dimen.dp_12),
+//                        (int) getResources().getDimension(R.dimen.dp_10));
+//                        (int) getResources().getDimension(R.dimen.dp_10));
             }
         }
     }
