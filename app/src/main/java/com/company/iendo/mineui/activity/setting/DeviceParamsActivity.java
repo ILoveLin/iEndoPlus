@@ -2,6 +2,7 @@ package com.company.iendo.mineui.activity.setting;
 
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -30,7 +31,7 @@ import java.util.regex.Pattern;
  * time：2022/1/18 13:50
  * desc：设备参数界面
  */
-public class DeviceParamsActivity extends AppActivity implements StatusAction, OnRangeChangedListener, SwitchButton.OnCheckedChangeListener, TextWatcher, View.OnFocusChangeListener {
+public class DeviceParamsActivity extends AppActivity implements StatusAction, OnRangeChangedListener, SwitchButton.OnCheckedChangeListener, TextWatcher, TextView.OnEditorActionListener {
     private StatusLayout mStatusLayout;
     private RangeSeekBar mBalance;
     private RangeSeekBar mPressure;
@@ -45,6 +46,11 @@ public class DeviceParamsActivity extends AppActivity implements StatusAction, O
     private EditText mEditBalance;
     private EditText mEditPressure;
     private EditText mEditFlow;
+    private boolean mSwitchLightStatus;
+    private boolean mSwitchBloodStatus;
+    private float mBalanceInitData;
+    private float mPressureInitData;
+    private float mFlowInitData;
 
     @Override
     protected int getLayoutId() {
@@ -70,6 +76,7 @@ public class DeviceParamsActivity extends AppActivity implements StatusAction, O
         mFlow = findViewById(R.id.sb_single_flow);
 
         responseListener();
+
     }
 
     private void responseListener() {
@@ -84,14 +91,15 @@ public class DeviceParamsActivity extends AppActivity implements StatusAction, O
         mEditPressure.addTextChangedListener(this);
         mEditFlow.addTextChangedListener(this);
 
-        mEditBalance.setOnFocusChangeListener(this);
-        mEditPressure.setOnFocusChangeListener(this);
-        mEditFlow.setOnFocusChangeListener(this);
+        mEditBalance.setOnEditorActionListener(this);
+        mEditPressure.setOnEditorActionListener(this);
+        mEditFlow.setOnEditorActionListener(this);
+
 
         mTitleBar.setOnTitleBarListener(new OnTitleBarListener() {
             @Override
             public void onLeftClick(View view) {
-
+                finish();
             }
 
             @Override
@@ -109,6 +117,13 @@ public class DeviceParamsActivity extends AppActivity implements StatusAction, O
 
     //重置数据
     private void setInitData() {
+        mDeviceType.setText("" + mCurrentDeviceType);
+        mDeviceCode.setText("" + mCurrentDeviceCode);
+        mSwitchLight.setChecked(mSwitchLightStatus);
+        mSwitchBlood.setChecked(mSwitchBloodStatus);
+        mBalance.setProgress(mBalanceInitData);
+        mPressure.setProgress(mPressureInitData);
+        mFlow.setProgress(mFlowInitData);
 
     }
 
@@ -128,6 +143,11 @@ public class DeviceParamsActivity extends AppActivity implements StatusAction, O
         mPressure.setProgress(50);
         mFlow.setProgress(66);
 
+        mSwitchLightStatus = mSwitchLight.isChecked();
+        mSwitchBloodStatus = mSwitchBlood.isChecked();
+        mBalanceInitData = mBalance.getLeftSeekBar().getProgress();
+        mPressureInitData = mPressure.getLeftSeekBar().getProgress();
+        mFlowInitData = mFlow.getLeftSeekBar().getProgress();
     }
 
     @Override
@@ -157,8 +177,6 @@ public class DeviceParamsActivity extends AppActivity implements StatusAction, O
     public void onStopTrackingTouch(RangeSeekBar view, boolean isLeft) {
         float progress = view.getLeftSeekBar().getProgress();
         String round = (Math.round(progress) + "").replace(".", "");
-
-
         switch (view.getId()) {
             case R.id.sb_single_balance:
                 LogUtils.e("progress==balance==" + round);
@@ -221,31 +239,24 @@ public class DeviceParamsActivity extends AppActivity implements StatusAction, O
 
     }
 
-    /**
-     * 焦点的监听
-     *
-     * @param v
-     * @param hasFocus
-     */
+
     @Override
-    public void onFocusChange(View v, boolean hasFocus) {
+    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
         switch (v.getId()) {
             case R.id.edit_light:
-                if (!hasFocus) {   //失去焦点
-                    mBalance.setProgress(Integer.parseInt(mEditBalance.getText().toString().trim()));
-                }
+                mBalance.setProgress(Integer.parseInt(mEditBalance.getText().toString().trim()));
+                mEditBalance.clearFocus();
                 break;
             case R.id.edit_pressure:
-                if (!hasFocus) {   //失去焦点
-                    mPressure.setProgress(Integer.parseInt(mEditPressure.getText().toString().trim()));
-                }
+                mPressure.setProgress(Integer.parseInt(mEditPressure.getText().toString().trim()));
+                mEditPressure.clearFocus();
                 break;
             case R.id.edit_flow:
-                if (!hasFocus) {   //失去焦点
-                    mFlow.setProgress(Integer.parseInt(mEditFlow.getText().toString().trim()));
-                }
+                mFlow.setProgress(Integer.parseInt(mEditFlow.getText().toString().trim()));
+                mEditFlow.clearFocus();
                 break;
         }
-
+        return true;
     }
+
 }

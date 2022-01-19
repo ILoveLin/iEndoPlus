@@ -4,12 +4,15 @@ import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatImageView;
 
 import com.bumptech.glide.load.MultiTransformation;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.company.iendo.R;
 import com.company.iendo.action.StatusAction;
 import com.company.iendo.app.AppActivity;
@@ -69,7 +72,7 @@ public class HospitalActivity extends AppActivity implements StatusAction {
      * 头像地址
      */
     private Uri mAvatarUrl;
-    private RoundedImageView mAvatarView;
+    private AppCompatImageView mAvatarView;
     private ClearEditText mNumber;
     private ClearEditText mTitle_01;
     private ClearEditText mTitle_02;
@@ -89,6 +92,7 @@ public class HospitalActivity extends AppActivity implements StatusAction {
         mTitlebar = findViewById(R.id.hospital_bar);
         mStatusLayout = findViewById(R.id.status_hint);
         mAvatarView = findViewById(R.id.avatar_view);
+//        mAvatarView = findViewById(R.id.avatar_view);
         mTitle_01 = findViewById(R.id.title_01);
         mTitle_02 = findViewById(R.id.title_02);
         mAddress = findViewById(R.id.address);
@@ -199,6 +203,7 @@ public class HospitalActivity extends AppActivity implements StatusAction {
                     public void onResponse(String response, int id) {
                         showComplete();
                         HospitalBean mBean = mGson.fromJson(response, HospitalBean.class);
+                        LogUtils.e("医院信息===="+response);
                         if ("" != response && 0 == mBean.getCode()) {  //成功
                             mID = mBean.getData().getID();
                             refreshData(mBean.getData());
@@ -225,8 +230,11 @@ public class HospitalActivity extends AppActivity implements StatusAction {
         szPostCode = data.getSzPostCode();
         //http://ip:port/DefaultLogo.jpg
         String szIconPath = HttpConstant.Common + "/" + data.getSzIconPath();
-        GlideApp.with(getActivity())
-                .load(szIconPath)
+
+        // 显示圆角的 ImageView
+        GlideApp.with(this)
+                .load(R.drawable.update_app_top_bg)
+                .transform(new MultiTransformation<>(new CenterCrop(), new RoundedCorners((int) getResources().getDimension(R.dimen.dp_5))))
                 .into(mAvatarView);
 
     }
@@ -318,8 +326,11 @@ public class HospitalActivity extends AppActivity implements StatusAction {
                 LogUtils.e("logo====onError==BBB==" + mAvatarUrl);
 
             }
-            GlideApp.with(getActivity())
+
+            // 显示圆角的 ImageView
+            GlideApp.with(this)
                     .load(mAvatarUrl)
+                    .transform(new MultiTransformation<>(new CenterCrop(), new RoundedCorners((int) getResources().getDimension(R.dimen.dp_5))))
                     .into(mAvatarView);
         }
 

@@ -70,7 +70,7 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
         mUserName = findViewById(R.id.tv_current_name);
         mRelo = findViewById(R.id.tv_current_relo);
         mBaseUrl = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_BaseUrl, "192.168.312.102");
-        setOnClickListener(R.id.tv_text, R.id.params_bar, R.id.hospital_bar, R.id.user_bar, R.id.about_bar, R.id.memory_bar, R.id.password_bar, R.id.exit_bar);
+        setOnClickListener( R.id.params_bar, R.id.hospital_bar, R.id.user_bar, R.id.about_bar, R.id.memory_bar, R.id.password_bar, R.id.exit_bar);
 
     }
 
@@ -106,10 +106,10 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.tv_text:
-                toast("设备参数");
-                startActivity(CopyActivity.class);
-                break;
+//            case R.id.tv_text:
+//                toast("设备参数");
+//                startActivity(CopyActivity.class);
+//                break;
             case R.id.params_bar:
                 startActivity(DeviceParamsActivity.class);
                 break;

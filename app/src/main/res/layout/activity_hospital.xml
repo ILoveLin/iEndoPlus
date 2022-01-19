@@ -37,125 +37,289 @@
                     android:orientation="vertical">
 
                     <RelativeLayout
-                        android:layout_marginTop="@dimen/dp_20"
                         android:id="@+id/relative_top"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dp_20"
                         android:orientation="vertical"
                         android:paddingLeft="@dimen/dp_10"
                         android:paddingRight="@dimen/dp_10">
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:text="头像"
-                            android:textColor="@color/black"
-                            android:textSize="@dimen/sp_16" />
-
-                        <com.makeramen.roundedimageview.RoundedImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+                        <androidx.appcompat.widget.AppCompatImageView
                             android:id="@+id/avatar_view"
-                            android:layout_width="@dimen/dp_100"
-                            android:layout_height="@dimen/dp_100"
-                            android:layout_alignParentRight="true"
-                            android:layout_centerVertical="true"
-                            android:scaleType="fitCenter"
-                            android:src="@drawable/example_bg"
-                            app:riv_border_color="@color/red_500"
-                            app:riv_border_width="@dimen/dp_2"
-                            app:riv_corner_radius="@dimen/dp_50"
-                            app:riv_corner_radius_bottom_left="@dimen/dp_5"
-                            app:riv_corner_radius_bottom_right="@dimen/dp_5"
-                            app:riv_corner_radius_top_left="@dimen/dp_5"
-                            app:riv_corner_radius_top_right="@dimen/dp_5"
-                            app:riv_mutate_background="true"
-                            app:riv_oval="false"
-                            app:riv_tile_mode="repeat" />
+                            android:background="@drawable/shape_bg_device_params"
+                            android:layout_width="@dimen/dp_90"
+                            android:layout_height="@dimen/dp_90"
+                            android:layout_centerInParent="true"
+                            android:layout_marginStart="@dimen/dp_40"
+                            app:srcCompat="@drawable/example_bg"
+                            tools:scaleType="centerCrop" />
+
+                        <!--                        <com.makeramen.roundedimageview.RoundedImageView xmlns:app="http://schemas.android.com/apk/res-auto"-->
+                        <!--                            android:id="@+id/avatar_view"-->
+                        <!--                            android:layout_width="@dimen/dp_100"-->
+                        <!--                            android:layout_height="@dimen/dp_100"-->
+                        <!--                            android:layout_centerInParent="true"-->
+                        <!--                            android:scaleType="fitCenter"-->
+                        <!--                            android:src="@drawable/example_bg"-->
+                        <!--                            app:riv_border_color="@color/red_500"-->
+                        <!--                            app:riv_border_width="@dimen/dp_2"-->
+                        <!--                            app:riv_corner_radius="@dimen/dp_50"-->
+                        <!--                            app:riv_corner_radius_bottom_left="@dimen/dp_5"-->
+                        <!--                            app:riv_corner_radius_bottom_right="@dimen/dp_5"-->
+                        <!--                            app:riv_corner_radius_top_left="@dimen/dp_5"-->
+                        <!--                            app:riv_corner_radius_top_right="@dimen/dp_5"-->
+                        <!--                            app:riv_mutate_background="true"-->
+                        <!--                            app:riv_oval="false"-->
+                        <!--                            app:riv_tile_mode="repeat" />-->
 
                     </RelativeLayout>
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:paddingLeft="@dimen/dp_10"
-                        android:paddingRight="@dimen/dp_10">
+                        android:layout_marginLeft="@dimen/dp_10"
+                        android:layout_marginTop="@dimen/dp_20"
+                        android:layout_marginRight="@dimen/dp_10"
+                        android:layout_marginBottom="@dimen/dp_20"
+                        android:orientation="vertical">
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="主标题"
-                            android:textColor="@color/black"
-                            android:textSize="@dimen/sp_16" />
-
-                        <com.hjq.widget.view.ClearEditText
-                            android:id="@+id/title_01"
+                        <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="@dimen/dp_25"
-                            android:layout_marginTop="@dimen/dp_2"
-                            android:background="@drawable/shape_hosppital" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="副标题"
-                            android:textColor="@color/black"
-                            android:textSize="@dimen/sp_16" />
+                            android:background="@drawable/shape_bg_device_params"
+                            android:orientation="vertical"
+                            android:paddingLeft="@dimen/dp_10"
+                            android:paddingRight="@dimen/dp_10">
 
-                        <com.hjq.widget.view.ClearEditText
-                            android:id="@+id/title_02"
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="@dimen/dp_40"
+                                android:gravity="center_vertical"
+                                android:text="主标题"
+                                android:textColor="@color/black"
+                                android:textSize="@dimen/sp_14" />
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1px"
+                                android:background="@color/colorLine" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/dp_40"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <ImageView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:src="@drawable/ic_icon_maintitle" />
+
+                                <com.hjq.widget.view.ClearEditText
+                                    android:id="@+id/title_01"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="@dimen/dp_25"
+                                    android:layout_marginLeft="@dimen/dp_10"
+                                    android:background="@null"
+                                    android:textColor="@color/color_9A9A9A"
+                                    android:textSize="@dimen/sp_14" />
+                            </LinearLayout>
+
+
+                        </LinearLayout>
+
+
+                        <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="@dimen/dp_25"
-                            android:layout_marginTop="@dimen/dp_2"
-                            android:background="@drawable/shape_hosppital" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="地址"
-                            android:textColor="@color/black"
-                            android:textSize="@dimen/sp_16" />
+                            android:layout_marginTop="@dimen/dp_10"
+                            android:background="@drawable/shape_bg_device_params"
+                            android:orientation="vertical"
+                            android:paddingLeft="@dimen/dp_10"
+                            android:paddingRight="@dimen/dp_10">
 
-                        <com.hjq.widget.view.ClearEditText
-                            android:id="@+id/address"
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="@dimen/dp_40"
+
+                                android:gravity="center_vertical"
+                                android:text="副标题"
+                                android:textColor="@color/black"
+                                android:textSize="@dimen/sp_14" />
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1px"
+                                android:background="@color/colorLine" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/dp_40"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <ImageView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:src="@drawable/ic_icon_subtitle" />
+
+                                <com.hjq.widget.view.ClearEditText
+                                    android:id="@+id/title_02"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="@dimen/dp_25"
+                                    android:layout_marginLeft="@dimen/dp_10"
+                                    android:background="@null"
+                                    android:textColor="@color/color_9A9A9A"
+                                    android:textSize="@dimen/sp_14" />
+                            </LinearLayout>
+
+
+                        </LinearLayout>
+
+                        <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="@dimen/dp_50"
-                            android:layout_marginTop="@dimen/dp_2"
-                            android:background="@drawable/shape_hosppital" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="电话"
-                            android:textColor="@color/black"
-                            android:textSize="@dimen/sp_16" />
+                            android:layout_marginTop="@dimen/dp_10"
+                            android:background="@drawable/shape_bg_device_params"
+                            android:orientation="vertical"
+                            android:paddingLeft="@dimen/dp_10"
+                            android:paddingRight="@dimen/dp_10">
 
-                        <com.hjq.widget.view.ClearEditText
-                            android:id="@+id/phone"
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="@dimen/dp_40"
+                                android:gravity="center_vertical"
+                                android:text="地址"
+                                android:textColor="@color/black"
+                                android:textSize="@dimen/sp_14" />
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1px"
+                                android:background="@color/colorLine" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/dp_40"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <ImageView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:src="@drawable/ic_icon_address" />
+
+                                <com.hjq.widget.view.ClearEditText
+                                    android:id="@+id/address"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="@dimen/dp_25"
+                                    android:layout_marginLeft="@dimen/dp_10"
+                                    android:background="@null"
+                                    android:textColor="@color/color_9A9A9A"
+                                    android:textSize="@dimen/sp_14" />
+                            </LinearLayout>
+
+
+                        </LinearLayout>
+
+
+                        <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="@dimen/dp_25"
-                            android:layout_marginTop="@dimen/dp_2"
-                            android:background="@drawable/shape_hosppital" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="邮编"
-                            android:textColor="@color/black"
-                            android:textSize="@dimen/sp_16" />
+                            android:layout_marginTop="@dimen/dp_10"
+                            android:background="@drawable/shape_bg_device_params"
+                            android:orientation="vertical"
+                            android:paddingLeft="@dimen/dp_10"
+                            android:paddingRight="@dimen/dp_10">
 
-                        <com.hjq.widget.view.ClearEditText
-                            android:id="@+id/number"
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="@dimen/dp_40"
+                                android:gravity="center_vertical"
+                                android:text="电话"
+                                android:textColor="@color/black"
+                                android:textSize="@dimen/sp_14" />
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1px"
+                                android:background="@color/colorLine" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/dp_40"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <ImageView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:src="@drawable/ic_icon_phone" />
+
+                                <com.hjq.widget.view.ClearEditText
+                                    android:id="@+id/phone"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="@dimen/dp_25"
+                                    android:layout_marginLeft="@dimen/dp_10"
+                                    android:background="@null"
+                                    android:textColor="@color/color_9A9A9A"
+                                    android:textSize="@dimen/sp_14" />
+                            </LinearLayout>
+
+
+                        </LinearLayout>
+
+
+                        <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="@dimen/dp_25"
-                            android:layout_marginTop="@dimen/dp_2"
-                            android:background="@drawable/shape_hosppital" />
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/dp_10"
+                            android:background="@drawable/shape_bg_device_params"
+                            android:orientation="vertical"
+                            android:paddingLeft="@dimen/dp_10"
+                            android:paddingRight="@dimen/dp_10">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="@dimen/dp_40"
+                                android:gravity="center_vertical"
+                                android:text="邮编"
+                                android:textColor="@color/black"
+                                android:textSize="@dimen/sp_14" />
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1px"
+                                android:background="@color/colorLine" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/dp_40"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <ImageView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:src="@drawable/ic_icon_zipcode" />
+
+                                <com.hjq.widget.view.ClearEditText
+                                    android:id="@+id/number"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="@dimen/dp_25"
+                                    android:layout_marginLeft="@dimen/dp_10"
+                                    android:background="@null"
+                                    android:textColor="@color/color_9A9A9A"
+                                    android:textSize="@dimen/sp_14" />
+                            </LinearLayout>
+
+
+                        </LinearLayout>
+
 
                     </LinearLayout>
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/dp_250" />
                 </LinearLayout>
 
             </com.company.iendo.widget.StatusLayout>
