@@ -46,6 +46,7 @@ import com.company.iendo.mineui.offline.AFragment;
 import com.company.iendo.other.Constants;
 import com.company.iendo.other.HttpConstant;
 import com.company.iendo.other.KeyboardWatcher;
+import com.company.iendo.ui.dialog.SelectDialog;
 import com.company.iendo.ui.dialog.TipsDialog;
 import com.company.iendo.ui.dialog.WaitDialog;
 import com.company.iendo.ui.popup.ListPopup;
@@ -54,6 +55,7 @@ import com.company.iendo.utils.MD5ChangeUtil;
 import com.company.iendo.utils.ScreenSizeUtil;
 import com.company.iendo.utils.SharePreferenceUtil;
 import com.gyf.immersionbar.ImmersionBar;
+import com.hjq.base.BaseDialog;
 import com.hjq.base.BasePopupWindow;
 import com.hjq.base.action.AnimAction;
 import com.hjq.umeng.Platform;
@@ -67,6 +69,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import okhttp3.Call;
@@ -132,6 +135,7 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
         }
     };
     private int screenWidth;
+    private TextView mLoginType;
 
     private void initRememberPassword() {
 
@@ -196,6 +200,7 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
         mCommitView = findViewById(R.id.btn_login_commit);
         mSettingView = findViewById(R.id.btn_login_setting);
         mDeviceType = findViewById(R.id.btn_device_type);
+        mLoginType = findViewById(R.id.login_type);
         mTopLogoAnim = findViewById(R.id.linear_top_logo);
         mCheckbox = findViewById(R.id.checkbox_remember);
         setOnClickListener(R.id.btn_login_commit, R.id.btn_login_setting, R.id.checkbox_remember, R.id.login_type);
@@ -449,7 +454,7 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                 });
                 break;
             case R.id.login_type:
-                toast("功能待开发!");
+                showLoginType();
                 break;
             case R.id.btn_login_setting:
                 startActivity(DeviceActivity.class);
@@ -459,6 +464,33 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
 
     }
 
+    //选择登录模式
+    private void showLoginType() {
+        //默认是在线登录
+        new SelectDialog.Builder(getActivity())
+                .setTitle("请选择")
+                .setList("在线登录", "离线登录")
+                .setSingleSelect()
+                .setSelect(0)
+                .setListener(new SelectDialog.OnListener() {
+                    @Override
+                    public void onSelected(BaseDialog dialog, HashMap data) {
+                        String string = data.toString();
+                        int size = data.size();
+                        int i = string.indexOf("=");
+                        String value = string.substring(i + 1, string.length() - 1);
+                        LogUtils.e("下载===value=" + value);
+                        if (value.equals("在线登录")) {  //在线登录
+                            mLoginType.setText("在线登录");
+                            SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.OnLine_Flag, true);
+                        } else if (value.equals("离线登录")) {//离线登录
+                            mLoginType.setText("离线登录");
+                            SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.OnLine_Flag, false);
+                        }
+                    }
+                }).show();
+    }
+
     //存点假数据
     private void setTestOffCaseData() {
         List<CaseDBBean> mCaseDBList = CaseDBUtils.queryAll(getActivity());
@@ -466,7 +498,7 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
             for (int i = 0; i < 10; i++) {
                 CaseDBBean caseDBBean = new CaseDBBean();
                 caseDBBean.setDeviceCaseID(i + "");  //用户表和设备表进行绑定, //用户表和设备表进行绑定, //用户表和设备表进行绑定
-                caseDBBean.setName("姓名"+i);    // 姓名
+                caseDBBean.setName("姓名" + i);    // 姓名
                 caseDBBean.setOccupatior(i + "--职业");    // 职业
                 caseDBBean.setRecord_date("2022-01-" + i);    // 创建时间
                 CaseDBUtils.insertOrReplaceInTx(getActivity(), caseDBBean);

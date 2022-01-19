@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:leftIcon="@null"
-        app:title="离线模式-病例列表" />
+        app:title="病例列表" />
 
     <com.donkingliang.groupedadapter.widget.StickyHeaderLayout
         android:id="@+id/sticky_layout"

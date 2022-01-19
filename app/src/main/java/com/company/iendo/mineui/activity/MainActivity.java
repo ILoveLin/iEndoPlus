@@ -14,12 +14,14 @@ import com.company.iendo.R;
 import com.company.iendo.app.AppActivity;
 import com.company.iendo.app.AppFragment;
 import com.company.iendo.manager.ActivityManager;
+import com.company.iendo.mineui.activity.login.LoginActivity;
 import com.company.iendo.mineui.fragment.casemanage.CaseManageFragment;
 import com.company.iendo.mineui.fragment.setting.SettingFragment;
 import com.company.iendo.mineui.offline.AFragment;
 import com.company.iendo.other.DoubleClickHelper;
 import com.company.iendo.ui.adapter.NavigationAdapter;
 import com.company.iendo.ui.fragment.HomeFragment;
+import com.company.iendo.utils.SharePreferenceUtil;
 import com.gyf.immersionbar.ImmersionBar;
 import com.hjq.base.FragmentPagerAdapter;
 import com.hjq.permissions.OnPermissionCallback;
@@ -44,7 +46,8 @@ public class MainActivity extends AppActivity implements NavigationAdapter.OnNav
     private NavigationAdapter mNavigationAdapter;
     private FragmentPagerAdapter<AppFragment<?>> mPagerAdapter;
 
-    private  static  String mCurrentItemID;
+    private static String mCurrentItemID;
+    private Boolean mOnLineFlag;
 
     public static void start(Context context) {
         start(context, HomeFragment.class);
@@ -66,6 +69,7 @@ public class MainActivity extends AppActivity implements NavigationAdapter.OnNav
 
     @Override
     protected void initView() {
+        mOnLineFlag = (Boolean) SharePreferenceUtil.get(MainActivity.this, SharePreferenceUtil.OnLine_Flag, true);
         mViewPager = findViewById(R.id.vp_home_pager);
         mNavigationView = findViewById(R.id.rv_home_navigation);
         mNavigationAdapter = new NavigationAdapter(this);
@@ -81,14 +85,16 @@ public class MainActivity extends AppActivity implements NavigationAdapter.OnNav
         mNavigationView.setAdapter(mNavigationAdapter);
 
 
-
     }
 
     @Override
     protected void initData() {
         mPagerAdapter = new FragmentPagerAdapter<>(this);
-//        mPagerAdapter.addFragment(AFragment.newInstance());
-        mPagerAdapter.addFragment(CaseManageFragment.newInstance());
+        if (mOnLineFlag) {
+            mPagerAdapter.addFragment(CaseManageFragment.newInstance());
+        } else {
+            mPagerAdapter.addFragment(AFragment.newInstance());
+        }
         mPagerAdapter.addFragment(SettingFragment.newInstance());
 //        mPagerAdapter.addFragment(AFragment.newInstance());
         mViewPager.setAdapter(mPagerAdapter);

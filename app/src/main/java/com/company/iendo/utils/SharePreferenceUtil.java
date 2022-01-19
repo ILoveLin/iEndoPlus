@@ -27,6 +27,7 @@ public class SharePreferenceUtil {
     public static final String Current_Host = "host";  // 加了---/---的
 
     public static final String Current_BaseUrl = "BaseUrl";     //末尾不加斜杠  http://192.168.66.42:8008
+    public static final String OnLine_Flag = "OnLine";             //登入方式--true=在线登录,false=离线登录
 
 
     public static final String Current_Login_Role = "login_role";  //登录用户的role  权限
@@ -56,7 +57,7 @@ public class SharePreferenceUtil {
     public static final String Current_Type = "Current_Type";                        //设备类型  --一体机 ,耳鼻喉治疗台等等类型
     public static final String Current_EndoType = "Current_EndoType";                //工作站类型
     /**
-     *mDeviceCode  mDBBean.getDeviceName----这个是智能搜索之后返回过来的设备码
+     * mDeviceCode  mDBBean.getDeviceName----这个是智能搜索之后返回过来的设备码
      * 需要再搜索完成后创建dialog的时候设置上去,不然为null
      */
     public static final String Current_DeviceCode = "Current_DeviceCode";             //设备码--后台返回
