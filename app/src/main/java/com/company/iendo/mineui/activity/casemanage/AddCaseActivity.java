@@ -256,6 +256,7 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
         mParamsMap.put("Name", et_01_name.getText().toString().trim());
         mParamsMap.put("UserName", UserName);
         mParamsMap.put("EndoType", endoType);
+        mParamsMap.put("UserID", mUserID);
         mParamsMap.put("Tel", Tel);
         mParamsMap.put("Address", Address);
         mParamsMap.put("CardID", CardID);

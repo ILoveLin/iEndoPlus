@@ -47,6 +47,7 @@ public abstract class AppActivity extends BaseActivity
     public Gson mGson;
     public String mBaseUrl;  //当前用户的头部url
     public String endoType;
+    public String mUserID;
 
     /**
      * 当前加载对话框是否在显示中
@@ -109,6 +110,7 @@ public abstract class AppActivity extends BaseActivity
 
         mBaseUrl = (String) SharePreferenceUtil.get(AppActivity.this, SharePreferenceUtil.Current_BaseUrl, "192.167.132.102");
         endoType = (String) SharePreferenceUtil.get(AppActivity.this, SharePreferenceUtil.Current_EndoType, "3");
+        mUserID = (String) SharePreferenceUtil.get(AppActivity.this, SharePreferenceUtil.Current_Login_UserID, "3");
 
 
         // 初始化沉浸式状态栏

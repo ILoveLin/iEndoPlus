@@ -379,12 +379,14 @@
                             app:rsb_indicator_show_mode="alwaysShow"
                             app:rsb_indicator_text_size="@dimen/sp_10"
                             app:rsb_mode="single"
+
                             app:rsb_progress_color="@color/color_25A5FF"
                             app:rsb_progress_default_color="@color/rsbColorSeekBarDefault"
                             app:rsb_thumb_drawable="@drawable/thumb_activated"
                             app:rsb_thumb_inactivated_drawable="@drawable/thumb_inactivated"
                             app:rsb_tick_mark_mode="number" />
-
+<!--                        app:rsb_thumb_width="@dimen/dp_10"-->
+<!--                        app:rsb_thumb_height="@dimen/dp_10"-->
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"

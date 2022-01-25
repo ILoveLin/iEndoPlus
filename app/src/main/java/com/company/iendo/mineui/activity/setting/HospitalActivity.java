@@ -152,6 +152,7 @@ public class HospitalActivity extends AppActivity implements StatusAction {
             OkHttpUtils.post()
                     .url(mBaseUrl+HttpConstant.CaseManager_CaseUpdateHospitalInfo)
                     .addParams("ID", mID)
+                    .addParams("UserID", mUserID)
                     .addParams("szHospital", mTitle_01.getText().toString().trim())
                     .addParams("szSlave", mTitle_02.getText().toString().trim())
                     .addParams("szAddress", mAddress.getText().toString().trim())

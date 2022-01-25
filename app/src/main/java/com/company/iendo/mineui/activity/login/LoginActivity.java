@@ -537,9 +537,7 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
         EventBus.getDefault().unregister(this);
-
     }
 
     /**
@@ -584,7 +582,6 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
         objectAnimator.setDuration(mAnimTime);
         objectAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
         objectAnimator.start();
-
         // 执行缩小动画
         mTopLogoAnim.setPivotX(mTopLogoAnim.getWidth() / 2f);
         mTopLogoAnim.setPivotY(mTopLogoAnim.getHeight());

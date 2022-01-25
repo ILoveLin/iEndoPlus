@@ -90,6 +90,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
     private ClearEditText lines_edit_01_i_tell_you;
     private ClearEditText lines_edit_01_i_bad_tell;
     private CaseDetailBean.DataDTO mDataBean;
+    private String mUserName;
 
     public static DetailFragment newInstance() {
         return new DetailFragment();
@@ -106,6 +107,8 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         mBaseUrl = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_BaseUrl, "192.168.132.102");
         mDeviceID = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_DeviceID, "");
         mUserID = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_Login_UserID, "");
+        mUserName = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_Login_UserName, "Admin");
+
         currentItemCaseID = MainActivity.getCurrentItemID();
         initLayoutViewDate();
         setEditStatus();
@@ -628,6 +631,9 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         OkHttpUtils.post()
                 .url(mBaseUrl + HttpConstant.CaseManager_DeleteCase)
                 .addParams("ID", mBean.getData().getID() + "")
+                .addParams("UserName", mUserName)
+                .addParams("EndoType", endoType)
+                .addParams("UserID", mUserID)
                 .build()
                 .execute(new StringCallback() {
                     @Override
@@ -1154,6 +1160,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         mParamsMap.put("CaseNo", et_01_check_num.getText().toString().trim());
         mParamsMap.put("UserName", UserName);
         mParamsMap.put("EndoType", EndoType);
+        mParamsMap.put("UserID", mUserID);
         mParamsMap.put("Tel", Tel);
         mParamsMap.put("Address", Address);
         mParamsMap.put("CardID", CardID);
