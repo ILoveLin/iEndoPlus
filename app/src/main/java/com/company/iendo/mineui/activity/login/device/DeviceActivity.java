@@ -178,13 +178,20 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                     } else if ("扫一扫".equals(str)) {
                         GoToZXingInput();
                     } else {
-                        showSearchLayout(R.raw.anim_search_loading04, R.string.status_layout_search, new StatusLayout.OnDismissListener() {
-                            @Override
-                            public void onDismiss(StatusLayout layout) {
-                                toast("取消了~~~");
-                                showComplete();
-                            }
-                        });
+                        boolean show = mStatusLayout.isShow();
+                        if (!mStatusLayout.isShow()){
+                            showSearchLayout(R.raw.anim_search_loading04, R.string.status_layout_search, new StatusLayout.OnDismissListener() {
+                                @Override
+                                public void onDismiss(StatusLayout layout) {
+                                    toast("取消了~~~");
+                                    showComplete();
+                                }
+                            });
+                        }else {
+                            toast("稍安勿躁,搜索中...");
+
+                        }
+
                     }
                 })
                 .showAsDropDown(view);
