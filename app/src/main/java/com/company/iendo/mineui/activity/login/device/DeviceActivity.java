@@ -1,6 +1,7 @@
 package com.company.iendo.mineui.activity.login.device;
 
 import android.content.Intent;
+import android.view.Gravity;
 import android.view.View;
 
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -27,6 +28,7 @@ import com.hjq.bar.OnTitleBarListener;
 import com.hjq.bar.TitleBar;
 import com.hjq.base.BaseAdapter;
 import com.hjq.base.BaseDialog;
+import com.hjq.base.action.AnimAction;
 import com.hjq.permissions.OnPermissionCallback;
 import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
@@ -174,11 +176,12 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                 .setList("搜一搜", "扫一扫", "填一填")
                 .setListener((ListPopup.OnListener<String>) (popupWindow, position, str) -> {
                     if ("填一填".equals(str)) {
+                        showComplete();
                         showMultiDialog(str);
                     } else if ("扫一扫".equals(str)) {
+                        showComplete();
                         GoToZXingInput();
                     } else {
-                        boolean show = mStatusLayout.isShow();
                         if (!mStatusLayout.isShow()){
                             showSearchLayout(R.raw.anim_search_loading04, R.string.status_layout_search, new StatusLayout.OnDismissListener() {
                                 @Override
@@ -189,14 +192,14 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                             });
                         }else {
                             toast("稍安勿躁,搜索中...");
-
                         }
-
                     }
                 })
+                .setGravity(Gravity.CENTER_VERTICAL)
+                .setAutoDismiss(true)
+                .setOutsideTouchable(false) //80dp
+                .setAnimStyle(AnimAction.ANIM_SCALE)
                 .showAsDropDown(view);
-
-
     }
 
     private void GoToZXingInput() {
