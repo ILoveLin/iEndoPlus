@@ -12,6 +12,10 @@ import androidx.annotation.NonNull;
 import com.company.iendo.R;
 import com.company.iendo.action.StatusAction;
 import com.company.iendo.app.AppActivity;
+import com.company.iendo.mineui.socket.BroadCastDataBean;
+import com.company.iendo.mineui.socket.SocketDataBean;
+import com.company.iendo.mineui.socket.SocketManage;
+import com.company.iendo.utils.CalculateUtils;
 import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.SharePreferenceUtil;
 import com.company.iendo.widget.StatusLayout;
@@ -22,6 +26,8 @@ import com.hjq.widget.view.SwitchButton;
 import com.jaygoo.widget.OnRangeChangedListener;
 import com.jaygoo.widget.RangeSeekBar;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -76,6 +82,51 @@ public class DeviceParamsActivity extends AppActivity implements StatusAction, O
         mFlow = findViewById(R.id.sb_single_flow);
 
         responseListener();
+
+
+        /**
+         * 模拟测试
+         */
+        SocketManage.setOnSocketListener(new SocketManage.OnSocketListener() {
+            @Override
+            public void onSuccess(SocketDataBean bean) {
+                LogUtils.e("SocketManage回调==onSuccess===" + bean.getData());
+            }
+
+            @Override
+            public void onFailed(Throwable throwable) {
+                LogUtils.e("SocketManage回调==onFailed===" + throwable);
+
+            }
+        });
+
+        SocketManage.startAsyncReceive(7006);
+        InetAddress inetAddress = null;
+        try {
+            inetAddress = InetAddress.getByName(SEND_IP);
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+
+        BroadCastDataBean bean = new BroadCastDataBean();
+        bean.setBroadcaster("szcme");                              //设备名字
+        bean.setRamdom(CalculateUtils.getCurrentTimeString());
+        byte[] sendByteData = CalculateUtils.getSendByteData(this, bean, "FF",
+                "00000000000000000000000000000000", "FD");
+        LogUtils.e("sendByteData====" + sendByteData);
+        SocketManage.startSendMessageBySocket(sendByteData, inetAddress, 7006, true);
+
+
+    }
+
+//    private static String SEND_IP = "192.168.64.13";
+
+    private static String SEND_IP = "255.255.255.255";
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        SocketManage.setIsRuning(true);
 
     }
 
@@ -259,4 +310,10 @@ public class DeviceParamsActivity extends AppActivity implements StatusAction, O
         return true;
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        SocketManage.setIsRuning(false);
+        SocketManage.closeReceiveSocket();
+    }
 }
