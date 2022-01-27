@@ -107,11 +107,7 @@ public class SocketManage {
     }
 
 
-    /**
-     * @param data        UDP发包数据(<16进制字符串>--转--<字节数组>)
-     * @param inetAddress 接收端的intAddress
-     * @param sendPort    接收端的port
-     */
+
 //    public static void startSendMessageBySocket(String data, InetAddress inetAddress, int sendPort, Boolean isBroadcast) {
 //
 //
@@ -125,15 +121,20 @@ public class SocketManage {
 //        }
 //
 //    }
-    public static void startSendMessageBySocket(byte[] data, InetAddress inetAddress, int sendPort, Boolean isBroadcast) {
+    /**
+     * @param data        字节数组
+     * @param receiveInetAddress 接收端的intAddress
+     * @param receivePort    接收端的port
+     */
+    public static void startSendMessageBySocket(byte[] data, InetAddress receiveInetAddress, int receivePort, Boolean isBroadcast) {
 
 
         easyCacheThread = ThreadManager.getCache();
         if (isBroadcast) {//发送广播
-            getSendBroadcastRunnable(data, inetAddress, sendPort);
+            getSendBroadcastRunnable(data, receiveInetAddress, receivePort);
             easyCacheThread.execute(mSendBroadcastRunnable);
         } else {  //点对点消息
-            getSendSocketRunnable(data, inetAddress, sendPort);
+            getSendSocketRunnable(data, receiveInetAddress, receivePort);
             easyCacheThread.execute(mSendRunnable);
         }
 

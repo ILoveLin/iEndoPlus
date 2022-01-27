@@ -22,23 +22,35 @@ import com.airbnb.lottie.LottieAnimationView;
 import com.company.iendo.R;
 
 /**
- *    author : Android 轮子哥
- *    github : https://github.com/getActivity/AndroidProject
- *    time   : 2019/04/18
- *    desc   : 状态布局（网络错误，异常错误，空数据）
+ * author : Android 轮子哥
+ * github : https://github.com/getActivity/AndroidProject
+ * time   : 2019/04/18
+ * desc   : 状态布局（网络错误，异常错误，空数据）
  */
 public final class StatusLayout extends FrameLayout {
 
-    /** 主布局 */
+    /**
+     * 主布局
+     */
     private ViewGroup mMainLayout;
-    /** 提示图标 */
+    /**
+     * 提示图标
+     */
     private LottieAnimationView mLottieView;
-    /** 提示文本 */
+    /**
+     * 提示文本
+     */
     private TextView mTextView;
-    /** 重试按钮 */
+    /**
+     * 重试按钮
+     */
     private TextView mRetryView;
-    /** 重试监听 */
+    private TextView mDismissView;
+    /**
+     * 重试监听
+     */
     private OnRetryListener mListener;
+    private OnDismissListener mDismissListener;
 
     public StatusLayout(@NonNull Context context) {
         this(context, null);
@@ -146,6 +158,7 @@ public final class StatusLayout extends FrameLayout {
         mLottieView = mMainLayout.findViewById(R.id.iv_status_icon);
         mTextView = mMainLayout.findViewById(R.id.iv_status_text);
         mRetryView = mMainLayout.findViewById(R.id.iv_status_retry);
+        mDismissView = mMainLayout.findViewById(R.id.iv_status_dismiss);
 
         if (mMainLayout.getBackground() == null) {
             // 默认使用 windowBackground 作为背景
@@ -154,7 +167,7 @@ public final class StatusLayout extends FrameLayout {
             mMainLayout.setClickable(true);
             typedArray.recycle();
         }
-
+        mDismissView.setOnClickListener(mClickDismissWrapper);
         mRetryView.setOnClickListener(mClickWrapper);
 
         addView(mMainLayout);
@@ -166,7 +179,17 @@ public final class StatusLayout extends FrameLayout {
     public void setOnRetryListener(OnRetryListener listener) {
         mListener = listener;
         if (isShow()) {
+            mDismissView.setVisibility(mDismissListener == null ? View.INVISIBLE : View.INVISIBLE);
             mRetryView.setVisibility(mListener == null ? View.INVISIBLE : View.VISIBLE);
+
+        }
+    }
+
+    public void setOnDismissListener(OnDismissListener listener) {
+        mDismissListener = listener;
+        if (isShow()) {
+            mRetryView.setVisibility(mListener == null ? View.INVISIBLE : View.INVISIBLE);
+            mDismissView.setVisibility(mDismissListener == null ? View.INVISIBLE : View.VISIBLE);
         }
     }
 
@@ -183,6 +206,16 @@ public final class StatusLayout extends FrameLayout {
             mListener.onRetry(StatusLayout.this);
         }
     };
+    private final OnClickListener mClickDismissWrapper = new OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            if (mDismissListener == null) {
+                return;
+            }
+            mDismissListener.onDismiss(StatusLayout.this);
+        }
+    };
 
     /**
      * 重试监听器
@@ -193,5 +226,16 @@ public final class StatusLayout extends FrameLayout {
          * 点击了重试
          */
         void onRetry(StatusLayout layout);
+    }
+
+    /**
+     * 重试监听器
+     */
+    public interface OnDismissListener {
+
+        /**
+         * 点击了重试
+         */
+        void onDismiss(StatusLayout layout);
     }
 }

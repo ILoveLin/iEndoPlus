@@ -116,7 +116,7 @@ public class DeviceParamsActivity extends AppActivity implements StatusAction, O
         LogUtils.e("sendByteData====" + sendByteData);
         SocketManage.startSendMessageBySocket(sendByteData, inetAddress, 7006, true);
 
-
+        String receiveDataString = CalculateUtils.getReceiveDataString("");
     }
 
 //    private static String SEND_IP = "192.168.64.13";

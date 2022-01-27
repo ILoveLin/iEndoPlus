@@ -4,6 +4,8 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.view.View;
+import android.widget.TextView;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.RawRes;
@@ -14,10 +16,10 @@ import com.company.iendo.R;
 import com.company.iendo.widget.StatusLayout;
 
 /**
- *    author : Android 轮子哥
- *    github : https://github.com/getActivity/AndroidProject
- *    time   : 2019/12/08
- *    desc   : 状态布局意图
+ * author : Android 轮子哥
+ * github : https://github.com/getActivity/AndroidProject
+ * time   : 2019/12/08
+ * desc   : 状态布局意图
  */
 public interface StatusAction {
 
@@ -76,6 +78,28 @@ public interface StatusAction {
         }
         showLayout(R.drawable.status_error_ic, R.string.status_layout_error_request, listener);
     }
+
+    /**
+     * 显示自定义搜索
+     */
+    default void showSearchLayout(@RawRes int drawableId, @StringRes int stringId, StatusLayout.OnDismissListener listener) {
+        StatusLayout layout = getStatusLayout();
+        Context context = layout.getContext();
+        showSearchLayout(drawableId, context.getString(stringId),listener);
+    }
+
+    default void showSearchLayout(@RawRes int drawableId, CharSequence hint,StatusLayout.OnDismissListener listener) {
+
+        StatusLayout layout = getStatusLayout();
+        layout.show();
+        layout.setAnimResource(drawableId);
+        layout.setHint("");
+        layout.setOnDismissListener(listener);
+
+    }
+
+
+
 
     /**
      * 显示自定义提示

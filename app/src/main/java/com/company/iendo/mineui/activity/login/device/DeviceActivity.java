@@ -171,13 +171,20 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
     private void showSelectDialog(View view) {
         // 菜单弹窗
         new ListPopup.Builder(this)
-                .setList("扫一扫", "填一填")
+                .setList("搜一搜", "扫一扫", "填一填")
                 .setListener((ListPopup.OnListener<String>) (popupWindow, position, str) -> {
                     if ("填一填".equals(str)) {
                         showMultiDialog(str);
-                    } else {
+                    } else if ("扫一扫".equals(str)) {
                         GoToZXingInput();
-
+                    } else {
+                        showSearchLayout(R.raw.anim_search_loading04, R.string.status_layout_search, new StatusLayout.OnDismissListener() {
+                            @Override
+                            public void onDismiss(StatusLayout layout) {
+                                toast("取消了~~~");
+                                showComplete();
+                            }
+                        });
                     }
                 })
                 .showAsDropDown(view);

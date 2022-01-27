@@ -5,7 +5,10 @@ import android.util.Log;
 import android.view.ContextThemeWrapper;
 
 import com.company.iendo.mineui.socket.BroadCastDataBean;
+import com.company.iendo.mineui.socket.SocketDataBean;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.hjq.gson.factory.GsonFactory;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -126,11 +129,11 @@ public class CalculateUtils {
     /**
      * 获取发送数据的16进制字符串--转--字节数组的byte
      *
-     * @param mContext
-     * @param bean          mData的bean对象,N字节,其中包含broadcaster：广播发起者名称,ramdom:广播发起随机时间戳
-     * @param Received_Type 接收方设备类型(字节):00-工作站， 01-HD3摄像机，02-冷光源，03-气腹机，04-冲洗机，05-4K摄像机，06-耳鼻喉控制板，07-一代一体机，8-耳鼻喉治疗台，9-妇科治疗台，10-泌尿治疗台A0-iOS，A1-Android,FF-所有设备
-     * @param Received_ID   接收方设备唯一标识,16字节,32位,不够补0
-     * @param CMD           控制命令，1字节0xFF（即0-255）不同设备控制命令可雷同
+     * @param mContext      :上下文
+     * @param bean          :mData的bean对象,N字节，其中包含，broadcaster：广播发起者名称,ramdom:广播发起随机时间戳
+     * @param Received_Type :接收方设备类型(1字节):00-工作站， 01-HD3摄像机，02-冷光源，03-气腹机，04-冲洗机，05-4K摄像机，06-耳鼻喉控制板，07-一代一体机，8-耳鼻喉治疗台，9-妇科治疗台，10-泌尿治疗台，A0-iOS，A1-Android，FF-所有设备
+     * @param Received_ID   :接收方设备唯一标识,16字节，32位,不够补0
+     * @param CMD           :控制命令，1字节0xFF（即0-255）不同设备控制命令可雷同
      * @return
      */
 
@@ -147,7 +150,7 @@ public class CalculateUtils {
         String mHead = "AAC5";                                             //帧头    ---2字节
         String mVer = "01";                                                //版本号  ---1字节
         String mLength = CalculateUtils.getLength(mData);                  //长度   ---2字节   40加data的长度 字符串的长度转成hex进制
-        String mRandom = CalculateUtils.getRandomHexString(4);         // //随机数  ---1字节
+        String mRandom = CalculateUtils.getRandomHexString(2);         // //随机数  ---1字节
         String mCMD_ID = "FF";                                              //命令ID   ---2字节-暂时规定,主动发起方为FF 接收方为随机值,PS--移动端目前交互写死值=FF
         String mSend_Type = "A1";                                           //发送方设备类型。--1字节-Android=A1  FF为所有设备
         String mSend_ID = mSend_IDBy32;                                     //发送方设备唯一标识。   --16字节
@@ -157,19 +160,40 @@ public class CalculateUtils {
         // 校验和，0xAA 依次与“Length、Random、CMD_ID、Send_Type、Send_ID、Received_Type、Received_ID、CMD、Data” 异或运算后的结果
         String CSString = "AA" + mLength + mRandom + mCMD_ID + mSend_Type + mSend_ID + mReceived_Type + mReceived_ID + mCMD + mData;
         String mCheck_Sum = CalculateUtils.get16HexXORData(CSString).toUpperCase();
+
+        sendCommandString = mHead + mVer + mLength + mRandom + mCMD_ID + mSend_Type + mSend_ID + mReceived_Type +
+                mReceived_ID + mCMD + mData + mCheck_Sum + "DD";
         LogUtils.e("UDP==命令===mBeanString===" + mBean);
         LogUtils.e("UDP==命令===mBeanHex----===" + CalculateUtils.str2HexStr(mBean));
         LogUtils.e("UDP==命令===mRandom===" + mRandom);
         LogUtils.e("UDP==命令===异或的CSString===" + CSString);
         LogUtils.e("UDP==命令===异或的结果===" + mCheck_Sum);
-        sendCommandString = mHead + mVer + mLength + mRandom + mCMD_ID + mSend_Type + mSend_ID + mReceived_Type +
-                mReceived_ID + mCMD + mData + mCheck_Sum + "DD";
         LogUtils.e("UDP==命令===发送的String===" + sendCommandString);
         byte[] bytes = CalculateUtils.hexString2Bytes(sendCommandString);
+        //AAC5 01 0059 EE22 FF A1 f9432b11b93e8bb4ae34539b7472c20e FF 00000000000000000000000000000000
+        //FD 7B2262726F6164636173746572223A22737A636D65222C2272616D646F6D223A223230323230313237313132373535227D
+        // F8 DD
         return bytes;
     }
 
+    /**
+     * 获取接收socket的数据--data
+     * @param str  传入接收指令所有长度的,16进制的string
+     * @return
+     */
+    public static String getReceiveDataString(String str) {
+//        String str = "AAC5010059D8FFA1f9432b11b93e8bb4ae34539b7472c20eFF00000000000000000000000000000000FD7B2262726F6164636173746572223A22737A636D65222C2272616D646F6D223A223230323230313237313133353130227DEEDD";
+        String substring = str.substring(82 + 2, str.length() - 4);
+        LogUtils.e("UDP==命令===获取到data的HexString=====" + substring);
+        String s1 = hexStr2Str(substring);
+        LogUtils.e("UDP==命令===获取到data的String=====" + s1);
+//        Gson gson = GsonFactory.getSingletonGson();
+//        BroadCastDataBean bean = gson.fromJson(s1, BroadCastDataBean.class);
+//        LogUtils.e("UDP==命令===bean=====" + bean.getBroadcaster());
+//        LogUtils.e("UDP==命令===bean=====" + bean.getRamdom());
+        return substring;
 
+    }
     /*************************************************************计算协议数据的个方法***********************************************************************/
 
 
