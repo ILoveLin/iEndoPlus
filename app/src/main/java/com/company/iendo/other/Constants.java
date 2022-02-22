@@ -13,10 +13,16 @@ public class Constants {
     public static final String Is_Logined = "is_logined";          //是否已经登入   false  未登录
 
 
-
     public static final String IS_Admin = "IS_Admin";          //是否创建了admin用户
 
     //系统和请求头
     public static final String Token = "token";
     public static final String Device = "android";
+
+    public static final String BROADCASTER = "szcme";                //广播发起者名称--暂时固定szcme
+    public static final String BROADCAST_IP = "255.255.255.255";      //广播地址
+    public static final int BROADCAST_PORT = 8005;               //广播约定端口
+    public static final int RECEIVE_PORT = 8005;                 //本地监听端口
+
+
 }

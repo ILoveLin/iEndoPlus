@@ -152,7 +152,7 @@ public final class GuideActivity extends AppActivity {
      * 用户协议dialog 不然上不了应用市场
      */
     private void showUserAgreementDialog() {
-        SpannableString textSpanned1 = new SpannableString("在你使用CME Player之前，请你认真阅读并了解《CME Player用户协议》和《CME Player隐私权政策》,点击同意即表示你已阅读并且了解。");
+        SpannableString textSpanned1 = new SpannableString("在你使用CME Player之前，请你认真阅读并了解《iEndo用户协议》和《iEndo隐私权政策》,点击同意即表示你已阅读并且了解。");
         //设置颜色
         textSpanned1.setSpan(new ForegroundColorSpan(Color.BLUE),
                 26, 42, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);

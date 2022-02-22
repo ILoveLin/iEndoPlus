@@ -456,7 +456,7 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
             case R.id.login_type:
                 showLoginType();
                 break;
-            case R.id.btn_login_setting:
+            case R.id.btn_login_setting: //设备管理界面
                 startActivity(DeviceActivity.class);
                 break;
         }

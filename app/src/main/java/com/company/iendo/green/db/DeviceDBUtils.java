@@ -63,6 +63,18 @@ public class DeviceDBUtils {
 
     }
 
+    //条件查询
+    //精确查询  获取到bean
+    public static DeviceDBBean getQueryBeanByCode(Context context, String code) {
+        DeviceDBBeanDao deviceDBBeanDao = DBManager.getDaoSession(context).getDeviceDBBeanDao();
+
+        DeviceDBBean queryBean = deviceDBBeanDao.queryBuilder().where(DeviceDBBeanDao.Properties.DeviceCode.eq(code)).unique();
+
+        return queryBean;
+
+    }
+
+
     /**
      * @param context
      * @param id

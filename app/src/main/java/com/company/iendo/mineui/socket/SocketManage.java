@@ -1,8 +1,17 @@
 package com.company.iendo.mineui.socket;
 
+import android.app.Activity;
+import android.content.Context;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.util.Log;
 
+import com.company.iendo.green.db.DaoMaster;
+import com.company.iendo.other.Constants;
+import com.company.iendo.utils.CalculateUtils;
 import com.company.iendo.utils.LogUtils;
+import com.company.iendo.utils.db.DBManager;
+import com.company.iendo.utils.db.MyOpenHelper;
 import com.lzh.easythread.AsyncCallback;
 import com.lzh.easythread.EasyThread;
 
@@ -10,7 +19,9 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
 
 /**
  * company：江西神州医疗设备有限公司
@@ -39,97 +50,174 @@ public class SocketManage {
     static {
         LogUtils.e("======SocketManage=====static==");
         isRuning = true;
+
     }
 
-    public static void startAsyncReceive(int port) {
-        easyFixed2Thread = ThreadManager.getIO();
+    private static SocketManage mSocketManage;
+    private static String currentIP;
 
-        // 异步执行任务
-        Callable<SocketDataBean> callable = new Callable<SocketDataBean>() {
+    public static SocketManage getSocketManageInstance() {
+        if (null == mSocketManage) {
+            synchronized (SocketManage.class) {
+                if (null == mSocketManage) {
+                    mSocketManage = new SocketManage();
+                }
+            }
+        }
+
+        return mSocketManage;
+    }
+
+    private SocketManage() {
+        LogUtils.e("正在执行Runnable任务：%s====SocketManage====创建了");
+        isRuning = true;
+        easyCacheThread = ThreadManager.getCache();
+        easyFixed2Thread = ThreadManager.getIO();
+    }
+
+    /**
+     * 开启一个异步回调监听
+     */
+//    public static void startAsyncReceive(int port) {
+//        easyFixed2Thread = ThreadManager.getIO();
+//
+//        // 异步执行任务
+//        Callable<String> callable = new Callable<String>() {
+//            @Override
+//            public String call() throws Exception {
+//                LogUtils.e("正在执行Runnable任务：%s" + Thread.currentThread().getName());
+//                byte[] receiveData = new byte[1024];
+//                DatagramPacket mReceivePacket = new DatagramPacket(receiveData, receiveData.length);
+//                try {
+//                    mReceiveSocket = new DatagramSocket(port);
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//                while (true) {
+//                    if (isRuning) {
+//                        try {
+//                            LogUtils.e("======SocketManage=====000==");
+//                            mReceiveSocket.receive(mReceivePacket);
+//                            LogUtils.e("======SocketManage=====111==");
+//                            if (mReceivePacket != null) {
+////                                SocketDataBean socketDataBean = new SocketDataBean();
+////                                socketDataBean.setData("" + mReceivePacket.getData());
+//                                LogUtils.e("startAsyncReceive==receivedata===" + mReceivePacket.getData());
+//                                return mReceivePacket.getData() + "";
+//                            }
+//                        } catch (IOException e) {
+//                            e.printStackTrace();
+//                        }
+//
+//                    }
+//                }
+//
+//            }
+//        };
+//
+//        // 异步回调
+//        AsyncCallback<String> async = new AsyncCallback<String>() {
+//            @Override
+//            public void onSuccess(String str) {
+//                // notify success;
+//                LogUtils.e("======SocketManage=====onSuccess==" + str);
+//                if (null != mListener) {
+//                    mListener.onSuccess(str);
+//                }
+//
+//            }
+//
+//            @Override
+//            public void onFailed(Throwable t) {
+//                // notify failed.
+//                LogUtils.e("======SocketManage=====onFailed==");
+//                if (null != mListener) {
+//                    mListener.onFailed(t);
+//                }
+//
+//            }
+//        };
+//
+//        // 启动异步任务
+//        easyFixed2Thread.async(callable, async);
+//
+//    }
+
+    /**
+     * 开启一个普通回调监听
+     */
+    public static void startNorReceive(int port, Activity activity) {
+        //Wifi状态判断
+        WifiManager wifiManager = (WifiManager) activity.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        if (wifiManager.isWifiEnabled()) {
+            WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+            currentIP = getIpString(wifiInfo.getIpAddress());
+        }
+//        easyFixed2Thread = ThreadManager.getIO();
+        mReceiveRunnable = new Runnable() {
             @Override
-            public SocketDataBean call() throws Exception {
+            public void run() {
                 LogUtils.e("正在执行Runnable任务：%s" + Thread.currentThread().getName());
                 byte[] receiveData = new byte[1024];
                 DatagramPacket mReceivePacket = new DatagramPacket(receiveData, receiveData.length);
                 try {
-                    mReceiveSocket = new DatagramSocket(port);
+                    mReceiveSocket = new DatagramSocket(port);  //本地监听的端口
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
                 while (true) {
                     if (isRuning) {
                         try {
-                            LogUtils.e("======SocketManage=====000==");
-                            mReceiveSocket.receive(mReceivePacket);
-                            LogUtils.e("======SocketManage=====111==");
-                            if (mReceivePacket != null) {
-                                SocketDataBean socketDataBean = new SocketDataBean();
-                                socketDataBean.setData("" + mReceivePacket.getData());
-                                LogUtils.e("startAsyncReceive==receivedata===" + mReceivePacket.getData());
-                                return socketDataBean;
+                            LogUtils.e("======ReceiveThread=====000==");
+                            LogUtils.e("======ReceiveThread=====mReceivePacket.getAddress()==" + mReceivePacket.getAddress());
+                            LogUtils.e("======ReceiveThread=====currentIP==" + currentIP);
+                            if (!currentIP.equals(mReceivePacket.getAddress())) {   //不是自己的IP不接受
+                                mReceiveSocket.receive(mReceivePacket);
+                                String rec = CalculateUtils.byteArrayToHexString(mReceivePacket.getData()).trim();
+                                //过滤不是发送给我的消息全部不接受
+                                int dd = rec.indexOf("DD");
+                                String strdata = rec.substring(0, dd + 2);
+                                LogUtils.e("======ReceiveThread=====接受到数据==原始数据==" + strdata);
+                                LogUtils.e("======ReceiveThread=====3333==" + mReceivePacket.getData());
+                                if (!"".equals(strdata)) {
+                                    LogUtils.e("======ReceiveThread=====66666==");
+                                    activity.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            if (null != mListener) {
+                                                LogUtils.e("======ReceiveThread=====发送回调==");
+                                                if (CalculateUtils.getDataIfForMe(strdata, activity)) {
+                                                    mListener.onSuccess(strdata);
+                                                }
+                                            }
+                                        }
+                                    });
+                                }
+
                             }
+
+
                         } catch (IOException e) {
                             e.printStackTrace();
+                            if (null != mListener) {
+                                mListener.onFailed(e);
+                            }
                         }
 
                     }
                 }
-
             }
         };
-
-        // 异步回调
-        AsyncCallback<SocketDataBean> async = new AsyncCallback<SocketDataBean>() {
-            @Override
-            public void onSuccess(SocketDataBean bean) {
-                // notify success;
-                LogUtils.e("======SocketManage=====onSuccess==" + bean.getData());
-                if (null != mListener) {
-                    mListener.onSuccess(bean);
-                }
-
-            }
-
-            @Override
-            public void onFailed(Throwable t) {
-                // notify failed.
-                LogUtils.e("======SocketManage=====onFailed==");
-                if (null != mListener) {
-                    mListener.onFailed(t);
-                }
-
-            }
-        };
-
-        // 启动异步任务
-        easyFixed2Thread.async(callable, async);
-
+        easyFixed2Thread.execute(mReceiveRunnable);
     }
 
 
-
-//    public static void startSendMessageBySocket(String data, InetAddress inetAddress, int sendPort, Boolean isBroadcast) {
-//
-//
-//        easyCacheThread = ThreadManager.getCache();
-//        if (isBroadcast) {//发送广播
-//            getSendBroadcastRunnable(data, inetAddress, sendPort);
-//            easyCacheThread.execute(mSendBroadcastRunnable);
-//        } else {  //点对点消息
-//            getSendSocketRunnable(data, inetAddress, sendPort);
-//            easyCacheThread.execute(mSendRunnable);
-//        }
-//
-//    }
     /**
-     * @param data        字节数组
+     * @param data               字节数组
      * @param receiveInetAddress 接收端的intAddress
-     * @param receivePort    接收端的port
+     * @param receivePort        接收端的port
      */
     public static void startSendMessageBySocket(byte[] data, InetAddress receiveInetAddress, int receivePort, Boolean isBroadcast) {
-
-
-        easyCacheThread = ThreadManager.getCache();
         if (isBroadcast) {//发送广播
             getSendBroadcastRunnable(data, receiveInetAddress, receivePort);
             easyCacheThread.execute(mSendBroadcastRunnable);
@@ -155,10 +243,19 @@ public class SocketManage {
                 try {
 //                    byte[] sendData = data.getBytes();
                     DatagramPacket mSendPacket = new DatagramPacket(data, data.length, inetAddress, sendPort);
-                    mSendBroadcastSocket = new DatagramSocket();
-                    mSendBroadcastSocket.send(mSendPacket);
-                    mSendBroadcastSocket.setBroadcast(true);
-                    mSendBroadcastSocket.close();
+                    for (int i = 0; i < 5; i++) {
+                        LogUtils.e("发送消息==广播==" + sendPort);
+                        Thread.sleep(2000);
+                        //固定端口
+//                      mSendBroadcastSocket = new DatagramSocket(null);
+//                      mSendBroadcastSocket.bind(new InetSocketAddress(8005));
+                        //随机端口
+                        mSendBroadcastSocket = new DatagramSocket();
+                        mSendBroadcastSocket.send(mSendPacket);
+                        mSendBroadcastSocket.setBroadcast(true);
+                        mSendBroadcastSocket.close();
+                    }
+
                 } catch (Exception e) {
 
                 }
@@ -183,7 +280,8 @@ public class SocketManage {
                 try {
 //                    byte[] sendData = data.getBytes();
                     DatagramPacket mSendPacket = new DatagramPacket(data, data.length, inetAddress, sendPort);
-                    for (int i = 0; i < 2; i++) {
+                    for (int i = 0; i < 5; i++) {
+                        LogUtils.e("发送消息==点对点==" + sendPort);
                         mSendSocket = new DatagramSocket();
                         mSendSocket.send(mSendPacket);
                         mSendSocket.close();
@@ -197,6 +295,7 @@ public class SocketManage {
     }
 
     /**
+     * 1,
      * 关闭接收线程的socket
      */
     public static void closeReceiveSocket() {
@@ -206,6 +305,7 @@ public class SocketManage {
     }
 
     /**
+     * 2
      * 是否接收信息
      *
      * @param status true为接收
@@ -214,22 +314,37 @@ public class SocketManage {
         isRuning = status;
     }
 
-
+    /***
+     * 备注!!!
+     * 备注!!!
+     * 1,2两个方法都不使用的时候,不会出现退出界面两次之后接收不到数据
+     * 所以这两个方法直接不适用就好
+     * 备注!!!
+     * 备注!!!
+     */
     /**
      * 回调监听
      */
-    public interface OnSocketListener {
-        void onSuccess(SocketDataBean bean);
+    public interface OnSocketReceiveListener {
+        void onSuccess(String str);
 
         void onFailed(Throwable throwable);
 
+
     }
 
-    public static void setOnSocketListener(OnSocketListener listener) {
+    public static void setOnSocketReceiveListener(OnSocketReceiveListener listener) {
         mListener = listener;
     }
 
-    private static OnSocketListener mListener;
+    private static OnSocketReceiveListener mListener;
 
+    /**
+     * 将获取到的int型ip转成string类型
+     */
+    private static String getIpString(int i) {
+        return (i & 0xFF) + "." + ((i >> 8) & 0xFF) + "."
+                + ((i >> 16) & 0xFF) + "." + (i >> 24 & 0xFF);
+    }
 
 }

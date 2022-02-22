@@ -14,7 +14,9 @@ import com.company.iendo.bean.RefreshEvent;
 import com.company.iendo.green.db.DeviceDBBean;
 import com.company.iendo.green.db.DeviceDBUtils;
 import com.company.iendo.mineui.activity.ZXingActivity;
+import com.company.iendo.mineui.activity.casemanage.ImageReportActivity;
 import com.company.iendo.mineui.activity.login.device.adapter.DeviceAdapter;
+import com.company.iendo.mineui.activity.login.device.search.DeviceSearchActivity;
 import com.company.iendo.ui.dialog.InputDeviceDialog;
 import com.company.iendo.ui.dialog.MessageDialog;
 import com.company.iendo.ui.dialog.ModifyDeviceDialog;
@@ -182,17 +184,19 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                         showComplete();
                         GoToZXingInput();
                     } else {
-                        if (!mStatusLayout.isShow()){
-                            showSearchLayout(R.raw.anim_search_loading04, R.string.status_layout_search, new StatusLayout.OnDismissListener() {
-                                @Override
-                                public void onDismiss(StatusLayout layout) {
-                                    toast("取消了~~~");
-                                    showComplete();
-                                }
-                            });
-                        }else {
-                            toast("稍安勿躁,搜索中...");
-                        }
+                        startActivity(DeviceSearchActivity.class);
+//                        startActivity(ImageReportActivity.class);
+//                        if (!mStatusLayout.isShow()){
+//                            showSearchLayout(R.raw.anim_search_loading04, R.string.status_layout_search, new StatusLayout.OnDismissListener() {
+//                                @Override
+//                                public void onDismiss(StatusLayout layout) {
+//                                    toast("取消了~~~");
+//                                    showComplete();
+//                                }
+//                            });
+//                        }else {
+//                            toast("稍安勿躁,搜索中...");
+//                        }
                     }
                 })
                 .setGravity(Gravity.CENTER_VERTICAL)

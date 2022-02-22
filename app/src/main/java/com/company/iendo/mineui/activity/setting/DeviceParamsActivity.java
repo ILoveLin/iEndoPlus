@@ -83,40 +83,42 @@ public class DeviceParamsActivity extends AppActivity implements StatusAction, O
 
         responseListener();
 
-
-        /**
-         * 模拟测试
-         */
-        SocketManage.setOnSocketListener(new SocketManage.OnSocketListener() {
-            @Override
-            public void onSuccess(SocketDataBean bean) {
-                LogUtils.e("SocketManage回调==onSuccess===" + bean.getData());
-            }
-
-            @Override
-            public void onFailed(Throwable throwable) {
-                LogUtils.e("SocketManage回调==onFailed===" + throwable);
-
-            }
-        });
-
-        SocketManage.startAsyncReceive(7006);
-        InetAddress inetAddress = null;
-        try {
-            inetAddress = InetAddress.getByName(SEND_IP);
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
-
-        BroadCastDataBean bean = new BroadCastDataBean();
-        bean.setBroadcaster("szcme");                              //设备名字
-        bean.setRamdom(CalculateUtils.getCurrentTimeString());
-        byte[] sendByteData = CalculateUtils.getSendByteData(this, bean, "FF",
-                "00000000000000000000000000000000", "FD");
-        LogUtils.e("sendByteData====" + sendByteData);
-        SocketManage.startSendMessageBySocket(sendByteData, inetAddress, 7006, true);
-
-        String receiveDataString = CalculateUtils.getReceiveDataString("");
+//
+//        /**
+//         * 模拟测试
+//         */
+//        SocketManage.setOnSocketReceiveListener(new SocketManage.OnSocketReceiveListener() {
+//            @Override
+//            public void onSuccess(String str) {
+//                LogUtils.e("SocketManage回调==onSuccess===" +str);
+//            }
+//
+//            @Override
+//            public void onFailed(Throwable throwable) {
+//                LogUtils.e("SocketManage回调==onFailed===" + throwable);
+//
+//            }
+//        });
+//
+//        SocketManage.startAsyncReceive(7006);
+//        InetAddress inetAddress = null;
+//        try {
+//            inetAddress = InetAddress.getByName(SEND_IP);
+//        } catch (UnknownHostException e) {
+//            e.printStackTrace();
+//        }
+//
+//
+//
+//        BroadCastDataBean bean = new BroadCastDataBean();
+//        bean.setBroadcaster("szcme");                              //设备名字
+//        bean.setRamdom(CalculateUtils.getCurrentTimeString());
+//        byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(bean), "FF",
+//                "00000000000000000000000000000000", "FD");
+//        LogUtils.e("sendByteData====" + sendByteData);
+//        SocketManage.startSendMessageBySocket(sendByteData, inetAddress, 7006, true);
+//
+//        String receiveDataString = CalculateUtils.getReceiveDataString("");
     }
 
 //    private static String SEND_IP = "192.168.64.13";
