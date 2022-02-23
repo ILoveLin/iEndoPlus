@@ -50,6 +50,7 @@ import com.company.iendo.ui.dialog.SelectDialog;
 import com.company.iendo.ui.dialog.TipsDialog;
 import com.company.iendo.ui.dialog.WaitDialog;
 import com.company.iendo.ui.popup.ListPopup;
+import com.company.iendo.utils.CalculateUtils;
 import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.MD5ChangeUtil;
 import com.company.iendo.utils.ScreenSizeUtil;
@@ -624,9 +625,9 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
         LogUtils.e("========当前设备的备注信息~~~~====LoginActivity==onResume===");
         mBaseUrl = (String) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Current_BaseUrl, "http://192.168.1.200:3000");
         LogUtils.e("========当前设备的备注信息~~~~====LoginActivity==mBaseUrl===" + mBaseUrl);
-        postDelayed(() -> {
-            sendRequest(mBaseUrl);
-        }, 500);
+//        postDelayed(() -> {
+//            sendRequest(mBaseUrl);
+//        }, 500);
 
         String mType = (String) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Current_Type, "耳鼻喉治疗台");
         mDeviceType.setText("" + mType);
@@ -638,6 +639,16 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
          */
         //选择设备之后,回到此界面默认会写记住密码的第一个用户
         initRememberPassword();
+
+        String str = "EE0700000000000000005618B1F96D92837CA1F9432B11B93E8BB4AE34539B7472C20EFD7B227469746C65223A2241494F2D454E54222C2272656D61726B223A2231E58FB7E58685E9959CE5AEA4222C22656E646F74797065223A2233222C22616363657074223A2231227D";
+        String strr = "AAC5 01 006A 22 EE 07 00000000000000005618B1F96D92837Ca1 f9432b11b93e8bb4ae34539b7472c20e FD 7b227469746c65223a2241494f2d454e54222c2272656d61726b223a226f6e65686f6d65222c22656e646f74797065223a2233222c22616363657074223a2230227db4DD";
+
+        int fd = str.indexOf("FD");
+        String substring = str.substring(fd);
+        LogUtils.e("========当前设备的备注信息~~~~====LoginActivity==fd===" + fd);
+        LogUtils.e("========当前设备的备注信息~~~~====LoginActivity==fd=substring==" + substring);
+        String currentCMD = CalculateUtils.getCMD(strr);
+        LogUtils.e("SocketManage回调==currentCMD===" + currentCMD);
 
     }
 

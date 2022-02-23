@@ -97,22 +97,25 @@ public class DeviceAdapter extends AppAdapter<DeviceDBBean> {
                 mMsgChose.setVisibility(View.INVISIBLE);
 
             }
-            switch (mDBBean.getType()) {
-                case "一代一体机":
-                    mImageChose.setImageResource(R.drawable.icon_yitiji);
-                    break;
-                case "耳鼻喉治疗台":
-                    mImageChose.setImageResource(R.drawable.icon_erbihou);
+            if (null!=mDBBean.getType()){
+                switch (mDBBean.getType()) {
+                    case "一代一体机":
+                        mImageChose.setImageResource(R.drawable.icon_yitiji);
+                        break;
+                    case "耳鼻喉治疗台":
+                        mImageChose.setImageResource(R.drawable.icon_erbihou);
 
-                    break;
-                case "妇科治疗台":
-                    mImageChose.setImageResource(R.drawable.icon_shenzhou4k);
+                        break;
+                    case "妇科治疗台":
+                        mImageChose.setImageResource(R.drawable.icon_shenzhou4k);
 
-                    break;
-                case "泌尿治疗台":
-                    mImageChose.setImageResource(R.drawable.icon_shenzhou4k);
-                    break;
+                        break;
+                    case "泌尿治疗台":
+                        mImageChose.setImageResource(R.drawable.icon_shenzhou4k);
+                        break;
+                }
             }
+
 //            http://192.168.64.28:7001/ID/FilePath
 //            Log.e("adapter", "" + "Path:" + bean.getFilePath());
 //            mTextView.setText("Path:" + mDBBean.getMsg());

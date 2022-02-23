@@ -31,10 +31,15 @@ public class BroadCastReceiveBean {
 
 
     private Boolean mSelected;    //自己添加的字段 是否选中
+    private String ip;               //自己添加的字段 数据来源的ip地址值
+    private String receiveType;    //接收方设备类型----广播回调获取到什么设备发来的消息,发送接入消息的时候,需要发到receiveType这个设备里去
+    private String receiveID;    //接收方设备类型----广播回调获取到什么设备发来的消息,发送接入消息的时候,需要发到receiveType这个设备里去
     private String deviceType;    //自己添加的字段 设备类型,后续bean对象存入数据库,更具此字段,设置默认值
-    private String deviceCode;    //自己添加的字段 这个是智能搜索之后返回过来的设备码     Send_ID
-    private String itemId;      //标识,点击选中和未选中状态切换
-    private Boolean inDB;       //是否存入数据库
+    private String deviceCode;    //自己添加的字段 这个是智能搜索之后返回过来的设备码     和receiveID字段一样的
+    private String itemId;        //标识,点击选中和未选中状态切换
+    private Boolean inDB;           //是否存入数据库
+    private Boolean isCheckAccess;       //需要登入密码的情况下,是否检验接入过,true表示校验接入过,false表示没有
+
 
     public String getTitle() {
         return title;
@@ -109,6 +114,30 @@ public class BroadCastReceiveBean {
         this.itemId = itemId;
     }
 
+    public Boolean getCheckAccess() {
+        return isCheckAccess;
+    }
+
+    public void setCheckAccess(Boolean checkAccess) {
+        isCheckAccess = checkAccess;
+    }
+
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
+
+    public String getReceiveID() {
+        return receiveID;
+    }
+
+    public void setReceiveID(String receiveID) {
+        this.receiveID = receiveID;
+    }
+
     @Override
     public String toString() {
         return "BroadCastReceiveBean{" +
@@ -118,11 +147,23 @@ public class BroadCastReceiveBean {
                 ", accept='" + accept + '\'' +
                 ", pinAccess='" + pinAccess + '\'' +
                 ", mSelected=" + mSelected +
+                ", ip='" + ip + '\'' +
+                ", receiveType='" + receiveType + '\'' +
+                ", receiveID='" + receiveID + '\'' +
                 ", deviceType='" + deviceType + '\'' +
                 ", deviceCode='" + deviceCode + '\'' +
                 ", itemId='" + itemId + '\'' +
                 ", inDB=" + inDB +
+                ", isCheckAccess=" + isCheckAccess +
                 '}';
+    }
+
+    public String getReceiveType() {
+        return receiveType;
+    }
+
+    public void setReceiveType(String receiveType) {
+        this.receiveType = receiveType;
     }
 
     public Boolean getInDB() {

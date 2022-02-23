@@ -19,10 +19,11 @@ import java.util.List;
  */
 public class DeviceDBUtils {
 
-    //插入或者替换,如果没有,插入,如果有,替换
+    //插入或者替换,如果没有,插入,如果有,替换  --传入的对象主键如果存在于数据库中，有则更新，否则插入
     public static void insertOrReplaceInTx(Context context, DeviceDBBean bean) {
         DBManager.getDaoSession(context).getDeviceDBBeanDao().insertOrReplaceInTx(bean);
     }
+
 
     //插入或者替换,如果没有,插入,如果有,替换
     public static void insertOrReplace(Context context, DeviceDBBean bean) {
@@ -63,14 +64,79 @@ public class DeviceDBUtils {
 
     }
 
+
     //条件查询
     //精确查询  获取到bean
-    public static DeviceDBBean getQueryBeanByCode(Context context, String code) {
+    public static DeviceDBBean getQueryBeanByCode(Context context, String code, String Type) {
         DeviceDBBeanDao deviceDBBeanDao = DBManager.getDaoSession(context).getDeviceDBBeanDao();
+        Query<DeviceDBBean> query = deviceDBBeanDao.queryBuilder().where(DeviceDBBeanDao.Properties.DeviceCode.eq(
+                code)).build();
+        List<DeviceDBBean> beanList = query.list();
+        if ("0".equals(beanList.size())) {
+            return null;
+        } else {
+            for (int i = 0; i < beanList.size(); i++) {
+                boolean type = (Type).equals(beanList.get(i).getType());
+                if (type) {
+                    return beanList.get(i);
+                } else {
+                    return null;
+                }
+            }
+            return null;
 
-        DeviceDBBean queryBean = deviceDBBeanDao.queryBuilder().where(DeviceDBBeanDao.Properties.DeviceCode.eq(code)).unique();
+        }
 
-        return queryBean;
+
+//        DeviceDBBean unique = deviceDBBeanDao.queryBuilder().where(DeviceDBBeanDao.Properties.DeviceCode.eq(code)).unique();
+//        if (null == unique) {
+//            return null;
+//        } else {
+//            boolean type = (Type).equals(unique.getType());     // code 存在并且,type存在--返回bean对象,说明数据库有该条数据
+//            if (type) {
+//                return unique;
+//            } else {
+//                return null;
+//            }
+//        }
+
+
+    }
+
+    //条件查询
+    //精确查询  获取到bean
+    public static DeviceDBBean getQueryBeanByType(Context context, String code, String Type) {
+
+        DeviceDBBeanDao deviceDBBeanDao = DBManager.getDaoSession(context).getDeviceDBBeanDao();
+        Query<DeviceDBBean> query = deviceDBBeanDao.queryBuilder().where(DeviceDBBeanDao.Properties.Type.eq(
+                Type)).build();
+        List<DeviceDBBean> beanList = query.list();
+        if ("0".equals(beanList.size())) {
+            return null;
+        } else {
+            for (int i = 0; i < beanList.size(); i++) {
+                boolean codeFlag = (code).equals(beanList.get(i).getDeviceCode());
+                if (codeFlag) {
+                    return beanList.get(i);
+                } else {
+                    return null;
+                }
+            }
+            return null;
+        }
+
+//        DeviceDBBeanDao deviceDBBeanDao = DBManager.getDaoSession(context).getDeviceDBBeanDao();
+//        DeviceDBBean unique = deviceDBBeanDao.queryBuilder().where(DeviceDBBeanDao.Properties.Type.eq(Type)).unique();
+//        if (null == unique) {
+//            return null;
+//        } else {
+//            boolean deviceCode = (code).equals(unique.getDeviceCode());     // code 存在并且,type存在--返回bean对象,说明数据库有该条数据
+//            if (deviceCode) {
+//                return unique;
+//            } else {
+//                return null;
+//            }
+//        }
 
     }
 

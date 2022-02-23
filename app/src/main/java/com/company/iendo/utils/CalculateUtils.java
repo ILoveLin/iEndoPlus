@@ -81,12 +81,95 @@ public class CalculateUtils {
     }
 
     /**
+     * * Send_Type(Received_Type)	发送(接收方)方设备类型
+     * * 设备类型：
+     * * 00-工作站， 01-HD3摄像机，02-冷光源，03-气腹机，04-冲洗机，
+     * * 05-4K摄像机，06-耳鼻喉控制板，07-一代一体机，8-耳鼻喉治疗台，
+     * * 9-妇科治疗台，10-泌尿治疗台，A0-iOS，A1-Android
+     * * FF-所有设备
+     * * 更多设备类型依次类推，平台最大可连接255种受控设备
+     *
+     * @param string从随机之开始到校验和处结束的String
+     * @return
+     */
+    public static String getDeviceTypeFromRoom(String string) {
+        //字符串--48位--50位表示的是设备类型
+
+        if (!("".equals(string)) && string.length() >= 38) {
+            String str = string.substring(2, 4);
+            String result = null;
+            if ("00".equals(str)) {
+                result = "工作站";
+            } else if ("01".equals(str)) {
+                result = "HD3摄像机";
+            } else if ("02".equals(str)) {
+                result = "冷光源";
+            } else if ("03".equals(str)) {
+                result = "气腹机";
+            } else if ("04".equals(str)) {
+                result = "冲洗机";
+            } else if ("05".equals(str)) {
+                result = "4K摄像机";
+            } else if ("06".equals(str)) {
+                result = "耳鼻喉控制板";
+            } else if ("07".equals(str)) {
+                result = "一代一体机";
+            } else if ("8".equals(str)) {
+                result = "耳鼻喉治疗台";
+            } else if ("9".equals(str)) {
+                result = "妇科治疗台";
+            } else if ("10".equals(str)) {
+                result = "泌尿治疗台";
+            } else if ("A0".equals(str)) {
+                result = "iOS";
+            } else if ("A1".equals(str)) {
+                result = "Android";
+            } else {
+                result = str;
+
+            }
+            return result;
+
+        }
+        return "null";
+
+    }
+
+    /**
+     * 获取协议---命令cmd---然后处理不同socket回调转换数据bean
+     */
+    public static String getCMD(String string) {
+//        AAC501006A22EE0700000000000000005618B1F96D92837Ca1f9432b11b93e8bb4ae34539b7472c20eFD7b227469746c65223a2241494f2d454e54222c2272656d61726b223a226f6e65686f6d65222c22656e646f74797065223a2233222c22616363657074223a2230227db4DD
+        //字符串--50位--66位表示的是设备类型
+        if (!("".equals(string)) && string.length() >= 83) {
+            String str = string.substring(82, 84);
+            return str;
+
+        }
+        return "";
+    }
+
+    /**
      * 获取发送方设备id ---唯一表示
      */
     public static String getDeviceOnlyCode(String string) {
         //字符串--50位--66位表示的是设备类型
+        if (!("".equals(string)) && string.length() >= 70) {
+            String str = string.substring(58, 70);
+            return str;
+
+        }
+        return "";
+    }
+
+    /**
+     * 获取发送方设备id ---唯一表示
+     * 从随机之开始到Data结束的String
+     */
+    public static String getDeviceOnlyCodeFromRoom(String string) {
+        //字符串--50位--66位表示的是设备类型
         if (!("".equals(string)) && string.length() >= 66) {
-            String str = string.substring(50, 82);
+            String str = string.substring(38, 70);
             return str;
 
         }
@@ -229,7 +312,7 @@ public class CalculateUtils {
     /**
      * 16进制直接转换成为字符串(无需Unicode解码)
      *
-     * @param hexStr
+     * @param hexStr 字母必须为大写
      * @return
      */
     public static String hexStr2Str(String hexStr) {
@@ -360,14 +443,110 @@ public class CalculateUtils {
         return substring;
 
     }
+
     /**
-     * 获取接收socket的数据--随机数之后到DD结尾的String
+     * 获取接收socket的数据--data
+     *
+     * @param str 传入接收指令所有长度为(命令id主从机---命令id主从机)包含这两者,16进制的string
+     * @return
+     */
+    public static String getReceiveDataStringFromRoomForBroadCast(String str) {
+//        String str = "EE0700000000000000005618B1F96D92837Ca1f9432b11b93e8bb4ae34539b7472c20eFD7b227469746c65223a2241494f2d454e
+//        54222c2272656d61726b223a226f6e65686f6d65222c22656e646f74797065223a2233222c22616363657074223a2230227d==192.168.132.102";
+        int i = str.indexOf("==");
+        LogUtils.e("UDP==命令===获取到data的HexString==str===" + str);
+        LogUtils.e("UDP==命令===获取到data的HexString==str===" + str);
+
+        String substring = str.substring(72, i);
+
+        LogUtils.e("UDP==命令===获取到data的HexString==FromRoom===" + substring);
+        String s1 = hexStr2Str(substring);
+        LogUtils.e("UDP==命令===获取到data的String==FromRoom===" + s1);
+//        Gson gson = GsonFactory.getSingletonGson();
+//        BroadCastDataBean bean = gson.fromJson(s1, BroadCastDataBean.class);
+//        LogUtils.e("UDP==命令===bean=====" + bean.getBroadcaster());
+//        LogUtils.e("UDP==命令===bean=====" + bean.getRamdom());
+        return substring;
+
+    }
+    /**
+     * 获取接收socket的数据--data
+     *
+     * @param str 传入接收指令所有长度为(命令id主从机---命令id主从机)包含这两者,16进制的string
+     * @return
+     */
+    public static String getReceiveDataStringFromRoomForPoint(String str) {
+//        String str = "EE0700000000000000005618B1F96D92837Ca03399cbe9a32d4786abf24e39d3cad576FC7b226970223a223139322e3136382e36342e3133
+//        222c227a7074223a2237373838222c226964223a22726f6f74222c227077223a22726f6f74222c2266726f6d223a2241494f2d454e54222c22737470223a22
+//        38303035222c22687074223a2237303031222c2272656d61726b223a2231E58FB7E58685E9959CE5AEA4222c2274797065223a223037222c226574223a2233
+//        222c22726574636f6465223a2230227dd5DD==192.168.132";
+        int i = str.indexOf("==");
+        LogUtils.e("UDP==命令===获取到data的HexString==str===" + str);
+        LogUtils.e("UDP==命令===获取到data的HexString==str===" + str);
+
+        String substring = str.substring(72, i-4);
+
+        LogUtils.e("UDP==命令===获取到data的HexString==ForPoint===" + substring);
+        String s1 = hexStr2Str(substring);
+        LogUtils.e("UDP==命令===获取到data的String==ForPoint===" + s1);
+//        Gson gson = GsonFactory.getSingletonGson();
+//        BroadCastDataBean bean = gson.fromJson(s1, BroadCastDataBean.class);
+//        LogUtils.e("UDP==命令===bean=====" + bean.getBroadcaster());
+//        LogUtils.e("UDP==命令===bean=====" + bean.getRamdom());
+        return substring;
+
+    }
+    /**
+     * 获取接收socket的数据--data
+     *
+     * @param str 传入接收指令所有长度为(命令id主从机---命令id主从机)包含这两者,16进制的string
+     * @return
+     */
+    public static String getReceiveType(String str) {
+//     String str = "EE0700000000000000005618B1F96D92837CA1F9432B11B93E8BB4AE34539B7472C20EFD7B227469746C65223A2241494F2D454E54222C2272656D61726B223A2231E58FB7E58685E9959CE5AEA4222C22656E646F74797065223A2233222C22616363657074223A2231227D";
+
+        String substring = str.substring(2, 4);
+        LogUtils.e("UDP==命令===getReceiveType===" + substring);
+
+        return substring;
+
+    }
+    /**
+     * 获取接收socket的数据--data
+     *
+     * @param str 传入接收指令所有长度为(命令id主从机---命令id主从机)包含这两者,16进制的string
+     * @return
+     */
+    public static String getSendID(String str) {
+//      String str = "EE0700000000000000005618B1F96D92837CA1F9432B11B93E8BB4AE34539B7472C20EFD7B227469746C65223A2241494F2D454E54222C2272656D61726B223A2231E58FB7E58685E9959CE5AEA4222C22656E646F74797065223A2233222C22616363657074223A2231227D";
+        String substring = str.substring(4, 36);
+        LogUtils.e("UDP==命令===getReceiveID===" + substring);
+
+        return substring;
+
+    }
+    /**
+     * 获取接收socket的数据--data
+     *
+     * @param str 传入接收指令所有长度为(命令id主从机---命令id主从机)包含这两者,16进制的string
+     * @return
+     */
+    public static String getReceiveID(String str) {
+//      String str = "EE0700000000000000005618B1F96D92837CA1F9432B11B93E8BB4AE34539B7472C20EFD7B227469746C65223A2241494F2D454E54222C2272656D61726B223A2231E58FB7E58685E9959CE5AEA4222C22656E646F74797065223A2233222C22616363657074223A2231227D";
+        String substring = str.substring(4, 36);
+        LogUtils.e("UDP==命令===getReceiveID===" + substring);
+
+        return substring;
+
+    }
+    /**
+     * 获取接收socket的数据--随机数之后到data结尾的String
      *
      * @param str 传入接收指令所有长度的,16进制的string
      * @return
      */
-    public static String getReceiveRun2DDString(String str) {
-//        String str = "AAC5 01 0059 D8 FF A1f9432b11b93e8bb4ae34539b7472c20eFF00000000000000000000000000000000FD7B2262726F6164636173746572223A22737A636D65222C2272616D646F6D223A223230323230313237313133353130227DEEDD";
+    public static String getReceiveRun2End4String(String str) {
+//      String str = "AAC501006A22 EE0700000000000000005618B1F96D92837Ca1f9432b11b93e8bb4ae34539b7472c20eFD7b227469746c65223a2241494f2d454e54222c2272656d61726b223a226f6e65686f6d65222c22656e646f74797065223a2233222c22616363657074223a2230227d b4DD";
         String substring = str.substring(12, str.length() - 4);
         LogUtils.e("UDP==命令===获取到data的HexString=====" + substring);
         String s1 = hexStr2Str(substring);

@@ -25,4 +25,11 @@ public class Constants {
     public static final int RECEIVE_PORT = 8005;                 //本地监听端口
 
 
+    /**
+     * 协议命令cmd-->用来区分那个socket回调的消息
+     */
+    public static final String UDP_FD = "FD";                 //网络发现（UDP广播）
+    public static final String UDP_FC = "FC";                 //授权接入
+
+
 }

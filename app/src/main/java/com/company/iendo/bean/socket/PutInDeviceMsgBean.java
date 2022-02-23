@@ -9,32 +9,65 @@ import com.google.gson.annotations.SerializedName;
  * desc：授权接入成功之后返回的数据Bean
  */
 public class PutInDeviceMsgBean {
+
+
     /**
-     * Id:RTSP直播的账号id；
-     * Pw:RTSP直播的账号密码；
-     * from:设备名称
-     * IP：RTSP直播IP地址；
-     * Zpt:RTSP直播端口号；
-     * Stp:socke udp接收端口；
-     * Type:设备类型
-     * Et:科室类型
+     *    Id:RTSP直播的账号id；
+     *     Pw:RTSP直播的账号密码；
+     *     from:设备名称
+     *     IP：RTSP直播IP地址；
+     *     Zpt:RTSP直播端口号；
+     *     Stp:socke udp接收端口；
+     *     Remark：备注
+     *     Hpt：node js 服务端口
+     *     Type:设备类型
+     *     Et:科室类型
+     *     retcode:授权返回码 0:接入成功 1：密码错误 2：不准接入
+     *     16进制的json
+     *     7b226970223a223139322e3136382e36342e3133222c227a7074223a2237373838222c226964223a22726f6f74222c227077223a22726f6f74222c2266726f6d223a2241494f2d454e54222c22737470223a2238303035222c22687074223a2237303031222c2272656d61726b223a2231E58FB7E58685E9959CE5AEA4222c2274797065223a223037222c226574223a2233222c22726574636f6465223a2230227d
      */
+
+
+
+
+    @SerializedName("ip")
+    private String ip;
+    @SerializedName("zpt")
+    private String zpt;
     @SerializedName("id")
     private String id;
     @SerializedName("pw")
     private String pw;
     @SerializedName("from")
     private String from;
-    @SerializedName("ip")
-    private String ip;
-    @SerializedName("zpt")
-    private String zpt;
-    @SerializedName("spt")
-    private String spt;
+    @SerializedName("stp")
+    private String stp;
+    @SerializedName("hpt")
+    private String hpt;
+    @SerializedName("remark")
+    private String remark;
     @SerializedName("type")
     private String type;
     @SerializedName("et")
     private String et;
+    @SerializedName("retcode")
+    private String retcode;
+
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
+
+    public String getZpt() {
+        return zpt;
+    }
+
+    public void setZpt(String zpt) {
+        this.zpt = zpt;
+    }
 
     public String getId() {
         return id;
@@ -60,28 +93,28 @@ public class PutInDeviceMsgBean {
         this.from = from;
     }
 
-    public String getIp() {
-        return ip;
+    public String getStp() {
+        return stp;
     }
 
-    public void setIp(String ip) {
-        this.ip = ip;
+    public void setStp(String stp) {
+        this.stp = stp;
     }
 
-    public String getZpt() {
-        return zpt;
+    public String getHpt() {
+        return hpt;
     }
 
-    public void setZpt(String zpt) {
-        this.zpt = zpt;
+    public void setHpt(String hpt) {
+        this.hpt = hpt;
     }
 
-    public String getSpt() {
-        return spt;
+    public String getRemark() {
+        return remark;
     }
 
-    public void setSpt(String spt) {
-        this.spt = spt;
+    public void setRemark(String remark) {
+        this.remark = remark;
     }
 
     public String getType() {
@@ -100,17 +133,28 @@ public class PutInDeviceMsgBean {
         this.et = et;
     }
 
+    public String getRetcode() {
+        return retcode;
+    }
+
+    public void setRetcode(String retcode) {
+        this.retcode = retcode;
+    }
+
     @Override
     public String toString() {
         return "PutInDeviceMsgBean{" +
-                "id='" + id + '\'' +
+                "ip='" + ip + '\'' +
+                ", zpt='" + zpt + '\'' +
+                ", id='" + id + '\'' +
                 ", pw='" + pw + '\'' +
                 ", from='" + from + '\'' +
-                ", ip='" + ip + '\'' +
-                ", zpt='" + zpt + '\'' +
-                ", spt='" + spt + '\'' +
+                ", stp='" + stp + '\'' +
+                ", hpt='" + hpt + '\'' +
+                ", remark='" + remark + '\'' +
                 ", type='" + type + '\'' +
                 ", et='" + et + '\'' +
+                ", retcode='" + retcode + '\'' +
                 '}';
     }
 }

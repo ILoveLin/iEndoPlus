@@ -4,24 +4,15 @@ import android.app.Activity;
 import android.content.Context;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
-import android.util.Log;
 
-import com.company.iendo.green.db.DaoMaster;
-import com.company.iendo.other.Constants;
 import com.company.iendo.utils.CalculateUtils;
 import com.company.iendo.utils.LogUtils;
-import com.company.iendo.utils.db.DBManager;
-import com.company.iendo.utils.db.MyOpenHelper;
-import com.lzh.easythread.AsyncCallback;
 import com.lzh.easythread.EasyThread;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.util.concurrent.Callable;
-import java.util.concurrent.TimeUnit;
 
 /**
  * company：江西神州医疗设备有限公司
@@ -145,6 +136,9 @@ public class SocketManage {
 
     /**
      * 开启一个普通回调监听
+     * <p>
+     * 具体是那个socket的回调通过
+     * 协议:命令cmd,来区分
      */
     public static void startNorReceive(int port, Activity activity) {
         //Wifi状态判断
@@ -187,7 +181,7 @@ public class SocketManage {
                                             if (null != mListener) {
                                                 LogUtils.e("======ReceiveThread=====发送回调==");
                                                 if (CalculateUtils.getDataIfForMe(strdata, activity)) {
-                                                    mListener.onSuccess(strdata);
+                                                    mListener.onSuccess(strdata,mReceivePacket.getAddress());
                                                 }
                                             }
                                         }
@@ -245,7 +239,7 @@ public class SocketManage {
                     DatagramPacket mSendPacket = new DatagramPacket(data, data.length, inetAddress, sendPort);
                     for (int i = 0; i < 5; i++) {
                         LogUtils.e("发送消息==广播==" + sendPort);
-                        Thread.sleep(2000);
+                        Thread.sleep(500);
                         //固定端口
 //                      mSendBroadcastSocket = new DatagramSocket(null);
 //                      mSendBroadcastSocket.bind(new InetSocketAddress(8005));
@@ -282,6 +276,7 @@ public class SocketManage {
                     DatagramPacket mSendPacket = new DatagramPacket(data, data.length, inetAddress, sendPort);
                     for (int i = 0; i < 5; i++) {
                         LogUtils.e("发送消息==点对点==" + sendPort);
+                        Thread.sleep(500);
                         mSendSocket = new DatagramSocket();
                         mSendSocket.send(mSendPacket);
                         mSendSocket.close();
@@ -326,7 +321,8 @@ public class SocketManage {
      * 回调监听
      */
     public interface OnSocketReceiveListener {
-        void onSuccess(String str);
+        //str   回传过来全部的string数据  和ip地址
+        void onSuccess(String str, InetAddress ip);
 
         void onFailed(Throwable throwable);
 
@@ -346,5 +342,78 @@ public class SocketManage {
         return (i & 0xFF) + "." + ((i >> 8) & 0xFF) + "."
                 + ((i >> 16) & 0xFF) + "." + (i >> 24 & 0xFF);
     }
+
+
+//    /**
+//     * 开启一个普通回调监听     复制copy版本
+//     * <p>
+//     * 具体是那个socket的回调通过
+//     * 协议:命令cmd,来区分
+//     */
+//    public static void startNorReceive(int port, Activity activity) {
+//        //Wifi状态判断
+//        WifiManager wifiManager = (WifiManager) activity.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+//        if (wifiManager.isWifiEnabled()) {
+//            WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+//            currentIP = getIpString(wifiInfo.getIpAddress());
+//        }
+////        easyFixed2Thread = ThreadManager.getIO();
+//        mReceiveRunnable = new Runnable() {
+//            @Override
+//            public void run() {
+//                LogUtils.e("正在执行Runnable任务：%s" + Thread.currentThread().getName());
+//                byte[] receiveData = new byte[1024];
+//                DatagramPacket mReceivePacket = new DatagramPacket(receiveData, receiveData.length);
+//                try {
+//                    mReceiveSocket = new DatagramSocket(port);  //本地监听的端口
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//                while (true) {
+//                    if (isRuning) {
+//                        try {
+//                            LogUtils.e("======ReceiveThread=====000==");
+//                            LogUtils.e("======ReceiveThread=====mReceivePacket.getAddress()==" + mReceivePacket.getAddress());
+//                            LogUtils.e("======ReceiveThread=====currentIP==" + currentIP);
+//                            if (!currentIP.equals(mReceivePacket.getAddress())) {   //不是自己的IP不接受
+//                                mReceiveSocket.receive(mReceivePacket);
+//                                String rec = CalculateUtils.byteArrayToHexString(mReceivePacket.getData()).trim();
+//                                //过滤不是发送给我的消息全部不接受
+//                                int dd = rec.indexOf("DD");
+//                                String strdata = rec.substring(0, dd + 2);
+//                                LogUtils.e("======ReceiveThread=====接受到数据==原始数据==" + strdata);
+//                                LogUtils.e("======ReceiveThread=====3333==" + mReceivePacket.getData());
+//                                if (!"".equals(strdata)) {
+//                                    LogUtils.e("======ReceiveThread=====66666==");
+//                                    activity.runOnUiThread(new Runnable() {
+//                                        @Override
+//                                        public void run() {
+//                                            if (null != mListener) {
+//                                                LogUtils.e("======ReceiveThread=====发送回调==");
+//                                                if (CalculateUtils.getDataIfForMe(strdata, activity)) {
+//                                                    mListener.onSuccess(strdata,mReceivePacket.getAddress());
+//                                                }
+//                                            }
+//                                        }
+//                                    });
+//                                }
+//
+//                            }
+//
+//
+//                        } catch (IOException e) {
+//                            e.printStackTrace();
+//                            if (null != mListener) {
+//                                mListener.onFailed(e);
+//                            }
+//                        }
+//
+//                    }
+//                }
+//            }
+//        };
+//        easyFixed2Thread.execute(mReceiveRunnable);
+//    }
+
 
 }

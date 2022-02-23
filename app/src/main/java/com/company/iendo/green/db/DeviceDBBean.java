@@ -27,7 +27,7 @@ import org.greenrobot.greendao.annotation.Unique;
  * //内镜科室
  * #define  GASTROSCOPY                  1 //胃镜
  * #define  COLONOSCOPY                  2 //肠镜
- * #define  ENT                          3 //耳鼻喉镜
+ * #define  ENT                          3 //耳鼻喉镜              接入授权-Type:设备类型
  * #define  HYSTEROSCOPY				  4 //宫腔镜
  * #define  CHOLEDOCHOSCOPE              5 //胆道镜
  * #define  CYSTOSCOPY					  6 //膀胱镜
@@ -65,12 +65,12 @@ public class DeviceDBBean {
     @Id(autoincrement = true)
     private Long id;            //这个主键ID是需要绑定用户表中的deviceID,确保是这个设备下,离线模式能通过id查询绑定用户
     //设备唯一标识
-    private String deviceID;
+    private String deviceID;      //deviceID=deviceCode    作用一样的
     //设备码
     private String deviceCode;  //  这个是智能搜索之后返回过来的设备码//  这个是智能搜索之后返回过来的设备码//  这个是智能搜索之后返回过来的设备码
     //设备ip
     private String ip;
-    //设备http端口
+    //设备http端口--就是ode js 服务端口
     private String httpPort;
     //设备socket端口
     private String socketPort;
@@ -84,12 +84,12 @@ public class DeviceDBBean {
     private String password;
     //设备标题
     private String title;
-    //设备描述
+    //设备描述 --备注
     private String msg;
     //设备类型
-    private String type;  //34567  数字对应  比如3是耳鼻喉治疗台
+    private String type;  //34567  数字对应  比如10是耳鼻喉治疗台            type和endotype不是相等的!!!!
     //工作站类型
-    private String endoType;
+    private String endoType;//
     ////mDeviceCode  这个是智能搜索之后返回过来的设备码
     private String deviceName;  //设备名字
     //备用字段1
@@ -97,7 +97,7 @@ public class DeviceDBBean {
     //备用字段2
     private String usemsg02;  //备用字段2
     //是否被选中
-    private Boolean mSelected;    //是否被选中    :0未选中,1被选中
+    private Boolean mSelected;    //是否被选中  默认未选中  :0未选中,1被选中
 
     @Generated(hash = 1981403596)
     public DeviceDBBean(Long id, String deviceID, String deviceCode, String ip, String httpPort, String socketPort,
