@@ -13,6 +13,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.company.iendo.R;
 import com.company.iendo.app.AppAdapter;
 import com.company.iendo.bean.socket.BroadCastReceiveBean;
+import com.company.iendo.green.db.DeviceDBBean;
+import com.company.iendo.green.db.DeviceDBUtils;
 import com.company.iendo.utils.LogUtils;
 
 import java.util.List;
@@ -28,14 +30,8 @@ import java.util.List;
 public class DeviceSearchAdapter extends AppAdapter<BroadCastReceiveBean> {
     private String mID;
     private RecyclerView mRv;
+    private Context mContext;
     private List<BroadCastReceiveBean> mDataLest;
-
-    //
-    public DeviceSearchAdapter(Context context, String mID) {
-        super(context);
-        this.mID = mID;
-
-    }
 
 
     private int mSelectedPos = -1;
@@ -43,6 +39,7 @@ public class DeviceSearchAdapter extends AppAdapter<BroadCastReceiveBean> {
     public DeviceSearchAdapter(@NonNull Context context, RecyclerView mRv, List<BroadCastReceiveBean> mDataLest) {
         super(context);
         this.mRv = mRv;
+        this.mContext = context;
         this.mDataLest = mDataLest;
         //找到默认选中的position
         LogUtils.e(mDataLest.size() + "mDataLest===Adapter==" + mDataLest.size());
@@ -58,7 +55,7 @@ public class DeviceSearchAdapter extends AppAdapter<BroadCastReceiveBean> {
 
     private final class ViewHolder extends AppAdapter<?>.ViewHolder {
         public final RelativeLayout mRelativeLayout;
-        public final TextView mMsgChose;
+        public final TextView mMsgChose, mInDB;
         private final ImageView mImageChose;
 
         private ViewHolder() {
@@ -67,6 +64,7 @@ public class DeviceSearchAdapter extends AppAdapter<BroadCastReceiveBean> {
 //            mLinearStatus = findViewById(R.id.linear_status);
             mImageChose = findViewById(R.id.iv_current_chose_image);
             mMsgChose = findViewById(R.id.tv_current_chose_msg);
+            mInDB = findViewById(R.id.tv_isindb);
 //            mChange = findViewById(R.id.tv_change);
 //            mDelete = findViewById(R.id.tv_delete);
         }
@@ -84,6 +82,34 @@ public class DeviceSearchAdapter extends AppAdapter<BroadCastReceiveBean> {
                 mMsgChose.setVisibility(View.INVISIBLE);
 
             }
+            LogUtils.e("SocketManage回调==模拟数据==DeviceDBBean.toString==Adapter===" + mDBBean.toString());
+            String tag = mDBBean.getIp() + mDBBean.getEndotype() + mDBBean.getDeviceCode() + mDBBean.getDeviceType();
+
+            DeviceDBBean codeBean = DeviceDBUtils.getQueryBeanByAcceptAndInsertDB(mContext, tag);
+            LogUtils.e("SocketManage回调==模拟数据==DeviceDBBean.codeBean==tag===" + tag); //192.168.132.10200000000000000005618B1F96D92837C一代一体机
+            LogUtils.e("SocketManage回调==模拟数据==DeviceDBBean.codeBean==codeBean===" + codeBean);
+//            LogUtils.e("SocketManage回调==模拟数据==DeviceDBBean.codeBean==getAcceptAndInsertDB===" + codeBean.getAcceptAndInsertDB());
+
+
+            if (null != codeBean) {  //数据库表存在更新数据即可
+                if (tag.equals(codeBean.getAcceptAndInsertDB())) {
+                    mInDB.setVisibility(View.VISIBLE);
+                } else {
+                    mInDB.setVisibility(View.INVISIBLE);
+                }
+
+            }
+
+            Boolean inDB = mDBBean.getInDB();
+            if (null != inDB)
+                if (inDB) {
+                    mInDB.setVisibility(View.VISIBLE);
+                } else {
+                    mInDB.setVisibility(View.INVISIBLE);
+
+                }
+
+
 //            switch (mDBBean.getType()) {
 //                case "一代一体机":
 //                    mImageChose.setImageResource(R.drawable.icon_yitiji);

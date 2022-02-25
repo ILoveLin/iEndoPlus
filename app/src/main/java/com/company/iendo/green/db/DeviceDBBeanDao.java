@@ -40,6 +40,7 @@ public class DeviceDBBeanDao extends AbstractDao<DeviceDBBean, Long> {
         public final static Property Usemsg01 = new Property(15, String.class, "usemsg01", false, "USEMSG01");
         public final static Property Usemsg02 = new Property(16, String.class, "usemsg02", false, "USEMSG02");
         public final static Property MSelected = new Property(17, Boolean.class, "mSelected", false, "M_SELECTED");
+        public final static Property AcceptAndInsertDB = new Property(18, String.class, "acceptAndInsertDB", false, "ACCEPT_AND_INSERT_DB");
     }
 
 
@@ -72,7 +73,8 @@ public class DeviceDBBeanDao extends AbstractDao<DeviceDBBean, Long> {
                 "\"DEVICE_NAME\" TEXT," + // 14: deviceName
                 "\"USEMSG01\" TEXT," + // 15: usemsg01
                 "\"USEMSG02\" TEXT," + // 16: usemsg02
-                "\"M_SELECTED\" INTEGER);"); // 17: mSelected
+                "\"M_SELECTED\" INTEGER," + // 17: mSelected
+                "\"ACCEPT_AND_INSERT_DB\" TEXT);"); // 18: acceptAndInsertDB
     }
 
     /** Drops the underlying database table. */
@@ -174,6 +176,11 @@ public class DeviceDBBeanDao extends AbstractDao<DeviceDBBean, Long> {
         if (mSelected != null) {
             stmt.bindLong(18, mSelected ? 1L: 0L);
         }
+ 
+        String acceptAndInsertDB = entity.getAcceptAndInsertDB();
+        if (acceptAndInsertDB != null) {
+            stmt.bindString(19, acceptAndInsertDB);
+        }
     }
 
     @Override
@@ -269,6 +276,11 @@ public class DeviceDBBeanDao extends AbstractDao<DeviceDBBean, Long> {
         if (mSelected != null) {
             stmt.bindLong(18, mSelected ? 1L: 0L);
         }
+ 
+        String acceptAndInsertDB = entity.getAcceptAndInsertDB();
+        if (acceptAndInsertDB != null) {
+            stmt.bindString(19, acceptAndInsertDB);
+        }
     }
 
     @Override
@@ -296,7 +308,8 @@ public class DeviceDBBeanDao extends AbstractDao<DeviceDBBean, Long> {
             cursor.isNull(offset + 14) ? null : cursor.getString(offset + 14), // deviceName
             cursor.isNull(offset + 15) ? null : cursor.getString(offset + 15), // usemsg01
             cursor.isNull(offset + 16) ? null : cursor.getString(offset + 16), // usemsg02
-            cursor.isNull(offset + 17) ? null : cursor.getShort(offset + 17) != 0 // mSelected
+            cursor.isNull(offset + 17) ? null : cursor.getShort(offset + 17) != 0, // mSelected
+            cursor.isNull(offset + 18) ? null : cursor.getString(offset + 18) // acceptAndInsertDB
         );
         return entity;
     }
@@ -321,6 +334,7 @@ public class DeviceDBBeanDao extends AbstractDao<DeviceDBBean, Long> {
         entity.setUsemsg01(cursor.isNull(offset + 15) ? null : cursor.getString(offset + 15));
         entity.setUsemsg02(cursor.isNull(offset + 16) ? null : cursor.getString(offset + 16));
         entity.setMSelected(cursor.isNull(offset + 17) ? null : cursor.getShort(offset + 17) != 0);
+        entity.setAcceptAndInsertDB(cursor.isNull(offset + 18) ? null : cursor.getString(offset + 18));
      }
     
     @Override

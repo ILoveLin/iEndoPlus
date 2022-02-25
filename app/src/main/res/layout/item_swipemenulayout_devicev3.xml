@@ -16,6 +16,15 @@
         android:layout_margin="@dimen/dp_10"
         android:background="@drawable/shape_bg_device_all_nor">
 
+        <TextView
+            android:id="@+id/tv_isindb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dp_2"
+            android:paddingTop="@dimen/dp_2"
+            android:text="已存入"
+            android:textSize="@dimen/sp_12"
+            android:visibility="invisible" />
 
         <ImageView
             android:id="@+id/iv_current_chose_image"
@@ -38,7 +47,6 @@
             android:textColor="@color/white"
             android:textSize="@dimen/sp_12"
             android:visibility="invisible" />
-
 
 
     </RelativeLayout>

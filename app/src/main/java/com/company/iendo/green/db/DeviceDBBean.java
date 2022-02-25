@@ -98,11 +98,14 @@ public class DeviceDBBean {
     private String usemsg02;  //备用字段2
     //是否被选中
     private Boolean mSelected;    //是否被选中  默认未选中  :0未选中,1被选中
+    //是否被选中
+    private String acceptAndInsertDB;   //授权接入是否存入DB的标识---->存入之后把bean.toString()字符串存入这个字段之中----PutInDeviceMsgBean的数据bean,标识数据在数据库的唯一性
 
-    @Generated(hash = 1981403596)
+    @Generated(hash = 193952484)
     public DeviceDBBean(Long id, String deviceID, String deviceCode, String ip, String httpPort, String socketPort,
-            String livePort, String micPort, String username, String password, String title, String msg, String type,
-            String endoType, String deviceName, String usemsg01, String usemsg02, Boolean mSelected) {
+                        String livePort, String micPort, String username, String password, String title, String msg, String type,
+                        String endoType, String deviceName, String usemsg01, String usemsg02, Boolean mSelected,
+                        String acceptAndInsertDB) {
         this.id = id;
         this.deviceID = deviceID;
         this.deviceCode = deviceCode;
@@ -121,6 +124,7 @@ public class DeviceDBBean {
         this.usemsg01 = usemsg01;
         this.usemsg02 = usemsg02;
         this.mSelected = mSelected;
+        this.acceptAndInsertDB = acceptAndInsertDB;
     }
 
     @Generated(hash = 1828217020)
@@ -291,5 +295,23 @@ public class DeviceDBBean {
 
     public void setDeviceCode(String deviceCode) {
         this.deviceCode = deviceCode;
+    }
+
+    public String getAcceptAndInsertDB() {
+        return this.acceptAndInsertDB;
+    }
+
+    /**
+     * 依次存入ip,endotype,deviceCode,deviceType拼接作为作为数据唯一的标识
+     * 192.168.132.102300000000000000005618B1F96D92837C一代一体机
+     * ip:192.168.132.102
+     * endotype:3
+     * deviceCode:00000000000000005618B1F96D92837C
+     * deviceType:一代一体机
+     *
+     * @param acceptAndInsertDB
+     */
+    public void setAcceptAndInsertDB(String acceptAndInsertDB) {
+        this.acceptAndInsertDB = acceptAndInsertDB;
     }
 }

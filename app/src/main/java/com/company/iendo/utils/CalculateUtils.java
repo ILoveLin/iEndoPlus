@@ -183,6 +183,7 @@ public class CalculateUtils {
      * 2,在判断接收方是android 并且发送的data 的设备id必须和我本机android设备id相同
      * 3,再次检验验算发送过来string的检验值,正确才回调数据
      *
+     * @param string 全部hexstring 数据
      * @return true 是发给我的  false 不是发给我的
      */
     public static Boolean getDataIfForMe(String string, Activity activity) {
@@ -194,22 +195,34 @@ public class CalculateUtils {
 
         //长度不够直接不接受
         if (!(("".equals(string)) && string.length() >= 179)) {
-            String currentDeviceID = MD5ChangeUtil.Md5_32(DeviceIdUtil.getDeviceId(activity));
+            String currentDevice = MD5ChangeUtil.Md5_32(DeviceIdUtil.getDeviceId(activity)); //记得大写
+            String currentDeviceID = currentDevice.toUpperCase(); //记得大写
+
             //获取发送给什么设备类型的
             String str = string.substring(48, 50);
             //获取发送给什么设备的id
             String substring = string.substring(50, 82);
             LogUtils.e("======ReceiveThread====接收方设备类型====" + str);
-
-            //获取接收的设备id 必须本机的设备id相同,接收方为android-A1
-            if (!("A1".equals(str)) || currentDeviceID.equals(substring)) {
+            LogUtils.e("======ReceiveThread====接收方设备ID====" + substring);
+            String sendType = string.substring(7, 9);
+            LogUtils.e("======ReceiveThread====发送方-设备类型====" + sendType);
+            //android发送给android的 直接过滤
+            if (("A1".equals(sendType))) {
                 return false;
+            }
+            //获取接收的设备id 必须本机的设备id相同,返回false
+            if (!(currentDeviceID.equals(substring))) {
+                return false;
+            }
+            //接收方不是android-A1 返回false
+            if (!("A1".equals(str))) {
+                return false;
+
             }
             LogUtils.e("======ReceiveThread====接收方设备类型====" + str);
             LogUtils.e("======ReceiveThread====接收方设备类型ID====" + substring);
             //f9432b11b93e8bb4ae34539b7472c20e
-            String s = MD5ChangeUtil.Md5_32(DeviceIdUtil.getDeviceId(activity));
-            LogUtils.e("======ReceiveThread====本机设备ID====" + s.toUpperCase());
+            LogUtils.e("======ReceiveThread====本机设备ID====" + currentDeviceID);
             //再次校验下校验和
             String substring1 = string.substring(6, string.length() - 4);
             String oldCSData = string.substring(string.length() - 4, string.length() - 2);
@@ -229,6 +242,18 @@ public class CalculateUtils {
         return false;
     }
 
+    public static String getOkIp(String ip) {
+        LogUtils.e("======ReceiveThread====成功回调的ip地址=原始地址==" + ip);
+        if ("/".startsWith("/")) {
+            String substring = ip.substring(1, ip.length());
+            LogUtils.e("======ReceiveThread====成功回调的ip地址=ip==" + substring);
+            return substring;
+        } else {
+            LogUtils.e("======ReceiveThread====成功回调的ip地址=ip==" + ip);
+            return ip;
+        }
+
+    }
 
 /*************************************************************计算协议数据的个方法***********************************************************************/
     /**
@@ -365,6 +390,7 @@ public class CalculateUtils {
 
         sendCommandString = mHead + mVer + mLength + mRandom + mCMD_ID + mSend_Type + mSend_ID + mReceived_Type +
                 mReceived_ID + mCMD + mData + mCheck_Sum + "DD";
+        LogUtils.e("UDP==命令===mData===" + mData);
         LogUtils.e("UDP==命令===mSend_IDBy32===" + mSend_IDBy32);
         LogUtils.e("UDP==命令===mRandom===" + mRandom);
         LogUtils.e("UDP==命令===异或的CSString===" + CSString);
@@ -469,6 +495,7 @@ public class CalculateUtils {
         return substring;
 
     }
+
     /**
      * 获取接收socket的数据--data
      *
@@ -482,11 +509,12 @@ public class CalculateUtils {
 //        222c22726574636f6465223a2230227dd5DD==192.168.132";
         int i = str.indexOf("==");
         LogUtils.e("UDP==命令===获取到data的HexString==str===" + str);
-        LogUtils.e("UDP==命令===获取到data的HexString==str===" + str);
 
-        String substring = str.substring(72, i-4);
+        String substring = str.substring(72, i );
+        String substring6 = str.substring(72, i - 4);
 
-        LogUtils.e("UDP==命令===获取到data的HexString==ForPoint===" + substring);
+        LogUtils.e("UDP==命令===获取到data的HexString==substring===" + substring);
+        LogUtils.e("UDP==命令===获取到data的HexString==substring6===" + substring6);
         String s1 = hexStr2Str(substring);
         LogUtils.e("UDP==命令===获取到data的String==ForPoint===" + s1);
 //        Gson gson = GsonFactory.getSingletonGson();
@@ -496,6 +524,7 @@ public class CalculateUtils {
         return substring;
 
     }
+
     /**
      * 获取接收socket的数据--data
      *
@@ -511,6 +540,7 @@ public class CalculateUtils {
         return substring;
 
     }
+
     /**
      * 获取接收socket的数据--data
      *
@@ -525,6 +555,7 @@ public class CalculateUtils {
         return substring;
 
     }
+
     /**
      * 获取接收socket的数据--data
      *
@@ -539,6 +570,7 @@ public class CalculateUtils {
         return substring;
 
     }
+
     /**
      * 获取接收socket的数据--随机数之后到data结尾的String
      *

@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 
 /**
  * company：江西神州医疗设备有限公司
@@ -30,13 +31,14 @@ public class SocketManage {
     private static DatagramSocket mSendSocket = null;
     private static DatagramSocket mSendBroadcastSocket = null;
     private static DatagramSocket mReceiveSocket = null;
+    private volatile static boolean isRuning = true;
+
     private static Runnable mSendRunnable;
     private static Runnable mSendBroadcastRunnable;
     private static Runnable mReceiveRunnable;
     private static EasyThread easyCacheThread;
     private static EasyThread easyFixed2Thread;
     private static final String TAG = "SocketManage";
-    private volatile static boolean isRuning = true;
 
     static {
         LogUtils.e("======SocketManage=====static==");
@@ -154,8 +156,21 @@ public class SocketManage {
                 LogUtils.e("正在执行Runnable任务：%s" + Thread.currentThread().getName());
                 byte[] receiveData = new byte[1024];
                 DatagramPacket mReceivePacket = new DatagramPacket(receiveData, receiveData.length);
+
+
                 try {
-                    mReceiveSocket = new DatagramSocket(port);  //本地监听的端口
+//                    mReceiveSocket = new DatagramSocket(null);  //本地监听的端口
+//                    mReceiveSocket.bind(new InetSocketAddress(port));
+//                    mReceiveSocket = new DatagramSocket(port);  //本地监听的端口   容易绑定异常
+                    //
+                    if (mReceiveSocket == null) {
+                        mReceiveSocket = new DatagramSocket(null);
+                        mReceiveSocket.setReuseAddress(true);
+                        LogUtils.e("======ReceiveThread=====0.0.0.0==" + new InetSocketAddress(port));
+
+                        mReceiveSocket.bind(new InetSocketAddress(port));
+                    }
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -164,28 +179,50 @@ public class SocketManage {
                         try {
                             LogUtils.e("======ReceiveThread=====000==");
                             LogUtils.e("======ReceiveThread=====mReceivePacket.getAddress()==" + mReceivePacket.getAddress());
+                            LogUtils.e("======ReceiveThread=====mReceivePacket.getData()==" + mReceivePacket.getAddress());
                             LogUtils.e("======ReceiveThread=====currentIP==" + currentIP);
                             if (!currentIP.equals(mReceivePacket.getAddress())) {   //不是自己的IP不接受
                                 mReceiveSocket.receive(mReceivePacket);
                                 String rec = CalculateUtils.byteArrayToHexString(mReceivePacket.getData()).trim();
+//                                String rec = CalculateUtils.byteArrayToHexString(mReceivePacket.getData()).trim();
                                 //过滤不是发送给我的消息全部不接受
-                                int dd = rec.indexOf("DD");
-                                String strdata = rec.substring(0, dd + 2);
-                                LogUtils.e("======ReceiveThread=====接受到数据==原始数据==" + strdata);
+                                int length = mReceivePacket.getLength() * 2;
+                                byte[] data = mReceivePacket.getData();
+                                String strdata = rec.substring(0, length);
+
+                                LogUtils.e("======ReceiveThread=====获取长度==length==" + length);
+                                LogUtils.e("======ReceiveThread=====获取长度数据==substring==" + strdata);
+                                LogUtils.e("======ReceiveThread=====接受到数据==原始数据====mReceivePacket.getData()=" + mReceivePacket.getData());
+
                                 LogUtils.e("======ReceiveThread=====3333==" + mReceivePacket.getData());
-                                if (!"".equals(strdata)) {
+                                if (mReceivePacket != null) {
+//                                if (!"".equals(strdata)) {
                                     LogUtils.e("======ReceiveThread=====66666==");
-                                    activity.runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            if (null != mListener) {
-                                                LogUtils.e("======ReceiveThread=====发送回调==");
-                                                if (CalculateUtils.getDataIfForMe(strdata, activity)) {
-                                                    mListener.onSuccess(strdata,mReceivePacket.getAddress());
+                                    boolean flag = false;
+                                    String finalOkIp = "";
+                                    if (CalculateUtils.getDataIfForMe(strdata, activity)) {
+                                        finalOkIp = CalculateUtils.getOkIp(mReceivePacket.getAddress().toString());
+                                        flag = true;
+                                    }
+                                    if (flag) {
+                                        String finalOkIp1 = finalOkIp;
+                                        activity.runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                if (null != mListener) {
+                                                    LogUtils.e("======ReceiveThread=====发送回调=====strdata==" + strdata);
+                                                    LogUtils.e("======ReceiveThread=====发送回调=====finalOkIp1==" + strdata);
+//                                                Boolean dataIfForMe = CalculateUtils.getDataIfForMe(strdata, activity);
+//                                                LogUtils.e("======ReceiveThread=====是否可以回调消息=="+dataIfForMe);
+                                                    mListener.onSuccess(strdata, finalOkIp1);
+
                                                 }
                                             }
-                                        }
-                                    });
+                                        });
+                                        flag = false;
+
+                                    }
+
                                 }
 
                             }
@@ -274,13 +311,13 @@ public class SocketManage {
                 try {
 //                    byte[] sendData = data.getBytes();
                     DatagramPacket mSendPacket = new DatagramPacket(data, data.length, inetAddress, sendPort);
-                    for (int i = 0; i < 5; i++) {
-                        LogUtils.e("发送消息==点对点==" + sendPort);
-                        Thread.sleep(500);
-                        mSendSocket = new DatagramSocket();
-                        mSendSocket.send(mSendPacket);
-                        mSendSocket.close();
-                    }
+//                    for (int i = 0; i < 5; i++) {
+                    mSendSocket = new DatagramSocket();
+                    mSendSocket.send(mSendPacket);
+                    mSendSocket.close();
+                    LogUtils.e("发送消息==点对点==" + sendPort);
+
+//                    }
                 } catch (Exception e) {
 
                 }
@@ -294,7 +331,10 @@ public class SocketManage {
      * 关闭接收线程的socket
      */
     public static void closeReceiveSocket() {
+
+        //容易ANR
         if (null != mReceiveSocket) {
+            mReceiveSocket.disconnect();
             mReceiveSocket.close();
         }
     }
@@ -322,7 +362,7 @@ public class SocketManage {
      */
     public interface OnSocketReceiveListener {
         //str   回传过来全部的string数据  和ip地址
-        void onSuccess(String str, InetAddress ip);
+        void onSuccess(String str, String ip);
 
         void onFailed(Throwable throwable);
 

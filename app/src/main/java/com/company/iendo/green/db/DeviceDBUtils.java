@@ -1,13 +1,12 @@
 package com.company.iendo.green.db;
 
 import android.content.Context;
-import android.util.Log;
 
+import com.company.iendo.bean.socket.PutInDeviceMsgBean;
 import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.db.DBManager;
 
 import org.greenrobot.greendao.query.Query;
-import org.greenrobot.greendao.query.QueryBuilder;
 
 import java.util.List;
 
@@ -64,6 +63,60 @@ public class DeviceDBUtils {
 
     }
 
+    //条件查询
+    //精确查询  获取到bean
+    public static DeviceDBBean getQueryBeanByAcceptAndInsertDB(Context context, String acceptAndInsertDB) {
+        List<DeviceDBBean> list = DBManager.getDaoSession(context).getDeviceDBBeanDao().queryBuilder().list();
+//        bean.getIp()+bean.getEt()+deviceOnlyCodeFromRoom+bean.getType()
+        if (list.size() != 0) {
+            for (int i = 0; i < list.size(); i++) {
+                DeviceDBBean deviceDBBean = list.get(i);
+
+
+                //192.168.132.102300000000000000005618B1F96D92837C一代一体机    00000000000000005618B1F96D92837C
+                LogUtils.e("sendByteData==onItemClick===deviceDBBean.getAcceptAndInsertDB()==" + deviceDBBean.getAcceptAndInsertDB());
+
+                //192.168.132.10200000000000000005618B1F96D92837C一代一体机
+                LogUtils.e("sendByteData==onItemClick===acceptAndInsertDB==" + acceptAndInsertDB);
+
+                if (acceptAndInsertDB.equals(deviceDBBean.getAcceptAndInsertDB())) {
+                    return deviceDBBean;
+                } else {
+                    return null;
+                }
+            }
+
+        }
+        return null;
+
+
+
+
+//        List<DeviceDBBean> list = DBManager.getDaoSession(context).getDeviceDBBeanDao().queryBuilder().list();
+////        bean.getIp()+bean.getEt()+deviceOnlyCodeFromRoom+bean.getType()
+//        if (list.size() != 0) {
+//            for (int i = 0; i < list.size(); i++) {
+//                DeviceDBBean deviceDBBean = list.get(i);
+//
+//
+//                //192.168.64.13300000000000000005618B1F96D92837C一代一体机
+//
+//
+//                String s = putBean.getIp() + deviceOnlyCodeFromRoom + putBean.getType();
+//                LogUtils.e("sendByteData==onItemClick===deviceDBBean.getAcceptAndInsertDB()==" + deviceDBBean.getAcceptAndInsertDB());
+//
+//                LogUtils.e("sendByteData==onItemClick===acceptAndInsertDB==" + s);
+//
+////                if (acceptAndInsertDB.equals(deviceDBBean.getAcceptAndInsertDB())) {
+////                    return deviceDBBean;
+////                } else {
+////                    return null;
+////                }
+//            }
+//
+//        }
+//        return null;
+    }
 
     //条件查询
     //精确查询  获取到bean
