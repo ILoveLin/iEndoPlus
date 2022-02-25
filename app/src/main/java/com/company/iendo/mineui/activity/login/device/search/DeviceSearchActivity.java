@@ -1,8 +1,10 @@
 package com.company.iendo.mineui.activity.login.device.search;
 
 import android.annotation.SuppressLint;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -35,6 +37,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * company：江西神州医疗设备有限公司
@@ -85,30 +88,30 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
                         e.printStackTrace();
                     }
                     //加载动画,发送广播
-//                    if (!mStatusLayout.isShow()) {
-//                        showSearchLayout(R.raw.anim_search_loading04, R.string.status_layout_search, new StatusLayout.OnDismissListener() {
-//                            @Override
-//                            public void onDismiss(StatusLayout layout) {
-//                                mHandler.sendEmptyMessage(UDP_BroadCast_Over);
-//                            }
-//                        });
-                    //开启计时器
-//                        countDownTimer.start();
+                    if (!mStatusLayout.isShow()) {
+                        showSearchLayout(R.raw.anim_search_loading04, R.string.status_layout_search, new StatusLayout.OnDismissListener() {
+                            @Override
+                            public void onDismiss(StatusLayout layout) {
+                                mHandler.sendEmptyMessage(UDP_BroadCast_Over);
+                            }
+                        });
+                        //开启计时器
+                        countDownTimer.start();
 
-                    //发送广播
-                    BroadCastDataBean bean = new BroadCastDataBean();
-                    bean.setBroadcaster("szcme");                              //设备名字
-                    bean.setRamdom(CalculateUtils.getCurrentTimeString());     //时间戳
-                    byte[] sendByteData = CalculateUtils.getSendByteData(DeviceSearchActivity.this, mGson.toJson(bean), "FF",
-                            "00000000000000000000000000000000", "FD");
-                    LogUtils.e("sendByteData====" + sendByteData);
-                    //发送广播消息
-                    SocketManage.startSendMessageBySocket(sendByteData, inetAddress, Constants.BROADCAST_PORT, true);
+                        //发送广播
+                        BroadCastDataBean bean = new BroadCastDataBean();
+                        bean.setBroadcaster("szcme");                              //设备名字
+                        bean.setRamdom(CalculateUtils.getCurrentTimeString());     //时间戳
+                        byte[] sendByteData = CalculateUtils.getSendByteData(DeviceSearchActivity.this, mGson.toJson(bean), "FF",
+                                "00000000000000000000000000000000", "FD");
+                        LogUtils.e("sendByteData====" + sendByteData);
+                        //发送广播消息
+                        SocketManage.startSendMessageBySocket(sendByteData, inetAddress, Constants.BROADCAST_PORT, true);
 
-                    mHandler.sendEmptyMessageDelayed(UDP_BroadCast_Over, 3000);
-//                    } else {
-//                        toast("稍安勿躁,搜索中...");
-//                    }
+                        mHandler.sendEmptyMessageDelayed(UDP_BroadCast_Over, 3000);
+                    } else {
+                        toast("稍安勿躁,搜索中...");
+                    }
                     break;
             }
         }
@@ -224,7 +227,7 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
             deviceDBBean.setEndoType(bean.getEt());   //设置科室类型---endoType
             deviceDBBean.setMSelected(false);   //默认未选中
             //依次存入ip,endotype,deviceCode,deviceType
-            deviceDBBean.setAcceptAndInsertDB(currentClickItem.getIp()+ bean.getEt() + deviceOnlyCodeFromRoom + bean.getType());    //存入回调数据bean,标识数据在数据库的唯一性
+            deviceDBBean.setAcceptAndInsertDB(currentClickItem.getIp() + bean.getEt() + deviceOnlyCodeFromRoom + bean.getType());    //存入回调数据bean,标识数据在数据库的唯一性
 
             LogUtils.e("SocketManage回调==模拟数据==DeviceDBBean.bean.getIp()===" + bean.getIp());//192.168.64.13
             LogUtils.e("SocketManage回调==模拟数据==DeviceDBBean.currentClickItem.getIp()===" + currentClickItem.getIp());//192.168.132.102
@@ -394,7 +397,7 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
         putBean.setPinAccess(item.getPinAccess());
         putBean.setSpt(Constants.RECEIVE_PORT + "");
 
-        String tag = item.getIp() + item.getEndotype()+item.getDeviceCode() + item.getDeviceType();
+        String tag = item.getIp() + item.getEndotype() + item.getDeviceCode() + item.getDeviceType();
 
         DeviceDBBean codeBean = DeviceDBUtils.getQueryBeanByAcceptAndInsertDB(DeviceSearchActivity.this, tag);
         List<DeviceDBBean> deviceDBBeans = DeviceDBUtils.queryAll(DeviceSearchActivity.this);
@@ -410,7 +413,7 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
                 LogUtils.e("sendByteData==onItemClick===DB已经存在==");
                 item.setInDB(true);
                 mAdapter.notifyDataSetChanged();
-                toast("DB已经存在");
+                toast("已经存入过数据库了!");
                 return;
             } else {
                 LogUtils.e("sendByteData==onItemClick===NO存在==");
@@ -564,23 +567,25 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
 
     /**
      * 第一个参数表示总时间，第二个参数表示间隔时间。意思就是每隔一秒会回调一次方法onTick，然后10秒之后会回调onFinish方法
+     * 你想在范围[5, 21]之间产生随机数，只需这样：netInt(21 - 5 + 1) + 5;
      */
-//    private CountDownTimer countDownTimer = new CountDownTimer(6000, 1000) {
-//        @Override
-//        public void onTick(long millisUntilFinished) {
-//            //秒转化成 00:00形式一
-////            timeView2.setText(formatTime1(millisUntilFinished) + "");
-//            //秒转化成 00:00形式二
-//            Log.e("hehehe ", millisUntilFinished + " ");
-//        }
-//
-//        @Override
-//        public void onFinish() {
-//            //显示主界面
-//            mHandler.sendEmptyMessage(UDP_BroadCast_Over);
-//
-//        }
-//    };
+    private CountDownTimer countDownTimer = new CountDownTimer(1000 * 4, 1000) {
+        @Override
+        public void onTick(long millisUntilFinished) {
+            //秒转化成 00:00形式一
+//            timeView2.setText(formatTime1(millisUntilFinished) + "");
+            //秒转化成 00:00形式二
+            Log.e("hehehe ", millisUntilFinished + " ");
+        }
+
+        @Override
+        public void onFinish() {
+            //显示主界面
+            mHandler.sendEmptyMessage(UDP_BroadCast_Over);
+
+        }
+    };
+
     @Override
     public StatusLayout getStatusLayout() {
         return mStatusLayout;

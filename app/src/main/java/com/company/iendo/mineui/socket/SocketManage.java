@@ -156,13 +156,7 @@ public class SocketManage {
                 LogUtils.e("正在执行Runnable任务：%s" + Thread.currentThread().getName());
                 byte[] receiveData = new byte[1024];
                 DatagramPacket mReceivePacket = new DatagramPacket(receiveData, receiveData.length);
-
-
                 try {
-//                    mReceiveSocket = new DatagramSocket(null);  //本地监听的端口
-//                    mReceiveSocket.bind(new InetSocketAddress(port));
-//                    mReceiveSocket = new DatagramSocket(port);  //本地监听的端口   容易绑定异常
-                    //
                     if (mReceiveSocket == null) {
                         mReceiveSocket = new DatagramSocket(null);
                         mReceiveSocket.setReuseAddress(true);
