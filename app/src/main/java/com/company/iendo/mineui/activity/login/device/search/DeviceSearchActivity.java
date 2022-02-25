@@ -56,6 +56,7 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
     private int currentItemPosition = -1;
     private ArrayList<String> mReceiveBroadCastList = new ArrayList<>();    //接收线程,获取到广播hexString的数据
     private ArrayList<String> mReceivePointList = new ArrayList<>();    //接收线程,获取到点对点hexString的数据
+    private int isIntUIAdapterCount = 0;
     private static final int UDP_BroadCast_Over = 112;
     private static final int UDP_Point_Over = 113;
     private static final int UDP_Anim = 114;
@@ -67,6 +68,9 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
             switch (msg.what) {
                 case UDP_BroadCast_Over: //广播结束
                     showComplete();
+                    isIntUIAdapterCount++;
+                    LogUtils.e("SocketManage回调==模拟数据==mRun2DDString==" + isIntUIAdapterCount);
+
                     getAdapterBeanData();
                     //模拟获取到点对点数据回传
 //                    String str = "AAC50100CA78EE0700000000000000005618B1F96D92837Ca03399cbe9a32d4786abf24e39d3cad576FC7b226970223a223139322e3136382e36342e3133222c227a7074223a2237373838222c226964223a22726f6f74222c227077223a22726f6f74222c2266726f6d223a2241494f2d454e54222c22737470223a2238303035222c22687074223a2237303031222c2272656d61726b223a2231E58FB7E58685E9959CE5AEA4222c2274797065223a223037222c226574223a2233222c22726574636f6465223a2230227dd5DD==192.168.132.102";
@@ -107,8 +111,6 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
                         LogUtils.e("sendByteData====" + sendByteData);
                         //发送广播消息
                         SocketManage.startSendMessageBySocket(sendByteData, inetAddress, Constants.BROADCAST_PORT, true);
-
-                        mHandler.sendEmptyMessageDelayed(UDP_BroadCast_Over, 3000);
                     } else {
                         toast("稍安勿躁,搜索中...");
                     }
@@ -185,7 +187,9 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
         //获取当前界面被点击的数据item
         BroadCastReceiveBean currentClickItem = mAdapter.getItem(currentItemPosition);
 
-        if (null != codeBean) {  //数据库表存在更新数据即可
+        if (null != codeBean) {  //数据库表存在更新数据即可,只针对主键
+            Long id = codeBean.getId();
+            codeBean.setIp(id + "");
             codeBean.setDeviceCode(deviceOnlyCodeFromRoom);  //设置设备码
             codeBean.setDeviceID(deviceOnlyCodeFromRoom);  //设置设备id
             codeBean.setUsername(bean.getId()); //设置直播账号
@@ -241,52 +245,6 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
         }
 
 
-//        if (null != codeBean && null != typeBean) {  //数据库表存在更新数据即可
-//            codeBean.setDeviceCode(deviceOnlyCodeFromRoom);  //设置设备码
-//            codeBean.setDeviceID(deviceOnlyCodeFromRoom);  //设置设备id
-//            codeBean.setUsername(bean.getId()); //设置直播账号
-//            codeBean.setPassword(bean.getPw()); //设置直播密码
-//            codeBean.setDeviceName(bean.getFrom()); //设置设备名称
-//            codeBean.setIp(bean.getIp());       //设置RTSP直播IP地址；
-//            codeBean.setLivePort(bean.getZpt());//设置直播端口号；
-//            codeBean.setSocketPort(bean.getStp());  //设置接收端口；
-//            codeBean.setMsg(bean.getRemark());      //设置备注-描述信息
-//            codeBean.setHttpPort(bean.getHpt());    //设置node js 服务端口  ===httpPort
-//            codeBean.setType(bean.getType());
-//            codeBean.setEndoType(bean.getEt());   //设置科室类型---endoType
-//            codeBean.setMSelected(false);   //默认未选中
-//            //此处修改界面adapter数据bean(BroadCastReceiveBean)状态,是否检验接入过isCheckAccess->true;是否存入数据库inDB->true
-//            currentClickItem.setInDB(true);
-//            currentClickItem.setCheckAccess(true);
-//            DeviceDBUtils.update(DeviceSearchActivity.this, codeBean);
-//            mAdapter.notifyDataSetChanged();
-//            LogUtils.e("SocketManage回调==模拟数据==DeviceDBBean.toString==更新===" + codeBean.toString());
-//
-//        } else { //暂无数据添加到数据库
-//            DeviceDBBean deviceDBBean = new DeviceDBBean();
-//            deviceDBBean.setDeviceCode(deviceOnlyCodeFromRoom);  //设置设备码
-//            deviceDBBean.setDeviceID(deviceOnlyCodeFromRoom);  //设置设备id
-//            deviceDBBean.setUsername(bean.getId()); //设置直播账号
-//            deviceDBBean.setPassword(bean.getPw()); //设置直播密码
-//            deviceDBBean.setDeviceName(bean.getFrom()); //设置设备名称
-//            deviceDBBean.setIp(bean.getIp());       //设置RTSP直播IP地址；
-//            deviceDBBean.setLivePort(bean.getZpt());//设置直播端口号；
-//            deviceDBBean.setSocketPort(bean.getStp());  //设置接收端口；
-//            deviceDBBean.setMsg(bean.getRemark());      //设置备注-描述信息
-//            deviceDBBean.setHttpPort(bean.getHpt());    //设置node js 服务端口  ===httpPort
-//            deviceDBBean.setType(bean.getType());
-//            deviceDBBean.setEndoType(bean.getEt());   //设置科室类型---endoType
-//            deviceDBBean.setMSelected(false);   //默认未选中
-//            LogUtils.e("SocketManage回调==模拟数据==DeviceDBBean.toString==新增===" + deviceDBBean.toString());
-//
-//            //此处修改界面adapter数据bean(BroadCastReceiveBean)状态,是否检验接入过isCheckAccess->true;是否存入数据库inDB->true
-//            currentClickItem.setInDB(true);
-//            currentClickItem.setCheckAccess(true);
-//            mAdapter.notifyDataSetChanged();
-//            DeviceDBUtils.insertOrReplace(DeviceSearchActivity.this, deviceDBBean);
-//        }
-
-
         List<DeviceDBBean> deviceDBBeanss = DeviceDBUtils.queryAll(DeviceSearchActivity.this);
         LogUtils.e("SocketManage回调==模拟数据==new=设备表长度==" + deviceDBBeanss.size());
 
@@ -296,6 +254,10 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
      * 把hexString的集合数据转化成BroadCastReceiveBean数据给适配器
      */
     private void getAdapterBeanData() {
+        //此处只做一次广播结束之后界面数据的刷新,不然会出现数据重复
+        if (isIntUIAdapterCount != 1) {
+            return;
+        }
         for (int i = 0; i < mReceiveBroadCastList.size(); i++) {
             String str = mReceiveBroadCastList.get(i);
             String receiveDataStringFromRoom = CalculateUtils.getReceiveDataStringFromRoomForBroadCast(str);
@@ -324,10 +286,13 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
 
             mReceiveList.add(bean);
         }
-        mAdapter.setData(mReceiveList);
-
+        if (mReceiveList.size() == 0) {
+            showEmpty();
+        } else {
+            mAdapter.setData(mReceiveList);
+            showComplete();
+        }
     }
-
 
     @Override
     protected int getLayoutId() {
@@ -346,22 +311,9 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
         GridLayoutManager gridLayoutManager = new GridLayoutManager(DeviceSearchActivity.this, 2);
         mRecyclerView.setLayoutManager(gridLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
-//        7B227469746C65223A2241494F2D454E54222C2272656D61726B223A2231E58FB7E58685E9959CE5AEA4222C22656E646F74797065223A2233222C22616363657074223A2230227D
         SocketManage.getSocketManageInstance();
         //必须打开不然再次进入界面 不能能接受收据哦
 
-//        String str = "AAC501006A22EE0700000000000000005618B1F96D92837Ca1f9432b11b93e8bb4ae34539b7472c20eFD7b227469746c65223a2241494f2d454e54222c2272656d61726b223a226f6e65686f6d65222c22656e646f74797065223a2233222c22616363657074223a2230227db4DD";
-//        String str2 = "AAC501006A22EE0700000000000000005618B1F96D92837Ca1f9432b11b93e8bb4ae34539b7472c20eFD7b227469746c65223a2241494f2d434e54222c2272656d61726b223a22746f77686f6d65222c22656e646f74797065223a2233222c22616363657074223a2231227db4DD";
-//        String str3 = "AAC501006A22EE0700000000000000005618B1F96D92837Ca1f9432b11b93e8bb4ae34539b7472c20eFD7b227469746c65223a2241494f2d434e54222c2272656d61726b223a227468726565686f6d65222c22656e646f74797065223a2233222c22616363657074223a2232227db4DD";
-//        String mRun2DDString1 = CalculateUtils.getReceiveRun2End4String(str) + "==" + "192.168.130.113";
-//        String mRun2DDString2 = CalculateUtils.getReceiveRun2End4String(str2) + "==" + "192.168.132.102";
-//        String mRun2DDString3 = CalculateUtils.getReceiveRun2End4String(str3) + "==" + "192.168.132.102";
-//        mReceiveBroadCastList.add(mRun2DDString1.toUpperCase()); //直接接入
-//        mReceiveBroadCastList.add(mRun2DDString2.toUpperCase()); //直接接入
-//        mReceiveBroadCastList.add(mRun2DDString3.toUpperCase()); //直接接入
-
-
-//        mHandler.sendEmptyMessage(UDP_BroadCast_Over);
     }
 
     /**
@@ -375,15 +327,11 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
      */
     @Override
     public void onItemClick(RecyclerView recyclerView, View itemView, int position) {
-        //刷新UI界面
-//        refreshUIStatus(position);
-        //存入数据库
-//        saveDataToDB(position);
+
         /**
          * 校验是否
          */
         this.currentItemPosition = position;
-        toast("onItemClick");
         BroadCastReceiveBean item = mAdapter.getItem(position);
         String accept = item.getAccept();
         String receiveType = item.getReceiveType();
@@ -403,19 +351,20 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
         List<DeviceDBBean> deviceDBBeans = DeviceDBUtils.queryAll(DeviceSearchActivity.this);
 
         LogUtils.e("sendByteData==onItemClick===deviceDBBeans==" + deviceDBBeans.size());
-//        LogUtils.e("sendByteData==onItemClick===deviceDBBeans==" + deviceDBBeans.get(0).getAcceptAndInsertDB());
         LogUtils.e("sendByteData==onItemClick===codeBean==" + codeBean);
         LogUtils.e("sendByteData==onItemClick===item.toString()==" + item.toString());
+        LogUtils.e("sendByteData==onItemClick===item.getCheckAccess()==" + item.getCheckAccess());
 
 
         if (null != codeBean) {
-            if (tag.equals(codeBean.getAcceptAndInsertDB())) {
+            if (tag.equals(codeBean.getAcceptAndInsertDB())) {  //数据库有该条数据
                 LogUtils.e("sendByteData==onItemClick===DB已经存在==");
                 item.setInDB(true);
+                item.setCheckAccess(true);//授权接入过
                 mAdapter.notifyDataSetChanged();
                 toast("已经存入过数据库了!");
-                return;
-            } else {
+                refreshUIStatus(position);
+            } else { //数据库没有有该条数据
                 LogUtils.e("sendByteData==onItemClick===NO存在==");
             }
         }
@@ -431,8 +380,9 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
             }
         } else {
             toast("已经被授权登入过了");
-        }
+            refreshUIStatus(position);
 
+        }
 
     }
 
@@ -490,17 +440,23 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
     }
 
     private void refreshUIStatus(int position) {
-        BroadCastReceiveBean bean = mReceiveList.get(position);
-        bean.setSelected(true);
-        String string = bean.toString();
+//        BroadCastReceiveBean bean = mReceiveList.get(position);
         for (int i = 0; i < mReceiveList.size(); i++) {
             BroadCastReceiveBean mBean = mReceiveList.get(i);
-            String tag = mBean.toString();
-            if (!tag.equals(string)) {//不相等,说明不是当前选择的,把Selected设置为flase
+//            Boolean selected = mBean.getSelected();
+            if (position != i) {
                 mBean.setSelected(false);
             } else {
                 mBean.setSelected(true);
             }
+
+//            BroadCastReceiveBean mBean = mReceiveList.get(i);
+//            Boolean selected = mBean.getSelected();
+//            if (selected) {//不相等,说明不是当前选择的,把Selected设置为flase
+//                mBean.setSelected(false);
+//            } else {
+//                mBean.setSelected(true);
+//            }
         }
         mAdapter.notifyDataSetChanged();
     }
@@ -548,12 +504,8 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
                         //发消息,存入数据库,并且刷新设备搜索界面
                         mHandler.sendEmptyMessage(UDP_Point_Over);
 
-
                     }
-
-
                 }
-
             }
 
             @Override
@@ -604,14 +556,14 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
     protected void onDestroy() {
         super.onDestroy();
         //暂时不明确
-//        SocketManage.setIsRuning(false);
+        SocketManage.setIsRuning(false);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         //暂时不明确
-//        SocketManage.setIsRuning(true);
+        SocketManage.setIsRuning(true);
 
 
     }

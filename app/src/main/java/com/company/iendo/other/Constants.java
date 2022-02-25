@@ -30,6 +30,7 @@ public class Constants {
      */
     public static final String UDP_FD = "FD";                 //网络发现（UDP广播）
     public static final String UDP_FC = "FC";                 //授权接入
+    public static final String UDP_HAND = "30";                 //捂手
 
 
 }

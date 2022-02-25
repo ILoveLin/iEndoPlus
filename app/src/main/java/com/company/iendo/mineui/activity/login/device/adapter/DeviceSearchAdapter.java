@@ -71,9 +71,9 @@ public class DeviceSearchAdapter extends AppAdapter<BroadCastReceiveBean> {
 
         @Override
         public void onBindView(int position) {
-            BroadCastReceiveBean mDBBean = getItem(position);
+            BroadCastReceiveBean mItemBean = getItem(position);
 
-            Boolean mSelected = mDBBean.getSelected();
+            Boolean mSelected = mItemBean.getSelected();
             if (mSelected) {
                 mRelativeLayout.setBackgroundResource(R.drawable.shape_bg_device_all_pre);
                 mMsgChose.setVisibility(View.VISIBLE);
@@ -82,8 +82,8 @@ public class DeviceSearchAdapter extends AppAdapter<BroadCastReceiveBean> {
                 mMsgChose.setVisibility(View.INVISIBLE);
 
             }
-            LogUtils.e("SocketManage回调==模拟数据==DeviceDBBean.toString==Adapter===" + mDBBean.toString());
-            String tag = mDBBean.getIp() + mDBBean.getEndotype() + mDBBean.getDeviceCode() + mDBBean.getDeviceType();
+            LogUtils.e("SocketManage回调==模拟数据==DeviceDBBean.toString==Adapter===" + mItemBean.toString());
+            String tag = mItemBean.getIp() + mItemBean.getEndotype() + mItemBean.getDeviceCode() + mItemBean.getDeviceType();
 
             DeviceDBBean codeBean = DeviceDBUtils.getQueryBeanByAcceptAndInsertDB(mContext, tag);
             LogUtils.e("SocketManage回调==模拟数据==DeviceDBBean.codeBean==tag===" + tag); //192.168.132.10200000000000000005618B1F96D92837C一代一体机
@@ -100,7 +100,7 @@ public class DeviceSearchAdapter extends AppAdapter<BroadCastReceiveBean> {
 
             }
 
-            Boolean inDB = mDBBean.getInDB();
+            Boolean inDB = mItemBean.getInDB();
             if (null != inDB)
                 if (inDB) {
                     mInDB.setVisibility(View.VISIBLE);
@@ -108,7 +108,9 @@ public class DeviceSearchAdapter extends AppAdapter<BroadCastReceiveBean> {
                     mInDB.setVisibility(View.INVISIBLE);
 
                 }
+            if (mItemBean.getCheckAccess()) {
 
+            }
 
 //            switch (mDBBean.getType()) {
 //                case "一代一体机":
