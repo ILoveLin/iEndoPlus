@@ -26,21 +26,23 @@ public class DeviceDBBeanDao extends AbstractDao<DeviceDBBean, Long> {
         public final static Property DeviceID = new Property(1, String.class, "deviceID", false, "DEVICE_ID");
         public final static Property DeviceCode = new Property(2, String.class, "deviceCode", false, "DEVICE_CODE");
         public final static Property Ip = new Property(3, String.class, "ip", false, "IP");
-        public final static Property HttpPort = new Property(4, String.class, "httpPort", false, "HTTP_PORT");
-        public final static Property SocketPort = new Property(5, String.class, "socketPort", false, "SOCKET_PORT");
-        public final static Property LivePort = new Property(6, String.class, "livePort", false, "LIVE_PORT");
-        public final static Property MicPort = new Property(7, String.class, "micPort", false, "MIC_PORT");
-        public final static Property Username = new Property(8, String.class, "username", false, "USERNAME");
-        public final static Property Password = new Property(9, String.class, "password", false, "PASSWORD");
-        public final static Property Title = new Property(10, String.class, "title", false, "TITLE");
-        public final static Property Msg = new Property(11, String.class, "msg", false, "MSG");
-        public final static Property Type = new Property(12, String.class, "type", false, "TYPE");
-        public final static Property EndoType = new Property(13, String.class, "endoType", false, "ENDO_TYPE");
-        public final static Property DeviceName = new Property(14, String.class, "deviceName", false, "DEVICE_NAME");
-        public final static Property Usemsg01 = new Property(15, String.class, "usemsg01", false, "USEMSG01");
-        public final static Property Usemsg02 = new Property(16, String.class, "usemsg02", false, "USEMSG02");
-        public final static Property MSelected = new Property(17, Boolean.class, "mSelected", false, "M_SELECTED");
-        public final static Property AcceptAndInsertDB = new Property(18, String.class, "acceptAndInsertDB", false, "ACCEPT_AND_INSERT_DB");
+        public final static Property LiveIp = new Property(4, String.class, "LiveIp", false, "LIVE_IP");
+        public final static Property HttpPort = new Property(5, String.class, "httpPort", false, "HTTP_PORT");
+        public final static Property SocketPort = new Property(6, String.class, "socketPort", false, "SOCKET_PORT");
+        public final static Property LivePort = new Property(7, String.class, "livePort", false, "LIVE_PORT");
+        public final static Property MicPort = new Property(8, String.class, "micPort", false, "MIC_PORT");
+        public final static Property Username = new Property(9, String.class, "username", false, "USERNAME");
+        public final static Property Password = new Property(10, String.class, "password", false, "PASSWORD");
+        public final static Property Title = new Property(11, String.class, "title", false, "TITLE");
+        public final static Property Msg = new Property(12, String.class, "msg", false, "MSG");
+        public final static Property Type = new Property(13, String.class, "type", false, "TYPE");
+        public final static Property Type_num = new Property(14, String.class, "type_num", false, "TYPE_NUM");
+        public final static Property EndoType = new Property(15, String.class, "endoType", false, "ENDO_TYPE");
+        public final static Property DeviceName = new Property(16, String.class, "deviceName", false, "DEVICE_NAME");
+        public final static Property Usemsg01 = new Property(17, String.class, "usemsg01", false, "USEMSG01");
+        public final static Property Usemsg02 = new Property(18, String.class, "usemsg02", false, "USEMSG02");
+        public final static Property MSelected = new Property(19, Boolean.class, "mSelected", false, "M_SELECTED");
+        public final static Property AcceptAndInsertDB = new Property(20, String.class, "acceptAndInsertDB", false, "ACCEPT_AND_INSERT_DB");
     }
 
 
@@ -60,21 +62,23 @@ public class DeviceDBBeanDao extends AbstractDao<DeviceDBBean, Long> {
                 "\"DEVICE_ID\" TEXT," + // 1: deviceID
                 "\"DEVICE_CODE\" TEXT," + // 2: deviceCode
                 "\"IP\" TEXT," + // 3: ip
-                "\"HTTP_PORT\" TEXT," + // 4: httpPort
-                "\"SOCKET_PORT\" TEXT," + // 5: socketPort
-                "\"LIVE_PORT\" TEXT," + // 6: livePort
-                "\"MIC_PORT\" TEXT," + // 7: micPort
-                "\"USERNAME\" TEXT," + // 8: username
-                "\"PASSWORD\" TEXT," + // 9: password
-                "\"TITLE\" TEXT," + // 10: title
-                "\"MSG\" TEXT," + // 11: msg
-                "\"TYPE\" TEXT," + // 12: type
-                "\"ENDO_TYPE\" TEXT," + // 13: endoType
-                "\"DEVICE_NAME\" TEXT," + // 14: deviceName
-                "\"USEMSG01\" TEXT," + // 15: usemsg01
-                "\"USEMSG02\" TEXT," + // 16: usemsg02
-                "\"M_SELECTED\" INTEGER," + // 17: mSelected
-                "\"ACCEPT_AND_INSERT_DB\" TEXT);"); // 18: acceptAndInsertDB
+                "\"LIVE_IP\" TEXT," + // 4: LiveIp
+                "\"HTTP_PORT\" TEXT," + // 5: httpPort
+                "\"SOCKET_PORT\" TEXT," + // 6: socketPort
+                "\"LIVE_PORT\" TEXT," + // 7: livePort
+                "\"MIC_PORT\" TEXT," + // 8: micPort
+                "\"USERNAME\" TEXT," + // 9: username
+                "\"PASSWORD\" TEXT," + // 10: password
+                "\"TITLE\" TEXT," + // 11: title
+                "\"MSG\" TEXT," + // 12: msg
+                "\"TYPE\" TEXT," + // 13: type
+                "\"TYPE_NUM\" TEXT," + // 14: type_num
+                "\"ENDO_TYPE\" TEXT," + // 15: endoType
+                "\"DEVICE_NAME\" TEXT," + // 16: deviceName
+                "\"USEMSG01\" TEXT," + // 17: usemsg01
+                "\"USEMSG02\" TEXT," + // 18: usemsg02
+                "\"M_SELECTED\" INTEGER," + // 19: mSelected
+                "\"ACCEPT_AND_INSERT_DB\" TEXT);"); // 20: acceptAndInsertDB
     }
 
     /** Drops the underlying database table. */
@@ -107,79 +111,89 @@ public class DeviceDBBeanDao extends AbstractDao<DeviceDBBean, Long> {
             stmt.bindString(4, ip);
         }
  
+        String LiveIp = entity.getLiveIp();
+        if (LiveIp != null) {
+            stmt.bindString(5, LiveIp);
+        }
+ 
         String httpPort = entity.getHttpPort();
         if (httpPort != null) {
-            stmt.bindString(5, httpPort);
+            stmt.bindString(6, httpPort);
         }
  
         String socketPort = entity.getSocketPort();
         if (socketPort != null) {
-            stmt.bindString(6, socketPort);
+            stmt.bindString(7, socketPort);
         }
  
         String livePort = entity.getLivePort();
         if (livePort != null) {
-            stmt.bindString(7, livePort);
+            stmt.bindString(8, livePort);
         }
  
         String micPort = entity.getMicPort();
         if (micPort != null) {
-            stmt.bindString(8, micPort);
+            stmt.bindString(9, micPort);
         }
  
         String username = entity.getUsername();
         if (username != null) {
-            stmt.bindString(9, username);
+            stmt.bindString(10, username);
         }
  
         String password = entity.getPassword();
         if (password != null) {
-            stmt.bindString(10, password);
+            stmt.bindString(11, password);
         }
  
         String title = entity.getTitle();
         if (title != null) {
-            stmt.bindString(11, title);
+            stmt.bindString(12, title);
         }
  
         String msg = entity.getMsg();
         if (msg != null) {
-            stmt.bindString(12, msg);
+            stmt.bindString(13, msg);
         }
  
         String type = entity.getType();
         if (type != null) {
-            stmt.bindString(13, type);
+            stmt.bindString(14, type);
+        }
+ 
+        String type_num = entity.getType_num();
+        if (type_num != null) {
+            stmt.bindString(15, type_num);
         }
  
         String endoType = entity.getEndoType();
         if (endoType != null) {
-            stmt.bindString(14, endoType);
+            stmt.bindString(16, endoType);
         }
  
         String deviceName = entity.getDeviceName();
         if (deviceName != null) {
-            stmt.bindString(15, deviceName);
+            stmt.bindString(17, deviceName);
         }
  
         String usemsg01 = entity.getUsemsg01();
         if (usemsg01 != null) {
-            stmt.bindString(16, usemsg01);
+            stmt.bindString(18, usemsg01);
         }
  
         String usemsg02 = entity.getUsemsg02();
         if (usemsg02 != null) {
-            stmt.bindString(17, usemsg02);
+            stmt.bindString(19, usemsg02);
         }
  
         Boolean mSelected = entity.getMSelected();
         if (mSelected != null) {
-            stmt.bindLong(18, mSelected ? 1L: 0L);
+            stmt.bindLong(20, mSelected ? 1L: 0L);
         }
  
         String acceptAndInsertDB = entity.getAcceptAndInsertDB();
         if (acceptAndInsertDB != null) {
-            stmt.bindString(19, acceptAndInsertDB);
+            stmt.bindString(21, acceptAndInsertDB);
         }
     }
 
@@ -207,79 +221,89 @@ public class DeviceDBBeanDao extends AbstractDao<DeviceDBBean, Long> {
             stmt.bindString(4, ip);
         }
  
+        String LiveIp = entity.getLiveIp();
+        if (LiveIp != null) {
+            stmt.bindString(5, LiveIp);
+        }
+ 
         String httpPort = entity.getHttpPort();
         if (httpPort != null) {
-            stmt.bindString(5, httpPort);
+            stmt.bindString(6, httpPort);
         }
  
         String socketPort = entity.getSocketPort();
         if (socketPort != null) {
-            stmt.bindString(6, socketPort);
+            stmt.bindString(7, socketPort);
         }
  
         String livePort = entity.getLivePort();
         if (livePort != null) {
-            stmt.bindString(7, livePort);
+            stmt.bindString(8, livePort);
         }
  
         String micPort = entity.getMicPort();
         if (micPort != null) {
-            stmt.bindString(8, micPort);
+            stmt.bindString(9, micPort);
         }
  
         String username = entity.getUsername();
         if (username != null) {
-            stmt.bindString(9, username);
+            stmt.bindString(10, username);
         }
  
         String password = entity.getPassword();
         if (password != null) {
-            stmt.bindString(10, password);
+            stmt.bindString(11, password);
         }
  
         String title = entity.getTitle();
         if (title != null) {
-            stmt.bindString(11, title);
+            stmt.bindString(12, title);
         }
  
         String msg = entity.getMsg();
         if (msg != null) {
-            stmt.bindString(12, msg);
+            stmt.bindString(13, msg);
         }
  
         String type = entity.getType();
         if (type != null) {
-            stmt.bindString(13, type);
+            stmt.bindString(14, type);
+        }
+ 
+        String type_num = entity.getType_num();
+        if (type_num != null) {
+            stmt.bindString(15, type_num);
         }
  
         String endoType = entity.getEndoType();
         if (endoType != null) {
-            stmt.bindString(14, endoType);
+            stmt.bindString(16, endoType);
         }
  
         String deviceName = entity.getDeviceName();
         if (deviceName != null) {
-            stmt.bindString(15, deviceName);
+            stmt.bindString(17, deviceName);
         }
  
         String usemsg01 = entity.getUsemsg01();
         if (usemsg01 != null) {
-            stmt.bindString(16, usemsg01);
+            stmt.bindString(18, usemsg01);
         }
  
         String usemsg02 = entity.getUsemsg02();
         if (usemsg02 != null) {
-            stmt.bindString(17, usemsg02);
+            stmt.bindString(19, usemsg02);
         }
  
         Boolean mSelected = entity.getMSelected();
         if (mSelected != null) {
-            stmt.bindLong(18, mSelected ? 1L: 0L);
+            stmt.bindLong(20, mSelected ? 1L: 0L);
         }
  
         String acceptAndInsertDB = entity.getAcceptAndInsertDB();
         if (acceptAndInsertDB != null) {
-            stmt.bindString(19, acceptAndInsertDB);
+            stmt.bindString(21, acceptAndInsertDB);
         }
     }
 
@@ -295,21 +319,23 @@ public class DeviceDBBeanDao extends AbstractDao<DeviceDBBean, Long> {
             cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // deviceID
             cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // deviceCode
             cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // ip
-            cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // httpPort
-            cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // socketPort
-            cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6), // livePort
-            cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7), // micPort
-            cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8), // username
-            cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9), // password
-            cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10), // title
-            cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11), // msg
-            cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12), // type
-            cursor.isNull(offset + 13) ? null : cursor.getString(offset + 13), // endoType
-            cursor.isNull(offset + 14) ? null : cursor.getString(offset + 14), // deviceName
-            cursor.isNull(offset + 15) ? null : cursor.getString(offset + 15), // usemsg01
-            cursor.isNull(offset + 16) ? null : cursor.getString(offset + 16), // usemsg02
-            cursor.isNull(offset + 17) ? null : cursor.getShort(offset + 17) != 0, // mSelected
-            cursor.isNull(offset + 18) ? null : cursor.getString(offset + 18) // acceptAndInsertDB
+            cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // LiveIp
+            cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // httpPort
+            cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6), // socketPort
+            cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7), // livePort
+            cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8), // micPort
+            cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9), // username
+            cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10), // password
+            cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11), // title
+            cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12), // msg
+            cursor.isNull(offset + 13) ? null : cursor.getString(offset + 13), // type
+            cursor.isNull(offset + 14) ? null : cursor.getString(offset + 14), // type_num
+            cursor.isNull(offset + 15) ? null : cursor.getString(offset + 15), // endoType
+            cursor.isNull(offset + 16) ? null : cursor.getString(offset + 16), // deviceName
+            cursor.isNull(offset + 17) ? null : cursor.getString(offset + 17), // usemsg01
+            cursor.isNull(offset + 18) ? null : cursor.getString(offset + 18), // usemsg02
+            cursor.isNull(offset + 19) ? null : cursor.getShort(offset + 19) != 0, // mSelected
+            cursor.isNull(offset + 20) ? null : cursor.getString(offset + 20) // acceptAndInsertDB
         );
         return entity;
     }
@@ -320,21 +346,23 @@ public class DeviceDBBeanDao extends AbstractDao<DeviceDBBean, Long> {
         entity.setDeviceID(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
         entity.setDeviceCode(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
         entity.setIp(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
-        entity.setHttpPort(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
-        entity.setSocketPort(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
-        entity.setLivePort(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
-        entity.setMicPort(cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7));
-        entity.setUsername(cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8));
-        entity.setPassword(cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9));
-        entity.setTitle(cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10));
-        entity.setMsg(cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11));
-        entity.setType(cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12));
-        entity.setEndoType(cursor.isNull(offset + 13) ? null : cursor.getString(offset + 13));
-        entity.setDeviceName(cursor.isNull(offset + 14) ? null : cursor.getString(offset + 14));
-        entity.setUsemsg01(cursor.isNull(offset + 15) ? null : cursor.getString(offset + 15));
-        entity.setUsemsg02(cursor.isNull(offset + 16) ? null : cursor.getString(offset + 16));
-        entity.setMSelected(cursor.isNull(offset + 17) ? null : cursor.getShort(offset + 17) != 0);
-        entity.setAcceptAndInsertDB(cursor.isNull(offset + 18) ? null : cursor.getString(offset + 18));
+        entity.setLiveIp(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
+        entity.setHttpPort(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
+        entity.setSocketPort(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
+        entity.setLivePort(cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7));
+        entity.setMicPort(cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8));
+        entity.setUsername(cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9));
+        entity.setPassword(cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10));
+        entity.setTitle(cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11));
+        entity.setMsg(cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12));
+        entity.setType(cursor.isNull(offset + 13) ? null : cursor.getString(offset + 13));
+        entity.setType_num(cursor.isNull(offset + 14) ? null : cursor.getString(offset + 14));
+        entity.setEndoType(cursor.isNull(offset + 15) ? null : cursor.getString(offset + 15));
+        entity.setDeviceName(cursor.isNull(offset + 16) ? null : cursor.getString(offset + 16));
+        entity.setUsemsg01(cursor.isNull(offset + 17) ? null : cursor.getString(offset + 17));
+        entity.setUsemsg02(cursor.isNull(offset + 18) ? null : cursor.getString(offset + 18));
+        entity.setMSelected(cursor.isNull(offset + 19) ? null : cursor.getShort(offset + 19) != 0);
+        entity.setAcceptAndInsertDB(cursor.isNull(offset + 20) ? null : cursor.getString(offset + 20));
      }
     
     @Override

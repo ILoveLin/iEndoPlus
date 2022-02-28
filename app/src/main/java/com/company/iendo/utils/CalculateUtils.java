@@ -202,6 +202,7 @@ public class CalculateUtils {
             String str = string.substring(48, 50);
             //获取发送给什么设备的id
             String substring = string.substring(50, 82);
+            LogUtils.e("======ReceiveThread====全部hexstring ====" + string);
             LogUtils.e("======ReceiveThread====接收方设备类型====" + str);
             LogUtils.e("======ReceiveThread====接收方设备ID====" + substring);
             String sendType = string.substring(7, 9);
@@ -358,7 +359,7 @@ public class CalculateUtils {
      *
      * @param mContext      :上下文
      * @param bean          :(Bean数据Json字符串)mData的bean对象,N字节，
-     * @param Received_Type :接收方设备类型(1字节):00-工作站， 01-HD3摄像机，02-冷光源，03-气腹机，04-冲洗机，05-4K摄像机，06-耳鼻喉控制板，07-一代一体机，8-耳鼻喉治疗台，9-妇科治疗台，10-泌尿治疗台，A0-iOS，A1-Android，FF-所有设备
+     * @param Received_Type :接收方设备类型(数值参数,1字节):00-工作站， 01-HD3摄像机，02-冷光源，03-气腹机，04-冲洗机，05-4K摄像机，06-耳鼻喉控制板，07-一代一体机，8-耳鼻喉治疗台，9-妇科治疗台，10-泌尿治疗台，A0-iOS，A1-Android，FF-所有设备
      * @param Received_ID   :接收方设备唯一标识,16字节，32位,不够补0
      * @param CMD           :控制命令，1字节0xFF（即0-255）不同设备控制命令可雷同
      * @return
@@ -451,7 +452,7 @@ public class CalculateUtils {
 //    }
 
     /**
-     * 获取接收socket的数据--data
+     * 获取接收data的数据--data
      *
      * @param str 传入接收指令所有长度的,16进制的string
      * @return
@@ -459,9 +460,9 @@ public class CalculateUtils {
     public static String getReceiveDataString(String str) {
 //        String str = "AAC5 01 0059 D8 FF A1f9432b11b93e8bb4ae34539b7472c20eFF00000000000000000000000000000000FD7B2262726F6164636173746572223A22737A636D65222C2272616D646F6D223A223230323230313237313133353130227DEEDD";
         String substring = str.substring(82 + 2, str.length() - 4);
-        LogUtils.e("UDP==命令===获取到data的HexString=====" + substring);
+        LogUtils.e("UDP==命令===getReceiveDataString=====" + substring);
         String s1 = hexStr2Str(substring);
-        LogUtils.e("UDP==命令===获取到data的String=====" + s1);
+        LogUtils.e("UDP==命令===getReceiveDataString=====" + s1);
 //        Gson gson = GsonFactory.getSingletonGson();
 //        BroadCastDataBean bean = gson.fromJson(s1, BroadCastDataBean.class);
 //        LogUtils.e("UDP==命令===bean=====" + bean.getBroadcaster());
@@ -526,7 +527,7 @@ public class CalculateUtils {
     }
 
     /**
-     * 获取接收socket的数据--data
+     * 获取接收socket的数据--ReceiveType
      *
      * @param str 传入接收指令所有长度为(命令id主从机---命令id主从机)包含这两者,16进制的string
      * @return
@@ -542,7 +543,7 @@ public class CalculateUtils {
     }
 
     /**
-     * 获取接收socket的数据--data
+     * 获取接收socket的数据--SendID
      *
      * @param str 传入接收指令所有长度为(命令id主从机---命令id主从机)包含这两者,16进制的string
      * @return
@@ -557,7 +558,7 @@ public class CalculateUtils {
     }
 
     /**
-     * 获取接收socket的数据--data
+     * 获取接收socket的数据--ReceiveID
      *
      * @param str 传入接收指令所有长度为(命令id主从机---命令id主从机)包含这两者,16进制的string
      * @return
@@ -580,9 +581,9 @@ public class CalculateUtils {
     public static String getReceiveRun2End4String(String str) {
 //      String str = "AAC501006A22 EE0700000000000000005618B1F96D92837Ca1f9432b11b93e8bb4ae34539b7472c20eFD7b227469746c65223a2241494f2d454e54222c2272656d61726b223a226f6e65686f6d65222c22656e646f74797065223a2233222c22616363657074223a2230227d b4DD";
         String substring = str.substring(12, str.length() - 4);
-        LogUtils.e("UDP==命令===获取到data的HexString=====" + substring);
+        LogUtils.e("UDP==命令===getReceiveRun2End4String=====" + substring);
         String s1 = hexStr2Str(substring);
-        LogUtils.e("UDP==命令===获取到data的String=====" + s1);
+        LogUtils.e("UDP==命令===getReceiveRun2End4String=====" + s1);
 //        Gson gson = GsonFactory.getSingletonGson();
 //        BroadCastDataBean bean = gson.fromJson(s1, BroadCastDataBean.class);
 //        LogUtils.e("UDP==命令===bean=====" + bean.getBroadcaster());

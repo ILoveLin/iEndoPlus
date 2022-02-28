@@ -41,6 +41,7 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
     private TextView mReport;
     private TextView mPicture;
     private Boolean mFatherExit;   //父类Activity 是否主动退出的标识,主动退出需要请求保存fragment的更新数据
+    private String currentItemID;
 
     @Override
     protected int getLayoutId() {
@@ -120,11 +121,12 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
 
     @Override
     protected void initData() {
-        String currentItemID = MainActivity.getCurrentItemID();
+        currentItemID = getIntent().getStringExtra("itemID");
         mTabAdapter.addItem("详情");
         mTabAdapter.addItem("图片");
         mTabAdapter.addItem("视频");
         mTabAdapter.setOnTabListener(this);
+
 
     }
 
@@ -135,14 +137,18 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
             switch (view.getId()) {
                 case R.id.linear_get_picture://图像采集
                     mOnEditStatusListener.onGetPicture();
-                    startActivity(GetPictureActivity.class);
+                    Intent intent1 = new Intent(this, GetPictureActivity.class);
+                    Bundle bundle1 = new Bundle();
+                    bundle1.putString("ItemID", currentItemID);
+                    intent1.putExtras(bundle1);
+                    startActivity(intent1);
                     break;
                 case R.id.case_report://获取报告
                     mOnEditStatusListener.onGetReport();
                     Intent intent = new Intent(this, ReportActivity.class);
                     Bundle bundle = new Bundle();
                     bundle.putInt("A", 1);
-                    bundle.putString("B", "B");
+                    bundle.putString("current", currentItemID);
                     intent.putExtras(bundle);
                     startActivity(intent);
 

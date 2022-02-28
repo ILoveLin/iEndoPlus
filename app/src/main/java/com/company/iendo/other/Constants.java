@@ -30,7 +30,8 @@ public class Constants {
      */
     public static final String UDP_FD = "FD";                 //网络发现（UDP广播）
     public static final String UDP_FC = "FC";                 //授权接入
-    public static final String UDP_HAND = "30";                 //捂手
+    public static final String UDP_HAND = "30";               //握手----所有指令之前必须握手
+    public static final String UDP_F0 = "F0";                 //获取当前操作病历号（ID）    获取图片界面,获取当前操作病历号（ID）和当前手机界面进入的ID号相同才能采图和录像
 
 
 }

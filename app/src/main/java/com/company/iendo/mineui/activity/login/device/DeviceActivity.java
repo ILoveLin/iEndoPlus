@@ -321,6 +321,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                                 deviceDBBean.setLivePort(mLivePort);   //直播端口
                                 deviceDBBean.setMicPort(mMicPort);     //语音端口
                                 deviceDBBean.setType(mDeviceType);     //设备类型
+                                deviceDBBean.setType_num(getTypeNum(mDeviceType)); //设备类型数字
                                 deviceDBBean.setMSelected(false);
 
                                 DeviceDBUtils.insertOrReplaceInTx(DeviceActivity.this, deviceDBBean);
@@ -389,6 +390,8 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                                 deviceDBBean.setLivePort(mLivePort);   //直播端口
                                 deviceDBBean.setMicPort(mMicPort);     //语音端口
                                 deviceDBBean.setType(mDeviceType);     //设备类型
+                                deviceDBBean.setType_num(getTypeNum(mDeviceType)); //设备类型数字
+
                                 deviceDBBean.setMSelected(false);
 
                                 DeviceDBUtils.insertOrReplaceInTx(DeviceActivity.this, deviceDBBean);
@@ -452,6 +455,8 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                                 deviceDBBean.setLivePort(mLivePort);   //直播端口
                                 deviceDBBean.setMicPort(mMicPort);     //语音端口
                                 deviceDBBean.setType(mDeviceType);     //设备类型
+                                deviceDBBean.setType_num(getTypeNum(mDeviceType)); //设备类型数字
+
                                 deviceDBBean.setMSelected(false);
                                 DeviceDBUtils.insertOrReplaceInTx(DeviceActivity.this, deviceDBBean);
                                 refreshRecycleViewData();
@@ -516,6 +521,8 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                                 deviceDBBean.setLivePort(mLivePort);   //直播端口
                                 deviceDBBean.setMicPort(mMicPort);     //语音端口
                                 deviceDBBean.setType(mDeviceType);     //设备类型
+                                deviceDBBean.setType_num(getTypeNum(mDeviceType)); //设备类型数字
+
                                 deviceDBBean.setMSelected(false);
                                 DeviceDBUtils.insertOrReplaceInTx(DeviceActivity.this, deviceDBBean);
                                 refreshRecycleViewData();
@@ -574,6 +581,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
     @Override
     public void onItemClick(RecyclerView recyclerView, View itemView, int position) {
         toast(mAdapter.getItem(position).getDeviceName() + "~~~");
+        LogUtils.e("选中设备的String" + mAdapter.getItem(position).toString());
     }
 
     private int mSelectedPos = -1;
@@ -647,6 +655,8 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                         item.setLivePort(mLivePort);   //直播端口
                         item.setMicPort(mMicPort);     //语音端口
                         item.setType(mDeviceType);     //设备类型
+                        item.setType_num(getTypeNum(mDeviceType)); //设备类型数字
+
                         DeviceDBUtils.update(DeviceActivity.this, item);
                         refreshRecycleViewData();
                     }
@@ -852,27 +862,34 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
              *mDeviceCode 这个是智能搜索之后返回过来的设备码
              * 需要再搜索完成后创建dialog的时候设置上去,不然为null
              */
-            LogUtils.e("添加病例=== mDBBean.getDeviceName()===" + mDBBean.getDeviceCode());   ///
-            LogUtils.e("添加病例=== mDBBean.getType()===" + mDBBean.getType());   //通过此字段判断EndoType
+            LogUtils.e("添加病例=== mDBBean.getDeviceCode()===" + mDBBean.getDeviceCode());   ///
+            LogUtils.e("添加病例=== mDBBean.getType()===" + mDBBean.getType());   //通过此字段判断设备类型(中文)
+            LogUtils.e("添加病例=== mDBBean.getType_num()===" + mDBBean.getType_num());   //通过此字段判断设备类型(数字)
             switch (mDBBean.getType()) {
                 case "妇科治疗台":
                     SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_EndoType, "4");//妇科
                     SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_Type, "妇科治疗台");
+                    SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_Type_Num, mDBBean.getType_num());
 
                     break;
                 case "一代一体机":
                     SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_EndoType, "3");//一体机
                     SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_Type, "一代一体机");
+                    SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_Type_Num, mDBBean.getType_num());
+
 
                     break;
                 case "耳鼻喉治疗台":
                     SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_EndoType, "3");//耳鼻喉
                     SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_Type, "耳鼻喉治疗台");
+                    SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_Type_Num, mDBBean.getType_num());
+
 
                     break;
                 case "泌尿治疗台":
                     SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_EndoType, "6");//泌尿
                     SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_Type, "泌尿治疗台");
+                    SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_Type_Num, mDBBean.getType_num());
 
                     break;
 
@@ -895,6 +912,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
              * 当前选中设备的主键id,因为离线模式下就能通过这个主键id查找这个设备下的所有用户
              * 主键id==deviceID---->下载图片的时候文件夹: 文件夹（设备ID-病例ID）
              */
+            String deviceCode = mDBBean.getDeviceCode();//设备码
             SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_DeviceID, mDBBean.getId() + "");
             String o = (String) SharePreferenceUtil.get(DeviceActivity.this, SharePreferenceUtil.Current_DeviceID, "");
             LogUtils.e("选择的设备=== 存入的设备id是===" + o);
@@ -918,6 +936,32 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
         }
 
     }
+
+    /**
+     * 获取设备类型对呀的数字
+     * 00-工作站， 01-HD3摄像机，02-冷光源，03-气腹机，04-冲洗机，05-4K摄像机，06-耳鼻喉控制板，
+     * 07-一代一体机，8-耳鼻喉治疗台，9-妇科治疗台，10-泌尿治疗台
+     * A0-iOS，A1-Android，FF-所有设备
+     */
+    public String getTypeNum(String str) {
+        if ("妇科治疗台".equals(str)) {
+            return "9";
+        } else if ("一代一体机".equals(str)) {
+            return "07";
+
+        } else if ("耳鼻喉治疗台".equals(str)) {
+            return "8";
+
+        } else if ("泌尿治疗台".equals(str)) {
+            return "10";
+
+        } else if ("妇科治疗台".equals(str)) {
+            return "9";
+
+        }
+        return "07";
+    }
+
 
     /**
      * eventbus 刷新扫码数据
@@ -999,6 +1043,8 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
         }
         refreshRecycleViewData();
     }
+
+
     //
 //
 //    @Override

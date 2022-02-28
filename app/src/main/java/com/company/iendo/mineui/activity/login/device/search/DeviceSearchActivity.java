@@ -14,9 +14,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.company.iendo.R;
 import com.company.iendo.action.StatusAction;
 import com.company.iendo.app.AppActivity;
-import com.company.iendo.bean.socket.BroadCastReceiveBean;
-import com.company.iendo.bean.socket.PutInBean;
-import com.company.iendo.bean.socket.PutInDeviceMsgBean;
+import com.company.iendo.bean.socket.searchdevice.BroadCastReceiveBean;
+import com.company.iendo.bean.socket.searchdevice.PutInBean;
+import com.company.iendo.bean.socket.searchdevice.PutInDeviceMsgBean;
 import com.company.iendo.green.db.DeviceDBBean;
 import com.company.iendo.green.db.DeviceDBUtils;
 import com.company.iendo.mineui.activity.login.device.adapter.DeviceSearchAdapter;
@@ -33,11 +33,8 @@ import com.hjq.base.BaseDialog;
 import com.hjq.widget.layout.WrapRecyclerView;
 import com.scwang.smart.refresh.layout.SmartRefreshLayout;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 /**
  * company：江西神州医疗设备有限公司
@@ -49,10 +46,8 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
     private SmartRefreshLayout mRefreshLayout;
     private WrapRecyclerView mRecyclerView;
     private StatusLayout mStatusLayout;
-    private InetAddress inetAddress = null;
     private ArrayList<BroadCastReceiveBean> mReceiveList = new ArrayList<>();
     private DeviceSearchAdapter mAdapter;
-    private InetAddress mPointInetAddress;
     private int currentItemPosition = -1;
     private ArrayList<String> mReceiveBroadCastList = new ArrayList<>();    //接收线程,获取到广播hexString的数据
     private ArrayList<String> mReceivePointList = new ArrayList<>();    //接收线程,获取到点对点hexString的数据
@@ -86,11 +81,7 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
 
                     break;
                 case UDP_Anim:
-                    try {
-                        inetAddress = InetAddress.getByName(Constants.BROADCAST_IP);
-                    } catch (UnknownHostException e) {
-                        e.printStackTrace();
-                    }
+
                     //加载动画,发送广播
                     if (!mStatusLayout.isShow()) {
                         showSearchLayout(R.raw.anim_search_loading04, R.string.status_layout_search, new StatusLayout.OnDismissListener() {
@@ -110,7 +101,7 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
                                 "00000000000000000000000000000000", "FD");
                         LogUtils.e("sendByteData====" + sendByteData);
                         //发送广播消息
-                        SocketManage.startSendMessageBySocket(sendByteData, inetAddress, Constants.BROADCAST_PORT, true);
+                        SocketManage.startSendMessageBySocket(sendByteData, Constants.BROADCAST_IP, Constants.BROADCAST_PORT, true);
                     } else {
                         toast("稍安勿躁,搜索中...");
                     }
@@ -118,6 +109,7 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
             }
         }
     };
+    private String serverItemIP;
 
     //获取数据并且,校验成功,存入设备表
     private void getDataInsertDB() {
@@ -158,6 +150,11 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
 
     }
 
+    /**
+     * @param bean                   包含了授权成功返回的liveip,一般不用
+     *                               当前itembean的 通讯直播ip ,一般使用这个ip
+     * @param deviceOnlyCodeFromRoom
+     */
     //授权成功存入数据库
     private void insertData2DB(PutInDeviceMsgBean bean, String deviceOnlyCodeFromRoom) {
         List<DeviceDBBean> deviceDBBeans = DeviceDBUtils.queryAll(DeviceSearchActivity.this);
@@ -176,13 +173,14 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
                 bean.setType("泌尿治疗台");
                 break;
         }
-        String tag = bean.getIp() + deviceOnlyCodeFromRoom + bean.getType();
+        String tag = deviceOnlyCodeFromRoom + bean.getType();
         DeviceDBBean codeBean = DeviceDBUtils.getQueryBeanByAcceptAndInsertDB(DeviceSearchActivity.this, tag);
 //        DeviceDBBean codeBean = DeviceDBUtils.getQueryBeanByCode(DeviceSearchActivity.this, deviceOnlyCodeFromRoom, bean.getType());
 //        DeviceDBBean typeBean = DeviceDBUtils.getQueryBeanByType(DeviceSearchActivity.this, deviceOnlyCodeFromRoom, bean.getType());
         LogUtils.e("SocketManage回调==模拟数据==old=设备表长度==" + deviceDBBeans.size());
         LogUtils.e("SocketManage回调==模拟数据==DeviceDBBean.toString==codeBean===" + codeBean);
         LogUtils.e("SocketManage回调==模拟数据==DeviceDBBean.toString==bean.toString()===" + bean.toString());
+        LogUtils.e("SocketManage回调==模拟数据==DeviceDBBean.toString==bean.toString()==serverItemIP=" + serverItemIP);
 //        LogUtils.e("SocketManage回调==模拟数据==DeviceDBBean.toString==typeBean===" + typeBean);
         //获取当前界面被点击的数据item
         BroadCastReceiveBean currentClickItem = mAdapter.getItem(currentItemPosition);
@@ -195,19 +193,17 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
             codeBean.setUsername(bean.getId()); //设置直播账号
             codeBean.setPassword(bean.getPw()); //设置直播密码
             codeBean.setDeviceName(bean.getFrom()); //设置设备名称
-            codeBean.setIp(bean.getIp());       //设置RTSP直播IP地址；
+            codeBean.setIp(currentClickItem.getIp());       //设置直播和通讯ip  常用
+            codeBean.setLiveIp(bean.getIp());       //设置直播ip    不常用
             codeBean.setLivePort(bean.getZpt());//设置直播端口号；
             codeBean.setSocketPort(bean.getStp());  //设置接收端口；
             codeBean.setMsg(bean.getRemark());      //设置备注-描述信息
+            codeBean.setType_num(bean.getType());   //设置设备中文说明对应的数字,比如type=一代一体机  数字对应07
             codeBean.setHttpPort(bean.getHpt());    //设置node js 服务端口  ===httpPort
             codeBean.setType(bean.getType());
             codeBean.setEndoType(bean.getEt());   //设置科室类型---endoType
             codeBean.setMSelected(false);   //默认未选中
-            /**
-             * 此处为什么不用bean的ip?
-             * 因为校验的是存入广播地址值的ip,所以广播之后存入这个ip做校验
-             */
-            codeBean.setAcceptAndInsertDB(currentClickItem.getIp() + bean.getEt() + deviceOnlyCodeFromRoom + bean.getType());    //存入回调数据bean,标识数据在数据库的唯一性
+            codeBean.setAcceptAndInsertDB(bean.getEt() + deviceOnlyCodeFromRoom + bean.getType());    //存入回调数据bean,标识数据在数据库的唯一性
             //此处修改界面adapter数据bean(BroadCastReceiveBean)状态,是否检验接入过isCheckAccess->true;是否存入数据库inDB->true
             currentClickItem.setInDB(true);
             currentClickItem.setCheckAccess(true);
@@ -222,16 +218,18 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
             deviceDBBean.setUsername(bean.getId()); //设置直播账号
             deviceDBBean.setPassword(bean.getPw()); //设置直播密码
             deviceDBBean.setDeviceName(bean.getFrom()); //设置设备名称
-            deviceDBBean.setIp(bean.getIp());       //设置RTSP直播IP地址；
+            deviceDBBean.setIp(currentClickItem.getIp());       //设置直播和通讯ip  常用
+            deviceDBBean.setLiveIp(bean.getIp());       //设置直播ip    不常用
             deviceDBBean.setLivePort(bean.getZpt());//设置直播端口号；
             deviceDBBean.setSocketPort(bean.getStp());  //设置接收端口；
             deviceDBBean.setMsg(bean.getRemark());      //设置备注-描述信息
             deviceDBBean.setHttpPort(bean.getHpt());    //设置node js 服务端口  ===httpPort
-            deviceDBBean.setType(bean.getType());
+            deviceDBBean.setType(bean.getType());       //设置设备中文说明比如比如type=07  中文说明=一代一体机
+            deviceDBBean.setType_num(bean.getType());   //设置设备中文说明对应的数字,比如type=一代一体机  数字对应07
             deviceDBBean.setEndoType(bean.getEt());   //设置科室类型---endoType
             deviceDBBean.setMSelected(false);   //默认未选中
-            //依次存入ip,endotype,deviceCode,deviceType
-            deviceDBBean.setAcceptAndInsertDB(currentClickItem.getIp() + bean.getEt() + deviceOnlyCodeFromRoom + bean.getType());    //存入回调数据bean,标识数据在数据库的唯一性
+            //依次存入endotype,deviceCode,deviceType
+            deviceDBBean.setAcceptAndInsertDB(bean.getEt() + deviceOnlyCodeFromRoom + bean.getType());    //存入回调数据bean,标识数据在数据库的唯一性
 
             LogUtils.e("SocketManage回调==模拟数据==DeviceDBBean.bean.getIp()===" + bean.getIp());//192.168.64.13
             LogUtils.e("SocketManage回调==模拟数据==DeviceDBBean.currentClickItem.getIp()===" + currentClickItem.getIp());//192.168.132.102
@@ -336,16 +334,16 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
         String accept = item.getAccept();
         String receiveType = item.getReceiveType();
         String receiveID = item.getReceiveID();
-        String ip = item.getIp();
+        serverItemIP = item.getIp();
         LogUtils.e("sendByteData==onItemClick==" + item.toString());
-        LogUtils.e("sendByteData==onItemClick==" + ip);
+        LogUtils.e("sendByteData==onItemClick==" + serverItemIP);
 
         PutInBean putBean = new PutInBean();
         putBean.setBroadcaster(Constants.BROADCASTER);                              //设备名字
         putBean.setPinAccess(item.getPinAccess());
         putBean.setSpt(Constants.RECEIVE_PORT + "");
 
-        String tag = item.getIp() + item.getEndotype() + item.getDeviceCode() + item.getDeviceType();
+        String tag = item.getEndotype() + item.getDeviceCode() + item.getDeviceType();
 
         DeviceDBBean codeBean = DeviceDBUtils.getQueryBeanByAcceptAndInsertDB(DeviceSearchActivity.this, tag);
         List<DeviceDBBean> deviceDBBeans = DeviceDBUtils.queryAll(DeviceSearchActivity.this);
@@ -372,9 +370,9 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
         if (!item.getCheckAccess()) { //没有被授权登入过
             if ("0".equals(accept)) {
                 putBean.setPinAccess("");
-                sendSocketPointMsg(putBean, receiveType, receiveID, ip);
+                sendSocketPointMsg(putBean, receiveType, receiveID, serverItemIP);
             } else if ("1".equals(accept)) {
-                checkInPutPassword(ip, position, putBean, receiveType, receiveID);
+                checkInPutPassword(serverItemIP, position, putBean, receiveType, receiveID);
             } else if ("2".equals(accept)) {
                 toast("不准接入");
             }
@@ -393,15 +391,8 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
         LogUtils.e("sendByteData==点对点消息数据=数据bean=" + mGson.toJson(putBean));
         LogUtils.e("sendByteData==点对点消息数据==" + sendByteData);
         LogUtils.e("sendByteData==点对点消息===ip==" + ip);
-        try {
-            mPointInetAddress = InetAddress.getByName(ip);
-//            mPointInetAddress = InetAddress.getByName("192.168.132.102");
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
-        LogUtils.e("sendByteData==点对点消息===mPointInetAddress==" + mPointInetAddress);
 
-        SocketManage.startSendMessageBySocket(sendByteData, mPointInetAddress, Constants.BROADCAST_PORT, false);
+        SocketManage.startSendMessageBySocket(sendByteData, ip, Constants.BROADCAST_PORT, false);
 
 
     }
@@ -496,11 +487,10 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
 
                     }
                 } else if (Constants.UDP_FC.equals(currentCMD)) { //授权接入
-//                    授权接入模拟的死数据
-//               AAC50100CA78EE0700000000000000005618B1F96D92837Ca03399cbe9a32d4786abf24e39d3cad576FC7b226970223a223139322e3136382e36342e3133222c227a7074223a2237373838222c226964223a22726f6f74222c227077223a22726f6f74222c2266726f6d223a2241494f2d454e54222c22737470223a2238303035222c22687074223a2237303031222c2272656d61726b223a2231E58FB7E58685E9959CE5AEA4222c2274797065223a223037222c226574223a2233222c22726574636f6465223a2230227dd5DD
                     if (!mReceivePointList.contains(mRun2End4)) {
                         mReceivePointList.add(mRun2End4 + "==" + ip);
                         LogUtils.e("SocketManage回调==mReceivePointList.size()===" + mReceivePointList.size());
+                        LogUtils.e("SocketManage回调==mRun2End4 + + ip===" + mRun2End4 + "==" + ip);
                         //发消息,存入数据库,并且刷新设备搜索界面
                         mHandler.sendEmptyMessage(UDP_Point_Over);
 

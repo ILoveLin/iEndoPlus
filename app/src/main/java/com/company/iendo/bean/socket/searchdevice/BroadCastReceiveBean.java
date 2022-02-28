@@ -1,4 +1,4 @@
-package com.company.iendo.bean.socket;
+package com.company.iendo.bean.socket.searchdevice;
 
 import com.google.gson.annotations.SerializedName;
 

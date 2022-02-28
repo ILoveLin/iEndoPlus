@@ -1,6 +1,9 @@
 package com.company.iendo.app;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.view.View;
 
@@ -8,8 +11,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 
-import com.company.iendo.manager.ActivityManager;
-import com.company.iendo.mineui.activity.login.device.DeviceActivity;
 import com.company.iendo.utils.SharePreferenceUtil;
 import com.google.gson.Gson;
 import com.gyf.immersionbar.ImmersionBar;
@@ -27,27 +28,41 @@ import com.hjq.http.listener.OnHttpListener;
 import okhttp3.Call;
 
 /**
- *    author : Android 轮子哥
- *    github : https://github.com/getActivity/AndroidProject
- *    time   : 2018/10/18
- *    desc   : Activity 业务基类
+ * author : Android 轮子哥
+ * github : https://github.com/getActivity/AndroidProject
+ * time   : 2018/10/18
+ * desc   : Activity 业务基类
  */
 public abstract class AppActivity extends BaseActivity
         implements ToastAction, TitleBarAction, OnHttpListener<Object> {
 
-    /** 标题栏对象 */
+    /**
+     * 标题栏对象
+     */
     private TitleBar mTitleBar;
-    /** 状态栏沉浸 */
+    /**
+     * 状态栏沉浸
+     */
     private ImmersionBar mImmersionBar;
 
-    /** 加载对话框 */
+    /**
+     * 加载对话框
+     */
     private BaseDialog mDialog;
-    /** 对话框数量 */
+    /**
+     * 对话框数量
+     */
     private int mDialogCount;
     public Gson mGson;
     public String mBaseUrl;  //当前用户的头部url
     public String endoType;
     public String mUserID;
+    public static String currentIP;
+    public String mCurrentTypeDes;    //当前选择设备的==比如:一代一体机==07,此处mCurrentTypeDes==一代一体机
+    public String mCurrentTypeNum;    //当前选择设备的==比如:一代一体机==07,此处mCurrentTypeNum==07
+    public String mCurrentReceiveDeviceCode; //当前选择设备的==唯一设备码
+    public String mSocketOrLiveIP;       //socket或者直播通讯的ip
+    public String mSocketPort;           //socket通讯端口
 
     /**
      * 当前加载对话框是否在显示中
@@ -111,7 +126,11 @@ public abstract class AppActivity extends BaseActivity
         mBaseUrl = (String) SharePreferenceUtil.get(AppActivity.this, SharePreferenceUtil.Current_BaseUrl, "192.167.132.102");
         endoType = (String) SharePreferenceUtil.get(AppActivity.this, SharePreferenceUtil.Current_EndoType, "3");
         mUserID = (String) SharePreferenceUtil.get(AppActivity.this, SharePreferenceUtil.Current_Login_UserID, "3");
-
+        mCurrentTypeDes = (String) SharePreferenceUtil.get(AppActivity.this, SharePreferenceUtil.Current_Type, "妇科治疗台");
+        mCurrentTypeNum = (String) SharePreferenceUtil.get(AppActivity.this, SharePreferenceUtil.Current_Type_Num, "07");
+        mCurrentReceiveDeviceCode = (String) SharePreferenceUtil.get(AppActivity.this, SharePreferenceUtil.Current_DeviceCode, "00000000000000000000000000000000");
+        mSocketOrLiveIP = (String) SharePreferenceUtil.get(AppActivity.this, SharePreferenceUtil.Current_IP, "192.168.132.102");
+        mSocketPort = (String) SharePreferenceUtil.get(AppActivity.this, SharePreferenceUtil.Current_SocketPort, "8005");
 
         // 初始化沉浸式状态栏
         if (isStatusBarEnabled()) {
@@ -123,7 +142,20 @@ public abstract class AppActivity extends BaseActivity
             }
         }
         mGson = GsonFactory.getSingletonGson();
+        //Wifi状态判断
+        WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        if (wifiManager.isWifiEnabled()) {
+            WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+            currentIP = getIpString(wifiInfo.getIpAddress());
+        }
+    }
 
+    /**
+     * 将获取到的int型ip转成string类型
+     */
+    private static String getIpString(int i) {
+        return (i & 0xFF) + "." + ((i >> 8) & 0xFF) + "."
+                + ((i >> 16) & 0xFF) + "." + (i >> 24 & 0xFF);
     }
 
     /**

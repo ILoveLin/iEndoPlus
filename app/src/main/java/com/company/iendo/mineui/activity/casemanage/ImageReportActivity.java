@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.company.iendo.R;
 import com.company.iendo.action.StatusAction;
 import com.company.iendo.app.AppActivity;
-import com.company.iendo.bean.socket.BroadCastReceiveBean;
+import com.company.iendo.bean.socket.searchdevice.BroadCastReceiveBean;
 import com.company.iendo.mineui.activity.casemanage.fragment.adapter.ImageSelectedAdapter;
 import com.company.iendo.widget.StatusLayout;
 import com.gyf.immersionbar.ImmersionBar;

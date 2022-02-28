@@ -2,7 +2,6 @@ package com.company.iendo.green.db;
 
 import android.content.Context;
 
-import com.company.iendo.bean.socket.PutInDeviceMsgBean;
 import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.db.DBManager;
 
@@ -73,10 +72,10 @@ public class DeviceDBUtils {
                 DeviceDBBean deviceDBBean = list.get(i);
 
 
-                //192.168.132.102300000000000000005618B1F96D92837C一代一体机    00000000000000005618B1F96D92837C
+                //300000000000000005618B1F96D92837C一代一体机    00000000000000005618B1F96D92837C
                 LogUtils.e("sendByteData==onItemClick===deviceDBBean.getAcceptAndInsertDB()==" + deviceDBBean.getAcceptAndInsertDB());
 
-                //192.168.132.10200000000000000005618B1F96D92837C一代一体机
+                //00000000000000005618B1F96D92837C一代一体机
                 LogUtils.e("sendByteData==onItemClick===acceptAndInsertDB==" + acceptAndInsertDB);
 
                 if (acceptAndInsertDB.equals(deviceDBBean.getAcceptAndInsertDB())) {

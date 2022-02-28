@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.company.iendo.R;
 import com.company.iendo.app.AppAdapter;
-import com.company.iendo.bean.socket.BroadCastReceiveBean;
+import com.company.iendo.bean.socket.searchdevice.BroadCastReceiveBean;
 import com.company.iendo.green.db.DeviceDBBean;
 import com.company.iendo.green.db.DeviceDBUtils;
 import com.company.iendo.utils.LogUtils;
@@ -83,7 +83,7 @@ public class DeviceSearchAdapter extends AppAdapter<BroadCastReceiveBean> {
 
             }
             LogUtils.e("SocketManage回调==模拟数据==DeviceDBBean.toString==Adapter===" + mItemBean.toString());
-            String tag = mItemBean.getIp() + mItemBean.getEndotype() + mItemBean.getDeviceCode() + mItemBean.getDeviceType();
+            String tag = mItemBean.getEndotype() + mItemBean.getDeviceCode() + mItemBean.getDeviceType();
 
             DeviceDBBean codeBean = DeviceDBUtils.getQueryBeanByAcceptAndInsertDB(mContext, tag);
             LogUtils.e("SocketManage回调==模拟数据==DeviceDBBean.codeBean==tag===" + tag); //192.168.132.10200000000000000005618B1F96D92837C一代一体机

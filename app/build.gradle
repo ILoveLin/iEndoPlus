@@ -135,7 +135,7 @@ android {
 
 
     greendao {
-        schemaVersion 10 //数据库版本号
+        schemaVersion 12 //数据库版本号
         daoPackage 'com.company.iendo.green.db'
 // 设置DaoMaster、DaoSession、Dao 包名
         targetGenDir 'src/main/java'//设置DaoMaster、DaoSession、Dao目录,请注意，这里路径用/不要用.
@@ -248,8 +248,8 @@ dependencies {
     //内外环ImageView
     implementation 'com.makeramen:roundedimageview:2.3.0'
 
-    // 日志调试：https://github.com/getActivity/Logcat    app里面会有个小按钮
-
+//    日志调试 ： https://github.com/getActivity/Logcat    app里面会有个小按钮
+//
 //    debugImplementation 'com.hjq:logcat:8.2'
     //ZXing 二维码扫描
     implementation 'cn.bingoogolapple:bga-qrcode-zxing:1.3.7'

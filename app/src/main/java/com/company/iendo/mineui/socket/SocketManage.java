@@ -14,6 +14,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
 
 /**
  * company：江西神州医疗设备有限公司
@@ -172,7 +173,6 @@ public class SocketManage {
                         try {
                             LogUtils.e("======ReceiveThread=====000==");
                             LogUtils.e("======ReceiveThread=====mReceivePacket.getAddress()==" + mReceivePacket.getAddress());
-                            LogUtils.e("======ReceiveThread=====mReceivePacket.getData()==" + mReceivePacket.getAddress());
                             LogUtils.e("======ReceiveThread=====currentIP==" + currentIP);
                             if (!currentIP.equals(mReceivePacket.getAddress())) {   //不是自己的IP不接受
                                 mReceiveSocket.receive(mReceivePacket);
@@ -191,6 +191,7 @@ public class SocketManage {
                                     String finalOkIp = "";
                                     if (CalculateUtils.getDataIfForMe(strdata, activity)) {
                                         finalOkIp = CalculateUtils.getOkIp(mReceivePacket.getAddress().toString());
+
                                         flag = true;
                                     }
                                     if (flag) {
@@ -200,7 +201,7 @@ public class SocketManage {
                                             public void run() {
                                                 if (null != mListener) {
                                                     LogUtils.e("======SocketManage=====发送回调=====strdata==" + strdata);
-                                                    LogUtils.e("======SocketManage=====发送回调=====finalOkIp1==" + strdata);
+                                                    LogUtils.e("======SocketManage=====发送回调===Socket通讯ip==finalOkIp1==" + finalOkIp1);
 //                                                Boolean dataIfForMe = CalculateUtils.getDataIfForMe(strdata, activity);
 //                                                LogUtils.e("======ReceiveThread=====是否可以回调消息=="+dataIfForMe);
                                                     mListener.onSuccess(strdata, finalOkIp1);
@@ -231,18 +232,51 @@ public class SocketManage {
         easyFixed2Thread.execute(mReceiveRunnable);
     }
 
+    /**
+     * 发送握手消息
+     *
+     * @param data        协议完整的hexString数据
+     * @param ip          目标地址
+     * @param receivePort 目标端口
+     */
+    public static void startSendHandMessage(byte[] data, String ip, int receivePort) {
+        InetAddress mAddress = null;
+        //点对点消息,握手
+        try {
+             mAddress = InetAddress.getByName(ip);
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+        getSendSocketRunnable(data, mAddress, receivePort);
+        if (null == easyCacheThread) {
+            easyCacheThread = ThreadManager.getCache();
+        }
+        easyCacheThread.execute(mSendRunnable);
+
+    }
 
     /**
      * @param data               字节数组
-     * @param receiveInetAddress 接收端的intAddress
+     * @param ip ip
      * @param receivePort        接收端的port
      */
-    public static void startSendMessageBySocket(byte[] data, InetAddress receiveInetAddress, int receivePort, Boolean isBroadcast) {
+    public static void startSendMessageBySocket(byte[] data, String ip, int receivePort, Boolean isBroadcast) {
+        InetAddress mAddress = null;
+        //点对点消息,握手
+        try {
+            mAddress = InetAddress.getByName(ip);
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+
+        if (null == easyCacheThread) {
+            easyCacheThread = ThreadManager.getCache();
+        }
         if (isBroadcast) {//发送广播
-            getSendBroadcastRunnable(data, receiveInetAddress, receivePort);
+            getSendBroadcastRunnable(data, mAddress, receivePort);
             easyCacheThread.execute(mSendBroadcastRunnable);
         } else {  //点对点消息
-            getSendSocketRunnable(data, receiveInetAddress, receivePort);
+            getSendSocketRunnable(data, mAddress, receivePort);
             easyCacheThread.execute(mSendRunnable);
         }
 

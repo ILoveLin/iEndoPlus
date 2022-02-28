@@ -47,7 +47,7 @@ public class SharePreferenceUtil {
      */
     public static final String Current_MainID = "Current_MainID";                    //设备主键ID--//这个主键ID是需要绑定用户表中的deviceID,确保是这个设备下,离线模式能通过id查询绑定用户
     public static final String Current_DeviceID = "Current_DeviceID";                //设备唯一标识--//这个主键ID是需要绑定用户表中的deviceID,确保是这个设备下,离线模式能通过id查询绑定用户
-    public static final String Current_IP = "Current_IP";                            //设备ip
+    public static final String Current_IP = "Current_IP";                            //设备ip    直播和通讯的ip
     public static final String Current_HttpPort = "Current_HttpPort";                //设备http端口
     public static final String Current_SocketPort = "Current_SocketPort";            //socket端口
     public static final String Current_LivePort = "Current_LivePort";                //直播端口
@@ -56,6 +56,7 @@ public class SharePreferenceUtil {
     public static final String Current_DevicePassword = "Current_DevicePassword";    //设备密码(直播)
     public static final String Current_Type = "Current_Type";                        //设备类型  --一体机 ,耳鼻喉治疗台等等类型
     public static final String Current_EndoType = "Current_EndoType";                //工作站类型
+    public static final String Current_Type_Num = "Current_Type_Num";                //工作站类型
     /**
      * mDeviceCode  mDBBean.getDeviceName----这个是智能搜索之后返回过来的设备码
      * 需要再搜索完成后创建dialog的时候设置上去,不然为null

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
@@ -21,6 +22,11 @@ import androidx.annotation.NonNull;
 import com.company.iendo.R;
 import com.company.iendo.action.StatusAction;
 import com.company.iendo.app.AppActivity;
+import com.company.iendo.bean.socket.HandBean;
+import com.company.iendo.bean.socket.getpicture.CurrentUserIDBean;
+import com.company.iendo.mineui.socket.SocketManage;
+import com.company.iendo.other.Constants;
+import com.company.iendo.utils.CalculateUtils;
 import com.company.iendo.utils.CommonUtil;
 import com.company.iendo.utils.FileUtil;
 import com.company.iendo.utils.LogUtils;
@@ -41,6 +47,10 @@ import net.ossrs.rtmp.ConnectCheckerRtmp;
 import org.videolan.libvlc.Media;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetSocketAddress;
 
 /**
  * author : Android 轮子哥
@@ -82,12 +92,46 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
     private static final int Record_Start = 102;
     private static final int Record_Stop = 103;
     private static final int Time = 104;
+    private static final int UDP_Receive = 105;
+    private static final int UDP_Hand = 106;   //握手
+    private static final int UDP_ID = 107;      //获取病例ID
+    private static boolean UDP_HAND_TAG = false; //握手成功表示  true 成功
+    private static boolean UDP_EQUALS_ID = false; //获取当前操作id,和进入该界面的id 是否相等,相等才可以进行各种操作,默认不相等,
+    @SuppressLint("HandlerLeak")
     private Handler mHandler = new Handler() {
         @SuppressLint("NewApi")
         @Override
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
             switch (msg.what) {
+                case UDP_Hand:
+                    if ((Boolean) msg.obj) {
+                        toast("握手成功");
+                        UDP_HAND_TAG = true;
+                        //获取当前病例ID
+                        sendSocketPointMessage(Constants.UDP_F0);
+                    } else {
+                        toast("握手失败功");
+                        UDP_HAND_TAG = false;
+                    }
+                    break;
+                case UDP_ID:
+                    if ((Boolean) msg.obj) {
+                        UDP_EQUALS_ID = true;
+                        //获取当前病例ID
+                    } else {
+                        UDP_EQUALS_ID = false;
+                    }
+                    break;
+                case UDP_Receive:
+                    toast("接受到消息");
+                    //接受msg传递过来的参数数据
+                    String ip = msg.getData().getString("ip");
+                    String resultData = msg.getData().getString("resultData");
+                    LogUtils.e("======GetPictureActivity=====Handler接受====ip==" + ip);
+                    LogUtils.e("======GetPictureActivity=====Handler接受====resultData==" + resultData);
+
+                    break;
                 case Time:
                     String string = CommonUtil.stringForTime(Integer.parseInt(currentTime));
                     mTime.setText("" + string);
@@ -106,20 +150,21 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                     mTopControl.setVisibility(View.VISIBLE);
                     mBottomControl.setVisibility(View.VISIBLE);
                     break;
-                case Record_Start:
-                    mFlagMicOnLine = true;
-                    setTextColor(getResources().getColor(R.color.red), "录像中", false);
-                    break;
-                case Record_Stop:
-                    mFlagMicOnLine = false;
-                    setTextColor(getResources().getColor(R.color.white), "录像", true);
-                    toast("录像成功");
-                    break;
+//                case Record_Start:
+//                    mFlagMicOnLine = true;
+//                    setTextColor(getResources().getColor(R.color.red), "录像中", false);
+//                    break;
+//                case Record_Stop:
+//                    mFlagMicOnLine = false;
+//                    setTextColor(getResources().getColor(R.color.white), "录像", true);
+//                    toast("录像成功");
+//                    break;
             }
         }
     };
     private TextView mRecordMsg;
     private RtmpOnlyAudio rtmpOnlyAudio;
+    private String itemID;
 
 
     public void setTextColor(int color, String message, boolean isStarting) {
@@ -145,6 +190,8 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
 
     @Override
     protected void initData() {
+
+
         rootView.setLongClickable(true);  //手势需要--能触摸
         rootView.setOnTouchListener(onTouchVideoListener);
         //rootView.setOnTouchListener(null);
@@ -152,6 +199,10 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         rtmpOnlyAudio = new RtmpOnlyAudio(this);
         LogUtils.e("pusherStart====111===" + rtmpOnlyAudio.isStreaming());    //true   断开的时候
         LogUtils.e("pusherStart====222===" + rtmpOnlyAudio.prepareAudio());   //true
+
+        //获取当前病例ID
+        Bundle bundle = getIntent().getExtras();
+        itemID = bundle.getString("ItemID");
 
 //        推流音频代码
 //        if (!rtmpOnlyAudio.isStreaming()) {
@@ -176,8 +227,187 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
 //            }
 //        }
         responseListener();
+        //开启消息接收线程
+        initReceiveThread();
 
     }
+
+    /**
+     * ***************************************************************************通讯模块**************************************************************************
+     */
+    private static DatagramSocket mReceiveSocket = null;
+    private volatile static boolean isRuning = true;
+
+
+    /**
+     * 开启消息接收线程
+     */
+    private void initReceiveThread() {
+        new Thread() {
+            @Override
+            public void run() {
+                super.run();
+                LogUtils.e("正在执行Runnable任务：%s" + Thread.currentThread().getName());
+                byte[] receiveData = new byte[1024];
+                DatagramPacket mReceivePacket = new DatagramPacket(receiveData, receiveData.length);
+                try {
+                    if (mReceiveSocket == null) {
+                        mReceiveSocket = new DatagramSocket(null);
+                        mReceiveSocket.setReuseAddress(true);
+                        mReceiveSocket.bind(new InetSocketAddress(Constants.RECEIVE_PORT));
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                while (true) {
+                    if (isRuning) {
+                        try {
+                            LogUtils.e("======GetPictureActivity=====000==");
+                            LogUtils.e("======GetPictureActivity=====mReceivePacket.getAddress()==" + mReceivePacket.getAddress());
+                            LogUtils.e("======GetPictureActivity=====mReceivePacket.getData()==" + mReceivePacket.getAddress());
+                            LogUtils.e("======GetPictureActivity=====currentIP==" + currentIP);
+                            if (!currentIP.equals(mReceivePacket.getAddress())) {   //不是自己的IP不接受
+                                mReceiveSocket.receive(mReceivePacket);
+                                String rec = CalculateUtils.byteArrayToHexString(mReceivePacket.getData()).trim();
+//                                String rec = CalculateUtils.byteArrayToHexString(mReceivePacket.getData()).trim();
+                                //过滤不是发送给我的消息全部不接受
+                                int length = mReceivePacket.getLength() * 2;
+                                String resultData = rec.substring(0, length);
+                                LogUtils.e("======GetPictureActivity=====获取长度==length==" + length);
+                                LogUtils.e("======GetPictureActivity=====获取长度数据==substring==" + resultData);
+                                LogUtils.e("======GetPictureActivity=====接受到数据==原始数据====mReceivePacket.getData()=" + mReceivePacket.getData());
+                                LogUtils.e("======GetPictureActivity=====3333==" + mReceivePacket.getData());
+                                if (mReceivePacket != null) {
+                                    LogUtils.e("======GetPictureActivity=====66666==");
+                                    boolean flag = false;//是否可用的ip---此ip是服务器ip
+                                    String finalOkIp = "";
+                                    if (CalculateUtils.getDataIfForMe(resultData, GetPictureActivity.this)) {
+                                        finalOkIp = CalculateUtils.getOkIp(mReceivePacket.getAddress().toString());
+                                        flag = true;//正确的服务器ip地址
+                                    }
+                                    //正确的服务器ip地址,才开始计算获取自己需要的数据
+                                    if (flag) {
+                                        String mRun2End4 = CalculateUtils.getReceiveRun2End4String(resultData);//随机数之后到data结尾的String
+                                        String deviceType = CalculateUtils.getDeviceType(resultData);
+                                        String deviceOnlyCode = CalculateUtils.getDeviceOnlyCode(resultData);
+                                        String currentCMD = CalculateUtils.getCMD(resultData);
+                                        LogUtils.e("======GetPictureActivity==回调===随机数之后到data结尾的String=mRun2End4==" + mRun2End4);
+                                        LogUtils.e("======GetPictureActivity==回调===设备类型deviceType==" + deviceType);
+                                        LogUtils.e("======GetPictureActivity==回调===设备ID=deviceOnlyCode==" + deviceOnlyCode);
+                                        LogUtils.e("======GetPictureActivity==回调===CMD=currentCMD==" + currentCMD);
+
+
+                                        switch (currentCMD) {
+                                            case Constants.UDP_HAND://握手
+                                                LogUtils.e("======GetPictureActivity==回调===握手==");
+                                                //判断数据是否是发个自己的
+                                                Boolean dataIfForMe = CalculateUtils.getDataIfForMe(resultData, GetPictureActivity.this);
+                                                LogUtils.e("======GetPictureActivity=====dataIfForMe==" + dataIfForMe);
+                                                //设备在线握手成功
+                                                if (dataIfForMe) {
+                                                    Message message = new Message();
+                                                    message.what = UDP_Hand;
+                                                    message.obj = true;
+                                                    mHandler.sendMessage(message);
+                                                }
+                                                break;
+                                            case Constants.UDP_F0://获取当前病例
+                                                //获取到病例的ID是十六进制的,需要转成十进制
+                                                Boolean dataIfForFO = CalculateUtils.getDataIfForMe(resultData, GetPictureActivity.this);
+                                                LogUtils.e("======GetPictureActivity==回调===获取当前病例==" + mRun2End4);
+                                                LogUtils.e("======GetPictureActivity==回调===获取当前病例dataIfForFO==" + dataIfForFO);
+                                                if (dataIfForFO) {
+                                                    String dataString = CalculateUtils.getReceiveDataString(resultData);
+                                                    LogUtils.e("======GetPictureActivity==回调===CMD=getReceiveDataString==" + dataString);
+//                                                    String jsonID = CalculateUtils.hex16To10(dataString) + "";
+                                                    LogUtils.e("======GetPictureActivity==回调===CMD=CalculateUtils.hexStr2Str(dataString)==" + CalculateUtils.hexStr2Str(dataString));
+                                                    String s = CalculateUtils.hexStr2Str(dataString);
+                                                    CurrentUserIDBean bean = mGson.fromJson(s, CurrentUserIDBean.class);
+//                                                    LogUtils.e("======GetPictureActivity==回调===CMD=jsonID==" + jsonID);
+                                                    String jsonID = CalculateUtils.hex16To10(bean.getRecordid()) + "";
+                                                    //两者病例ID相同才能可以做其他操作
+                                                    if (itemID.equals(jsonID)) {
+                                                        Message message = new Message();
+                                                        message.what = UDP_Hand;
+                                                        message.obj = true;
+                                                        mHandler.sendMessage(message);
+                                                    } else {
+                                                        Message message = new Message();
+                                                        message.what = UDP_Hand;
+                                                        message.obj = false;
+                                                        mHandler.sendMessage(message);
+                                                    }
+                                                }
+
+
+                                                break;
+                                        }
+
+
+                                    }
+
+//                                    String finalOkIp1 = finalOkIp;
+//                                        Message message = new Message();
+//                                        Bundle bundle = new Bundle();
+//                                        message.what = UDP_Receive;
+//                                        bundle.putString("ip", finalOkIp1);
+//                                        bundle.putString("resultData", resultData);
+//                                        message.setData(bundle);
+//                                        mHandler.sendMessage(message);
+                                }
+
+                            }
+
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
+
+                        }
+                    }
+                }
+
+
+            }
+        }.start();
+
+    }
+
+    /**
+     * 发送握手消息
+     */
+    public void sendHandLinkMessage() {
+        HandBean handBean = new HandBean();
+        handBean.setHelloPc("HelloPc");
+        handBean.setComeFrom("Android");
+        byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(handBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
+                Constants.UDP_HAND);
+
+        SocketManage.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort));
+    }
+
+    /**
+     * 发送点对点消息,必须握手成功
+     *
+     * @param CMDCode 命令cmd
+     */
+    public void sendSocketPointMessage(String CMDCode) {
+        if (UDP_HAND_TAG) {
+            HandBean handBean = new HandBean();
+            handBean.setHelloPc("HelloPc");
+            handBean.setComeFrom("Android");
+            byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(handBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
+                    CMDCode);
+            SocketManage.startSendMessageBySocket(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), false);
+        } else {
+            toast("请先建立握手链接!");
+        }
+
+    }
+
+
+    /**
+     * ***************************************************************************通讯模块**************************************************************************
+     */
 
     private void responseListener() {
         setOnClickListener(R.id.linear_record, R.id.linear_picture, R.id.linear_cold, R.id.linear_mic, R.id.full_change, R.id.lock_screen, R.id.root_layout_vlc, R.id.video_back, R.id.control_start_view);
@@ -223,9 +453,9 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             public void eventSystemEnd(String isStringed) {
                 isPlayering = false;
                 if ("EndReached".equals(isStringed)) {
-                    if (mFlagRecord) { //如果在录像，断开录像
-                        vlcRecordOver();
-                    }
+//                    if (mFlagRecord) { //如果在录像，断开录像
+//                        vlcRecordOver();
+//                    }
                     if (mFlagMicOnLine) {//如果在连麦，断开连麦
 //                        pusherStop("Common");
                     }
@@ -243,6 +473,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         });
     }
 
+
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -255,54 +486,55 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             case R.id.control_start_view:       //重新开始链接直播
                 startLive(path);
                 break;
-            case R.id.linear_record:            //录像
-                if (isPlayering) {
-                    if (mVLCView.isPrepare()) {
-                        if ("录像".equals(mRecordMsg.getText())) {
-                            mFlagRecord = true;
-                            mHandler.sendEmptyMessage(Record_Start);
-//                        vlcVideoView.getMediaPlayer().record(directory);
-                            LogUtils.e("path=====录像--开始:=====" + directory); //   /storage/emulated/0/1604026573438.mp4
-                            recordEvent.startRecord(mVLCView.getMediaPlayer(), directory, "cme.mp4");
-                        } else {
-                            vlcRecordOver();
-                        }
-                    } else {
-                        vlcRecordOver();
-                    }
-                } else {
-                    toast("只有在播放的时候才能录像!");
-                }
+            case R.id.linear_record:            //录像,本地不做,socket通讯机子做操作
+//                if (isPlayering) {
+//                    if (mVLCView.isPrepare()) {
+//                        if ("录像".equals(mRecordMsg.getText())) {
+//                            mFlagRecord = true;
+//                            mHandler.sendEmptyMessage(Record_Start);
+////                        vlcVideoView.getMediaPlayer().record(directory);
+//                            LogUtils.e("path=====录像--开始:=====" + directory); //   /storage/emulated/0/1604026573438.mp4
+//                            recordEvent.startRecord(mVLCView.getMediaPlayer(), directory, "cme.mp4");
+//                        } else {
+//                            vlcRecordOver();
+//                        }
+//                    } else {
+//                        vlcRecordOver();
+//                    }
+//                } else {
+//                    toast("只有在播放的时候才能录像!");
+//                }
                 break;
-            case R.id.linear_picture:           //截图
-                if (isPlayering) {
-                    if (mVLCView.isPrepare()) {
-                        Media.VideoTrack videoTrack = mVLCView.getVideoTrack();
-                        if (videoTrack != null) {
-                            toast("截图成功");
-                            //原图
-                            LogUtils.e("path=====截图地址:=====" + shotFile.getAbsolutePath());
-                            File localFile = new File(shotFile.getAbsolutePath());
-                            if (!localFile.exists()) {
-                                localFile.mkdir();
-                            }
-                            recordEvent.takeSnapshot(mVLCView.getMediaPlayer(), shotFile.getAbsolutePath(), 0, 0);
-                            //插入相册 解决了华为截图显示问题
-                            MediaStore.Images.Media.insertImage(getContentResolver(), mVLCView.getBitmap(), "", "");
-                            //原图的一半
-                            //recordEvent.takeSnapshot(vlcVideoView.getMediaPlayer(), takeSnapshotFile.getAbsolutePath(), videoTrack.width / 2, 0);
-                        }
-                    }
-                    //这个就是截图 保存Bitmap就行了
-                    //thumbnail.setImageBitmap(vlcVideoView.getBitmap());
-                    //Bitmap bitmap = vlcVideoView.getBitmap();
-                    //saveBitmap("", bitmap);
-                } else {
-                    toast("只有在播放的时候才能截图!");
-                }
+            case R.id.linear_picture:           //截图,本地不做,socket通讯机子做操作
+//                if (isPlayering) {
+//                    if (mVLCView.isPrepare()) {
+//                        Media.VideoTrack videoTrack = mVLCView.getVideoTrack();
+//                        if (videoTrack != null) {
+//                            toast("截图成功");
+//                            //原图
+//                            LogUtils.e("path=====截图地址:=====" + shotFile.getAbsolutePath());
+//                            File localFile = new File(shotFile.getAbsolutePath());
+//                            if (!localFile.exists()) {
+//                                localFile.mkdir();
+//                            }
+//                            recordEvent.takeSnapshot(mVLCView.getMediaPlayer(), shotFile.getAbsolutePath(), 0, 0);
+//                            //插入相册 解决了华为截图显示问题
+//                            MediaStore.Images.Media.insertImage(getContentResolver(), mVLCView.getBitmap(), "", "");
+//                            //原图的一半
+//                            //recordEvent.takeSnapshot(vlcVideoView.getMediaPlayer(), takeSnapshotFile.getAbsolutePath(), videoTrack.width / 2, 0);
+//                        }
+//                    }
+//                    //这个就是截图 保存Bitmap就行了
+//                    //thumbnail.setImageBitmap(vlcVideoView.getBitmap());
+//                    //Bitmap bitmap = vlcVideoView.getBitmap();
+//                    //saveBitmap("", bitmap);
+//                } else {
+//                    toast("只有在播放的时候才能截图!");
+//                }
                 break;
             case R.id.linear_cold:              //冻结
-                toast("暂未开发");
+
+
                 break;
             case R.id.linear_mic:               //麦克风
 
@@ -332,9 +564,9 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
     }
 
     private void finishThisActivity() {
-        if (mFlagRecord) {
-            vlcRecordOver();
-        }
+//        if (mFlagRecord) {
+//            vlcRecordOver();
+//        }
         mVLCView.setAddSlave(null);
         mVLCView.onDestroy();
         finish();
@@ -448,20 +680,23 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                 .navigationBarColor(R.color.white);
     }
 
-    //结束录像
-    private void vlcRecordOver() {
-        mFlagRecord = false;
-        mHandler.sendEmptyMessage(Record_Stop);
-        mVLCView.getMediaPlayer().record(null);
-//        FileUtil.scanFile(VlcPlayerActivity.this, directory);
-        FileUtil.RefreshAlbum(directory, true, this);
-    }
+//    //结束录像
+//    private void vlcRecordOver() {
+//        mFlagRecord = false;
+//        mHandler.sendEmptyMessage(Record_Stop);
+//        mVLCView.getMediaPlayer().record(null);
+////        FileUtil.scanFile(VlcPlayerActivity.this, directory);
+//        FileUtil.RefreshAlbum(directory, true, this);
+//    }
 
     @Override
     protected void onResume() {
         super.onResume();
         isFirstIn = true;
         startLive(path);
+        //握手通讯
+        toast("onResume==开始建立握手链接!");
+        sendHandLinkMessage();
     }
 
     private void startLive(String path) {

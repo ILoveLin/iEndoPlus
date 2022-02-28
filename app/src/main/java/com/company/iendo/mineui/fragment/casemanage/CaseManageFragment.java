@@ -260,8 +260,8 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
         CaseManageListBean.DataDTO item = mAdapter.getItem(position);
         Intent intent = new Intent(getActivity(), DetailCaseActivity.class);
         ((MainActivity) getActivity()).setCurrentItemID(item.getID() + "");
-        LogUtils.e("item.getID()" + item.getID() + "");
-
+        LogUtils.e("itemID" + item.getID() + "");
+        intent.putExtra("itemID", item.getID() + "");
         startActivity(intent);
     }
 
