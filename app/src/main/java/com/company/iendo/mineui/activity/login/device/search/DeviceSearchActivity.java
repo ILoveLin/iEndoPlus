@@ -20,6 +20,7 @@ import com.company.iendo.bean.socket.searchdevice.PutInBean;
 import com.company.iendo.bean.socket.searchdevice.PutInDeviceMsgBean;
 import com.company.iendo.green.db.DeviceDBBean;
 import com.company.iendo.green.db.DeviceDBUtils;
+import com.company.iendo.mineui.activity.login.device.DeviceActivity;
 import com.company.iendo.mineui.activity.login.device.adapter.DeviceSearchAdapter;
 import com.company.iendo.mineui.socket.BroadCastDataBean;
 import com.company.iendo.mineui.socket.SocketManage;
@@ -408,12 +409,23 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
         codeBean.setHttpPort(codeBean.getHttpPort());    //设置node js 服务端口  ===httpPort
         codeBean.setType(bean.getDeviceType());
         codeBean.setEndoType(bean.getEndotype());   //设置科室类型---endoType
-        codeBean.setMSelected(true);   //此处被选中所以设置为true
         codeBean.setAcceptAndInsertDB(codeBean.getEndoType() + codeBean.getDeviceCode() + codeBean.getType());    //存入回调数据bean,标识数据在数据库的唯一性
         //此处修改界面adapter数据bean(BroadCastReceiveBean)状态,是否检验接入过isCheckAccess->true;是否存入数据库inDB->true
         bean.setInDB(true);
         bean.setCheckAccess(true);//授权接入过
-        DeviceDBUtils.update(DeviceSearchActivity.this, codeBean);
+//        DeviceDBUtils.update(DeviceSearchActivity.this, codeBean);
+        List<DeviceDBBean> deviceDBBeans = DeviceDBUtils.queryAll(DeviceSearchActivity.this);
+        for (int i = 0; i < deviceDBBeans.size(); i++) {
+            DeviceDBBean deviceDBBean = deviceDBBeans.get(i);
+            if (id.equals(deviceDBBean.getId())) {
+                deviceDBBean.setMSelected(true);   //此处被选中所以设置为true
+                DeviceDBUtils.insertOrReplaceInTx(DeviceSearchActivity.this, deviceDBBean);
+            } else {
+                deviceDBBean.setMSelected(false);//其他的该为未选中状态
+                DeviceDBUtils.insertOrReplaceInTx(DeviceSearchActivity.this, deviceDBBean);
+            }
+        }
+
         mAdapter.notifyDataSetChanged();
         toast("数据更新完毕!");
     }

@@ -625,9 +625,9 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
         LogUtils.e("========当前设备的备注信息~~~~====LoginActivity==onResume===");
         mBaseUrl = (String) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Current_BaseUrl, "http://192.168.1.200:3000");
         LogUtils.e("========当前设备的备注信息~~~~====LoginActivity==mBaseUrl===" + mBaseUrl);
-//        postDelayed(() -> {
-//            sendRequest(mBaseUrl);
-//        }, 500);
+        postDelayed(() -> {
+            sendRequest(mBaseUrl);
+        }, 500);
 
         String mType = (String) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Current_Type, "耳鼻喉治疗台");
         mDeviceType.setText("" + mType);
