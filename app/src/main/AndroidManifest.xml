@@ -63,6 +63,17 @@
         tools:replace="android:allowBackup,android:supportsRtl,label"
         tools:targetApi="n">
 
+        <!-- 悬浮窗入口 -->
+        <meta-data
+            android:name="LogcatWindowEntrance"
+            android:value="false" />
+
+        <!-- 通知栏入口 -->
+        <meta-data
+            android:name="LogcatNotifyEntrance"
+            android:value="true" />
+
+
         <!-- 表示当前已经适配了分区存储 -->
         <meta-data
             android:name="ScopedStorage"

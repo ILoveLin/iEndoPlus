@@ -64,7 +64,7 @@ import okhttp3.Call;
  * company：江西神州医疗设备有限公司
  * author： LoveLin
  * time：2021/10/29 13:55
- * desc：病例列表
+ * desc：病例列表 --此处开启监听线程,上位机删除或者更新,接受的到数据从新请求列表刷新数据
  */
 public class CaseManageFragment extends TitleBarFragment<MainActivity> implements StatusAction, BaseAdapter.OnItemClickListener, OnRefreshLoadMoreListener {
     private SmartRefreshLayout mRefreshLayout;
@@ -258,9 +258,12 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
     @Override
     public void onItemClick(RecyclerView recyclerView, View itemView, int position) {
         CaseManageListBean.DataDTO item = mAdapter.getItem(position);
+        LogUtils.e("======GetPictureActivity=====Handler接受====item==" + item.toString());
+
+        SharePreferenceUtil.put(getActivity(), SharePreferenceUtil.Current_Chose_CaseID, item.getID()+"");
         Intent intent = new Intent(getActivity(), DetailCaseActivity.class);
         ((MainActivity) getActivity()).setCurrentItemID(item.getID() + "");
-        LogUtils.e("itemID" + item.getID() + "");
+        LogUtils.e("itemID==" + item.getID() + "");
         intent.putExtra("itemID", item.getID() + "");
         startActivity(intent);
     }

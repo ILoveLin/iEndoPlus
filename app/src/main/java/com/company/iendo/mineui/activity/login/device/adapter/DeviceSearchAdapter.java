@@ -55,7 +55,7 @@ public class DeviceSearchAdapter extends AppAdapter<BroadCastReceiveBean> {
 
     private final class ViewHolder extends AppAdapter<?>.ViewHolder {
         public final RelativeLayout mRelativeLayout;
-        public final TextView mMsgChose, mInDB;
+        public final TextView mMsgChose, mInDB, mTitle, mRemark, mIP;
         private final ImageView mImageChose;
 
         private ViewHolder() {
@@ -65,6 +65,9 @@ public class DeviceSearchAdapter extends AppAdapter<BroadCastReceiveBean> {
             mImageChose = findViewById(R.id.iv_current_chose_image);
             mMsgChose = findViewById(R.id.tv_current_chose_msg);
             mInDB = findViewById(R.id.tv_isindb);
+            mTitle = findViewById(R.id.tv_current_title_msg);
+            mRemark = findViewById(R.id.tv_current_remark_msg);
+            mIP = findViewById(R.id.tv_current_ip_msg);
 //            mChange = findViewById(R.id.tv_change);
 //            mDelete = findViewById(R.id.tv_delete);
         }
@@ -74,6 +77,11 @@ public class DeviceSearchAdapter extends AppAdapter<BroadCastReceiveBean> {
             BroadCastReceiveBean mItemBean = getItem(position);
 
             Boolean mSelected = mItemBean.getSelected();
+
+            mTitle.setText("" + mItemBean.getTitle());
+            mRemark.setText("" + mItemBean.getRemark());
+            mIP.setText("" + mItemBean.getIp());
+
             if (mSelected) {
                 mRelativeLayout.setBackgroundResource(R.drawable.shape_bg_device_all_pre);
                 mMsgChose.setVisibility(View.VISIBLE);
@@ -104,13 +112,17 @@ public class DeviceSearchAdapter extends AppAdapter<BroadCastReceiveBean> {
             if (null != inDB)
                 if (inDB) {
                     mInDB.setVisibility(View.VISIBLE);
+                    //数据库存在,说明授权接入过
+                    mItemBean.setCheckAccess(true);
                 } else {
+
                     mInDB.setVisibility(View.INVISIBLE);
+                    //数据不库存在,说明授没有权接入过
+                    mItemBean.setCheckAccess(false);
+
 
                 }
-            if (mItemBean.getCheckAccess()) {
 
-            }
 
 //            switch (mDBBean.getType()) {
 //                case "一代一体机":

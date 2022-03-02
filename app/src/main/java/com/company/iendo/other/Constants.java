@@ -32,6 +32,15 @@ public class Constants {
     public static final String UDP_FC = "FC";                 //授权接入
     public static final String UDP_HAND = "30";               //握手----所有指令之前必须握手
     public static final String UDP_F0 = "F0";                 //获取当前操作病历号（ID）    获取图片界面,获取当前操作病历号（ID）和当前手机界面进入的ID号相同才能采图和录像
+    public static final String UDP_F3 = "F3";                 //冻结与解冻:00冻结，01解冻     ---未调试
+    public static final String UDP_12 = "12";                 //新增病历
+    public static final String UDP_13 = "13";                 //更新病历
+    public static final String UDP_14 = "14";                 //删除病历
+
+    public static final String UDP_15 = "15";                 //新增图片（采图）
+
+
+
 
 
 }

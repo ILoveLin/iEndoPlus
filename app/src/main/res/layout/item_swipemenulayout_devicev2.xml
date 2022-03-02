@@ -11,17 +11,18 @@
 
     <RelativeLayout
         android:id="@+id/relative_item"
-        android:layout_width="@dimen/dp_150"
+        android:layout_width="@dimen/dp_120"
         android:layout_height="@dimen/dp_150"
         android:layout_margin="@dimen/dp_10"
         android:background="@drawable/shape_bg_device_all_nor">
 
 
         <ImageView
+            android:layout_marginTop="@dimen/dp_10"
             android:id="@+id/iv_current_chose_image"
             android:layout_width="@dimen/dp_50"
-            android:layout_height="@dimen/dp_150"
-            android:layout_centerInParent="true"
+            android:layout_height="@dimen/dp_80"
+            android:layout_centerHorizontal="true"
             android:src="@mipmap/icon_yitiji" />
 
         <TextView
@@ -36,9 +37,60 @@
             android:paddingBottom="@dimen/dp_2"
             android:text="当前选中的设备"
             android:textColor="@color/white"
-            android:textSize="@dimen/sp_12"
+            android:textSize="@dimen/sp_11"
             android:visibility="invisible" />
 
+        <LinearLayout
+            android:layout_marginBottom="@dimen/dp_5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerInParent="true"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_current_title_msg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:paddingLeft="@dimen/dp_5"
+                android:paddingTop="@dimen/dp_2"
+                android:paddingRight="@dimen/dp_5"
+                android:paddingBottom="@dimen/dp_2"
+                android:text="AIO-ENT"
+                android:textColor="@color/black80"
+                android:textSize="@dimen/sp_11"
+                android:visibility="visible" />
+
+            <TextView
+                android:id="@+id/tv_current_remark_msg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:paddingLeft="@dimen/dp_5"
+                android:paddingTop="@dimen/dp_2"
+                android:paddingRight="@dimen/dp_5"
+                android:paddingBottom="@dimen/dp_2"
+                android:text="1号内镜室"
+                android:textColor="@color/color_9A9A9A"
+                android:textSize="@dimen/sp_11"
+                android:visibility="visible" />
+
+            <TextView
+                android:id="@+id/tv_current_ip_msg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:paddingLeft="@dimen/dp_5"
+                android:paddingTop="@dimen/dp_2"
+                android:paddingRight="@dimen/dp_5"
+                android:paddingBottom="@dimen/dp_2"
+                android:text="192.168.132.1.103"
+                android:textColor="@color/color_9A9A9A"
+                android:textSize="@dimen/sp_11"
+                android:visibility="visible" />
+
+        </LinearLayout>
         <LinearLayout
             android:id="@+id/linear_status"
             android:layout_width="match_parent"

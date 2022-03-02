@@ -99,7 +99,7 @@ public class DeviceDBBean {
     //工作站类型
     private String endoType;//
     ////mDeviceCode  这个是智能搜索之后返回过来的设备码
-    private String deviceName;  //设备名字
+    private String deviceName;  //设备名字:一代一体机
     //备用字段1
     private String usemsg01;  //备用字段1    是否长按选中了,显示修改和删除功能  true为选中
     //备用字段2
@@ -317,9 +317,8 @@ public class DeviceDBBean {
     }
 
     /**
-     * 依次存入ip,endotype,deviceCode,deviceType拼接作为作为数据唯一的标识
-     * 192.168.132.102300000000000000005618B1F96D92837C一代一体机
-     * ip:192.168.132.102
+     * 依次存入endotype,deviceCode,deviceType拼接作为作为数据唯一的标识
+     * 00000000000000005618B1F96D92837C一代一体机
      * endotype:3
      * deviceCode:00000000000000005618B1F96D92837C
      * deviceType:一代一体机

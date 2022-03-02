@@ -65,30 +65,47 @@ public class DeviceDBUtils {
     //条件查询
     //精确查询  获取到bean
     public static DeviceDBBean getQueryBeanByAcceptAndInsertDB(Context context, String acceptAndInsertDB) {
-        List<DeviceDBBean> list = DBManager.getDaoSession(context).getDeviceDBBeanDao().queryBuilder().list();
-//        bean.getIp()+bean.getEt()+deviceOnlyCodeFromRoom+bean.getType()
-        if (list.size() != 0) {
+        DeviceDBBeanDao deviceDBBeanDao = DBManager.getDaoSession(context).getDeviceDBBeanDao();
+        List<DeviceDBBean> list = deviceDBBeanDao.queryBuilder().where(DeviceDBBeanDao.Properties.AcceptAndInsertDB.eq(acceptAndInsertDB)).list();
+        if (null == list) {
+            return null;
+        } else {
             for (int i = 0; i < list.size(); i++) {
                 DeviceDBBean deviceDBBean = list.get(i);
-
-
-                //300000000000000005618B1F96D92837C一代一体机    00000000000000005618B1F96D92837C
-                LogUtils.e("sendByteData==onItemClick===deviceDBBean.getAcceptAndInsertDB()==" + deviceDBBean.getAcceptAndInsertDB());
-
-                //00000000000000005618B1F96D92837C一代一体机
-                LogUtils.e("sendByteData==onItemClick===acceptAndInsertDB==" + acceptAndInsertDB);
-
-                if (acceptAndInsertDB.equals(deviceDBBean.getAcceptAndInsertDB())) {
+                boolean deviceCode = (acceptAndInsertDB).equals(deviceDBBean.getAcceptAndInsertDB());     // code 存在并且,type存在--返回bean对象,说明数据库有该条数据
+                if (deviceCode) {
                     return deviceDBBean;
                 } else {
                     return null;
                 }
             }
 
+
         }
         return null;
 
-
+//        List<DeviceDBBean> list = DBManager.getDaoSession(context).getDeviceDBBeanDao().queryBuilder().list();
+////        bean.getIp()+bean.getEt()+deviceOnlyCodeFromRoom+bean.getType()
+//        if (list.size() != 0) {
+//            for (int i = 0; i < list.size(); i++) {
+//                DeviceDBBean deviceDBBean = list.get(i);
+//
+//
+//                //300000000000000005618B1F96D92837C一代一体机    00000000000000005618B1F96D92837C
+//                LogUtils.e("sendByteData==onItemClick===deviceDBBean.getAcceptAndInsertDB()==" + deviceDBBean.getAcceptAndInsertDB());
+//
+//                //00000000000000005618B1F96D92837C一代一体机
+//                LogUtils.e("sendByteData==onItemClick===acceptAndInsertDB==" + acceptAndInsertDB);
+//
+//                if (acceptAndInsertDB.equals(deviceDBBean.getAcceptAndInsertDB())) {
+//                    return deviceDBBean;
+//                } else {
+//                    return null;
+//                }
+//            }
+//
+//        }
+//        return null;
 
 
 //        List<DeviceDBBean> list = DBManager.getDaoSession(context).getDeviceDBBeanDao().queryBuilder().list();

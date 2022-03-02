@@ -5,6 +5,7 @@ package com.company.iendo.bean;
  * author： LoveLin
  * time：2021/12/31 13:56
  * desc： 二维码扫描之后刷新设备界面数据
+ * 设备搜索之后刷新设备界面数据
  */
 public class RefreshEvent {
     private String type;

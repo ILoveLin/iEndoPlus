@@ -26,8 +26,7 @@ public class BroadCastReceiveBean {
     private String endotype;
     @SerializedName("accept")     //是否准许接入
     private String accept;
-    @SerializedName("pinAccess")
-    private String pinAccess;
+
 
 
     private Boolean mSelected;    //自己添加的字段 是否选中
@@ -73,13 +72,7 @@ public class BroadCastReceiveBean {
         this.accept = accept;
     }
 
-    public String getPinAccess() {
-        return pinAccess;
-    }
 
-    public void setPinAccess(String pinAccess) {
-        this.pinAccess = pinAccess;
-    }
 
     public Boolean getSelected() {
         return mSelected;
@@ -105,6 +98,24 @@ public class BroadCastReceiveBean {
         this.deviceCode = deviceCode;
     }
 
+    @Override
+    public String toString() {
+        return "BroadCastReceiveBean{" +
+                "title='" + title + '\'' +
+                ", remark='" + remark + '\'' +
+                ", endotype='" + endotype + '\'' +
+                ", accept='" + accept + '\'' +
+                ", mSelected=" + mSelected +
+                ", ip='" + ip + '\'' +
+                ", receiveType='" + receiveType + '\'' +
+                ", receiveID='" + receiveID + '\'' +
+                ", deviceType='" + deviceType + '\'' +
+                ", deviceCode='" + deviceCode + '\'' +
+                ", itemId='" + itemId + '\'' +
+                ", inDB=" + inDB +
+                ", isCheckAccess=" + isCheckAccess +
+                '}';
+    }
 
     public String getItemId() {
         return itemId;
@@ -136,26 +147,6 @@ public class BroadCastReceiveBean {
 
     public void setReceiveID(String receiveID) {
         this.receiveID = receiveID;
-    }
-
-    @Override
-    public String toString() {
-        return "BroadCastReceiveBean{" +
-                "title='" + title + '\'' +
-                ", remark='" + remark + '\'' +
-                ", endotype='" + endotype + '\'' +
-                ", accept='" + accept + '\'' +
-                ", pinAccess='" + pinAccess + '\'' +
-                ", mSelected=" + mSelected +
-                ", ip='" + ip + '\'' +
-                ", receiveType='" + receiveType + '\'' +
-                ", receiveID='" + receiveID + '\'' +
-                ", deviceType='" + deviceType + '\'' +
-                ", deviceCode='" + deviceCode + '\'' +
-                ", itemId='" + itemId + '\'' +
-                ", inDB=" + inDB +
-                ", isCheckAccess=" + isCheckAccess +
-                '}';
     }
 
     public String getReceiveType() {

@@ -60,7 +60,7 @@ public class DeviceAdapter extends AppAdapter<DeviceDBBean> {
     private final class ViewHolder extends AppAdapter<?>.ViewHolder {
         public final RelativeLayout mRelativeLayout;
         public final LinearLayout mLinearStatus;
-        public final TextView mMsgChose, mChange, mDelete;
+        public final TextView mMsgChose, mChange, mDelete, mTitle, mRemark, mIP;
         private final ImageView mImageChose;
 
         private ViewHolder() {
@@ -71,12 +71,20 @@ public class DeviceAdapter extends AppAdapter<DeviceDBBean> {
             mMsgChose = findViewById(R.id.tv_current_chose_msg);
             mChange = findViewById(R.id.tv_change);
             mDelete = findViewById(R.id.tv_delete);
+            mTitle = findViewById(R.id.tv_current_title_msg);
+            mRemark = findViewById(R.id.tv_current_remark_msg);
+            mIP = findViewById(R.id.tv_current_ip_msg);
         }
 
         @Override
         public void onBindView(int position) {
 
             DeviceDBBean mDBBean = getItem(position);
+            mTitle.setText("" + mDBBean.getDeviceName());
+            mRemark.setText("" + mDBBean.getMsg());
+            mIP.setText("" + mDBBean.getIp());
+
+
             if (null != mDBBean.getUsemsg01()) {
                 if ("false".equals(mDBBean.getUsemsg01())) {
                     mLinearStatus.setVisibility(View.INVISIBLE);
@@ -97,7 +105,7 @@ public class DeviceAdapter extends AppAdapter<DeviceDBBean> {
                 mMsgChose.setVisibility(View.INVISIBLE);
 
             }
-            if (null!=mDBBean.getType()){
+            if (null != mDBBean.getType()) {
                 switch (mDBBean.getType()) {
                     case "一代一体机":
                         mImageChose.setImageResource(R.drawable.icon_yitiji);

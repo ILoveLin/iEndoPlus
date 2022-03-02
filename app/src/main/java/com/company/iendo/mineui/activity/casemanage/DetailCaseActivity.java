@@ -19,6 +19,7 @@ import com.company.iendo.mineui.activity.casemanage.fragment.VideoFragment;
 import com.company.iendo.mineui.activity.vlc.GetPictureActivity;
 import com.company.iendo.ui.adapter.TabAdapter;
 import com.company.iendo.utils.LogUtils;
+import com.company.iendo.utils.SharePreferenceUtil;
 import com.gyf.immersionbar.ImmersionBar;
 import com.hjq.bar.OnTitleBarListener;
 import com.hjq.bar.TitleBar;
@@ -64,7 +65,7 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
         mPagerAdapter.addFragment(VideoFragment.newInstance(), "视频");
         mViewPager.setAdapter(mPagerAdapter);
         mViewPager.addOnPageChangeListener(this);
-        setOnClickListener(R.id.linear_get_picture, R.id.case_report, R.id.case_delete, R.id.case_down, R.id.linear_down);
+        setOnClickListener(R.id.linear_get_picture, R.id.case_report, R.id.linear_delete, R.id.case_down, R.id.linear_down);
         mTitlebar.setOnTitleBarListener(new OnTitleBarListener() {
             @Override
             public void onLeftClick(View view) {
@@ -137,9 +138,12 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
             switch (view.getId()) {
                 case R.id.linear_get_picture://图像采集
                     mOnEditStatusListener.onGetPicture();
+//                    currentUrl01 = "rtsp://" + username + ":" + password + "@" + ip + ":" + port + "/session0.mpg";  //高清
+                  String  currentUrl = "rtsp://" + mUsername + ":" + mPassword + "@" + mSocketOrLiveIP + ":" + mLivePort + "/session0.mpg";  //高清
                     Intent intent1 = new Intent(this, GetPictureActivity.class);
                     Bundle bundle1 = new Bundle();
                     bundle1.putString("ItemID", currentItemID);
+                    bundle1.putString("currentUrl", currentUrl);
                     intent1.putExtras(bundle1);
                     startActivity(intent1);
                     break;
@@ -153,7 +157,7 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
                     startActivity(intent);
 
                     break;
-                case R.id.case_delete://删除
+                case R.id.linear_delete://删除
                     mOnEditStatusListener.onDelete();
 
                     break;

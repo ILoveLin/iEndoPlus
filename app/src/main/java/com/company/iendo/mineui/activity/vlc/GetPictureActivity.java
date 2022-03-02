@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
-import android.provider.MediaStore;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -23,14 +22,16 @@ import com.company.iendo.R;
 import com.company.iendo.action.StatusAction;
 import com.company.iendo.app.AppActivity;
 import com.company.iendo.bean.socket.HandBean;
-import com.company.iendo.bean.socket.getpicture.CurrentUserIDBean;
+import com.company.iendo.bean.socket.getpicture.ColdPictureBean;
+import com.company.iendo.bean.socket.getpicture.ShotPictureBean;
+import com.company.iendo.bean.socket.getpicture.UserIDBean;
 import com.company.iendo.mineui.socket.SocketManage;
 import com.company.iendo.other.Constants;
 import com.company.iendo.utils.CalculateUtils;
 import com.company.iendo.utils.CommonUtil;
-import com.company.iendo.utils.FileUtil;
 import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.ScreenSizeUtil;
+import com.company.iendo.utils.SharePreferenceUtil;
 import com.company.iendo.widget.vlc.ENDownloadView;
 import com.company.iendo.widget.vlc.ENPlayView;
 import com.company.iendo.widget.vlc.MyVlcVideoView;
@@ -43,8 +44,6 @@ import com.vlc.lib.VlcVideoView;
 import com.vlc.lib.listener.MediaListenerEvent;
 
 import net.ossrs.rtmp.ConnectCheckerRtmp;
-
-import org.videolan.libvlc.Media;
 
 import java.io.File;
 import java.io.IOException;
@@ -59,7 +58,7 @@ import java.net.InetSocketAddress;
  * desc   : 获取图片界面
  */
 public final class GetPictureActivity extends AppActivity implements StatusAction, ConnectCheckerRtmp {
-    public static final String path = "http://9890.vod.myqcloud.com/9890_4e292f9a3dd011e6b4078980237cc3d3.f20.mp4";
+    public static String path = "http://9890.vod.myqcloud.com/9890_4e292f9a3dd011e6b4078980237cc3d3.f20.mp4";
     public boolean isFullscreen = false;
     private StatusLayout mStatusLayout;
     private TextView mChangeFull;
@@ -95,6 +94,9 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
     private static final int UDP_Receive = 105;
     private static final int UDP_Hand = 106;   //握手
     private static final int UDP_ID = 107;      //获取病例ID
+    private static final int UDP_Cold = 108;      //冻结与解冻:00冻结，01解冻
+    private static final int UDP_Shot = 109;      //冻结与解冻:00冻结，01解冻
+    //    private static final int UDP_Cold = 108;      //获取病例ID
     private static boolean UDP_HAND_TAG = false; //握手成功表示  true 成功
     private static boolean UDP_EQUALS_ID = false; //获取当前操作id,和进入该界面的id 是否相等,相等才可以进行各种操作,默认不相等,
     @SuppressLint("HandlerLeak")
@@ -111,15 +113,25 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                         //获取当前病例ID
                         sendSocketPointMessage(Constants.UDP_F0);
                     } else {
-                        toast("握手失败功");
+                        toast("握手失败");
                         UDP_HAND_TAG = false;
+                        sendHandLinkMessage();
                     }
                     break;
-                case UDP_ID:
+                case UDP_Cold://冻结和解冻
+                    if ("00".equals(msg.obj)) {
+                        toast("冻结成功");
+                    } else {
+                        toast("解冻成功");
+                    }
+                    break;
+                case UDP_ID://获取病例ID
                     if ((Boolean) msg.obj) {
                         UDP_EQUALS_ID = true;
+                        toast("当前病例ID==相等");
                         //获取当前病例ID
                     } else {
+                        toast("当前病例ID==不相等");
                         UDP_EQUALS_ID = false;
                     }
                     break;
@@ -129,6 +141,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                     String ip = msg.getData().getString("ip");
                     String resultData = msg.getData().getString("resultData");
                     LogUtils.e("======GetPictureActivity=====Handler接受====ip==" + ip);
+                    LogUtils.e("===========Handler接受====ip==" + ip);
                     LogUtils.e("======GetPictureActivity=====Handler接受====resultData==" + resultData);
 
                     break;
@@ -164,7 +177,8 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
     };
     private TextView mRecordMsg;
     private RtmpOnlyAudio rtmpOnlyAudio;
-    private String itemID;
+    private  String itemID;
+    private String currentUrl;
 
 
     public void setTextColor(int color, String message, boolean isStarting) {
@@ -202,8 +216,11 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
 
         //获取当前病例ID
         Bundle bundle = getIntent().getExtras();
-        itemID = bundle.getString("ItemID");
+        currentUrl = bundle.getString("currentUrl");
+        LogUtils.e("pusherStart====彩图界面直播地址:currentUrl===" + currentUrl);
 
+        path = currentUrl;
+        startLive(path);
 //        推流音频代码
 //        if (!rtmpOnlyAudio.isStreaming()) {
 //            if (rtmpOnlyAudio.prepareAudio()) {
@@ -227,8 +244,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
 //            }
 //        }
         responseListener();
-        //开启消息接收线程
-        initReceiveThread();
+
 
     }
 
@@ -288,8 +304,8 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                                     //正确的服务器ip地址,才开始计算获取自己需要的数据
                                     if (flag) {
                                         String mRun2End4 = CalculateUtils.getReceiveRun2End4String(resultData);//随机数之后到data结尾的String
-                                        String deviceType = CalculateUtils.getDeviceType(resultData);
-                                        String deviceOnlyCode = CalculateUtils.getDeviceOnlyCode(resultData);
+                                        String deviceType = CalculateUtils.getSendDeviceType(resultData);
+                                        String deviceOnlyCode = CalculateUtils.getSendDeviceOnlyCode(resultData);
                                         String currentCMD = CalculateUtils.getCMD(resultData);
                                         LogUtils.e("======GetPictureActivity==回调===随机数之后到data结尾的String=mRun2End4==" + mRun2End4);
                                         LogUtils.e("======GetPictureActivity==回调===设备类型deviceType==" + deviceType);
@@ -322,25 +338,51 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
 //                                                    String jsonID = CalculateUtils.hex16To10(dataString) + "";
                                                     LogUtils.e("======GetPictureActivity==回调===CMD=CalculateUtils.hexStr2Str(dataString)==" + CalculateUtils.hexStr2Str(dataString));
                                                     String s = CalculateUtils.hexStr2Str(dataString);
-                                                    CurrentUserIDBean bean = mGson.fromJson(s, CurrentUserIDBean.class);
+                                                    UserIDBean bean = mGson.fromJson(s, UserIDBean.class);
 //                                                    LogUtils.e("======GetPictureActivity==回调===CMD=jsonID==" + jsonID);
                                                     String jsonID = CalculateUtils.hex16To10(bean.getRecordid()) + "";
+                                                    //必须从新取数据不然会错乱
+                                                    String spCaseID = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_Chose_CaseID, "");
+                                                    LogUtils.e("======GetPictureActivity==回调===itemID=spCaseID=" + spCaseID);
+                                                    LogUtils.e("======GetPictureActivity==回调===itemID=itemID=" + itemID);
+                                                    LogUtils.e("======GetPictureActivity==回调===jsonID=jsonID=" + jsonID);
+
                                                     //两者病例ID相同才能可以做其他操作
+                                                    Message message = new Message();
                                                     if (itemID.equals(jsonID)) {
-                                                        Message message = new Message();
-                                                        message.what = UDP_Hand;
+                                                        message.what = UDP_ID;
                                                         message.obj = true;
                                                         mHandler.sendMessage(message);
                                                     } else {
-                                                        Message message = new Message();
-                                                        message.what = UDP_Hand;
+                                                        message.what = UDP_ID;
                                                         message.obj = false;
                                                         mHandler.sendMessage(message);
                                                     }
                                                 }
 
+                                                break;
+                                            case Constants.UDP_F3://冻结与解冻:00冻结，01解冻,未调试
+                                                Boolean dataIfForF3 = CalculateUtils.getDataIfForMe(resultData, GetPictureActivity.this);
+                                                if (dataIfForF3) {
+                                                    String dataString = CalculateUtils.getReceiveDataString(resultData);
+                                                    String s = CalculateUtils.hexStr2Str(dataString);
+                                                    ColdPictureBean bean = mGson.fromJson(s, ColdPictureBean.class);
+//                                                    LogUtils.e("======GetPictureActivity==回调===CMD=jsonID==" + jsonID);
+                                                    String jsonString = CalculateUtils.hex16To10(bean.getFreeze()) + "";
+                                                    Message message = new Message();
+                                                    if ("00".equals(jsonString)) { //冻结
+                                                        message.what = UDP_Cold;
+                                                        message.obj = "00";
+                                                        mHandler.sendMessage(message);
+                                                    } else {//解冻
+                                                        message.what = UDP_Cold;
+                                                        message.obj = "01";
+                                                        mHandler.sendMessage(message);
+                                                    }
+                                                }
 
                                                 break;
+
                                         }
 
 
@@ -404,6 +446,26 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
 
     }
 
+    /**
+     * 发送点对点消息,必须握手成功
+     *
+     * @param CMDCode 命令cmd
+     */
+    public void sendSocketPointShotMessage(String CMDCode) {
+        if (UDP_HAND_TAG) {
+            ShotPictureBean bean = new ShotPictureBean();
+            String hexID = CalculateUtils.numToHex16(Integer.parseInt(itemID));
+            bean.setRecordid(hexID);
+            LogUtils.e("======GetPictureActivity==回调===获取当前病例==" + bean.toString());
+
+            byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(bean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
+                    CMDCode);
+            SocketManage.startSendMessageBySocket(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), false);
+        } else {
+            toast("请先建立握手链接!");
+        }
+
+    }
 
     /**
      * ***************************************************************************通讯模块**************************************************************************
@@ -506,6 +568,17 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
 //                }
                 break;
             case R.id.linear_picture:           //截图,本地不做,socket通讯机子做操作
+                if (UDP_HAND_TAG){
+                    if (UDP_EQUALS_ID) {
+                        sendSocketPointShotMessage(Constants.UDP_15);
+                    } else {
+                        toast("当前病例ID和操作病例ID不相等,不能操作!");
+                    }
+                }else {
+                    toast("我收失败,正在尝试链接设备!");
+                    sendHandLinkMessage();
+                }
+
 //                if (isPlayering) {
 //                    if (mVLCView.isPrepare()) {
 //                        Media.VideoTrack videoTrack = mVLCView.getVideoTrack();
@@ -533,8 +606,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
 //                }
                 break;
             case R.id.linear_cold:              //冻结
-
-
+                sendSocketPointMessage(Constants.UDP_F3);
                 break;
             case R.id.linear_mic:               //麦克风
 
@@ -569,6 +641,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
 //        }
         mVLCView.setAddSlave(null);
         mVLCView.onDestroy();
+
         finish();
     }
 
@@ -694,8 +767,11 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         super.onResume();
         isFirstIn = true;
         startLive(path);
+        isRuning=true;
+        //开启消息接收线程
+        initReceiveThread();
         //握手通讯
-        toast("onResume==开始建立握手链接!");
+        LogUtils.e("onResume===GetPictureActivity===开始建立握手链接!");
         sendHandLinkMessage();
     }
 
@@ -733,6 +809,8 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
 //        mVLCView.setMediaListenerEvent(null);
         mVLCView.onStop();
         mVLCView.onDestroy();
+        isRuning=false;
+
     }
 
 

@@ -10,6 +10,7 @@ import com.google.gson.annotations.SerializedName;
  */
 public class AddCaseBean {
 
+
     @SerializedName("data")
     private DataDTO data;
     @SerializedName("code")
@@ -42,5 +43,24 @@ public class AddCaseBean {
     }
 
     public static class DataDTO {
+        @SerializedName("ID")
+        private int ID;
+
+        public int getID() {
+            return ID;
+        }
+
+        public void setID(int ID) {
+            this.ID = ID;
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "AddCaseBean{" +
+                "data=" + data +
+                ", code=" + code +
+                ", msg='" + msg + '\'' +
+                '}';
     }
 }

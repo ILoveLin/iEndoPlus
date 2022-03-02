@@ -38,13 +38,17 @@ public class CalculateUtils {
      * 9-妇科治疗台，10-泌尿治疗台，A0-iOS，A1-Android
      * FF-所有设备
      * 更多设备类型依次类推，平台最大可连接255种受控设备
+     * 相对于pad来说的发送方也就是上位机的设备设备类型
      */
 
 
-    public static String getDeviceType(String string) {
+    public static String getSendDeviceType(String string) {
         //字符串--48位--50位表示的是设备类型
         if (!("".equals(string)) && string.length() >= 50) {
-            String str = string.substring(48, 50);
+            String str = string.substring(14, 16);
+            LogUtils.e("SocketManage回调==哇哈哈==str==" + str);
+
+//            String str = string.substring(48, 50);
             String result = null;
             if ("00".equals(str)) {
                 result = "工作站";
@@ -151,11 +155,13 @@ public class CalculateUtils {
 
     /**
      * 获取发送方设备id ---唯一表示
+     * 相对于pad来说的发送方也就是上位机的设备id
      */
-    public static String getDeviceOnlyCode(String string) {
+    public static String getSendDeviceOnlyCode(String string) {
         //字符串--50位--66位表示的是设备类型
         if (!("".equals(string)) && string.length() >= 70) {
-            String str = string.substring(58, 70);
+            String str = string.substring(16, 48);
+
             return str;
 
         }

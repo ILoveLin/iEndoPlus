@@ -977,7 +977,6 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
         LogUtils.e("========当前设备的备注信息~~~~====DeviceActivity==mBaseUrl===" + mDataLest.size());
         LogUtils.e("========当前设备的备注信息~~~~====DeviceActivity==deviceDBBeans===" + deviceDBBeans.size());
 
-
         if (deviceDBBeans.size() == 0) {
             showEmpty();
 
@@ -1065,4 +1064,22 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
 //            mRefreshLayout.finishRefresh();
 //        }, 1000);
 //    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        DeviceDBBean bean = DeviceDBUtils.getQueryBeanByAcceptAndInsertDB(DeviceActivity.this, "30000000000000000546017FE6BC28949一代一体机");
+        LogUtils.e("SocketManage回调==onResume==onResume=onResume==" + bean);
+        List<DeviceDBBean> deviceDBBeans = DeviceDBUtils.queryAll(DeviceActivity.this);
+        LogUtils.e("SocketManage回调==onResume==onResume=onResume==" + deviceDBBeans.size());
+
+        for (int i = 0; i < deviceDBBeans.size(); i++) {
+            DeviceDBBean deviceDBBean = deviceDBBeans.get(i);
+
+            LogUtils.e("SocketManage回调==onResume==onResume=getAcceptAndInsertDB==" + deviceDBBean);
+
+        }
+
+    }
 }

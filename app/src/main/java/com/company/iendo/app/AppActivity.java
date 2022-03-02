@@ -63,6 +63,9 @@ public abstract class AppActivity extends BaseActivity
     public String mCurrentReceiveDeviceCode; //当前选择设备的==唯一设备码
     public String mSocketOrLiveIP;       //socket或者直播通讯的ip
     public String mSocketPort;           //socket通讯端口
+    public String mUsername;            //直播账号
+    public String mPassword;            //直播密码
+    public String mLivePort;            //直播端口
 
     /**
      * 当前加载对话框是否在显示中
@@ -131,6 +134,9 @@ public abstract class AppActivity extends BaseActivity
         mCurrentReceiveDeviceCode = (String) SharePreferenceUtil.get(AppActivity.this, SharePreferenceUtil.Current_DeviceCode, "00000000000000000000000000000000");
         mSocketOrLiveIP = (String) SharePreferenceUtil.get(AppActivity.this, SharePreferenceUtil.Current_IP, "192.168.132.102");
         mSocketPort = (String) SharePreferenceUtil.get(AppActivity.this, SharePreferenceUtil.Current_SocketPort, "8005");
+        mUsername = (String) SharePreferenceUtil.get(AppActivity.this, SharePreferenceUtil.Current_DeviceUsername, "root");
+        mPassword = (String) SharePreferenceUtil.get(AppActivity.this, SharePreferenceUtil.Current_DevicePassword, "root");
+        mLivePort = (String) SharePreferenceUtil.get(AppActivity.this, SharePreferenceUtil.Current_LivePort, "7788");
 
         // 初始化沉浸式状态栏
         if (isStatusBarEnabled()) {

@@ -28,6 +28,7 @@ public class SharePreferenceUtil {
 
     public static final String Current_BaseUrl = "BaseUrl";     //末尾不加斜杠  http://192.168.66.42:8008
     public static final String OnLine_Flag = "OnLine";             //登入方式--true=在线登录,false=离线登录
+    public static final String Current_Chose_CaseID = "Current_Chose_CaseID";    //当前选中的病例ID
 
 
     public static final String Current_Login_Role = "login_role";  //登录用户的role  权限
