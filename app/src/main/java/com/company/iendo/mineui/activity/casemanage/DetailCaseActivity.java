@@ -39,7 +39,6 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
     private TitleBar mTitlebar;
     private TextView mDown;
     private TextView mDelete;
-    private TextView mReport;
     private TextView mPicture;
     private Boolean mFatherExit;   //父类Activity 是否主动退出的标识,主动退出需要请求保存fragment的更新数据
     private String currentItemID;
@@ -55,7 +54,6 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
         mViewPager = findViewById(R.id.vp_detail_pager);
         mTitlebar = findViewById(R.id.titlebar);
         mPicture = findViewById(R.id.case_picture);
-        mReport = findViewById(R.id.case_report);
         mDelete = findViewById(R.id.case_delete);
         mDown = findViewById(R.id.case_down);
         mFatherExit = false;
@@ -65,7 +63,7 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
         mPagerAdapter.addFragment(VideoFragment.newInstance(), "视频");
         mViewPager.setAdapter(mPagerAdapter);
         mViewPager.addOnPageChangeListener(this);
-        setOnClickListener(R.id.linear_get_picture, R.id.case_report, R.id.linear_delete, R.id.case_down, R.id.linear_down);
+        setOnClickListener(R.id.linear_get_picture, R.id.linear_get_report, R.id.linear_delete, R.id.case_down, R.id.linear_down);
         mTitlebar.setOnTitleBarListener(new OnTitleBarListener() {
             @Override
             public void onLeftClick(View view) {
@@ -141,20 +139,19 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
 //                    currentUrl01 = "rtsp://" + username + ":" + password + "@" + ip + ":" + port + "/session0.mpg";  //高清
                   String  currentUrl = "rtsp://" + mUsername + ":" + mPassword + "@" + mSocketOrLiveIP + ":" + mLivePort + "/session0.mpg";  //高清
                     Intent intent1 = new Intent(this, GetPictureActivity.class);
+                    LogUtils.e("======GetPictureActivity=====currentUrl====currentUrl==" + currentUrl);
                     Bundle bundle1 = new Bundle();
                     bundle1.putString("ItemID", currentItemID);
                     bundle1.putString("currentUrl", currentUrl);
                     intent1.putExtras(bundle1);
                     startActivity(intent1);
                     break;
-                case R.id.case_report://获取报告
+                case R.id.linear_get_report://获取报告
                     mOnEditStatusListener.onGetReport();
-                    Intent intent = new Intent(this, ReportActivity.class);
-                    Bundle bundle = new Bundle();
-                    bundle.putInt("A", 1);
-                    bundle.putString("current", currentItemID);
-                    intent.putExtras(bundle);
+
+                    Intent intent = new Intent(this, PictureChoseActivity.class);
                     startActivity(intent);
+                    //转场动画
 
                     break;
                 case R.id.linear_delete://删除

@@ -292,6 +292,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                         .setPasswordContent("root")
                         .setHttpPortContent("7001")
                         .setLivePortContent("7788")
+                        .setSocketPortContent("8005")
                         .setMicPortContent("7789")
                         .setTypeContent("妇科治疗台")
                         // 提示可以不用填写
@@ -308,6 +309,8 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                             public void onConfirm(BaseDialog dialog, String mDeviceName, String mDeviceCode, String mDeviceNoteMessage,
                                                   String mDeviceIP, String mDeviceAccount, String mDevicePassword, String mHttpPort,
                                                   String mSocketPort, String mLivePort, String mMicPort, String mDeviceType) {
+
+
                                 //添加设备妇科治疗台
                                 DeviceDBBean deviceDBBean = new DeviceDBBean();
                                 deviceDBBean.setDeviceName(mDeviceName);  //设备名
@@ -323,9 +326,9 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                                 deviceDBBean.setType(mDeviceType);     //设备类型
                                 deviceDBBean.setType_num(getTypeNum(mDeviceType)); //设备类型数字
                                 deviceDBBean.setMSelected(false);
-
                                 DeviceDBUtils.insertOrReplaceInTx(DeviceActivity.this, deviceDBBean);
                                 refreshRecycleViewData();
+
                             }
 
                             @Override
@@ -361,6 +364,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                         .setPasswordContent("root")
                         .setHttpPortContent("7001")
                         .setLivePortContent("7788")
+                        .setSocketPortContent("8005")
                         .setMicPortContent("7789")
                         .setTypeContent("一代一体机")
                         // 提示可以不用填写
@@ -426,6 +430,8 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                         .setPasswordContent("root")
                         .setHttpPortContent("7001")
                         .setLivePortContent("7788")
+                        .setSocketPortContent("8005")
+
                         .setMicPortContent("7789")
                         .setTypeContent("耳鼻喉治疗台")
                         // 提示可以不用填写
@@ -492,6 +498,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                         .setPasswordContent("root")
                         .setHttpPortContent("7001")
                         .setLivePortContent("7788")
+                        .setSocketPortContent("8005")
                         .setMicPortContent("7789")
                         .setTypeContent("泌尿治疗台")
                         // 提示可以不用填写
@@ -738,6 +745,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                             .setPasswordContent("root")
                             .setHttpPortContent("7001")
                             .setLivePortContent("7788")
+                            .setSocketPortContent("8005")
                             .setMicPortContent("7789")
                             .setTypeContent("妇科治疗台")
                             .show();
@@ -749,6 +757,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                             .setPasswordContent("root")
                             .setHttpPortContent("7001")
                             .setLivePortContent("7788")
+                            .setSocketPortContent("8005")
                             .setMicPortContent("7789")
                             .setTypeContent("妇科治疗台")
                             .show();
@@ -765,6 +774,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                             .setPasswordContent("root")
                             .setHttpPortContent("7001")
                             .setLivePortContent("7788")
+                            .setSocketPortContent("8005")
                             .setMicPortContent("7789")
                             .setTypeContent("泌尿治疗台")
                             .show();
@@ -776,6 +786,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                             .setPasswordContent("root")
                             .setHttpPortContent("7001")
                             .setLivePortContent("7788")
+                            .setSocketPortContent("8005")
                             .setMicPortContent("7789")
                             .setTypeContent("泌尿治疗台")
                             .show();
@@ -792,6 +803,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                             .setPasswordContent("root")
                             .setHttpPortContent("7001")
                             .setLivePortContent("7788")
+                            .setSocketPortContent("8005")
                             .setMicPortContent("7789")
                             .setTypeContent("一代一体机")
                             .show();
@@ -803,6 +815,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                             .setPasswordContent("root")
                             .setHttpPortContent("7001")
                             .setLivePortContent("7788")
+                            .setSocketPortContent("8005")
                             .setMicPortContent("7789")
                             .setTypeContent("一代一体机")
                             .show();
@@ -820,6 +833,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                             .setPasswordContent("root")
                             .setHttpPortContent("7001")
                             .setLivePortContent("7788")
+                            .setSocketPortContent("8005")
                             .setMicPortContent("7789")
                             .setTypeContent("耳鼻喉治疗台")
                             .show();
@@ -831,6 +845,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                             .setPasswordContent("root")
                             .setHttpPortContent("7001")
                             .setLivePortContent("7788")
+                            .setSocketPortContent("8005")
                             .setMicPortContent("7789")
                             .setTypeContent("耳鼻喉治疗台")
                             .show();
@@ -923,7 +938,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
             SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_LivePort, mDBBean.getLivePort());
             SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_MicPort, null != mDBBean.getMicPort() ? mDBBean.getMicPort() : "1");
             SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_DeviceUsername, mDBBean.getUsername());
-            SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_DeviceUsername, mDBBean.getDeviceName());//mDBBean.getDeviceName()
+//            SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_Type, mDBBean.getDeviceName());//mDBBean.getDeviceName()
             SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_DevicePassword, mDBBean.getPassword());
             SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_DeviceName, mDBBean.getDeviceName());
             SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_DeviceCode, null != mDBBean.getDeviceCode() ? mDBBean.getDeviceCode() : "code码为空");

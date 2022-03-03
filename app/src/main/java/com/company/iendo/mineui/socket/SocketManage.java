@@ -247,11 +247,11 @@ public class SocketManage {
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
-        getSendSocketRunnable(data, mAddress, receivePort);
-        if (null == easyCacheThread) {
-            easyCacheThread = ThreadManager.getCache();
-        }
-        easyCacheThread.execute(mSendRunnable);
+            getSendSocketRunnable(data, mAddress, receivePort);
+            if (null == easyCacheThread) {
+                easyCacheThread = ThreadManager.getCache();
+            }
+            easyCacheThread.execute(mSendRunnable);
 
     }
 

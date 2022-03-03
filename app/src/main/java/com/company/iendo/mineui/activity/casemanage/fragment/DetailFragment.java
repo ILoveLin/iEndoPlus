@@ -122,6 +122,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
             }
         }
     };
+
     public static DetailFragment newInstance() {
         return new DetailFragment();
     }
@@ -642,7 +643,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 
     @Override
     public void onGetReport() {
-        toast("获取报告");
+
 
     }
 
@@ -847,16 +848,6 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        isFatherExit = false;
-        mFirstIn = true;
-        sendListDictsRequest();
-        sendHandLinkMessage();
-        initReceiveThread();
-
-    }
 
     /**
      * 获取需要Dialog选择数据的集合
@@ -1377,7 +1368,10 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 
         byte[] sendByteData = CalculateUtils.getSendByteData(getAttachActivity(), mGson.toJson(handBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
                 Constants.UDP_HAND);
-
+        if (("".equals(mSocketPort))) {
+            toast("通讯端口不能为空!");
+            return;
+        }
         SocketManage.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort));
     }
 
@@ -1393,6 +1387,10 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
             handBean.setComeFrom("Android");
             byte[] sendByteData = CalculateUtils.getSendByteData(getAttachActivity(), mGson.toJson(handBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
                     CMDCode);
+            if (("".equals(mSocketPort))) {
+                toast("通讯端口不能为空!");
+                return;
+            }
             SocketManage.startSendMessageBySocket(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), false);
         } else {
             toast("请先建立握手链接!");
@@ -1400,4 +1398,28 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 
     }
 
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        isFatherExit = false;
+        mFirstIn = true;
+        isRuning = true;
+        sendListDictsRequest();
+        sendHandLinkMessage();
+        initReceiveThread();
+
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        isRuning = false;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        isRuning = false;
+    }
 }

@@ -33,7 +33,9 @@
         <!-- 关闭 TextView 自带的文字间距 -->
         <item name="android:includeFontPadding">false</item>
     </style>
-
+    <style name="Theme.DialogActivity" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowBackground">@drawable/dialog_activity</item>
+    </style>
     <!-- 全屏主题样式 -->
     <style name="FullScreenTheme" parent="AppTheme">
         <item name="android:windowFullscreen">true</item>

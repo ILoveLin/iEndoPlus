@@ -139,19 +139,6 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
 
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        mBaseUrl = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_BaseUrl, "192.168.132.102");
-        LogUtils.e("currentChoseDate=====" + mTitle.getText().toString().trim());
-        if (!mTitle.getText().toString().trim().isEmpty()) {
-            sendRequest(mTitle.getText().toString().trim());
-        } else {
-            sendRequest(currentChoseDate);
-
-        }
-//        showDateDialog();
-    }
 
     //选择日期
     private void showDateDialog() {
@@ -260,7 +247,7 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
         CaseManageListBean.DataDTO item = mAdapter.getItem(position);
         LogUtils.e("======GetPictureActivity=====Handler接受====item==" + item.toString());
 
-        SharePreferenceUtil.put(getActivity(), SharePreferenceUtil.Current_Chose_CaseID, item.getID()+"");
+        SharePreferenceUtil.put(getActivity(), SharePreferenceUtil.Current_Chose_CaseID, item.getID() + "");
         Intent intent = new Intent(getActivity(), DetailCaseActivity.class);
         ((MainActivity) getActivity()).setCurrentItemID(item.getID() + "");
         LogUtils.e("itemID==" + item.getID() + "");
@@ -319,5 +306,23 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
     @Override
     public StatusLayout getStatusLayout() {
         return mStatusLayout;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mBaseUrl = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_BaseUrl, "192.168.132.102");
+        LogUtils.e("currentChoseDate=====" + mTitle.getText().toString().trim());
+        if (!mTitle.getText().toString().trim().isEmpty()) {
+            sendRequest(mTitle.getText().toString().trim());
+        } else {
+            sendRequest(currentChoseDate);
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
     }
 }

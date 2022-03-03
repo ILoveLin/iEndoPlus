@@ -67,6 +67,7 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/linear_get_report"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_marginLeft="@dimen/dp_5"
@@ -83,7 +84,6 @@
                         android:src="@drawable/ic_icon_detail_report" />
 
                     <TextView
-
                         android:id="@+id/case_report"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

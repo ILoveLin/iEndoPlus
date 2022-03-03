@@ -60,6 +60,12 @@ public interface StatusAction {
     default void showEmpty() {
         showLayout(R.drawable.status_empty_ic, R.string.status_layout_no_data, null);
     }
+    /**
+     * 显示空提示
+     */
+    default void showEmptyReport() {
+        showLayout(R.drawable.status_empty_ic,R.string.status_layout_no_report , null);
+    }
 
     /**
      * 显示错误提示

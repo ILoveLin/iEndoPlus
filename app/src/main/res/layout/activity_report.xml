@@ -8,13 +8,23 @@
     tools:context="com.company.iendo.ui.activity.CopyActivity">
 
     <com.hjq.bar.TitleBar
+        android:id="@+id/titlebar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:rightTitle="打印报告"
+        app:rightTitleColor="@color/black80"
+        app:rightTitleSize="@dimen/sp_13"
         app:title="报告预览" />
+
     <com.company.iendo.widget.StatusLayout
         android:id="@+id/status_hint"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/iv_report"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
 
     </com.company.iendo.widget.StatusLayout>

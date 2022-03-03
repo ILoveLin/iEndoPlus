@@ -38,9 +38,8 @@ public class Constants {
     public static final String UDP_14 = "14";                 //删除病历
 
     public static final String UDP_15 = "15";                 //新增图片（采图）
-
-
-
+    public static final String UDP_F1 = "F1";                 //预览报告
+    public static final String UDP_F2 = "F2";                 //打印报告
 
 
 }

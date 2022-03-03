@@ -245,6 +245,7 @@ public abstract class AppActivity extends BaseActivity
     @Override
     public void finish() {
         super.finish();
+        //转场动画
         overridePendingTransition(R.anim.left_in_activity, R.anim.left_out_activity);
     }
 

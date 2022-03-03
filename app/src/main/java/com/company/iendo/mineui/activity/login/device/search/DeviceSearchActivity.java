@@ -114,6 +114,10 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
                                 "00000000000000000000000000000000", "FD");
                         LogUtils.e("sendByteData====" + sendByteData);
                         //发送广播消息
+                        if (("".equals(Constants.BROADCAST_PORT))){
+                            toast("通讯端口不能为空!");
+                            return;
+                        }
                         SocketManage.startSendMessageBySocket(sendByteData, Constants.BROADCAST_IP, Constants.BROADCAST_PORT, true);
                     } else {
                         toast("稍安勿躁,搜索中...");
@@ -707,7 +711,12 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
                 .navigationBarColor(R.color.white);
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        SocketManage.setIsRuning(false);
 
+    }
     @Override
     protected void onDestroy() {
         super.onDestroy();

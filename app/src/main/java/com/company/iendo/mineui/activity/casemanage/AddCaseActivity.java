@@ -475,7 +475,10 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
         handBean.setComeFrom("Android");
         byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(handBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
                 Constants.UDP_HAND);
-
+        if (("".equals(mSocketPort))){
+            toast("通讯端口不能为空!");
+            return;
+        }
         SocketManage.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort));
     }
 
@@ -491,6 +494,10 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
             handBean.setComeFrom("Android");
             byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(handBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
                     CMDCode);
+            if (("".equals(mSocketPort))){
+                toast("通讯端口不能为空!");
+                return;
+            }
             SocketManage.startSendMessageBySocket(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), false);
         } else {
             toast("请先建立握手链接!");
@@ -505,15 +512,6 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
     }
 
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        sendListDictsRequest();
-        initReceiveThread();
-        //握手通讯
-        LogUtils.e("onResume===AddCaseActivity===开始建立握手链接!");
-        sendHandLinkMessage();
-    }
 
     /**
      * 获取需要Dialog选择数据的集合
@@ -853,4 +851,21 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
                 .navigationBarColor(R.color.white);
     }
 
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        sendListDictsRequest();
+        initReceiveThread();
+        //握手通讯
+        LogUtils.e("onResume===AddCaseActivity===开始建立握手链接!");
+        isRuning=true;
+        sendHandLinkMessage();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        isRuning=false;
+    }
 }

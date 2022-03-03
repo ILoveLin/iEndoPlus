@@ -10,7 +10,6 @@
         android:layout_height="@dimen/dp_130"
         android:layout_gravity="center_horizontal"
         android:adjustViewBounds="true"
-        android:paddingTop="@dimen/dp_10"
         android:src="@mipmap/image_gb_mine_header" />
 
 </LinearLayout>
