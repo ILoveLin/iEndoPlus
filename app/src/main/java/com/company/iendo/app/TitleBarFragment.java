@@ -18,6 +18,8 @@ import com.company.iendo.R;
 import com.company.iendo.action.TitleBarAction;
 import com.hjq.gson.factory.GsonFactory;
 
+import org.greenrobot.eventbus.EventBus;
+
 /**
  *    author : Android 轮子哥
  *    github : https://github.com/getActivity/AndroidProject
@@ -78,6 +80,12 @@ public abstract class TitleBarFragment<A extends AppActivity> extends AppFragmen
             WifiInfo wifiInfo = wifiManager.getConnectionInfo();
             currentIP = getIpString(wifiInfo.getIpAddress());
         }
+
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
 
     }
 

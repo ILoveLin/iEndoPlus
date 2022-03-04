@@ -3,8 +3,6 @@ package com.company.iendo.mineui.activity.casemanage.fragment;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Environment;
-import android.os.Handler;
-import android.os.Message;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.TextView;
@@ -21,6 +19,7 @@ import com.company.iendo.bean.DeleteBean;
 import com.company.iendo.bean.DetailPictureBean;
 import com.company.iendo.bean.DialogItemBean;
 import com.company.iendo.bean.ListDialogDateBean;
+import com.company.iendo.bean.event.SocketRefreshEvent;
 import com.company.iendo.bean.socket.HandBean;
 import com.company.iendo.green.db.CaseDBUtils;
 import com.company.iendo.green.db.downcase.CaseDBBean;
@@ -46,12 +45,12 @@ import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.FileCallBack;
 import com.zhy.http.okhttp.callback.StringCallback;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -103,25 +102,8 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
     private String mUserName;
     private static final int UDP_Hand = 126;   //握手
     private static boolean UDP_HAND_TAG = false; //握手成功表示  true 成功
-    @SuppressLint("HandlerLeak")
-    private Handler mHandler = new Handler() {
-        @SuppressLint("NewApi")
-        @Override
-        public void handleMessage(@NonNull Message msg) {
-            super.handleMessage(msg);
-            switch (msg.what) {
-                case UDP_Hand:
-                    if ((Boolean) msg.obj) {
-                        UDP_HAND_TAG = true;
-                    } else {
-                        UDP_HAND_TAG = false;
-                        sendHandLinkMessage();
-                    }
-                    break;
+    private static boolean Details_Reault_Ok = false; //握手成功表示  true 成功
 
-            }
-        }
-    };
 
     public static DetailFragment newInstance() {
         return new DetailFragment();
@@ -134,6 +116,8 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 
     @Override
     protected void initView() {
+        EventBus.getDefault().register(this);
+
         mStatusLayout = findViewById(R.id.detail_hint);
         mBaseUrl = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_BaseUrl, "192.168.132.102");
         mDeviceID = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_DeviceID, "");
@@ -311,6 +295,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                             mBean = mGson.fromJson(response, CaseDetailBean.class);
                             if (0 == mBean.getCode()) {  //成功
                                 showComplete();
+                                Details_Reault_Ok =true;
                                 setLayoutData(mBean);
 
                             } else {
@@ -654,45 +639,50 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 
     //删除用户请求
     private void sendDeleteRequest() {
-        LogUtils.e("删除用户==params=" + mBean.getData().getID() + "");
-        showLoading();
-        OkHttpUtils.post()
-                .url(mBaseUrl + HttpConstant.CaseManager_DeleteCase)
-                .addParams("ID", mBean.getData().getID() + "")
-                .addParams("UserName", mUserName)
-                .addParams("EndoType", endoType)
-                .addParams("UserID", mUserID)
-                .build()
-                .execute(new StringCallback() {
-                    @Override
-                    public void onError(Call call, Exception e, int id) {
-                        showError(listener -> {
-                            sendDeleteRequest();
-                        });
-                    }
+        if (Details_Reault_Ok){
+            LogUtils.e("删除用户==params=" + mBean.getData().getID() + "");
+            showLoading();
+            OkHttpUtils.post()
+                    .url(mBaseUrl + HttpConstant.CaseManager_DeleteCase)
+                    .addParams("ID", mBean.getData().getID() + "")
+                    .addParams("UserName", mUserName)
+                    .addParams("EndoType", endoType)
+                    .addParams("UserID", mUserID)
+                    .build()
+                    .execute(new StringCallback() {
+                        @Override
+                        public void onError(Call call, Exception e, int id) {
+                            showError(listener -> {
+                                sendDeleteRequest();
+                            });
+                        }
 
-                    @Override
-                    public void onResponse(String response, int id) {
-                        LogUtils.e("删除用户===" + response);
-                        if ("" != response) {
-                            DeleteBean mBean = mGson.fromJson(response, DeleteBean.class);
-                            if (0 == mBean.getCode()) {  //成功
-                                showComplete();
-                                sendSocketPointMessage(Constants.UDP_14);
-                                mActivity.finish();
+                        @Override
+                        public void onResponse(String response, int id) {
+                            LogUtils.e("删除用户===" + response);
+                            if ("" != response) {
+                                DeleteBean mBean = mGson.fromJson(response, DeleteBean.class);
+                                if (0 == mBean.getCode()) {  //成功
+                                    showComplete();
+                                    sendSocketPointMessage(Constants.UDP_14);
+                                    mActivity.finish();
 
+                                } else {
+                                    showError(listener -> {
+                                        sendDeleteRequest();
+                                    });
+                                }
                             } else {
                                 showError(listener -> {
                                     sendDeleteRequest();
                                 });
                             }
-                        } else {
-                            showError(listener -> {
-                                sendDeleteRequest();
-                            });
                         }
-                    }
-                });
+                    });
+        }else {
+            toast("稍后在尝试删除!");
+        }
+
     }
 
 
@@ -1261,102 +1251,36 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 
 
     }
-
-    /*******************************************************************UDP通讯模块*****************************************************************************/
-    private static DatagramSocket mReceiveSocket = null;
-    private volatile static boolean isRuning = true;
+    /**
+     * ***************************************************************************通讯模块**************************************************************************
+     */
 
 
     /**
-     * 开启消息接收线程
+     * eventbus 刷新socket数据
      */
-    private void initReceiveThread() {
-        new Thread() {
-            @Override
-            public void run() {
-                super.run();
-                LogUtils.e("正在执行Runnable任务：%s" + Thread.currentThread().getName());
-                byte[] receiveData = new byte[1024];
-                DatagramPacket mReceivePacket = new DatagramPacket(receiveData, receiveData.length);
-                try {
-                    if (mReceiveSocket == null) {
-                        mReceiveSocket = new DatagramSocket(null);
-                        mReceiveSocket.setReuseAddress(true);
-                        mReceiveSocket.bind(new InetSocketAddress(Constants.RECEIVE_PORT));
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                while (true) {
-                    if (isRuning) {
-                        try {
-                            LogUtils.e("======DetailFragment=====000==");
-                            LogUtils.e("======DetailFragment=====mReceivePacket.getAddress()==" + mReceivePacket.getAddress());
-                            LogUtils.e("======DetailFragment=====mReceivePacket.getData()==" + mReceivePacket.getAddress());
-                            LogUtils.e("======DetailFragment=====currentIP==" + currentIP);
-                            if (!currentIP.equals(mReceivePacket.getAddress())) {   //不是自己的IP不接受
-                                mReceiveSocket.receive(mReceivePacket);
-                                String rec = CalculateUtils.byteArrayToHexString(mReceivePacket.getData()).trim();
-//                                String rec = CalculateUtils.byteArrayToHexString(mReceivePacket.getData()).trim();
-                                //过滤不是发送给我的消息全部不接受
-                                int length = mReceivePacket.getLength() * 2;
-                                String resultData = rec.substring(0, length);
-                                LogUtils.e("======DetailFragment=====获取长度==length==" + length);
-                                LogUtils.e("======DetailFragment=====获取长度数据==substring==" + resultData);
-                                LogUtils.e("======DetailFragment=====接受到数据==原始数据====mReceivePacket.getData()=" + mReceivePacket.getData());
-                                LogUtils.e("======DetailFragment=====3333==" + mReceivePacket.getData());
-                                if (mReceivePacket != null) {
-                                    LogUtils.e("======DetailFragment=====66666==");
-                                    boolean flag = false;//是否可用的ip---此ip是服务器ip
-                                    String finalOkIp = "";
-                                    if (CalculateUtils.getDataIfForMe(resultData, getAttachActivity())) {
-                                        finalOkIp = CalculateUtils.getOkIp(mReceivePacket.getAddress().toString());
-                                        flag = true;//正确的服务器ip地址
-                                    }
-                                    //正确的服务器ip地址,才开始计算获取自己需要的数据
-                                    if (flag) {
-                                        String mRun2End4 = CalculateUtils.getReceiveRun2End4String(resultData);//随机数之后到data结尾的String
-                                        String deviceType = CalculateUtils.getSendDeviceType(resultData);
-                                        String deviceOnlyCode = CalculateUtils.getSendDeviceOnlyCode(resultData);
-                                        String currentCMD = CalculateUtils.getCMD(resultData);
-                                        LogUtils.e("======DetailFragment==回调===随机数之后到data结尾的String=mRun2End4==" + mRun2End4);
-                                        LogUtils.e("======DetailFragment==回调===设备类型deviceType==" + deviceType);
-                                        LogUtils.e("======DetailFragment==回调===设备ID=deviceOnlyCode==" + deviceOnlyCode);
-                                        LogUtils.e("======DetailFragment==回调===CMD=currentCMD==" + currentCMD);
-
-                                        switch (currentCMD) {
-                                            case Constants.UDP_HAND://握手
-                                                LogUtils.e("======DetailFragment==回调===握手==");
-                                                //判断数据是否是发个自己的
-                                                Boolean dataIfForMe = CalculateUtils.getDataIfForMe(resultData, getAttachActivity());
-                                                LogUtils.e("======DetailFragment=====dataIfForMe==" + dataIfForMe);
-                                                //设备在线握手成功
-                                                if (dataIfForMe) {
-                                                    Message message = new Message();
-                                                    message.what = UDP_Hand;
-                                                    message.obj = true;
-                                                    mHandler.sendMessage(message);
-                                                }
-                                                break;
-                                        }
-                                    }
-                                }
-
-                            }
-
-
-                        } catch (IOException e) {
-                            e.printStackTrace();
-
-                        }
-                    }
-                }
-
-
-            }
-        }.start();
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void SocketRefreshEvent(SocketRefreshEvent event) {
+        LogUtils.e("Socket回调==DetailFragment==event.getData()==" + event.getData());
+        String mRun2End4 = CalculateUtils.getReceiveRun2End4String(event.getData());//随机数之后到data结尾的String
+        String deviceType = CalculateUtils.getSendDeviceType(event.getData());
+        String deviceOnlyCode = CalculateUtils.getSendDeviceOnlyCode(event.getData());
+        String currentCMD = CalculateUtils.getCMD(event.getData());
+        LogUtils.e("Socket回调==DetailFragment==随机数之后到data的Str==mRun2End4==" + mRun2End4);
+        LogUtils.e("Socket回调==DetailFragment==发送方设备类型==deviceType==" + deviceType);
+        LogUtils.e("Socket回调==DetailFragment==获取发送方设备Code==deviceOnlyCode==" + deviceOnlyCode);
+        LogUtils.e("Socket回调==DetailFragment==当前UDP命令==currentCMD==" + currentCMD);
+        LogUtils.e("Socket回调==DetailFragment==当前UDP命令==event.getUdpCmd()==" + event.getUdpCmd());
+        String data = event.getData();
+        switch (event.getUdpCmd()) {
+            case Constants.UDP_HAND://握手
+                toast("握手成功");
+                UDP_HAND_TAG = true;
+                break;
+        }
 
     }
+
 
     /**
      * 发送握手消息
@@ -1393,10 +1317,15 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
             }
             SocketManage.startSendMessageBySocket(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), false);
         } else {
+            sendHandLinkMessage();
             toast("请先建立握手链接!");
         }
 
     }
+
+    /**
+     * ***************************************************************************通讯模块**************************************************************************
+     */
 
 
     @Override
@@ -1404,22 +1333,18 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         super.onResume();
         isFatherExit = false;
         mFirstIn = true;
-        isRuning = true;
         sendListDictsRequest();
         sendHandLinkMessage();
-        initReceiveThread();
-
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        isRuning = false;
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        isRuning = false;
+        EventBus.getDefault().unregister(this);
     }
 }

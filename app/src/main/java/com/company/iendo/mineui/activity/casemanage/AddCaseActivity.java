@@ -14,6 +14,7 @@ import com.company.iendo.app.AppActivity;
 import com.company.iendo.bean.AddCaseBean;
 import com.company.iendo.bean.DialogItemBean;
 import com.company.iendo.bean.ListDialogDateBean;
+import com.company.iendo.bean.event.SocketRefreshEvent;
 import com.company.iendo.bean.socket.HandBean;
 import com.company.iendo.manager.ActivityManager;
 import com.company.iendo.mineui.socket.SocketManage;
@@ -32,6 +33,10 @@ import com.hjq.base.BaseDialog;
 import com.hjq.widget.view.ClearEditText;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -64,27 +69,8 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
     private ClearEditText et_03_door_num, et_03_protection_num, et_03_section, et_03_device, et_03_case_num, et_03_in_hospital_num, et_03_case_area_num, et_03_case_bed_num, et_03_native_place, et_03_ming_zu, et_03_is_married, et_03_tel, et_03_address, et_03_my_id_num, et_03_case_history, et_03_family_case_history;
     private HashMap<String, String> mParamsMap;
     private ArrayList ageList;
-    private static final int UDP_Hand = 116;   //握手
     private static boolean UDP_HAND_TAG = false; //握手成功表示  true 成功
-    @SuppressLint("HandlerLeak")
-    private Handler mHandler = new Handler() {
-        @SuppressLint("NewApi")
-        @Override
-        public void handleMessage(@NonNull Message msg) {
-            super.handleMessage(msg);
-            switch (msg.what) {
-                case UDP_Hand:
-                    if ((Boolean) msg.obj) {
-                        UDP_HAND_TAG = true;
-                    } else {
-                        UDP_HAND_TAG = false;
-                        sendHandLinkMessage();
-                    }
-                    break;
 
-            }
-        }
-    };
 
     @Override
     protected int getLayoutId() {
@@ -93,6 +79,7 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
 
     @Override
     protected void initView() {
+        EventBus.getDefault().register(this);
         mStatusLayout = findViewById(R.id.status_hint);
         mTitleBar = findViewById(R.id.titlebar);
         initLayoutViewDate();
@@ -349,7 +336,6 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
                                 toast("" + mBean.getMsg());
                                 //socket告知上位机新增病例
                                 sendSocketPointMessage(Constants.UDP_12);
-
                                 ActivityManager.getInstance().finishActivity(AddCaseActivity.class);
                             } else {
                                 showError(listener -> {
@@ -371,100 +357,6 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
     /**
      * ***************************************************************************通讯模块**************************************************************************
      */
-    private static DatagramSocket mReceiveSocket = null;
-    private volatile static boolean isRuning = true;
-
-
-    /**
-     * 开启消息接收线程
-     */
-    private void initReceiveThread() {
-        new Thread() {
-            @Override
-            public void run() {
-                super.run();
-                LogUtils.e("正在执行Runnable任务：%s" + Thread.currentThread().getName());
-                byte[] receiveData = new byte[1024];
-                DatagramPacket mReceivePacket = new DatagramPacket(receiveData, receiveData.length);
-                try {
-                    if (mReceiveSocket == null) {
-                        mReceiveSocket = new DatagramSocket(null);
-                        mReceiveSocket.setReuseAddress(true);
-                        mReceiveSocket.bind(new InetSocketAddress(Constants.RECEIVE_PORT));
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                while (true) {
-                    if (isRuning) {
-                        try {
-                            LogUtils.e("======AddCaseActivity=====000==");
-                            LogUtils.e("======AddCaseActivity=====mReceivePacket.getAddress()==" + mReceivePacket.getAddress());
-                            LogUtils.e("======AddCaseActivity=====mReceivePacket.getData()==" + mReceivePacket.getAddress());
-                            LogUtils.e("======AddCaseActivity=====currentIP==" + currentIP);
-                            if (!currentIP.equals(mReceivePacket.getAddress())) {   //不是自己的IP不接受
-                                mReceiveSocket.receive(mReceivePacket);
-                                String rec = CalculateUtils.byteArrayToHexString(mReceivePacket.getData()).trim();
-//                                String rec = CalculateUtils.byteArrayToHexString(mReceivePacket.getData()).trim();
-                                //过滤不是发送给我的消息全部不接受
-                                int length = mReceivePacket.getLength() * 2;
-                                String resultData = rec.substring(0, length);
-                                LogUtils.e("======AddCaseActivity=====获取长度==length==" + length);
-                                LogUtils.e("======AddCaseActivity=====获取长度数据==substring==" + resultData);
-                                LogUtils.e("======AddCaseActivity=====接受到数据==原始数据====mReceivePacket.getData()=" + mReceivePacket.getData());
-                                LogUtils.e("======AddCaseActivity=====3333==" + mReceivePacket.getData());
-                                if (mReceivePacket != null) {
-                                    LogUtils.e("======AddCaseActivity=====66666==");
-                                    boolean flag = false;//是否可用的ip---此ip是服务器ip
-                                    String finalOkIp = "";
-                                    if (CalculateUtils.getDataIfForMe(resultData, AddCaseActivity.this)) {
-                                        finalOkIp = CalculateUtils.getOkIp(mReceivePacket.getAddress().toString());
-                                        flag = true;//正确的服务器ip地址
-                                    }
-                                    //正确的服务器ip地址,才开始计算获取自己需要的数据
-                                    if (flag) {
-                                        String mRun2End4 = CalculateUtils.getReceiveRun2End4String(resultData);//随机数之后到data结尾的String
-                                        String deviceType = CalculateUtils.getSendDeviceType(resultData);
-                                        String deviceOnlyCode = CalculateUtils.getSendDeviceOnlyCode(resultData);
-                                        String currentCMD = CalculateUtils.getCMD(resultData);
-                                        LogUtils.e("======AddCaseActivity==回调===随机数之后到data结尾的String=mRun2End4==" + mRun2End4);
-                                        LogUtils.e("======AddCaseActivity==回调===设备类型deviceType==" + deviceType);
-                                        LogUtils.e("======AddCaseActivity==回调===设备ID=deviceOnlyCode==" + deviceOnlyCode);
-                                        LogUtils.e("======AddCaseActivity==回调===CMD=currentCMD==" + currentCMD);
-
-                                        switch (currentCMD) {
-                                            case Constants.UDP_HAND://握手
-                                                LogUtils.e("======AddCaseActivity==回调===握手==");
-                                                //判断数据是否是发个自己的
-                                                Boolean dataIfForMe = CalculateUtils.getDataIfForMe(resultData, AddCaseActivity.this);
-                                                LogUtils.e("======AddCaseActivity=====dataIfForMe==" + dataIfForMe);
-                                                //设备在线握手成功
-                                                if (dataIfForMe) {
-                                                    Message message = new Message();
-                                                    message.what = UDP_Hand;
-                                                    message.obj = true;
-                                                    mHandler.sendMessage(message);
-                                                }
-                                                break;
-                                        }
-                                    }
-                                }
-
-                            }
-
-
-                        } catch (IOException e) {
-                            e.printStackTrace();
-
-                        }
-                    }
-                }
-
-
-            }
-        }.start();
-
-    }
 
     /**
      * 发送握手消息
@@ -500,11 +392,39 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
             }
             SocketManage.startSendMessageBySocket(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), false);
         } else {
+            sendHandLinkMessage();
             toast("请先建立握手链接!");
         }
 
     }
+    /**
+     * eventbus 刷新socket数据
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void SocketRefreshEvent(SocketRefreshEvent event) {
+        LogUtils.e("Socket回调==AddCaseActivity==event.getData()==" + event.getData());
+        String mRun2End4 = CalculateUtils.getReceiveRun2End4String(event.getData());//随机数之后到data结尾的String
+        String deviceType = CalculateUtils.getSendDeviceType(event.getData());
+        String deviceOnlyCode = CalculateUtils.getSendDeviceOnlyCode(event.getData());
+        String currentCMD = CalculateUtils.getCMD(event.getData());
+        LogUtils.e("Socket回调==AddCaseActivity==随机数之后到data的Str==mRun2End4==" + mRun2End4);
+        LogUtils.e("Socket回调==AddCaseActivity==发送方设备类型==deviceType==" + deviceType);
+        LogUtils.e("Socket回调==AddCaseActivity==获取发送方设备Code==deviceOnlyCode==" + deviceOnlyCode);
+        LogUtils.e("Socket回调==AddCaseActivity==当前UDP命令==currentCMD==" + currentCMD);
+        LogUtils.e("Socket回调==AddCaseActivity==当前UDP命令==event.getUdpCmd()==" + event.getUdpCmd());
+        String data = event.getData();
+        switch (event.getUdpCmd()) {
+            case Constants.UDP_HAND://握手
+                toast("握手成功");
+                UDP_HAND_TAG = true;
+                //获取当前病例ID
+                break;
+        }
 
+    }
+    /**
+     * ***************************************************************************通讯模块**************************************************************************
+     */
     @Override
     protected void initData() {
 
@@ -851,21 +771,21 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
                 .navigationBarColor(R.color.white);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+
+    }
 
     @Override
     protected void onResume() {
         super.onResume();
         sendListDictsRequest();
-        initReceiveThread();
         //握手通讯
         LogUtils.e("onResume===AddCaseActivity===开始建立握手链接!");
-        isRuning=true;
         sendHandLinkMessage();
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        isRuning=false;
-    }
+
 }

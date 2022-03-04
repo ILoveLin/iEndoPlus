@@ -143,13 +143,20 @@ public class CalculateUtils {
      * 获取协议---命令cmd---然后处理不同socket回调转换数据bean
      */
     public static String getCMD(String string) {
-//        AAC501006A22EE0700000000000000005618B1F96D92837Ca1f9432b11b93e8bb4ae34539b7472c20eFD7b227469746c65223a2241494f2d454e54222c2272656d61726b223a226f6e65686f6d65222c22656e646f74797065223a2233222c22616363657074223a2230227db4DD
-        //字符串--50位--66位表示的是设备类型
-        if (!("".equals(string)) && string.length() >= 83) {
-            String str = string.substring(82, 84);
-            return str;
+        try {
 
+//        AAC501006A22EE0700000000000000005618B1F96D92837Ca1f9432b11b93e8bb4ae34539b7472c20eFD7b227469746c65223a2241494f2d454e54222c2272656d61726b223a226f6e65686f6d65222c22656e646f74797065223a2233222c22616363657074223a2230227db4DD
+            //字符串--50位--66位表示的是设备类型
+            if (!("".equals(string)) && string.length() >= 83) {
+                String str = string.substring(82, 84);
+                return str;
+
+            }
+        } catch (Exception e) {
+            LogUtils.e("getCMD计算的时候发送了,Exception");
         }
+
+
         return "";
     }
 
@@ -158,13 +165,20 @@ public class CalculateUtils {
      * 相对于pad来说的发送方也就是上位机的设备id
      */
     public static String getSendDeviceOnlyCode(String string) {
-        //字符串--50位--66位表示的是设备类型
-        if (!("".equals(string)) && string.length() >= 70) {
-            String str = string.substring(16, 48);
 
-            return str;
+        try {
 
+            //字符串--50位--66位表示的是设备类型
+            if (!("".equals(string)) && string.length() >= 70) {
+                String str = string.substring(16, 48);
+
+                return str;
+
+            }
+        } catch (Exception e) {
+            LogUtils.e("getSendDeviceOnlyCode计算的时候发送了,Exception");
         }
+
         return "";
     }
 
@@ -189,10 +203,10 @@ public class CalculateUtils {
      * 2,在判断接收方是android 并且发送的data 的设备id必须和我本机android设备id相同
      * 3,再次检验验算发送过来string的检验值,正确才回调数据
      *
-     * @param string 全部hexstring 数据
+     * @param string 全部hexstring 数据DetailFragment$22
      * @return true 是发给我的  false 不是发给我的
      */
-    public static Boolean getDataIfForMe(String string, Activity activity) {
+    public static Boolean getDataIfForMe(String string, Context activity) {
 //        String oldstring = "AAC501007027EE0700000000000000005618B1F96D92837CA1F9432B11B93E8BB4AE34539B7472C20EFD7B227469746C65223A2241494F2D454E54222C2272656D61726B223A2231E58FB7E58685E9959CE5AEA4222C22656E646F74797065223A2233222C22616363657074223A2231227D8CDD";
 //        LogUtils.e("======ReceiveThread====判断当前信息是否发给我的==oldstring.length()==" + oldstring.length());
 //
@@ -517,7 +531,7 @@ public class CalculateUtils {
         int i = str.indexOf("==");
         LogUtils.e("UDP==命令===获取到data的HexString==str===" + str);
 
-        String substring = str.substring(72, i );
+        String substring = str.substring(72, i);
         String substring6 = str.substring(72, i - 4);
 
         LogUtils.e("UDP==命令===获取到data的HexString==substring===" + substring);
@@ -585,16 +599,24 @@ public class CalculateUtils {
      * @return
      */
     public static String getReceiveRun2End4String(String str) {
-//      String str = "AAC501006A22 EE0700000000000000005618B1F96D92837Ca1f9432b11b93e8bb4ae34539b7472c20eFD7b227469746c65223a2241494f2d454e54222c2272656d61726b223a226f6e65686f6d65222c22656e646f74797065223a2233222c22616363657074223a2230227d b4DD";
-        String substring = str.substring(12, str.length() - 4);
-        LogUtils.e("UDP==命令===getReceiveRun2End4String=====" + substring);
-        String s1 = hexStr2Str(substring);
-        LogUtils.e("UDP==命令===getReceiveRun2End4String=====" + s1);
+
+        try {
+
+            //      String str = "AAC501006A22 EE0700000000000000005618B1F96D92837Ca1f9432b11b93e8bb4ae34539b7472c20eFD7b227469746c65223a2241494f2d454e54222c2272656d61726b223a226f6e65686f6d65222c22656e646f74797065223a2233222c22616363657074223a2230227d b4DD";
+            String substring = str.substring(12, str.length() - 4);
+            LogUtils.e("UDP==命令===getReceiveRun2End4String=====" + substring);
+            String s1 = hexStr2Str(substring);
+            LogUtils.e("UDP==命令===getReceiveRun2End4String=====" + s1);
 //        Gson gson = GsonFactory.getSingletonGson();
 //        BroadCastDataBean bean = gson.fromJson(s1, BroadCastDataBean.class);
 //        LogUtils.e("UDP==命令===bean=====" + bean.getBroadcaster());
 //        LogUtils.e("UDP==命令===bean=====" + bean.getRamdom());
-        return substring;
+            return substring;
+        } catch (Exception e) {
+            LogUtils.e("getReceiveRun2End4String计算的时候发送了,Exception");
+        }
+
+        return "";
 
     }
     /*************************************************************计算协议数据的个方法***********************************************************************/

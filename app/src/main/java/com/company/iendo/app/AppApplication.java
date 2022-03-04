@@ -16,7 +16,6 @@ import androidx.lifecycle.LifecycleOwner;
 import com.company.iendo.green.db.DaoMaster;
 import com.company.iendo.green.db.DaoSession;
 import com.company.iendo.utils.db.DBManager;
-import com.company.iendo.utils.db.MigrationHelper;
 import com.company.iendo.utils.db.MyOpenHelper;
 import com.hjq.bar.TitleBar;
 import com.company.iendo.R;
@@ -38,9 +37,9 @@ import com.hjq.http.EasyConfig;
 import com.hjq.toast.ToastUtils;
 import com.hjq.umeng.UmengClient;
 import com.scwang.smart.refresh.layout.SmartRefreshLayout;
-import com.tencent.bugly.Bugly;
 import com.tencent.bugly.crashreport.CrashReport;
 import com.tencent.mmkv.MMKV;
+import com.xdandroid.hellodaemon.DaemonEnv;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.cookie.CookieJarImpl;
 import com.zhy.http.okhttp.cookie.store.MemoryCookieStore;
@@ -81,10 +80,24 @@ public final class AppApplication extends Application {
     public void onCreate() {
         super.onCreate();
         initSdk(this);
+        initLiveService();
+
         initOkHttp();
         initGreenDao();
 //        Bugly.init(getApplicationContext(), "ed2196268b", false);
 
+    }
+
+    /**
+     * 保活服务
+     */
+    private void initLiveService() {
+        //初始化
+        DaemonEnv.initialize(this, ReceiveSocketService.class, DaemonEnv.DEFAULT_WAKE_UP_INTERVAL);
+        //是否 任务完成, 不再需要服务运行?
+        ReceiveSocketService.sShouldStopService = false;
+        //开启服务
+        DaemonEnv.startServiceMayBind(ReceiveSocketService.class);
     }
 
 

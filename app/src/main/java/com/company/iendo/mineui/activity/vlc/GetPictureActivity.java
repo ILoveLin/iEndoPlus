@@ -21,6 +21,7 @@ import androidx.annotation.NonNull;
 import com.company.iendo.R;
 import com.company.iendo.action.StatusAction;
 import com.company.iendo.app.AppActivity;
+import com.company.iendo.bean.event.SocketRefreshEvent;
 import com.company.iendo.bean.socket.HandBean;
 import com.company.iendo.bean.socket.getpicture.ColdPictureBean;
 import com.company.iendo.bean.socket.getpicture.ShotPictureBean;
@@ -32,6 +33,7 @@ import com.company.iendo.utils.CommonUtil;
 import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.ScreenSizeUtil;
 import com.company.iendo.utils.SharePreferenceUtil;
+import com.company.iendo.utils.SocketUtils;
 import com.company.iendo.widget.vlc.ENDownloadView;
 import com.company.iendo.widget.vlc.ENPlayView;
 import com.company.iendo.widget.vlc.MyVlcVideoView;
@@ -44,6 +46,10 @@ import com.vlc.lib.VlcVideoView;
 import com.vlc.lib.listener.MediaListenerEvent;
 
 import net.ossrs.rtmp.ConnectCheckerRtmp;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.io.IOException;
@@ -91,12 +97,8 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
     private static final int Record_Start = 102;
     private static final int Record_Stop = 103;
     private static final int Time = 104;
-    private static final int UDP_Receive = 105;
     private static final int UDP_Hand = 106;   //握手
-    private static final int UDP_ID = 107;      //获取病例ID
-    private static final int UDP_Cold = 108;      //冻结与解冻:00冻结，01解冻
-    private static final int UDP_Shot = 109;      //冻结与解冻:00冻结，01解冻
-    //    private static final int UDP_Cold = 108;      //获取病例ID
+    //  private static final int UDP_Cold = 108;      //获取病例ID
     private static boolean UDP_HAND_TAG = false; //握手成功表示  true 成功
     private static boolean UDP_EQUALS_ID = false; //获取当前操作id,和进入该界面的id 是否相等,相等才可以进行各种操作,默认不相等,
     @SuppressLint("HandlerLeak")
@@ -106,44 +108,6 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
             switch (msg.what) {
-                case UDP_Hand:
-                    if ((Boolean) msg.obj) {
-                        toast("握手成功");
-                        UDP_HAND_TAG = true;
-                        //获取当前病例ID
-                        sendSocketPointMessage(Constants.UDP_F0);
-                    } else {
-                        toast("握手失败");
-
-                        UDP_HAND_TAG = false;
-                        sendHandLinkMessage();
-                    }
-                    break;
-                case UDP_Cold://冻结和解冻
-                    if ("00".equals(msg.obj)) {
-                        toast("冻结成功");
-                    } else {
-                        toast("解冻成功");
-                    }
-                    break;
-                case UDP_ID://获取病例ID
-                    if ((Boolean) msg.obj) {
-                        UDP_EQUALS_ID = true;
-                        //获取当前病例ID
-                    } else {
-                        UDP_EQUALS_ID = false;
-                    }
-                    break;
-                case UDP_Receive:
-                    toast("接受到消息");
-                    //接受msg传递过来的参数数据
-                    String ip = msg.getData().getString("ip");
-                    String resultData = msg.getData().getString("resultData");
-                    LogUtils.e("======GetPictureActivity=====Handler接受====ip==" + ip);
-                    LogUtils.e("===========Handler接受====ip==" + ip);
-                    LogUtils.e("======GetPictureActivity=====Handler接受====resultData==" + resultData);
-
-                    break;
                 case Time:
                     String string = CommonUtil.stringForTime(Integer.parseInt(currentTime));
                     mTime.setText("" + string);
@@ -198,6 +162,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
 
     @Override
     protected void initView() {
+        EventBus.getDefault().register(this);
         initLayoutView();
     }
 
@@ -250,168 +215,51 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
     /**
      * ***************************************************************************通讯模块**************************************************************************
      */
-    private static DatagramSocket mReceiveSocket = null;
-    private volatile static boolean isRuning = true;
-
 
     /**
-     * 开启消息接收线程
+     * eventbus 刷新socket数据
      */
-    private void initReceiveThread() {
-        new Thread() {
-            @Override
-            public void run() {
-                super.run();
-                LogUtils.e("正在执行Runnable任务：%s" + Thread.currentThread().getName());
-                byte[] receiveData = new byte[1024];
-                DatagramPacket mReceivePacket = new DatagramPacket(receiveData, receiveData.length);
-                try {
-                    if (mReceiveSocket == null) {
-                        mReceiveSocket = new DatagramSocket(null);
-                        mReceiveSocket.setReuseAddress(true);
-                        mReceiveSocket.bind(new InetSocketAddress(Constants.RECEIVE_PORT));
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void SocketRefreshEvent(SocketRefreshEvent event) {
+        LogUtils.e("Socket回调==DeviceSearchActivity==event.getData()==" + event.getData());
+        String mRun2End4 = CalculateUtils.getReceiveRun2End4String(event.getData());//随机数之后到data结尾的String
+        String deviceType = CalculateUtils.getSendDeviceType(event.getData());
+        String deviceOnlyCode = CalculateUtils.getSendDeviceOnlyCode(event.getData());
+        String currentCMD = CalculateUtils.getCMD(event.getData());
+        LogUtils.e("Socket回调==DeviceSearchActivity==随机数之后到data的Str==mRun2End4==" + mRun2End4);
+        LogUtils.e("Socket回调==DeviceSearchActivity==发送方设备类型==deviceType==" + deviceType);
+        LogUtils.e("Socket回调==DeviceSearchActivity==获取发送方设备Code==deviceOnlyCode==" + deviceOnlyCode);
+        LogUtils.e("Socket回调==DeviceSearchActivity==当前UDP命令==currentCMD==" + currentCMD);
+        LogUtils.e("Socket回调==DeviceSearchActivity==当前UDP命令==event.getUdpCmd()==" + event.getUdpCmd());
+        String data = event.getData();
+        switch (event.getUdpCmd()) {
+            case Constants.UDP_HAND://握手
+                toast("握手成功");
+                UDP_HAND_TAG = true;
+                //获取当前病例ID
+                sendSocketPointMessage(Constants.UDP_F0);
+                break;
+            case Constants.UDP_F0://获取当前病例
+                if ("true".equals(data)) {//当前病例相同才能操作
+                    UDP_EQUALS_ID = true;
+                    //获取当前病例ID
+                } else {
+                    UDP_EQUALS_ID = false;
                 }
-                while (true) {
-                    if (isRuning) {
-                        try {
-                            LogUtils.e("======GetPictureActivity=====000==");
-                            LogUtils.e("======GetPictureActivity=====mReceivePacket.getAddress()==" + mReceivePacket.getAddress());
-                            LogUtils.e("======GetPictureActivity=====mReceivePacket.getData()==" + mReceivePacket.getAddress());
-                            LogUtils.e("======GetPictureActivity=====currentIP==" + currentIP);
-                            if (!currentIP.equals(mReceivePacket.getAddress())) {   //不是自己的IP不接受
-                                mReceiveSocket.receive(mReceivePacket);
-                                String rec = CalculateUtils.byteArrayToHexString(mReceivePacket.getData()).trim();
-//                                String rec = CalculateUtils.byteArrayToHexString(mReceivePacket.getData()).trim();
-                                //过滤不是发送给我的消息全部不接受
-                                int length = mReceivePacket.getLength() * 2;
-                                String resultData = rec.substring(0, length);
-                                LogUtils.e("======GetPictureActivity=====获取长度==length==" + length);
-                                LogUtils.e("======GetPictureActivity=====获取长度数据==substring==" + resultData);
-                                LogUtils.e("======GetPictureActivity=====接受到数据==原始数据====mReceivePacket.getData()=" + mReceivePacket.getData());
-                                LogUtils.e("======GetPictureActivity=====3333==" + mReceivePacket.getData());
-                                if (mReceivePacket != null) {
-                                    LogUtils.e("======GetPictureActivity=====66666==");
-                                    boolean flag = false;//是否可用的ip---此ip是服务器ip
-                                    String finalOkIp = "";
-                                    if (CalculateUtils.getDataIfForMe(resultData, GetPictureActivity.this)) {
-                                        finalOkIp = CalculateUtils.getOkIp(mReceivePacket.getAddress().toString());
-                                        flag = true;//正确的服务器ip地址
-                                    }
-                                    //正确的服务器ip地址,才开始计算获取自己需要的数据
-                                    if (flag) {
-                                        String mRun2End4 = CalculateUtils.getReceiveRun2End4String(resultData);//随机数之后到data结尾的String
-                                        String deviceType = CalculateUtils.getSendDeviceType(resultData);
-                                        String deviceOnlyCode = CalculateUtils.getSendDeviceOnlyCode(resultData);
-                                        String currentCMD = CalculateUtils.getCMD(resultData);
-                                        LogUtils.e("======GetPictureActivity==回调===随机数之后到data结尾的String=mRun2End4==" + mRun2End4);
-                                        LogUtils.e("======GetPictureActivity==回调===设备类型deviceType==" + deviceType);
-                                        LogUtils.e("======GetPictureActivity==回调===设备ID=deviceOnlyCode==" + deviceOnlyCode);
-                                        LogUtils.e("======GetPictureActivity==回调===CMD=currentCMD==" + currentCMD);
-
-
-                                        switch (currentCMD) {
-                                            case Constants.UDP_HAND://握手
-                                                LogUtils.e("======GetPictureActivity==回调===握手==");
-                                                //判断数据是否是发个自己的
-                                                Boolean dataIfForMe = CalculateUtils.getDataIfForMe(resultData, GetPictureActivity.this);
-                                                LogUtils.e("======GetPictureActivity=====dataIfForMe==" + dataIfForMe);
-                                                //设备在线握手成功
-                                                if (dataIfForMe) {
-                                                    Message message = new Message();
-                                                    message.what = UDP_Hand;
-                                                    message.obj = true;
-                                                    mHandler.sendMessage(message);
-                                                }
-                                                break;
-                                            case Constants.UDP_F0://获取当前病例
-                                                //获取到病例的ID是十六进制的,需要转成十进制
-                                                Boolean dataIfForFO = CalculateUtils.getDataIfForMe(resultData, GetPictureActivity.this);
-                                                LogUtils.e("======GetPictureActivity==回调===获取当前病例==" + mRun2End4);
-                                                LogUtils.e("======GetPictureActivity==回调===获取当前病例dataIfForFO==" + dataIfForFO);
-                                                if (dataIfForFO) {
-                                                    String dataString = CalculateUtils.getReceiveDataString(resultData);
-                                                    LogUtils.e("======GetPictureActivity==回调===CMD=getReceiveDataString==" + dataString);
-//                                                    String jsonID = CalculateUtils.hex16To10(dataString) + "";
-                                                    LogUtils.e("======GetPictureActivity==回调===CMD=CalculateUtils.hexStr2Str(dataString)==" + CalculateUtils.hexStr2Str(dataString));
-                                                    String s = CalculateUtils.hexStr2Str(dataString);
-                                                    UserIDBean bean = mGson.fromJson(s, UserIDBean.class);
-//                                                    LogUtils.e("======GetPictureActivity==回调===CMD=jsonID==" + jsonID);
-                                                    String jsonID = CalculateUtils.hex16To10(bean.getRecordid()) + "";
-                                                    //必须从新取数据不然会错乱
-                                                    String spCaseID = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_Chose_CaseID, "");
-                                                    LogUtils.e("======GetPictureActivity==回调===itemID=spCaseID=" + spCaseID);
-                                                    LogUtils.e("======GetPictureActivity==回调===itemID=itemID=" + itemID);
-                                                    LogUtils.e("======GetPictureActivity==回调===jsonID=jsonID=" + jsonID);
-                                                    itemID = spCaseID;
-                                                    //两者病例ID相同才能可以做其他操作
-                                                    Message message = new Message();
-                                                    if (itemID.equals(jsonID)) {
-                                                        message.what = UDP_ID;
-                                                        message.obj = true;
-                                                        mHandler.sendMessage(message);
-                                                    } else {
-                                                        message.what = UDP_ID;
-                                                        message.obj = false;
-                                                        mHandler.sendMessage(message);
-                                                    }
-                                                }
-
-                                                break;
-                                            case Constants.UDP_F3://冻结与解冻:00冻结，01解冻,未调试
-                                                Boolean dataIfForF3 = CalculateUtils.getDataIfForMe(resultData, GetPictureActivity.this);
-                                                if (dataIfForF3) {
-                                                    String dataString = CalculateUtils.getReceiveDataString(resultData);
-                                                    String s = CalculateUtils.hexStr2Str(dataString);
-                                                    ColdPictureBean bean = mGson.fromJson(s, ColdPictureBean.class);
-//                                                    LogUtils.e("======GetPictureActivity==回调===CMD=jsonID==" + jsonID);
-                                                    String jsonString = CalculateUtils.hex16To10(bean.getFreeze()) + "";
-                                                    Message message = new Message();
-                                                    if ("00".equals(jsonString)) { //冻结
-                                                        message.what = UDP_Cold;
-                                                        message.obj = "00";
-                                                        mHandler.sendMessage(message);
-                                                    } else {//解冻
-                                                        message.what = UDP_Cold;
-                                                        message.obj = "01";
-                                                        mHandler.sendMessage(message);
-                                                    }
-                                                }
-
-                                                break;
-
-                                        }
-
-
-                                    }
-
-//                                    String finalOkIp1 = finalOkIp;
-//                                        Message message = new Message();
-//                                        Bundle bundle = new Bundle();
-//                                        message.what = UDP_Receive;
-//                                        bundle.putString("ip", finalOkIp1);
-//                                        bundle.putString("resultData", resultData);
-//                                        message.setData(bundle);
-//                                        mHandler.sendMessage(message);
-                                }
-
-                            }
-
-
-                        } catch (IOException e) {
-                            e.printStackTrace();
-
-                        }
-                    }
+                break;
+            case Constants.UDP_F3:////冻结与解冻:00冻结，01解冻,未调试
+                if ("00".equals(data)) {
+                    toast("冻结成功");
+                } else {
+                    toast("解冻成功");
                 }
-
-
-            }
-        }.start();
+                break;
+        }
 
     }
+
+
+
 
     /**
      * 发送握手消息
@@ -427,6 +275,8 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             return;
         }
         SocketManage.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort));
+//        SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort));
+//        SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort));
     }
 
     /**
@@ -586,7 +436,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                         toast("当前病例ID和操作病例ID不相等,不能操作!");
                     }
                 } else {
-                    toast("握手失败,正在尝试链接设备!");
+                    toast("握手失败,正在尝试连接设备!");
                     sendHandLinkMessage();
                 }
 
@@ -778,9 +628,6 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         super.onResume();
         isFirstIn = true;
         startLive(path);
-        isRuning = true;
-        //开启消息接收线程
-        initReceiveThread();
         //握手通讯
         LogUtils.e("onResume===GetPictureActivity===开始建立握手链接!");
         sendHandLinkMessage();
@@ -797,7 +644,6 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
     protected void onPause() {
         super.onPause();
         //直接调用stop 不然回ANR
-        isRuning = false;
         mVLCView.onStop();
         mLoadingView.release();
         mLoadingView.setVisibility(View.INVISIBLE);
@@ -817,11 +663,11 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        EventBus.getDefault().unregister(this);
         isFirstIn = false;
 //        mVLCView.setMediaListenerEvent(null);
         mVLCView.onStop();
         mVLCView.onDestroy();
-        isRuning = false;
 
     }
 

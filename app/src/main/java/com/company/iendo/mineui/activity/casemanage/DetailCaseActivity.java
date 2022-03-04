@@ -148,7 +148,6 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
                     break;
                 case R.id.linear_get_report://获取报告
                     mOnEditStatusListener.onGetReport();
-
                     Intent intent = new Intent(this, PictureChoseActivity.class);
                     startActivity(intent);
                     //转场动画

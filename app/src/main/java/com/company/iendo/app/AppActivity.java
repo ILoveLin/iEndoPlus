@@ -25,6 +25,8 @@ import com.company.iendo.ui.dialog.WaitDialog;
 import com.hjq.gson.factory.GsonFactory;
 import com.hjq.http.listener.OnHttpListener;
 
+import org.greenrobot.eventbus.EventBus;
+
 import okhttp3.Call;
 
 /**
@@ -154,6 +156,13 @@ public abstract class AppActivity extends BaseActivity
             WifiInfo wifiInfo = wifiManager.getConnectionInfo();
             currentIP = getIpString(wifiInfo.getIpAddress());
         }
+
+    }
+
+    @Nullable
+    @Override
+    public CharSequence onCreateDescription() {
+        return super.onCreateDescription();
     }
 
     /**
@@ -278,9 +287,12 @@ public abstract class AppActivity extends BaseActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
+
+
         if (isShowDialog()) {
             hideDialog();
         }
         mDialog = null;
+
     }
 }

@@ -269,6 +269,9 @@ dependencies {
     implementation 'com.github.Jay-Goo:RangeSeekBar:v3.0.0'
     //线程池管理
     implementation "com.github.yjfnypeu:EasyThread:0.5.0"
+    //服务保活
+    implementation 'com.xdandroid:hellodaemon:+'
+
     //adapter 多选 全选等等
     // 多语种：https://github.com/getActivity/MultiLanguages
     // 悬浮窗：https://github.com/getActivity/XToast
