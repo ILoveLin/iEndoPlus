@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/relative_all"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -19,7 +20,8 @@
     <com.company.iendo.widget.StatusLayout
         android:id="@+id/status_hint"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_below="@+id/titlebar">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -42,20 +44,60 @@
 
                 <TextView
                     android:id="@+id/tv_go_look"
-                    android:layout_gravity="center_horizontal"
                     android:layout_width="@dimen/dp_80"
                     android:layout_height="@dimen/dp_40"
-                    android:text="预览报告"
-                    android:gravity="center"
+                    android:layout_gravity="center_horizontal"
                     android:background="@drawable/shape_bg_chose_picture"
+                    android:gravity="center"
+                    android:text="预览报告"
                     android:textColor="@color/white"
                     android:textSize="@dimen/sp_15" />
 
-
             </LinearLayout>
-
 
         </RelativeLayout>
 
+
     </com.company.iendo.widget.StatusLayout>
-</LinearLayout>
+
+
+    <!--报告界面-->
+
+    <RelativeLayout
+        android:id="@+id/relative_anim"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:visibility="invisible">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="@dimen/dp_10"
+            android:background="@color/white"
+            android:orientation="vertical">
+
+            <com.hjq.bar.TitleBar
+                android:id="@+id/anim_titlebar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:rightTitle="打印"
+                app:rightTitleColor="@color/color_25A5FFA"
+                app:rightTitleSize="@dimen/sp_13"
+                app:title="预览报告" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_anim_report"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/dp_20"
+                android:layout_marginRight="@dimen/dp_20"
+                app:srcCompat="@mipmap/bg_splash_des"
+                tools:scaleType="centerCrop" />
+
+        </LinearLayout>
+    </RelativeLayout>
+
+</RelativeLayout>

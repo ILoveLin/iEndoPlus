@@ -83,111 +83,12 @@ public class ReportActivity extends AppActivity implements StatusAction {
 
             @Override
             public void onRightClick(View view) {
-                if (UDP_HAND_TAG){
-                    sendSocketPointMessage(Constants.UDP_F2);
-                }else {
-                    toast("暂未建立连接!");
-                    sendHandLinkMessage();
-                }
+
 
             }
         });
     }
 
-
-    /**
-     * ***************************************************************************通讯模块**************************************************************************
-     */
-
-    /**
-     * eventbus 刷新socket数据
-     */
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void SocketRefreshEvent(SocketRefreshEvent event) {
-        LogUtils.e("Socket回调==DeviceSearchActivity==event.getData()==" + event.getData());
-        String mRun2End4 = CalculateUtils.getReceiveRun2End4String(event.getData());//随机数之后到data结尾的String
-        String deviceType = CalculateUtils.getSendDeviceType(event.getData());
-        String deviceOnlyCode = CalculateUtils.getSendDeviceOnlyCode(event.getData());
-        String currentCMD = CalculateUtils.getCMD(event.getData());
-        LogUtils.e("Socket回调==DeviceSearchActivity==随机数之后到data的Str==mRun2End4==" + mRun2End4);
-        LogUtils.e("Socket回调==DeviceSearchActivity==发送方设备类型==deviceType==" + deviceType);
-        LogUtils.e("Socket回调==DeviceSearchActivity==获取发送方设备Code==deviceOnlyCode==" + deviceOnlyCode);
-        LogUtils.e("Socket回调==DeviceSearchActivity==当前UDP命令==currentCMD==" + currentCMD);
-        LogUtils.e("Socket回调==DeviceSearchActivity==当前UDP命令==event.getUdpCmd()==" + event.getUdpCmd());
-        String data = event.getData();
-        switch (event.getUdpCmd()) {
-            case Constants.UDP_HAND://握手
-                toast("握手成功");
-                UDP_HAND_TAG = true;
-                sendSocketPointMessage(Constants.UDP_F1);
-                break;
-            case Constants.UDP_F1://预览报告
-                if ("".equals(data)) {
-                    showEmptyReport();
-                } else {
-                    showComplete();
-                    Glide.with(getApplicationContext())
-                            .load(data)
-                            .error(R.mipmap.bg_loading_error)
-                            .into(mReport);
-                }
-                break;
-            case Constants.UDP_F2://打印报告
-                if ("00".equals(data)) {
-                    toast("报告打印成功!");
-                } else {
-                    toast("报告打印失败!");
-                }
-                break;
-        }
-
-    }
-
-    /**
-     * 发送握手消息
-     */
-    public void sendHandLinkMessage() {
-        HandBean handBean = new HandBean();
-        handBean.setHelloPc("HelloPc");
-        handBean.setComeFrom("Android");
-        byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(handBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
-                Constants.UDP_HAND);
-        if (("".equals(mSocketPort))) {
-            toast("通讯端口不能为空!");
-            return;
-        }
-        SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort));
-//        SocketManage.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort));
-    }
-
-
-    /**
-     * 发送点对点消息,必须握手成功
-     *
-     * @param CMDCode 命令cmd
-     */
-    public void sendSocketPointMessage(String CMDCode) {
-        if (UDP_HAND_TAG) {
-            ShotPictureBean shotPictureBean = new ShotPictureBean();
-            String spCaseID = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_Chose_CaseID, "");
-            String s = CalculateUtils.hex10To16Result4(Integer.parseInt(spCaseID));
-            shotPictureBean.setRecordid(s);
-            byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(shotPictureBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
-                    CMDCode);
-            if (("".equals(mSocketPort))) {
-                toast("通讯端口不能为空!");
-                return;
-            }
-            SocketManage.startSendMessageBySocket(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), false);
-        } else {
-            toast("请先建立握手链接!");
-        }
-
-    }
-
-    /**
-     * ***************************************************************************通讯模块**************************************************************************
-     */
 
     @Override
     public StatusLayout getStatusLayout() {
@@ -208,7 +109,7 @@ public class ReportActivity extends AppActivity implements StatusAction {
 //        initReceiveThread();
         //握手通讯
         LogUtils.e("onResume===ReportActivity===开始建立握手链接!");
-        sendHandLinkMessage();
+//        sendHandLinkMessage();
     }
 
     @Override
@@ -220,6 +121,5 @@ public class ReportActivity extends AppActivity implements StatusAction {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        EventBus.getDefault().unregister(this);
     }
 }

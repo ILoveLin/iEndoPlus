@@ -39,7 +39,7 @@ import okhttp3.Call;
  * time：2021/10/29 13:55
  * desc：第2个tab-fragment
  */
-public class PictureFragment extends TitleBarFragment<MainActivity> implements StatusAction, BaseAdapter.OnItemClickListener, OnRefreshLoadMoreListener {
+public class PictureFragment extends TitleBarFragment<MainActivity> implements StatusAction, BaseAdapter.OnItemClickListener {
     private SmartRefreshLayout mRefreshLayout;
     private WrapRecyclerView mRecyclerView;
     private StatusLayout mStatusLayout;
@@ -60,7 +60,7 @@ public class PictureFragment extends TitleBarFragment<MainActivity> implements S
 
     @Override
     protected void initView() {
-        mRefreshLayout = findViewById(R.id.rl_pic_refresh);
+//        mRefreshLayout = findViewById(R.id.rl_pic_refresh);
         mRecyclerView = findViewById(R.id.rv_pic_list);
         mStatusLayout = findViewById(R.id.pic_hint);
         mBaseUrl = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_BaseUrl, "111");
@@ -159,27 +159,27 @@ public class PictureFragment extends TitleBarFragment<MainActivity> implements S
 
     }
 
-    /**
-     * {@link OnRefreshLoadMoreListener}
-     */
-
-    @Override
-    public void onRefresh(@NonNull RefreshLayout refreshLayout) {
-        postDelayed(() -> {
-            mAdapter.clearData();
-            mAdapter.setData(mDataLest);
-            mRefreshLayout.finishRefresh();
-        }, 1000);
-    }
-
-    @Override
-    public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
-        postDelayed(() -> {
-            mRefreshLayout.finishLoadMore();
-            mAdapter.setLastPage(true);
-            mRefreshLayout.setNoMoreData(mAdapter.isLastPage());
-        }, 1000);
-    }
+//    /**
+//     * {@link OnRefreshLoadMoreListener}
+//     */
+//
+//    @Override
+//    public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+//        postDelayed(() -> {
+//            mAdapter.clearData();
+//            mAdapter.setData(mDataLest);
+//            mRefreshLayout.finishRefresh();
+//        }, 1000);
+//    }
+//
+//    @Override
+//    public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
+//        postDelayed(() -> {
+//            mRefreshLayout.finishLoadMore();
+//            mAdapter.setLastPage(true);
+//            mRefreshLayout.setNoMoreData(mAdapter.isLastPage());
+//        }, 1000);
+//    }
 
 
     @Override

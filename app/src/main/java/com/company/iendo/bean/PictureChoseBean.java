@@ -8,8 +8,26 @@ package com.company.iendo.bean;
  */
 public class PictureChoseBean {
     private String url;
-    private boolean selected;
+    private boolean oldSelected;  //请求过来已经选中的id,这个字段不会改变,只做原来选中的图片标识
+    private boolean newSelected;  //自己点击选中的id(包含了已经选中的id哦,之后的点击改变此字段)
     private String itemID;
+    private String pictureID;
+
+    public boolean isNewSelected() {
+        return newSelected;
+    }
+
+    public void setNewSelected(boolean newSelected) {
+        this.newSelected = newSelected;
+    }
+
+    public String getPictureID() {
+        return pictureID;
+    }
+
+    public void setPictureID(String pictureID) {
+        this.pictureID = pictureID;
+    }
 
     public String getItemID() {
         return itemID;
@@ -27,11 +45,22 @@ public class PictureChoseBean {
         this.url = url;
     }
 
-    public boolean isSelected() {
-        return selected;
+    public boolean isOldSelected() {
+        return oldSelected;
     }
 
-    public void setSelected(boolean selected) {
-        this.selected = selected;
+    public void setOldSelected(boolean oldSelected) {
+        this.oldSelected = oldSelected;
+    }
+
+    @Override
+    public String toString() {
+        return "PictureChoseBean{" +
+                "url='" + url + '\'' +
+                ", oldSelected=" + oldSelected +
+                ", newSelected=" + newSelected +
+                ", itemID='" + itemID + '\'' +
+                ", pictureID='" + pictureID + '\'' +
+                '}';
     }
 }

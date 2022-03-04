@@ -68,6 +68,7 @@ public abstract class AppActivity extends BaseActivity
     public String mUsername;            //直播账号
     public String mPassword;            //直播密码
     public String mLivePort;            //直播端口
+    public String mBaseUrlPort;
 
     /**
      * 当前加载对话框是否在显示中
@@ -129,6 +130,7 @@ public abstract class AppActivity extends BaseActivity
 
 
         mBaseUrl = (String) SharePreferenceUtil.get(AppActivity.this, SharePreferenceUtil.Current_BaseUrl, "192.167.132.102");
+        mBaseUrlPort = (String) SharePreferenceUtil.get(AppActivity.this, SharePreferenceUtil.Current_HttpPort, "7001");
         endoType = (String) SharePreferenceUtil.get(AppActivity.this, SharePreferenceUtil.Current_EndoType, "3");
         mUserID = (String) SharePreferenceUtil.get(AppActivity.this, SharePreferenceUtil.Current_Login_UserID, "3");
         mCurrentTypeDes = (String) SharePreferenceUtil.get(AppActivity.this, SharePreferenceUtil.Current_Type, "妇科治疗台");

@@ -13,11 +13,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.scwang.smart.refresh.layout.SmartRefreshLayout
-            android:id="@+id/rl_pic_refresh"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:srlEnablePreviewInEditMode="false">
+<!--        <com.scwang.smart.refresh.layout.SmartRefreshLayout-->
+<!--            android:id="@+id/rl_pic_refresh"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            app:srlEnablePreviewInEditMode="false">-->
 
             <com.hjq.widget.layout.WrapRecyclerView
                 android:id="@+id/rv_pic_list"
@@ -25,7 +25,7 @@
                 android:layout_height="match_parent"
                 tools:listCount="10"
                 tools:listitem="@layout/picker_item" />
-        </com.scwang.smart.refresh.layout.SmartRefreshLayout>
+<!--        </com.scwang.smart.refresh.layout.SmartRefreshLayout>-->
 
     </com.company.iendo.widget.StatusLayout>
 </LinearLayout>

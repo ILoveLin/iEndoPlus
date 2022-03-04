@@ -11,9 +11,11 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.MultiTransformation;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.signature.ObjectKey;
 import com.company.iendo.R;
 import com.company.iendo.app.AppAdapter;
 import com.company.iendo.bean.PictureChoseBean;
+import com.company.iendo.utils.LogUtils;
 
 /**
  * company：江西神州医疗设备有限公司
@@ -60,13 +62,18 @@ public class ChosePictureAdapter extends AppAdapter<PictureChoseBean> {
 //            Log.e("adapter", "item==path=mBaseUrl=" + mBaseUrl + "/" + mID + "/" + item);
 //            http://192.168.64.56:7001/3/001.jpg
 //            mImageView.setText("Path:" + item.getImagePath() + "ID:" + item.getID());
+            LogUtils.e("Socket回调==PictureChoseActivity==当前UDP命令==path=adapter=" + bean.getUrl());
+
             Glide.with(getContext())
                     .load(bean.getUrl())
                     .error(R.mipmap.bg_loading_error)
+                    .placeholder(R.mipmap.bg_splash_des) //占位符 也就是加载中的图片，可放个gif
                     .transform(new MultiTransformation<>(new CenterCrop(), new RoundedCorners((int) getResources().getDimension(R.dimen.dp_4))))
+                    //解决使用缓存图片的问题
+//                    .signature(new ObjectKey(System.currentTimeMillis()))
                     .into(mImageView);
 
-            if (bean.isSelected()) {
+            if (bean.isNewSelected()) {
                 mRelativeLayout.setBackgroundResource(R.drawable.shape_bg_chose_picture_pre);
             }else {
                 mRelativeLayout.setBackgroundResource(R.drawable.shape_bg_chose_picture_nor);

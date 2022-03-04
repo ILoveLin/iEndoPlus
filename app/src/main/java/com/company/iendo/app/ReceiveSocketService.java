@@ -213,8 +213,10 @@ public class ReceiveSocketService extends AbsWorkService {
                                                     EventBus.getDefault().post(event);
                                                     break;
                                                 case Constants.UDP_F1://预览报告
-                                                    LogUtils.e("======LiveServiceImpl==回调===预览报告==");
+                                                    LogUtils.e("======LiveServiceImpl==回调===预览报告=="+str);
                                                     LookReportBean lookBean = mGson.fromJson(str, LookReportBean.class);
+                                                    LogUtils.e("======LiveServiceImpl==回调===预览报告=="+lookBean.toString());
+
                                                     event.setTga(true);
                                                     event.setData(lookBean.getReporturl());
                                                     event.setIp(finalOkIp);
@@ -238,7 +240,6 @@ public class ReceiveSocketService extends AbsWorkService {
                                 }
 
                             }
-
 
                         } catch (IOException e) {
                             e.printStackTrace();

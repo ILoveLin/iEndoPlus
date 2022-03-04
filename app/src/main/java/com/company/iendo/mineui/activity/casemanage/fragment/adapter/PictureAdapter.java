@@ -45,7 +45,7 @@ public class PictureAdapter extends AppAdapter<DetailPictureBean.DataDTO> {
         private final AppCompatImageView mImageView;
 
         private ViewHolder() {
-            super(R.layout.item_picture);
+            super(R.layout.item_picture_detail);
             mImageView = findViewById(R.id.pic_image);
         }
 
@@ -63,7 +63,8 @@ public class PictureAdapter extends AppAdapter<DetailPictureBean.DataDTO> {
 //            mImageView.setText("Path:" + item.getImagePath() + "ID:" + item.getID());
             Glide.with(getContext())
                     .load(path)
-                    .error(R.mipmap.bg_loading_error)
+                    .placeholder(R.mipmap.bg_splash_des) //占位符 也就是加载中的图片，可放个gif
+                    .error(R.mipmap.bg_splash_des)
                     .transform(new MultiTransformation<>(new CenterCrop(), new RoundedCorners((int) getResources().getDimension(R.dimen.dp_4))))
                     .into(mImageView);
         }

@@ -2,6 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -10,6 +12,8 @@
         android:layout_height="@dimen/dp_130"
         android:layout_gravity="center_horizontal"
         android:adjustViewBounds="true"
+        app:srcCompat="@drawable/example_bg"
+        tools:scaleType="centerCrop"
         android:src="@mipmap/image_gb_mine_header" />
 
 </LinearLayout>

@@ -48,4 +48,14 @@ public class SocketRefreshEvent {
     public void setIp(String ip) {
         this.ip = ip;
     }
+
+    @Override
+    public String toString() {
+        return "SocketRefreshEvent{" +
+                "tga=" + tga +
+                ", udpCmd='" + udpCmd + '\'' +
+                ", data='" + data + '\'' +
+                ", ip='" + ip + '\'' +
+                '}';
+    }
 }

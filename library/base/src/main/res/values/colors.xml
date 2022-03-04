@@ -27,7 +27,7 @@
     <color name="white15">#26FFFFFF</color>
     <color name="white10">#1AFFFFFF</color>
     <color name="white5">#0DFFFFFF</color>
-
+    <color name="gray">#FF808080</color>
     <!-- 黑色 -->
     <color name="black">#FF000000</color>
     <color name="black95">#F2000000</color>
@@ -53,7 +53,7 @@
     <color name="black5">#0D000000</color>
 
     <!-- 灰色 -->
-    <color name="gray">#FF808080</color>
+
     <!-- 红色 -->
     <color name="red">#FFFF0000</color>
     <!-- 金色 -->
