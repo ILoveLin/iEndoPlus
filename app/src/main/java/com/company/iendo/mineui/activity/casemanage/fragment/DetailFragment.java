@@ -1232,7 +1232,6 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                             AddCaseBean mBean = mGson.fromJson(response, AddCaseBean.class);
                             if (0 == mBean.getCode()) {  //成功
                                 showComplete();
-                                toast("保存成功!");
                                 //socket告知上位机更新病例
                                 sendSocketPointMessage(Constants.UDP_13);
                                 ActivityManager.getInstance().finishActivity(AddCaseActivity.class);

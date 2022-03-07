@@ -3,6 +3,9 @@
     android:id="@+id/root_layout_vlc"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+<!--    此处RelativeLayout的点击事件响应整体控制的显示或者隐藏,不用做任何其他操作就能响应左右上下滑动控制亮度和声音-->
+<!--    此处RelativeLayout的点击事件响应整体控制的显示或者隐藏,不用做任何其他操作就能响应左右上下滑动控制亮度和声音-->
+<!--    此处RelativeLayout的点击事件响应整体控制的显示或者隐藏,不用做任何其他操作就能响应左右上下滑动控制亮度和声音-->
 
     <!--    &lt;!&ndash;播放器&ndash;&gt;-->
     <com.vlc.lib.VlcVideoView

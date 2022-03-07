@@ -37,7 +37,7 @@ import okhttp3.Call;
  * time：2021/10/29 13:55
  * desc：第2个tab-fragment
  */
-public class VideoFragment extends TitleBarFragment<MainActivity> implements StatusAction, BaseAdapter.OnItemClickListener, OnRefreshLoadMoreListener {
+public class VideoFragment extends TitleBarFragment<MainActivity> implements StatusAction, BaseAdapter.OnItemClickListener{
     private SmartRefreshLayout mRefreshLayout;
     private WrapRecyclerView mRecyclerView;
     private StatusLayout mStatusLayout;
@@ -56,7 +56,6 @@ public class VideoFragment extends TitleBarFragment<MainActivity> implements Sta
 
     @Override
     protected void initView() {
-        mRefreshLayout = findViewById(R.id.rl_video_refresh);
         mRecyclerView = findViewById(R.id.rv_video_list);
         mStatusLayout = findViewById(R.id.video_hint);
 
@@ -144,27 +143,6 @@ public class VideoFragment extends TitleBarFragment<MainActivity> implements Sta
         startActivity(intent);
     }
 
-    /**
-     * {@link OnRefreshLoadMoreListener}
-     */
-
-    @Override
-    public void onRefresh(@NonNull RefreshLayout refreshLayout) {
-        postDelayed(() -> {
-            mAdapter.clearData();
-            mAdapter.setData(mDataLest);
-            mRefreshLayout.finishRefresh();
-        }, 1000);
-    }
-
-    @Override
-    public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
-        postDelayed(() -> {
-            mRefreshLayout.finishLoadMore();
-            mAdapter.setLastPage(true);
-            mRefreshLayout.setNoMoreData(mAdapter.isLastPage());
-        }, 1000);
-    }
 
 
     @Override

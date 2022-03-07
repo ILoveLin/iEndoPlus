@@ -90,6 +90,9 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
     private RtmpOnlyAudio rtmpOnlyAudio;
     private String itemID;
     private String currentUrl;
+    private RelativeLayout mTopControl;
+    private RelativeLayout mBottomControl;
+    private ImageView mImageBack;
     private String mCaseID; //当前病例ID
     private static final int Lock = 100;
     private static final int Unlock = 101;
@@ -125,11 +128,8 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                     } else if ("2".equals(tag) || "4".equals(tag)) {
                         setTextColor(getResources().getColor(R.color.white), "录像", false);
                     }
-
                     LogUtils.e("录像====" + tag);
                     LogUtils.e("录像====" + UDP_RECODE_INIT_TAG);
-
-
 //                    switch ((String) msg.obj) {
 //                        case "0":
 //                            break;
@@ -185,10 +185,6 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         mRecordMsg.setTextColor(color);
     }
 
-    private RelativeLayout mTopControl;
-    private RelativeLayout mBottomControl;
-    private ImageView mImageBack;
-
 
     @Override
     protected int getLayoutId() {
@@ -203,7 +199,6 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
 
     @Override
     protected void initData() {
-
 
         rootView.setLongClickable(true);  //手势需要--能触摸
         rootView.setOnTouchListener(onTouchVideoListener);
@@ -486,10 +481,11 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                 break;
             case R.id.linear_record:            //录像,本地不做,socket通讯机子做操作
                 sendSocketPointRecodeStatusMessage(Constants.UDP_18, "0");
-
-
-                mHandler.sendEmptyMessageDelayed(Record_Request, 200);
-
+                if (UDP_EQUALS_ID){
+                    mHandler.sendEmptyMessageDelayed(Record_Request, 200);
+                }else {
+                    toast("当前病例ID和操作病例ID不相等,不能操作!");
+                }
 
 //                if (isPlayering) {
 //                    if (mVLCView.isPrepare()) {
