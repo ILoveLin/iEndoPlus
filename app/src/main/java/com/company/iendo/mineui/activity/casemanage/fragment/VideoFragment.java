@@ -14,6 +14,7 @@ import com.company.iendo.mineui.activity.MainActivity;
 import com.company.iendo.mineui.activity.casemanage.fragment.adapter.VideoAdapter;
 import com.company.iendo.mineui.activity.vlc.VideoActivity;
 import com.company.iendo.other.HttpConstant;
+import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.SharePreferenceUtil;
 import com.company.iendo.widget.MyItemDecoration;
 import com.company.iendo.widget.StatusLayout;
@@ -134,7 +135,10 @@ public class VideoFragment extends TitleBarFragment<MainActivity> implements Sta
         Intent intent = new Intent(getActivity(), VideoActivity.class);
 //        http://192.168.64.28:7001/ID/FilePath
 //        mBaseUrl=http://192.168.132.102:7001
-        String mUrl = mBaseUrl + "/" + item.getID() + "/" + item.getFilePath();
+        String mUrl = mBaseUrl + "/" + item.getRecordID() + "/" + item.getFilePath();
+
+        LogUtils.e("当前播放URL"+item.toString());
+        LogUtils.e("当前播放URL"+mUrl);
 //        intent.putExtra("mUrl","http://9890.vod.myqcloud.com/9890_4e292f9a3dd011e6b4078980237cc3d3.f20.mp4");
         intent.putExtra("mUrl",mUrl);
         startActivity(intent);

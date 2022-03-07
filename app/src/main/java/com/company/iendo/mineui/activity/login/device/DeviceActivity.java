@@ -919,8 +919,8 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
             LogUtils.e("选择的设备=== mDBBean.getEndoType()===" + mDBBean.getEndoType());
             LogUtils.e("选择的设备=== mDBBean.getDeviceID()===" + mDBBean.getDeviceID());
             LogUtils.e("选择的设备=== mDBBean.toString===" + mDBBean.toString());
-            //这个主键ID是需要绑定用户表中的deviceID,确保是这个设备下,离线模式能通过id查询绑定用户
-            SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_MainID, mDBBean.getId() + "");
+            //这个主键ID是需要绑定用户表中的deviceID(code码),确保是这个设备下,离线模式能通过此字段查询绑定用户
+            SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_DeviceID, mDBBean.getId() + "");
             /**
              * 设备ID
              * 这个用户是在哪个设备上的     用户和病例都是和设备绑定的

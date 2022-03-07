@@ -8,6 +8,7 @@
     tools:context="com.company.iendo.ui.activity.CopyActivity">
 
     <com.hjq.bar.TitleBar
+        android:id="@+id/video_titlebar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:title="视频播放" />

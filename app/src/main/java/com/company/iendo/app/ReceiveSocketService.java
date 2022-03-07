@@ -9,6 +9,7 @@ import android.os.Message;
 
 import com.company.iendo.bean.RefreshEvent;
 import com.company.iendo.bean.event.SocketRefreshEvent;
+import com.company.iendo.bean.socket.RecodeBean;
 import com.company.iendo.bean.socket.getpicture.ColdPictureBean;
 import com.company.iendo.bean.socket.getpicture.LookReportBean;
 import com.company.iendo.bean.socket.getpicture.PrintReportBean;
@@ -213,9 +214,9 @@ public class ReceiveSocketService extends AbsWorkService {
                                                     EventBus.getDefault().post(event);
                                                     break;
                                                 case Constants.UDP_F1://预览报告
-                                                    LogUtils.e("======LiveServiceImpl==回调===预览报告=="+str);
+                                                    LogUtils.e("======LiveServiceImpl==回调===预览报告==" + str);
                                                     LookReportBean lookBean = mGson.fromJson(str, LookReportBean.class);
-                                                    LogUtils.e("======LiveServiceImpl==回调===预览报告=="+lookBean.toString());
+                                                    LogUtils.e("======LiveServiceImpl==回调===预览报告==" + lookBean.toString());
 
                                                     event.setTga(true);
                                                     event.setData(lookBean.getReporturl());
@@ -230,6 +231,15 @@ public class ReceiveSocketService extends AbsWorkService {
                                                     event.setData(portBean.getPrintcode());
                                                     event.setIp(finalOkIp);
                                                     event.setUdpCmd(Constants.UDP_F2);
+                                                    EventBus.getDefault().post(event);
+                                                    break;
+                                                case Constants.UDP_18://录像
+                                                    LogUtils.e("======LiveServiceImpl==回调===录像==");
+                                                    RecodeBean recodeBean = mGson.fromJson(str, RecodeBean.class);
+                                                    event.setTga(true);
+                                                    event.setData(recodeBean.getQrycode());
+                                                    event.setIp(finalOkIp);
+                                                    event.setUdpCmd(Constants.UDP_18);
                                                     EventBus.getDefault().post(event);
                                                     break;
 

@@ -144,5 +144,21 @@ public class DetailVideoBean {
         public void setViewTimes(int ViewTimes) {
             this.ViewTimes = ViewTimes;
         }
+
+        @Override
+        public String toString() {
+            return "DataDTO{" +
+                    "ID='" + ID + '\'' +
+                    ", RecordID='" + RecordID + '\'' +
+                    ", FtpPath=" + FtpPath +
+                    ", Title='" + Title + '\'' +
+                    ", Description='" + Description + '\'' +
+                    ", FilePath='" + FilePath + '\'' +
+                    ", ThumbPath='" + ThumbPath + '\'' +
+                    ", RecordedAt='" + RecordedAt + '\'' +
+                    ", CreatedAt='" + CreatedAt + '\'' +
+                    ", ViewTimes=" + ViewTimes +
+                    '}';
+        }
     }
 }

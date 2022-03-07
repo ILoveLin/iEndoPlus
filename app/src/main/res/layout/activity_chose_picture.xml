@@ -70,7 +70,6 @@
         android:background="@color/white"
         android:visibility="invisible">
 
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -83,6 +82,10 @@
                 android:id="@+id/anim_titlebar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                app:leftIcon="@null"
+                app:leftTitle="退出"
+                app:leftTitleColor="@color/color_25A5FFA"
+                app:leftTitleSize="@dimen/sp_13"
                 app:rightTitle="打印"
                 app:rightTitleColor="@color/color_25A5FFA"
                 app:rightTitleSize="@dimen/sp_13"
@@ -94,8 +97,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginLeft="@dimen/dp_20"
                 android:layout_marginRight="@dimen/dp_20"
-                app:srcCompat="@mipmap/bg_splash_des"
-                tools:scaleType="centerCrop" />
+                app:srcCompat="@drawable/ic_bg_splash_des" />
 
         </LinearLayout>
     </RelativeLayout>

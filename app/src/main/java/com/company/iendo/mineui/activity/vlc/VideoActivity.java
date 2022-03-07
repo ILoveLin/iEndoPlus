@@ -2,9 +2,14 @@ package com.company.iendo.mineui.activity.vlc;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
+import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -15,11 +20,14 @@ import com.company.iendo.R;
 import com.company.iendo.action.StatusAction;
 import com.company.iendo.app.AppActivity;
 import com.company.iendo.utils.CommonUtil;
+import com.company.iendo.utils.LogUtils;
+import com.company.iendo.utils.ScreenSizeUtil;
 import com.company.iendo.widget.StatusLayout;
 import com.company.iendo.widget.vlc.ENDownloadView;
 import com.company.iendo.widget.vlc.ENPlayView;
 import com.company.iendo.widget.vlc.MyVlcVideoView;
 import com.gyf.immersionbar.ImmersionBar;
+import com.hjq.bar.TitleBar;
 import com.vlc.lib.VlcVideoView;
 import com.vlc.lib.listener.MediaListenerEvent;
 
@@ -40,6 +48,7 @@ public final class VideoActivity extends AppActivity implements StatusAction {
     private ENPlayView mStartView;
     private ImageView mLockScreen;
     private String currentTime = "0";
+    public boolean isFullscreen = false;
 
     private static final int Time = 104;
     private Handler mHandler = new Handler() {
@@ -56,6 +65,7 @@ public final class VideoActivity extends AppActivity implements StatusAction {
         }
     };
     private TextView mTime;
+    private TitleBar mTilteBar;
 
     @Override
     protected int getLayoutId() {
@@ -64,6 +74,7 @@ public final class VideoActivity extends AppActivity implements StatusAction {
 
     @Override
     protected void initView() {
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         mStatusLayout = findViewById(R.id.status_hint);
         mRelativePlayerAll = findViewById(R.id.ff_player_all);
         mPlayer = findViewById(R.id.player);
@@ -72,6 +83,9 @@ public final class VideoActivity extends AppActivity implements StatusAction {
         mTime = findViewById(R.id.tv_time);
         mLoadingView = findViewById(R.id.control_load_view);
         mStartView = findViewById(R.id.control_start_view);
+        mTilteBar = findViewById(R.id.video_titlebar);
+
+        setOnClickListener(R.id.full_change, R.id.control_start_view);
         Intent intent = getIntent();
         path = intent.getStringExtra("mUrl");
         startLive(path);
@@ -83,8 +97,42 @@ public final class VideoActivity extends AppActivity implements StatusAction {
             case R.id.control_start_view:       //重新开始链接直播
                 startLive(path);
                 break;
+            case R.id.full_change:       //全屏
+                isFullscreen = !isFullscreen;
+                if (isFullscreen) {
+                    getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE); //横屏动态转换
+                    setVideoViewFull(R.drawable.nur_ic_fangxiao, "横屏");
+                } else {
+                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);//竖屏动态转换
+                    setVideoViewFull(R.drawable.nur_ic_fangda, "竖屏");
+                }
+                break;
+
         }
     }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {//
+            setVideoViewFull(R.drawable.nur_ic_fangxiao, "横屏");
+        } else {
+            setVideoViewFull(R.drawable.nur_ic_fangda, "竖屏");
+        }
+    }
+
+    private void setVideoViewFull(int mID, String type) {
+        if ("横屏".equals(type)) { //放小
+            LogUtils.e("全屏设置==开始==" + "横---屏");
+            mTilteBar.setVisibility(View.GONE);
+        } else {//放大
+            LogUtils.e("全屏设置==开始==" + "竖---屏");
+            mTilteBar.setVisibility(View.VISIBLE);
+        }
+    }
+
 
     @Override
     protected void initData() {

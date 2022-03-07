@@ -141,17 +141,29 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
     private void initRememberPassword() {
 
         Boolean isSave = (Boolean) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Flag_UserDBSave, false);
+        String deviceID = (String) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Current_DeviceID, "1");
         LogUtils.e("initRememberPassword====isSave:" + isSave);
         String userName = mPhoneView.getText().toString().trim();
         LogUtils.e("initRememberPassword====isSave:" + isSave);
 
-        if (isSave) {//存过设备之后才能查询本地数据库用户表--并且选中了当前用户
+        if (isSave) {//存过设备之后才能查询本地数据库用户表--并且选中了当前用户,此处存在不同设备名字相同的时候密码相同的bug
             List<UserDBBean> userDBBeans = UserDBUtils.queryAll(getApplicationContext());
             if (!userDBBeans.isEmpty()) {
-                UserDBBean userDBBean = userDBBeans.get(0);
                 mCheckbox.setChecked(true);
-                mPhoneView.setText("" + userDBBean.getUserName());
-                mPasswordView.setText("" + userDBBean.getPassword());
+
+                for (int i = 0; i < userDBBeans.size(); i++) {
+                    UserDBBean userDBBean = userDBBeans.get(i);
+                    String mID = userDBBean.getDeviceID();
+                    //当前选择的设备,和数据库存储之中有相同的设备,才会获取此bean,设置账号密码
+                    if (deviceID.equals(mID)) {
+                        mPhoneView.setText("" + userDBBean.getUserName());
+                        mPasswordView.setText("" + userDBBean.getPassword());
+                    }
+                }
+            }else {
+                mCheckbox.setChecked(false);
+                mPhoneView.setText("");
+                mPasswordView.setText("");
             }
 
         } else {
@@ -526,8 +538,8 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
              * 这个用户是在哪个设备上的     用户和病例都是和设备绑定的
              * 当前选中设备的主键id,因为离线模式下就能通过这个主键id查找这个设备下的所有用户
              */
-            String mMainID = (String) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Current_MainID, "1");
-            userDBBean.setDeviceID(mMainID + "");
+            String deviceID = (String) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Current_DeviceID, "1");
+            userDBBean.setDeviceID(deviceID + "");
             UserDBUtils.insertOrReplaceInTx(LoginActivity.this, userDBBean);
             SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Flag_UserDBSave, true);
 

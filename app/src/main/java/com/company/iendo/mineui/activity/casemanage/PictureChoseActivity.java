@@ -401,7 +401,6 @@ public final class PictureChoseActivity extends AppActivity implements StatusAct
                             .error(R.mipmap.bg_splash_des)
                             .signature(new ObjectKey(System.currentTimeMillis()))//不适用缓存
                             .into(mAnimReport);
-
                 }
                 break;
             case Constants.UDP_F2://打印报告

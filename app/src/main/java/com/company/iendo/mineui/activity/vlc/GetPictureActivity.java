@@ -23,9 +23,8 @@ import com.company.iendo.action.StatusAction;
 import com.company.iendo.app.AppActivity;
 import com.company.iendo.bean.event.SocketRefreshEvent;
 import com.company.iendo.bean.socket.HandBean;
-import com.company.iendo.bean.socket.getpicture.ColdPictureBean;
+import com.company.iendo.bean.socket.RecodeBean;
 import com.company.iendo.bean.socket.getpicture.ShotPictureBean;
-import com.company.iendo.bean.socket.getpicture.UserIDBean;
 import com.company.iendo.mineui.socket.SocketManage;
 import com.company.iendo.other.Constants;
 import com.company.iendo.utils.CalculateUtils;
@@ -33,7 +32,6 @@ import com.company.iendo.utils.CommonUtil;
 import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.ScreenSizeUtil;
 import com.company.iendo.utils.SharePreferenceUtil;
-import com.company.iendo.utils.SocketUtils;
 import com.company.iendo.widget.vlc.ENDownloadView;
 import com.company.iendo.widget.vlc.ENPlayView;
 import com.company.iendo.widget.vlc.MyVlcVideoView;
@@ -52,10 +50,6 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetSocketAddress;
 
 /**
  * author : Android 轮子哥
@@ -92,13 +86,20 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
     private boolean isPlayering = false;   //视频是否播放的标识符
     private boolean mFlagRecord = false;
     private boolean mFlagMicOnLine = false;
+    private TextView mRecordMsg;
+    private RtmpOnlyAudio rtmpOnlyAudio;
+    private String itemID;
+    private String currentUrl;
+    private String mCaseID; //当前病例ID
     private static final int Lock = 100;
     private static final int Unlock = 101;
-    private static final int Record_Start = 102;
-    private static final int Record_Stop = 103;
+    private static final int Record = 102;
+    private static final int Record_Request = 103;
     private static final int Time = 104;
     private static final int UDP_Hand = 106;   //握手
     //  private static final int UDP_Cold = 108;      //获取病例ID
+    private static boolean UDP_RECODE_INIT_TAG = false; //首次进入该界面,查询是否录像的标识
+    private static boolean UDP_RECODE_STATUS_TAG = UDP_RECODE_INIT_TAG; //每次请求的时候,需要再次请求状态,不然容易在未接受到消息的时候出现ui错乱的bug
     private static boolean UDP_HAND_TAG = false; //握手成功表示  true 成功
     private static boolean UDP_EQUALS_ID = false; //获取当前操作id,和进入该界面的id 是否相等,相等才可以进行各种操作,默认不相等,
     @SuppressLint("HandlerLeak")
@@ -108,6 +109,44 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
             switch (msg.what) {
+                case Record_Request://每次请求录像操作的时候,都需要获取上位机状态再做后续操作
+                    if (UDP_RECODE_INIT_TAG) {//true 表示:因为录像中,所以直接停止
+                        sendSocketPointRecodeStatusMessage(Constants.UDP_18, "2");
+                    } else {//因为未录像,所以开始录像
+                        sendSocketPointRecodeStatusMessage(Constants.UDP_18, "1");
+                    }
+                    break;
+                case Record:
+//                    0：查询录像状态 1：开始录像，2：停止录像，3：正在录像  4：未录像
+                    String tag = (String) msg.obj;
+                    if ("1".equals(tag) || "3".equals(tag)) {
+                        setTextColor(getResources().getColor(R.color.white), "录像中", true);
+
+                    } else if ("2".equals(tag) || "4".equals(tag)) {
+                        setTextColor(getResources().getColor(R.color.white), "录像", false);
+                    }
+
+                    LogUtils.e("录像====" + tag);
+                    LogUtils.e("录像====" + UDP_RECODE_INIT_TAG);
+
+
+//                    switch ((String) msg.obj) {
+//                        case "0":
+//                            break;
+//                        case "1":
+//                            setTextColor(getResources().getColor(R.color.red), "录像中", true);
+//                            break;
+//                        case "2":
+//                            setTextColor(getResources().getColor(R.color.white), "录像", false);
+//                            break;
+//                        case "3":
+//                            setTextColor(getResources().getColor(R.color.red), "录像中", true);
+//                            break;
+//                        case "4":
+//                            setTextColor(getResources().getColor(R.color.white), "录像", false);
+//                            break;
+//                    }
+                    break;
                 case Time:
                     String string = CommonUtil.stringForTime(Integer.parseInt(currentTime));
                     mTime.setText("" + string);
@@ -138,16 +177,12 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             }
         }
     };
-    private TextView mRecordMsg;
-    private RtmpOnlyAudio rtmpOnlyAudio;
-    private String itemID;
-    private String currentUrl;
 
 
-    public void setTextColor(int color, String message, boolean isStarting) {
+    public void setTextColor(int color, String message, Boolean recodeStatus) {
+        UDP_RECODE_INIT_TAG = recodeStatus;
         mRecordMsg.setText(message);
         mRecordMsg.setTextColor(color);
-//        this.isStarting = isStarting;
     }
 
     private RelativeLayout mTopControl;
@@ -181,6 +216,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         //获取当前病例ID
         Bundle bundle = getIntent().getExtras();
         currentUrl = bundle.getString("currentUrl");
+        mCaseID = bundle.getString("ItemID");
         LogUtils.e("pusherStart====彩图界面直播地址:currentUrl===" + currentUrl);
 
         path = currentUrl;
@@ -238,6 +274,8 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                 UDP_HAND_TAG = true;
                 //获取当前病例ID
                 sendSocketPointMessage(Constants.UDP_F0);
+                //实时获取当前上位机,录像的状态
+                sendSocketPointRecodeStatusMessage(Constants.UDP_18, "0");
                 break;
             case Constants.UDP_F0://获取当前病例
                 if ("true".equals(data)) {//当前病例相同才能操作
@@ -254,11 +292,15 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                     toast("解冻成功");
                 }
                 break;
+            case Constants.UDP_18://录像--->0：查询录像状态 1：开始录像，2：停止录像，3：正在录像  4：未录像
+                Message obtain = Message.obtain();
+                obtain.obj = data;
+                obtain.what = Record;
+                mHandler.sendMessage(obtain);
+                break;
         }
 
     }
-
-
 
 
     /**
@@ -283,6 +325,36 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
      * 发送点对点消息,必须握手成功
      *
      * @param CMDCode 命令cmd
+     * @param status  状态值
+     */
+    public void sendSocketPointRecodeStatusMessage(String CMDCode, String status) {
+        if (UDP_HAND_TAG) {
+            RecodeBean bean = new RecodeBean();
+            bean.setQrycode(status);
+            if (!("".equals(mCaseID))) {
+                String id = CalculateUtils.numToHex16(Integer.parseInt(mCaseID));
+                bean.setRecordid(id);
+            } else {
+                bean.setRecordid("");
+            }
+            byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(bean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
+                    CMDCode);
+            if (("".equals(mSocketPort))) {
+                toast("通讯端口不能为空!");
+                return;
+            }
+            SocketManage.startSendMessageBySocket(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), false);
+        } else {
+            toast("请先建立握手链接!");
+            sendHandLinkMessage();
+        }
+
+    }
+
+    /**
+     * 发送点对点消息,必须握手成功
+     *
+     * @param CMDCode 命令cmd
      */
     public void sendSocketPointMessage(String CMDCode) {
         if (UDP_HAND_TAG) {
@@ -298,6 +370,8 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             SocketManage.startSendMessageBySocket(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), false);
         } else {
             toast("请先建立握手链接!");
+            sendHandLinkMessage();
+
         }
 
     }
@@ -324,6 +398,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             SocketManage.startSendMessageBySocket(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), false);
         } else {
             toast("请先建立握手链接!");
+            sendHandLinkMessage();
         }
 
     }
@@ -410,6 +485,12 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                 startLive(path);
                 break;
             case R.id.linear_record:            //录像,本地不做,socket通讯机子做操作
+                sendSocketPointRecodeStatusMessage(Constants.UDP_18, "0");
+
+
+                mHandler.sendEmptyMessageDelayed(Record_Request, 200);
+
+
 //                if (isPlayering) {
 //                    if (mVLCView.isPrepare()) {
 //                        if ("录像".equals(mRecordMsg.getText())) {
@@ -439,7 +520,6 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                     toast("握手失败,正在尝试连接设备!");
                     sendHandLinkMessage();
                 }
-
 //                if (isPlayering) {
 //                    if (mVLCView.isPrepare()) {
 //                        Media.VideoTrack videoTrack = mVLCView.getVideoTrack();
