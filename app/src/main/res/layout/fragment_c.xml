@@ -86,14 +86,13 @@
                     android:src="@drawable/arrows_right_ic" />
 
             </RelativeLayout>
-
+<!--            android:background="@drawable/shape_setting_current_user"-->
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="@dimen/dp_10"
                 android:layout_marginRight="@dimen/dp_10"
-                android:background="@drawable/shape_setting_current_user"
                 android:orientation="vertical">
 
 
@@ -101,9 +100,7 @@
                     android:id="@+id/user_bar"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/dp_39"
-                    android:layout_marginTop="@dimen/dp_3"
-                    android:layout_marginBottom="@dimen/dp_3"
-                    android:background="@null"
+                    android:background="@drawable/selector_item_ffffff"
                     app:bar_leftDrawable="@drawable/ic_icon_usermanagement"
                     app:bar_leftDrawablePadding="@dimen/dp_12"
                     app:bar_leftText="用户管理"
@@ -126,8 +123,8 @@
                     android:id="@+id/password_bar"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/dp_39"
-                    android:layout_marginTop="@dimen/dp_3"
-                    android:layout_marginBottom="@dimen/dp_3"
+                    android:background="@drawable/selector_item_ffffff"
+
                     app:bar_leftDrawable="@drawable/ic_icon_change_thepassword"
                     app:bar_leftDrawablePadding="@dimen/dp_12"
                     app:bar_leftText="修改密码"
@@ -151,15 +148,14 @@
                 android:layout_height="match_parent"
                 android:layout_marginLeft="@dimen/dp_10"
                 android:layout_marginRight="@dimen/dp_10"
-                android:background="@drawable/shape_setting_current_user"
                 android:orientation="vertical">
 
                 <com.hjq.widget.layout.SettingBar
                     android:id="@+id/params_bar"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/dp_39"
-                    android:layout_marginTop="@dimen/dp_3"
-                    android:layout_marginBottom="@dimen/dp_3"
+                    android:background="@drawable/selector_item_ffffff"
+
                     app:bar_leftDrawable="@drawable/ic_icon_device_params"
                     app:bar_leftDrawablePadding="@dimen/dp_12"
                     app:bar_leftText="设备参数"
@@ -184,6 +180,8 @@
                     android:layout_height="@dimen/dp_39"
                     android:layout_marginTop="@dimen/dp_3"
                     android:layout_marginBottom="@dimen/dp_3"
+                    android:background="@drawable/selector_item_ffffff"
+
                     app:bar_leftDrawable="@drawable/ic_icon_availablespace"
                     app:bar_leftDrawablePadding="@dimen/dp_12"
                     app:bar_leftText="可用空间"
@@ -205,15 +203,15 @@
                 android:layout_height="match_parent"
                 android:layout_marginLeft="@dimen/dp_10"
                 android:layout_marginRight="@dimen/dp_10"
-                android:background="@drawable/shape_setting_current_user"
                 android:orientation="vertical">
 
                 <com.hjq.widget.layout.SettingBar
                     android:id="@+id/hospital_bar"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/dp_39"
-                    android:layout_marginTop="@dimen/dp_3"
-                    android:layout_marginBottom="@dimen/dp_3"
+                    android:background="@drawable/selector_item_ffffff"
+
+
                     app:bar_leftDrawable="@drawable/ic_icon_hospitalinformation"
                     app:bar_leftDrawablePadding="@dimen/dp_12"
                     app:bar_leftText="医院信息"
@@ -246,7 +244,6 @@
                 android:layout_height="match_parent"
                 android:layout_marginLeft="@dimen/dp_10"
                 android:layout_marginRight="@dimen/dp_10"
-                android:background="@drawable/shape_setting_current_user"
                 android:orientation="vertical">
 
 
@@ -254,8 +251,8 @@
                     android:id="@+id/about_bar"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/dp_39"
-                    android:layout_marginTop="@dimen/dp_3"
-                    android:layout_marginBottom="@dimen/dp_3"
+                    android:background="@drawable/selector_item_ffffff"
+
                     app:bar_leftDrawable="@drawable/ic_icon_about"
                     app:bar_leftDrawablePadding="@dimen/dp_12"
                     app:bar_leftText="关于"
@@ -276,18 +273,19 @@
 
 
             <RelativeLayout
+
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="@dimen/dp_40"
                 android:layout_marginLeft="@dimen/dp_10"
-                android:layout_marginTop="@dimen/dp_10"
                 android:layout_marginRight="@dimen/dp_10"
-                android:layout_marginBottom="@dimen/dp_20"
-                android:background="@drawable/shape_setting_current_user_exit"
                 android:orientation="horizontal">
 
                 <LinearLayout
+                    android:background="@drawable/selector_item_ffffff"
+
+                    android:gravity="center"
                     android:id="@+id/linear_exit"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
                     android:orientation="horizontal">
