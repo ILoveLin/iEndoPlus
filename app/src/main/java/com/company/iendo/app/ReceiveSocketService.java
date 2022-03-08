@@ -33,7 +33,14 @@ import java.net.InetSocketAddress;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Observer;
+import io.reactivex.Scheduler;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 
 /**
@@ -295,7 +302,225 @@ public class ReceiveSocketService extends AbsWorkService {
             isFirstIn = true;
             LogUtils.e("保活服务开启----BBB--" + Thread.currentThread().getName());
             initReceiveThread();
+
+//            initRxJava();
         }
+
+
+    }
+
+    private void initRxJava() {
+
+        Observable.create(new ObservableOnSubscribe<SocketRefreshEvent>() {
+            @Override
+            public void subscribe(@NonNull ObservableEmitter<SocketRefreshEvent> e) throws Exception {
+
+                LogUtils.e("正在执行Runnable任务：%s" + Thread.currentThread().getName());
+                byte[] receiveData = new byte[1024];
+                DatagramPacket mReceivePacket = new DatagramPacket(receiveData, receiveData.length);
+                try {
+                    if (mReceiveSocket == null) {
+//                        mReceiveSocket = new DatagramSocket(Constants.RECEIVE_PORT);  //端口绑定异常
+                        mReceiveSocket = new DatagramSocket(null);
+                        mReceiveSocket.setReuseAddress(true);
+                        mReceiveSocket.bind(new InetSocketAddress(Constants.RECEIVE_PORT));
+                    }
+                } catch (Exception ee) {
+                    ee.printStackTrace();
+                }
+                while (true) {
+                    if (isRuning) {
+                        try {
+                            LogUtils.e("======LiveServiceImpl=====000==");
+                            LogUtils.e("======LiveServiceImpl=====mReceivePacket.getAddress()==" + mReceivePacket.getAddress());
+                            LogUtils.e("======LiveServiceImpl=====mReceivePacket.getData()==" + mReceivePacket.getAddress());
+                            LogUtils.e("======LiveServiceImpl=====currentIP==" + currentIP);
+                            if (!currentIP.equals(mReceivePacket.getAddress())) {   //不是自己的IP不接受
+                                mReceiveSocket.receive(mReceivePacket);
+                                String rec = CalculateUtils.byteArrayToHexString(mReceivePacket.getData()).trim();
+//                                String rec = CalculateUtils.byteArrayToHexString(mReceivePacket.getData()).trim();
+                                //过滤不是发送给我的消息全部不接受
+                                int length = mReceivePacket.getLength() * 2;
+                                String resultData = rec.substring(0, length);
+                                LogUtils.e("======LiveServiceImpl=====获取长度==length==" + length);
+                                LogUtils.e("======LiveServiceImpl=====获取长度数据==substring==" + resultData);
+                                LogUtils.e("======LiveServiceImpl=====接受到数据==原始数据====mReceivePacket.getData()=" + mReceivePacket.getData());
+                                LogUtils.e("======LiveServiceImpl=====3333==" + mReceivePacket.getData());
+                                if (mReceivePacket != null) {
+                                    LogUtils.e("======LiveServiceImpl=====mReceivePacket!= null==");
+                                    boolean flag = false;//是否可用的ip---此ip是服务器ip
+                                    String finalOkIp = "";
+                                    if (CalculateUtils.getDataIfForMe(resultData, getApplicationContext())) {
+                                        finalOkIp = CalculateUtils.getOkIp(mReceivePacket.getAddress().toString());
+                                        flag = true;//正确的服务器ip地址
+                                    }
+                                    LogUtils.e("======LiveServiceImpl=====mReceivePacket!= flag==" + flag);
+
+                                    //正确的服务器ip地址,才开始计算获取自己需要的数据
+                                    if (flag) {
+                                        String mRun2End4 = CalculateUtils.getReceiveRun2End4String(resultData);//随机数之后到data结尾的String
+                                        String deviceType = CalculateUtils.getSendDeviceType(resultData);
+                                        String deviceOnlyCode = CalculateUtils.getSendDeviceOnlyCode(resultData);
+                                        String currentCMD = CalculateUtils.getCMD(resultData);
+                                        LogUtils.e("======LiveServiceImpl==回调===随机数之后到data结尾的String=mRun2End4==" + mRun2End4);
+                                        LogUtils.e("======LiveServiceImpl==回调===设备类型deviceType==" + deviceType);
+                                        LogUtils.e("======LiveServiceImpl==回调===设备ID=deviceOnlyCode==" + deviceOnlyCode);
+                                        LogUtils.e("======LiveServiceImpl==回调===CMD=currentCMD==" + currentCMD);
+                                        SocketRefreshEvent event = new SocketRefreshEvent();
+                                        Boolean dataIfForMe = CalculateUtils.getDataIfForMe(resultData, getApplicationContext());
+                                        String dataString = CalculateUtils.getReceiveDataString(resultData);
+                                        //16进制直接转换成为字符串
+                                        String str = CalculateUtils.hexStr2Str(dataString);
+                                        if (dataIfForMe) {
+                                            switch (currentCMD) {
+                                                case Constants.UDP_HAND://握手
+                                                    LogUtils.e("======LiveServiceImpl==回调===握手==");
+                                                    //判断数据是否是发个自己的
+                                                    LogUtils.e("======LiveServiceImpl=====dataIfForMe==" + dataIfForMe);
+                                                    //设备在线握手成功
+                                                    event.setTga(true);
+                                                    event.setData(resultData);
+                                                    event.setIp(finalOkIp);
+                                                    event.setUdpCmd(Constants.UDP_HAND);
+                                                    e.onNext(event);
+//                                                    EventBus.getDefault().post(event);
+                                                    break;
+
+                                                case Constants.UDP_FD: //广播
+                                                    LogUtils.e("======LiveServiceImpl==回调===广播==");
+                                                    event.setTga(true);
+                                                    event.setData(resultData);
+                                                    event.setIp(finalOkIp);
+                                                    event.setUdpCmd(Constants.UDP_FD);
+                                                    e.onNext(event);
+//                                                    EventBus.getDefault().post(event);
+
+                                                    break;
+                                                case Constants.UDP_FC://授权接入
+                                                    LogUtils.e("======LiveServiceImpl==回调===授权接入==");
+                                                    //获取到病例的ID是十六进制的,需要转成十进制
+                                                    event.setTga(true);
+                                                    event.setData(resultData);
+                                                    event.setIp(finalOkIp);
+                                                    event.setUdpCmd(Constants.UDP_FC);
+                                                    e.onNext(event);
+//                                                    EventBus.getDefault().post(event);
+
+                                                    break;
+                                                case Constants.UDP_F0://获取当前病例
+                                                    LogUtils.e("======LiveServiceImpl==回调===获取当前病例==");
+                                                    //获取到病例的ID是十六进制的,需要转成十进制
+
+                                                    LogUtils.e("======GetPictureActivity==回调===CMD=getReceiveDataString==" + dataString);
+//                                                    String jsonID = CalculateUtils.hex16To10(dataString) + "";
+                                                    LogUtils.e("======GetPictureActivity==回调===CMD=CalculateUtils.hexStr2Str(dataString)==" + CalculateUtils.hexStr2Str(dataString));
+                                                    UserIDBean mUserIDBean = mGson.fromJson(str, UserIDBean.class);
+//                                                    LogUtils.e("======GetPictureActivity==回调===CMD=jsonID==" + jsonID);
+                                                    String jsonID = CalculateUtils.hex16To10(mUserIDBean.getRecordid()) + "";
+                                                    //必须从新取数据不然会错乱
+                                                    String spCaseID = (String) SharePreferenceUtil.get(getApplicationContext(), SharePreferenceUtil.Current_Chose_CaseID, "");
+                                                    LogUtils.e("======GetPictureActivity==回调===itemID=spCaseID=" + spCaseID);
+                                                    LogUtils.e("======GetPictureActivity==回调===jsonID=jsonID=" + jsonID);
+                                                    if (spCaseID.equals(jsonID)) {
+                                                        //id相等才能操作截图等功能
+                                                        event.setData("true");
+                                                    } else {
+                                                        event.setData("false");
+                                                    }
+                                                    event.setTga(true);
+                                                    event.setIp(finalOkIp);
+                                                    event.setUdpCmd(Constants.UDP_F0);
+                                                    e.onNext(event);
+//                                                    EventBus.getDefault().post(event);
+                                                    break;
+                                                case Constants.UDP_F3://冻结与解冻:00冻结，01解冻,未调试
+                                                    LogUtils.e("======LiveServiceImpl==回调===冻结与解冻==");
+                                                    ColdPictureBean mColdBean = mGson.fromJson(str, ColdPictureBean.class);
+                                                    String jsonString = CalculateUtils.hex16To10(mColdBean.getFreeze()) + "";
+                                                    event.setTga(true);
+                                                    event.setData(jsonString);
+                                                    event.setIp(finalOkIp);
+                                                    event.setUdpCmd(Constants.UDP_F3);
+                                                    e.onNext(event);
+//                                                    EventBus.getDefault().post(event);
+                                                    break;
+                                                case Constants.UDP_F1://预览报告
+                                                    LogUtils.e("======LiveServiceImpl==回调===预览报告==" + str);
+                                                    LookReportBean lookBean = mGson.fromJson(str, LookReportBean.class);
+                                                    LogUtils.e("======LiveServiceImpl==回调===预览报告==" + lookBean.toString());
+
+                                                    event.setTga(true);
+                                                    event.setData(lookBean.getReporturl());
+                                                    event.setIp(finalOkIp);
+                                                    event.setUdpCmd(Constants.UDP_F1);
+                                                    e.onNext(event);
+//                                                    EventBus.getDefault().post(event);
+                                                    break;
+                                                case Constants.UDP_F2://打印报告
+                                                    LogUtils.e("======LiveServiceImpl==回调===打印报告==");
+                                                    PrintReportBean portBean = mGson.fromJson(str, PrintReportBean.class);
+                                                    event.setTga(true);
+                                                    event.setData(portBean.getPrintcode());
+                                                    event.setIp(finalOkIp);
+                                                    event.setUdpCmd(Constants.UDP_F2);
+                                                    e.onNext(event);
+//                                                    EventBus.getDefault().post(event);
+                                                    break;
+                                                case Constants.UDP_18://录像
+                                                    LogUtils.e("======LiveServiceImpl==回调===录像==");
+                                                    RecodeBean recodeBean = mGson.fromJson(str, RecodeBean.class);
+                                                    event.setTga(true);
+                                                    event.setData(recodeBean.getQrycode());
+                                                    event.setIp(finalOkIp);
+                                                    event.setUdpCmd(Constants.UDP_18);
+                                                    e.onNext(event);
+//                                                    EventBus.getDefault().post(event);
+                                                    break;
+
+
+                                            }
+                                        }
+                                    }
+                                }
+
+                            }
+
+                        } catch (IOException e1) {
+                            e1.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }).subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<SocketRefreshEvent>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+                        LogUtils.e("RxJava=====onSubscribe=====");
+
+                    }
+
+                    @Override
+                    public void onNext(@NonNull SocketRefreshEvent event) {
+                        LogUtils.e("RxJava=====onNext====="+event.toString());
+
+                        EventBus.getDefault().post(event);
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        LogUtils.e("RxJava=====onNext=====");
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        LogUtils.e("RxJava=====onComplete=====");
+
+                    }
+                });
+
+
 
 
     }

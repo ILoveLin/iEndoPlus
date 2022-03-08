@@ -36,6 +36,7 @@
             app:srcCompat="@drawable/ic_logo_svg" />
 
         <TextView
+            android:background="@drawable/selector_item_ffffff"
             android:id="@+id/btn_login_setting"
             style="@style/ButtonDeviceStyle"
             android:layout_width="wrap_content"

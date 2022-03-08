@@ -109,6 +109,11 @@ public class HttpConstant {
      * post uploadHospitalLogo
      */
     public static final String CaseManager_Report = "/report/selectImages";
+    /**
+     * 2.5 查询服务端是否已经生成报告
+     * get uploadHospitalLogo
+     */
+    public static final String CaseManager_Report_Exists = "/report/reportExists";
 
 
     /**=======================================================================================*/

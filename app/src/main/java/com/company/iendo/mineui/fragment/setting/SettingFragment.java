@@ -15,6 +15,7 @@ import com.company.iendo.mineui.activity.setting.DeviceParamsActivity;
 import com.company.iendo.mineui.activity.setting.HospitalActivity;
 import com.company.iendo.other.Constants;
 import com.company.iendo.other.HttpConstant;
+import com.company.iendo.ui.activity.CopyActivity;
 import com.company.iendo.ui.dialog.Input2Dialog;
 import com.company.iendo.ui.dialog.MessageAboutDialog;
 import com.company.iendo.ui.dialog.MessageDialog;
@@ -24,6 +25,7 @@ import com.company.iendo.utils.FileUtil;
 import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.MD5ChangeUtil;
 import com.company.iendo.utils.SharePreferenceUtil;
+import com.company.iendo.utils.SocketUtils;
 import com.hjq.base.BaseDialog;
 import com.hjq.widget.layout.SettingBar;
 import com.zhy.http.okhttp.OkHttpUtils;
@@ -65,7 +67,7 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
         mUserName = findViewById(R.id.tv_current_name);
         mRelo = findViewById(R.id.tv_current_relo);
         mBaseUrl = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_BaseUrl, "192.168.312.102");
-        setOnClickListener( R.id.params_bar, R.id.hospital_bar, R.id.user_bar, R.id.about_bar, R.id.memory_bar, R.id.password_bar, R.id.linear_exit);
+        setOnClickListener( R.id.memory_bar,R.id.params_bar, R.id.hospital_bar, R.id.user_bar, R.id.about_bar, R.id.memory_bar, R.id.password_bar, R.id.linear_exit);
 
     }
 
@@ -101,10 +103,8 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-//            case R.id.tv_text:
-//                toast("设备参数");
-//                startActivity(CopyActivity.class);
-//                break;
+            case R.id.memory_bar:
+                break;
             case R.id.params_bar:
                 startActivity(DeviceParamsActivity.class);
                 break;
