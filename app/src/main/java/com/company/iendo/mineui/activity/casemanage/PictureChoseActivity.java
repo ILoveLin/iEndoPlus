@@ -385,7 +385,6 @@ public final class PictureChoseActivity extends AppActivity implements StatusAct
         String data = event.getData();
         switch (event.getUdpCmd()) {
             case Constants.UDP_HAND://握手
-                toast("握手成功");
                 UDP_HAND_TAG = true;
                 break;
             case Constants.UDP_F1://预览报告

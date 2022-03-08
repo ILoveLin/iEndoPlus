@@ -37,8 +37,6 @@ import com.company.iendo.green.db.CaseDBUtils;
 import com.company.iendo.green.db.UserDBBean;
 import com.company.iendo.green.db.UserDBUtils;
 import com.company.iendo.green.db.downcase.CaseDBBean;
-import com.company.iendo.green.db.downcase.CaseImageListBean;
-import com.company.iendo.http.glide.GlideApp;
 import com.company.iendo.manager.InputTextManager;
 import com.company.iendo.mineui.activity.MainActivity;
 import com.company.iendo.mineui.activity.login.device.DeviceActivity;
@@ -138,53 +136,70 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
     private int screenWidth;
     private TextView mLoginType;
 
+    /**
+     * 登录成功之后,判断是否记录密码,记住密码就存入数据库
+     *
+     * @param mBean
+     */
+    private void saveRememberPassword(LoginBean mBean) {
+        if (mCheckbox.isChecked()) { //记住密码状态下存入数据库
+            LoginBean.DataDTO bean = mBean.getData();
+            UserDBBean userDBBean = new UserDBBean();
+            userDBBean.setUserName(mPhoneView.getText().toString().trim());
+            userDBBean.setPassword(mPasswordView.getText().toString().trim());
+            userDBBean.setDeviceUserID(bean.getUserID());
+            userDBBean.setRelo(bean.getRole() + "");
+            userDBBean.setIsRememberPassword(true);
+            /**
+             * 设备ID
+             * 这个用户是在哪个设备上的     用户和病例都是和设备绑定的
+             * 当前选中设备的主键id,因为离线模式下就能通过这个主键id查找这个设备下的所有用户
+             */
+            String deviceID = (String) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Current_DeviceID, "1");
+
+            LogUtils.e("initRememberPassword==存入的==deviceID:" + deviceID);
+            userDBBean.setDeviceID(deviceID + "");
+            UserDBUtils.insertOrReplaceInTx(LoginActivity.this, userDBBean);
+//            SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Flag_UserDBSave, true);
+
+        }
+
+    }
+
     private void initRememberPassword() {
 
-        Boolean isSave = (Boolean) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Flag_UserDBSave, false);
+//        Boolean isSave = (Boolean) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Flag_UserDBSave, false);
         String deviceID = (String) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Current_DeviceID, "1");
-        LogUtils.e("initRememberPassword====isSave:" + isSave);
+//        LogUtils.e("initRememberPassword====isSave:" + isSave);
         String userName = mPhoneView.getText().toString().trim();
-        LogUtils.e("initRememberPassword====isSave:" + isSave);
+        LogUtils.e("initRememberPassword==当前设备==deviceID:" + deviceID);
 
-        if (isSave) {//存过设备之后才能查询本地数据库用户表--并且选中了当前用户,此处存在不同设备名字相同的时候密码相同的bug
-            List<UserDBBean> userDBBeans = UserDBUtils.queryAll(getApplicationContext());
-            if (!userDBBeans.isEmpty()) {
-                mCheckbox.setChecked(true);
+//        if (isSave) {//存过设备之后才能查询本地数据库用户表--并且选中了当前用户,此处存在不同设备名字相同的时候密码相同的bug
+        //先查询deviceID设备下,存储过的用户
+        List<UserDBBean> userDBBeans = UserDBUtils.getQueryByDeviceID(getApplicationContext(), deviceID);
+        if (!userDBBeans.isEmpty()) {
+            mCheckbox.setChecked(true);
 
-                for (int i = 0; i < userDBBeans.size(); i++) {
-                    UserDBBean userDBBean = userDBBeans.get(i);
-                    String mID = userDBBean.getDeviceID();
-                    //当前选择的设备,和数据库存储之中有相同的设备,才会获取此bean,设置账号密码
-                    if (deviceID.equals(mID)) {
-                        mPhoneView.setText("" + userDBBean.getUserName());
-                        mPasswordView.setText("" + userDBBean.getPassword());
-                    }
-                }
-            }else {
-                mCheckbox.setChecked(false);
-                mPhoneView.setText("");
-                mPasswordView.setText("");
+            if (null == userDBBeans) {
+                return;
             }
+            for (int i = 0; i < userDBBeans.size(); i++) {
+                UserDBBean userDBBean = userDBBeans.get(i);
+                String currentName = userDBBean.getUserName();
+                if (currentName.equals(userName)) {
+                    mPhoneView.setText("" + userDBBean.getUserName());
+                    mPasswordView.setText("" + userDBBean.getPassword());
+                }
 
+            }
         } else {
             mCheckbox.setChecked(false);
             mPhoneView.setText("");
             mPasswordView.setText("");
         }
-//        if (isSave && !"".equals(userName)) {//存过设备之后才能查询本地数据库用户表--并且选中了当前用户
-//            if (UserDBUtils.queryListIsExist(getApplicationContext(), userName)) {
-//                UserDBBean userDBBean = UserDBUtils.queryListByName(getApplicationContext(), userName);
-//                mCheckbox.setChecked(true);
-//                mPhoneView.setText("" + userDBBean.getUserName());
-//                mPasswordView.setText("" + userDBBean.getPassword());
-//            }
-//        } else {
-//            mCheckbox.setChecked(false);
-//            mPhoneView.setText("");
-//            mPasswordView.setText("");
-//        }
 
     }
+
 
     @Log
     public static void start(Context context, String phone, String password) {
@@ -519,33 +534,6 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
         }
     }
 
-    /**
-     * 登录成功之后,判断是否记录密码,记住密码就存入数据库
-     *
-     * @param mBean
-     */
-    private void saveRememberPassword(LoginBean mBean) {
-        if (mCheckbox.isChecked()) { //记住密码状态下存入数据库
-            LoginBean.DataDTO bean = mBean.getData();
-            UserDBBean userDBBean = new UserDBBean();
-            userDBBean.setUserName(mPhoneView.getText().toString().trim());
-            userDBBean.setPassword(mPasswordView.getText().toString().trim());
-            userDBBean.setDeviceUserID(bean.getUserID());
-            userDBBean.setRelo(bean.getRole() + "");
-            userDBBean.setIsRememberPassword(true);
-            /**
-             * 设备ID
-             * 这个用户是在哪个设备上的     用户和病例都是和设备绑定的
-             * 当前选中设备的主键id,因为离线模式下就能通过这个主键id查找这个设备下的所有用户
-             */
-            String deviceID = (String) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Current_DeviceID, "1");
-            userDBBean.setDeviceID(deviceID + "");
-            UserDBUtils.insertOrReplaceInTx(LoginActivity.this, userDBBean);
-            SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Flag_UserDBSave, true);
-
-        }
-
-    }
 
     @Override
     protected void onDestroy() {
@@ -562,10 +550,10 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
     @Override
     public void onSucceed(Platform platform, UmengLogin.LoginData data) {
 
-        GlideApp.with(this)
-                .load(data.getAvatar())
-                .circleCrop()
-                .into(mLogoView);
+//        GlideApp.with(this)
+//                .load(data.getAvatar())
+//                .circleCrop()
+//                .into(mLogoView);
 
         toast("昵称：" + data.getName() + "\n" +
                 "性别：" + data.getSex() + "\n" +

@@ -265,7 +265,6 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         String data = event.getData();
         switch (event.getUdpCmd()) {
             case Constants.UDP_HAND://握手
-                toast("握手成功");
                 UDP_HAND_TAG = true;
                 //获取当前病例ID
                 sendSocketPointMessage(Constants.UDP_F0);

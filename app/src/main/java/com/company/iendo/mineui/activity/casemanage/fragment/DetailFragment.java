@@ -1273,7 +1273,6 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         String data = event.getData();
         switch (event.getUdpCmd()) {
             case Constants.UDP_HAND://握手
-                toast("握手成功");
                 UDP_HAND_TAG = true;
                 break;
         }

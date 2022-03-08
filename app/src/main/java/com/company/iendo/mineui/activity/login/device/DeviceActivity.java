@@ -920,7 +920,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
             LogUtils.e("选择的设备=== mDBBean.getDeviceID()===" + mDBBean.getDeviceID());
             LogUtils.e("选择的设备=== mDBBean.toString===" + mDBBean.toString());
             //这个主键ID是需要绑定用户表中的deviceID(code码),确保是这个设备下,离线模式能通过此字段查询绑定用户
-            SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_DeviceID, mDBBean.getId() + "");
+            SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_DeviceID, mDBBean.getDeviceID() + "");
             /**
              * 设备ID
              * 这个用户是在哪个设备上的     用户和病例都是和设备绑定的
@@ -928,7 +928,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
              * 主键id==deviceID---->下载图片的时候文件夹: 文件夹（设备ID-病例ID）
              */
             String deviceCode = mDBBean.getDeviceCode();//设备码
-            SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_DeviceID, mDBBean.getId() + "");
+//            SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_DeviceID, mDBBean.getId() + "");
             String o = (String) SharePreferenceUtil.get(DeviceActivity.this, SharePreferenceUtil.Current_DeviceID, "");
             LogUtils.e("选择的设备=== 存入的设备id是===" + o);
 
