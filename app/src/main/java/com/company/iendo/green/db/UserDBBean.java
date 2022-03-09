@@ -134,5 +134,18 @@ public class UserDBBean {
         this.isRememberPassword = isRememberPassword;
     }
 
-
+    @Override
+    public String toString() {
+        return "UserDBBean{" +
+                "id=" + id +
+                ", deviceID='" + deviceID + '\'' +
+                ", deviceUserID='" + deviceUserID + '\'' +
+                ", UserName='" + UserName + '\'' +
+                ", Password='" + Password + '\'' +
+                ", relo='" + relo + '\'' +
+                ", make01='" + make01 + '\'' +
+                ", make02='" + make02 + '\'' +
+                ", isRememberPassword=" + isRememberPassword +
+                '}';
+    }
 }

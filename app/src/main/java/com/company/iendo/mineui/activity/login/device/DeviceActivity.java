@@ -857,6 +857,25 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        //把当前选择的itembean的数据信息存到sp里面去
+        List<DeviceDBBean> deviceDBBeans = DeviceDBUtils.queryAll(DeviceActivity.this);
+        for (int i = 0; i < deviceDBBeans.size(); i++) {
+            if (deviceDBBeans.get(i).getMSelected()) {
+                mDBBean = deviceDBBeans.get(i);
+                continue;
+            }
+
+
+        }
+        if (null!=mDBBean){
+            SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_DeviceID, mDBBean.getDeviceID() + "");
+        }
+
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);

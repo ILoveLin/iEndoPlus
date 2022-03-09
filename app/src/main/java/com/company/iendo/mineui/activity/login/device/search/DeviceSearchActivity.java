@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.company.iendo.R;
 import com.company.iendo.action.StatusAction;
 import com.company.iendo.app.AppActivity;
+import com.company.iendo.app.ReceiveSocketService;
 import com.company.iendo.bean.RefreshEvent;
 import com.company.iendo.bean.event.SocketRefreshEvent;
 import com.company.iendo.bean.socket.searchdevice.BroadCastReceiveBean;
@@ -252,7 +253,7 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
             public void onLeftClick(View view) {
                 //发送消息刷新设备界面
                 EventBus.getDefault().post(new RefreshEvent("refresh"));
-
+                ReceiveSocketService.stopService();
                 finish();
             }
 
@@ -350,13 +351,15 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
         //点击对话框的时候在存入pinAccess密码
         putBean.setBroadcaster(Constants.BROADCASTER);                              //设备名字
         putBean.setSpt(Constants.RECEIVE_PORT + "");
+        //存入数据库的标识;endotype(数字)+devicecode(36位设备码)+devicetype(中文说明)
         String tag = item.getEndotype() + item.getDeviceCode() + item.getDeviceType();
+        //判断是否存入过该条数据到数据库中
         DeviceDBBean codeBean = DeviceDBUtils.getQueryBeanByAcceptAndInsertDB(DeviceSearchActivity.this, tag);
         List<DeviceDBBean> deviceDBBeans = DeviceDBUtils.queryAll(DeviceSearchActivity.this);
 
         LogUtils.e("sendByteData==onItemClick===deviceDBBeans==" + deviceDBBeans.size());
-        LogUtils.e("sendByteData==onItemClick===codeBean==" + codeBean);
-        LogUtils.e("sendByteData==onItemClick===item.toString()==" + item.toString());
+        LogUtils.e("sendByteData==onItemClick===codeBean==" + codeBean);//数据库bean
+        LogUtils.e("sendByteData==onItemClick===item.toString()==" + item.toString());//item的bean
         LogUtils.e("sendByteData==onItemClick===item.getCheckAccess()==" + item.getCheckAccess());
 
 

@@ -70,7 +70,7 @@ public class UserDBUtils {
     public static List<UserDBBean> getQueryByDeviceID(Context context, String ID) {
 
         UserDBBeanDao userDBBeanDao = DBManager.getDaoSession(context).getUserDBBeanDao();
-        List<UserDBBean> beanList = userDBBeanDao.queryBuilder().where(UserDBBeanDao.Properties.DeviceID.notEq(ID)).list();
+        List<UserDBBean> beanList = userDBBeanDao.queryBuilder().where(UserDBBeanDao.Properties.DeviceID.eq(ID)).list();
         return beanList;
     }
 

@@ -218,6 +218,10 @@ public class CalculateUtils {
             String currentDevice = MD5ChangeUtil.Md5_32(DeviceIdUtil.getDeviceId(activity)); //记得大写
             String currentDeviceID = currentDevice.toUpperCase(); //记得大写
 
+            if (string.length()< 82){
+                LogUtils.e("======ReceiveThread==getDataIfForMe==接收到数据但是!!!数据格式长度不对 ====" );
+                return false;
+            }
             //获取发送给什么设备类型的
             String str = string.substring(48, 50);
             //获取发送给什么设备的id
@@ -479,6 +483,10 @@ public class CalculateUtils {
      */
     public static String getReceiveDataString(String str) {
 //        String str = "AAC5 01 0059 D8 FF A1f9432b11b93e8bb4ae34539b7472c20eFF00000000000000000000000000000000FD7B2262726F6164636173746572223A22737A636D65222C2272616D646F6D223A223230323230313237313133353130227DEEDD";
+        if (str.length()< 82){
+            LogUtils.e("======ReceiveThread==getReceiveDataString==接收到数据但是!!!数据格式长度不对 ====" );
+            return "";
+        }
         String substring = str.substring(82 + 2, str.length() - 4);
         LogUtils.e("UDP==命令===getReceiveDataString=====" + substring);
         String s1 = hexStr2Str(substring);

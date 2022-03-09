@@ -416,6 +416,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
             }
         }
         if (isFatherExit) {//父类界面主动退出,保存当前数据
+            showComplete();
             checkDataAndRequest();
         }
 
@@ -1237,9 +1238,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                                 ActivityManager.getInstance().finishActivity(AddCaseActivity.class);
 
                             } else {
-                                showError(listener -> {
-
-                                });
+                              toast(mBean.getMsg()+"");
                             }
                         } else {
                             showError(listener -> {
