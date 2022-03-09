@@ -1,10 +1,12 @@
 package com.company.iendo.utils;
 
 import com.company.iendo.mineui.socket.ThreadManager;
+import com.company.iendo.other.Constants;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 
 /**
@@ -12,6 +14,11 @@ import java.net.UnknownHostException;
  * author： LoveLin
  * time：2022/3/3 15:40
  * desc：
+ * 使用端口复用,解决发送数据的时候只能使用随机端口的问题
+ *
+ *      DatagramSocket mSendSocket = new DatagramSocket(null);
+ *               mSendSocket.setReuseAddress(true);
+ *              mSendSocket.bind(new InetSocketAddress(Constants.SEND_PORT));
  */
 public class SocketUtils {
 
@@ -37,10 +44,19 @@ public class SocketUtils {
             public void run() {
                 super.run();
                 try {
+                    LogUtils.e("SocketUtils===发送消息==点对点==hand==ip==" + ip);
+
 //                    byte[] sendData = data.getBytes();
                     DatagramPacket mSendPacket = new DatagramPacket(data, data.length, finalMAddress, receivePort);
 //                    for (int i = 0; i < 5; i++) {
-                    DatagramSocket mSendSocket = new DatagramSocket();
+                    //随机端口
+//                    DatagramSocket mSendSocket = new DatagramSocket();
+//                    mSendSocket.send(mSendPacket);
+//                    mSendSocket.close();
+                    //固定端口
+                    DatagramSocket mSendSocket = new DatagramSocket(null);
+                    mSendSocket.setReuseAddress(true);
+                    mSendSocket.bind(new InetSocketAddress(Constants.SEND_PORT));
                     mSendSocket.send(mSendPacket);
                     mSendSocket.close();
                     LogUtils.e("SocketUtils===发送消息==点对点==hand==" + receivePort);
@@ -80,13 +96,17 @@ public class SocketUtils {
                         LogUtils.e("SocketUtils=====发送第=====" + i + "====次广播===" + receivePort);
                         Thread.sleep(500);
                         //固定端口
-//                      mSendBroadcastSocket = new DatagramSocket(null);
-//                      mSendBroadcastSocket.bind(new InetSocketAddress(8005));
-                        //随机端口
-                        DatagramSocket mSendBroadcastSocket = new DatagramSocket();
+                        DatagramSocket mSendBroadcastSocket = new DatagramSocket(null);
+                        mSendBroadcastSocket.setReuseAddress(true);
+                        mSendBroadcastSocket.bind(new InetSocketAddress(Constants.BROADCAST_PORT));
                         mSendBroadcastSocket.send(mSendPacket);
                         mSendBroadcastSocket.setBroadcast(true);
                         mSendBroadcastSocket.close();
+                        //随机端口
+//                        DatagramSocket mSendBroadcastSocket = new DatagramSocket();
+//                        mSendBroadcastSocket.send(mSendPacket);
+//                        mSendBroadcastSocket.setBroadcast(true);
+//                        mSendBroadcastSocket.close();
                     }
 
                 } catch (Exception e) {
@@ -121,7 +141,15 @@ public class SocketUtils {
 //                    byte[] sendData = data.getBytes();
                     DatagramPacket mSendPacket = new DatagramPacket(data, data.length, finalMAddress, receivePort);
 //                    for (int i = 0; i < 5; i++) {
-                    DatagramSocket mSendSocket = new DatagramSocket();
+                    //随机端口
+
+//                    DatagramSocket mSendSocket = new DatagramSocket();
+//                    mSendSocket.send(mSendPacket);
+//                    mSendSocket.close();
+                    //固定端口
+                    DatagramSocket mSendSocket = new DatagramSocket(null);
+                    mSendSocket.setReuseAddress(true);
+                    mSendSocket.bind(new InetSocketAddress(Constants.SEND_PORT));
                     mSendSocket.send(mSendPacket);
                     mSendSocket.close();
                     LogUtils.e("SocketUtils===发送消息==点对点==Point==" + receivePort);

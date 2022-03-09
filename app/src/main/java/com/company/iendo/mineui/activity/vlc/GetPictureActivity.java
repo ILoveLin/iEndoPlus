@@ -124,7 +124,6 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                     String tag = (String) msg.obj;
                     if ("1".equals(tag) || "3".equals(tag)) {
                         setTextColor(getResources().getColor(R.color.white), "录像中", true);
-
                     } else if ("2".equals(tag) || "4".equals(tag)) {
                         setTextColor(getResources().getColor(R.color.white), "录像", false);
                     }
@@ -480,9 +479,9 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                 break;
             case R.id.linear_record:            //录像,本地不做,socket通讯机子做操作
                 sendSocketPointRecodeStatusMessage(Constants.UDP_18, "0");
-                if (UDP_EQUALS_ID){
+                if (UDP_EQUALS_ID) {
                     mHandler.sendEmptyMessageDelayed(Record_Request, 200);
-                }else {
+                } else {
                     toast("当前病例ID和操作病例ID不相等,不能操作!");
                 }
 

@@ -23,6 +23,7 @@ public class Constants {
     public static final String BROADCAST_IP = "192.168.135.255";      //广播地址
 //    public static final String BROADCAST_IP = "255.255.255.255";      //广播地址
     public static final int BROADCAST_PORT = 8005;               //广播约定端口
+    public static final int SEND_PORT = 8005;                    //发送端口
     public static final int RECEIVE_PORT = 8005;                 //本地监听端口
 
 

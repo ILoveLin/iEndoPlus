@@ -8,6 +8,7 @@ import android.widget.TextView;
 import com.company.iendo.R;
 import com.company.iendo.app.TitleBarFragment;
 import com.company.iendo.bean.UserDeletedBean;
+import com.company.iendo.bean.socket.HandBean;
 import com.company.iendo.mineui.activity.MainActivity;
 import com.company.iendo.mineui.activity.UserListActivity;
 import com.company.iendo.mineui.activity.login.LoginActivity;
@@ -21,6 +22,7 @@ import com.company.iendo.ui.dialog.MessageAboutDialog;
 import com.company.iendo.ui.dialog.MessageDialog;
 import com.company.iendo.ui.dialog.TipsDialog;
 import com.company.iendo.ui.dialog.WaitDialog;
+import com.company.iendo.utils.CalculateUtils;
 import com.company.iendo.utils.FileUtil;
 import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.MD5ChangeUtil;
@@ -104,6 +106,18 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.memory_bar:
+                HandBean handBean = new HandBean();
+                handBean.setHelloPc("HelloPc");
+                handBean.setComeFrom("Android");
+                byte[] sendByteData = CalculateUtils.getSendByteData(getApplication(), mGson.toJson(handBean),
+                        mCurrentTypeNum, mCurrentReceiveDeviceCode,
+                        Constants.UDP_HAND);
+                if (("".equals(mSocketPort))) {
+                    toast("通讯端口不能为空!");
+                    return;
+                }
+                SocketUtils.startSendHandMessage("sendByteData".getBytes(), "192.168.130.196", Integer.parseInt("8005"));
+
                 break;
             case R.id.params_bar:
                 startActivity(DeviceParamsActivity.class);
