@@ -207,7 +207,6 @@
                     android:layout_height="@dimen/dp_39"
                     android:background="@drawable/selector_item_ffffff"
 
-
                     app:bar_leftDrawable="@drawable/ic_icon_hospitalinformation"
                     app:bar_leftDrawablePadding="@dimen/dp_12"
                     app:bar_leftText="医院信息"

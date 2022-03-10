@@ -37,6 +37,7 @@ import com.hjq.http.EasyConfig;
 import com.hjq.toast.ToastUtils;
 import com.hjq.umeng.UmengClient;
 import com.scwang.smart.refresh.layout.SmartRefreshLayout;
+import com.tencent.bugly.Bugly;
 import com.tencent.bugly.crashreport.CrashReport;
 import com.tencent.mmkv.MMKV;
 import com.xdandroid.hellodaemon.DaemonEnv;
@@ -202,7 +203,10 @@ public final class AppApplication extends Application {
         UmengClient.init(application, AppConfig.isLogEnable());
 
         // Bugly 异常捕捉
-        CrashReport.initCrashReport(application, AppConfig.getBuglyId(), AppConfig.isDebug());
+//        CrashReport.initCrashReport(application, "cc9cba912f", AppConfig.isDebug());
+
+        //Bugly 版本升级
+        Bugly.init(application, "f67a6c664d", false);
 
         // Activity 栈管理初始化
         ActivityManager.getInstance().init(application);

@@ -33,6 +33,7 @@ import com.hjq.widget.layout.SettingBar;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import okhttp3.Call;
@@ -112,11 +113,9 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
                 byte[] sendByteData = CalculateUtils.getSendByteData(getApplication(), mGson.toJson(handBean),
                         mCurrentTypeNum, mCurrentReceiveDeviceCode,
                         Constants.UDP_HAND);
-                if (("".equals(mSocketPort))) {
-                    toast("通讯端口不能为空!");
-                    return;
-                }
-                SocketUtils.startSendHandMessage("sendByteData".getBytes(), "192.168.130.196", Integer.parseInt("8005"));
+                ArrayList<Object> objects = new ArrayList<>();
+                objects.get(2);
+                SocketUtils.startSendHandMessage("sendByteData".getBytes(), "192.168.130.196", Integer.parseInt(""));
 
                 break;
             case R.id.params_bar:

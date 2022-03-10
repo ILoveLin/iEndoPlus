@@ -10,9 +10,9 @@
     {
       "type": "SINGLE",
       "filters": [],
-      "versionCode": 1,
-      "versionName": "1.0.0",
-      "outputFile": "iEndoPlus_v1.0.0_release_0104.apk"
+      "versionCode": 2,
+      "versionName": "1.0.2",
+      "outputFile": "iEndoPlus_v1.0.2_release_0310.apk"
     }
   ]
 }
