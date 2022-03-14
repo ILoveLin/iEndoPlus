@@ -97,13 +97,7 @@ public abstract class TitleBarFragment<A extends AppActivity> extends AppFragmen
             getStatusBarConfig().init();
         }
     }
-    /**
-     * 将获取到的int型ip转成string类型
-     */
-    private static String getIpString(int i) {
-        return (i & 0xFF) + "." + ((i >> 8) & 0xFF) + "."
-                + ((i >> 16) & 0xFF) + "." + (i >> 24 & 0xFF);
-    }
+
     /**
      * 是否在 Fragment 使用沉浸式
      */
@@ -151,5 +145,12 @@ public abstract class TitleBarFragment<A extends AppActivity> extends AppFragmen
             mTitleBar = obtainTitleBar((ViewGroup) getView());
         }
         return mTitleBar;
+    }
+    /**
+     * 将获取到的int型ip转成string类型
+     */
+    public static String getIpString(int i) {
+        return (i & 0xFF) + "." + ((i >> 8) & 0xFF) + "."
+                + ((i >> 16) & 0xFF) + "." + (i >> 24 & 0xFF);
     }
 }

@@ -2,6 +2,7 @@ package com.company.iendo.utils;
 
 import com.company.iendo.mineui.socket.ThreadManager;
 import com.company.iendo.other.Constants;
+import com.tencent.mmkv.MMKV;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -72,33 +73,35 @@ public class SocketUtils {
 
 
     /**
-     * @param data        字节数组
-     * @param ip          ip
-     * @param receivePort 接收端的port
+     * @param data        字节数组    广播 授权,使用的是设置的端口,其他的点对点消息,按照协议data的port的走
      */
-    public static void startSendBroadcastMessage(byte[] data, String ip, int receivePort) {
+    public static void startSendBroadcastMessage(byte[] data) {
         InetAddress mAddress = null;
         //点对点消息,握手
         try {
-            mAddress = InetAddress.getByName(ip);
+            mAddress = InetAddress.getByName(Constants.BROADCAST_IP);
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
         InetAddress finalMAddress = mAddress;
+
+
         new Thread(){
             @Override
             public void run() {
                 super.run();
                 try {
 //                    byte[] sendData = data.getBytes();
-                    DatagramPacket mSendPacket = new DatagramPacket(data, data.length, finalMAddress, receivePort);
+                    MMKV kv = MMKV.defaultMMKV();
+                    int mCastSendPort = kv.decodeInt(Constants.KEY_BROADCAST_PORT);
+                    DatagramPacket mSendPacket = new DatagramPacket(data, data.length, finalMAddress, mCastSendPort);
                     for (int i = 0; i < 5; i++) {
-                        LogUtils.e("SocketUtils=====发送第=====" + i + "====次广播===" + receivePort);
+                        LogUtils.e("SocketUtils=====发送第=====" + i + "====次广播==mCastSendPort==" + mCastSendPort);
                         Thread.sleep(500);
                         //固定端口
                         DatagramSocket mSendBroadcastSocket = new DatagramSocket(null);
                         mSendBroadcastSocket.setReuseAddress(true);
-                        mSendBroadcastSocket.bind(new InetSocketAddress(Constants.BROADCAST_PORT));
+                        mSendBroadcastSocket.bind(new InetSocketAddress(mCastSendPort));
                         mSendBroadcastSocket.send(mSendPacket);
                         mSendBroadcastSocket.setBroadcast(true);
                         mSendBroadcastSocket.close();
@@ -122,6 +125,7 @@ public class SocketUtils {
      * @param data        字节数组
      * @param ip          ip
      * @param receivePort 接收端的port
+     *                    广播 授权,使用的是设置的端口,其他的点对点消息,按照协议data的port的走
      */
     public static void startSendPointMessage(byte[] data, String ip, int receivePort) {
 
@@ -139,6 +143,8 @@ public class SocketUtils {
                 super.run();
                 try {
 //                    byte[] sendData = data.getBytes();
+//                    MMKV kv = MMKV.defaultMMKV();
+//                    int mSendPort = kv.decodeInt(Constants.KEY_BROADCAST_PORT);
                     DatagramPacket mSendPacket = new DatagramPacket(data, data.length, finalMAddress, receivePort);
 //                    for (int i = 0; i < 5; i++) {
                     //随机端口

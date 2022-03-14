@@ -15,6 +15,18 @@ public class SocketRefreshEvent {
     private String data;
     //回调的ip--->data对应的ip地址
     private String ip;
+    //本地App监听端口--->同时也是广播发送端口
+    private String receivePort;
+
+
+    public String getReceivePort() {
+        return receivePort;
+    }
+
+    public void setReceivePort(String receivePort) {
+        this.receivePort = receivePort;
+    }
+
 
 
     public String getUdpCmd() {
@@ -56,6 +68,7 @@ public class SocketRefreshEvent {
                 ", udpCmd='" + udpCmd + '\'' +
                 ", data='" + data + '\'' +
                 ", ip='" + ip + '\'' +
+                ", receivePort='" + receivePort + '\'' +
                 '}';
     }
 }

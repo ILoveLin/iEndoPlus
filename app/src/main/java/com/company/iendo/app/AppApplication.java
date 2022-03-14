@@ -7,6 +7,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -15,6 +17,7 @@ import androidx.lifecycle.LifecycleOwner;
 
 import com.company.iendo.green.db.DaoMaster;
 import com.company.iendo.green.db.DaoSession;
+import com.company.iendo.other.Constants;
 import com.company.iendo.utils.db.DBManager;
 import com.company.iendo.utils.db.MyOpenHelper;
 import com.hjq.bar.TitleBar;
@@ -205,7 +208,7 @@ public final class AppApplication extends Application {
         // Bugly 异常捕捉
 //        CrashReport.initCrashReport(application, "cc9cba912f", AppConfig.isDebug());
 
-        //Bugly 版本升级
+        //Bugly异常捕捉、 版本升级
         Bugly.init(application, "f67a6c664d", false);
 
         // Activity 栈管理初始化
@@ -213,6 +216,12 @@ public final class AppApplication extends Application {
 
         // MMKV 初始化
         MMKV.initialize(application);
+        MMKV kv = MMKV.defaultMMKV();
+        kv.encode(Constants.KEY_RECEIVE_PORT,Constants.RECEIVE_PORT);
+        kv.encode(Constants.KEY_BROADCAST_PORT,Constants.BROADCAST_PORT);
+
+        //设置第一次启动App的时候,是否第一次初始化过接收线程
+        kv.encode(Constants.KEY_SOCKET_RECEIVE_FIRST_IN,false);
 
         // 网络请求框架初始化
         OkHttpClient okHttpClient = new OkHttpClient.Builder()

@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 
+import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.SharePreferenceUtil;
 import com.google.gson.Gson;
 import com.gyf.immersionbar.ImmersionBar;
@@ -24,8 +25,6 @@ import com.company.iendo.http.model.HttpData;
 import com.company.iendo.ui.dialog.WaitDialog;
 import com.hjq.gson.factory.GsonFactory;
 import com.hjq.http.listener.OnHttpListener;
-
-import org.greenrobot.eventbus.EventBus;
 
 import okhttp3.Call;
 
@@ -59,7 +58,7 @@ public abstract class AppActivity extends BaseActivity
     public String mBaseUrl;  //当前用户的头部url
     public String endoType;
     public String mUserID;
-    public static String currentIP;
+    public static String mAppIP;
     public String mCurrentTypeDes;    //当前选择设备的==比如:一代一体机==07,此处mCurrentTypeDes==一代一体机
     public String mCurrentTypeNum;    //当前选择设备的==比如:一代一体机==07,此处mCurrentTypeNum==07
     public String mCurrentReceiveDeviceCode; //当前选择设备的==唯一设备码
@@ -120,6 +119,9 @@ public abstract class AppActivity extends BaseActivity
 
         mDialog.dismiss();
     }
+    /**
+     * 将获取到的int型ip转成string类型
+     */
 
     @Override
     protected void initLayout() {
@@ -142,6 +144,9 @@ public abstract class AppActivity extends BaseActivity
         mPassword = (String) SharePreferenceUtil.get(AppActivity.this, SharePreferenceUtil.Current_DevicePassword, "root");
         mLivePort = (String) SharePreferenceUtil.get(AppActivity.this, SharePreferenceUtil.Current_LivePort, "7788");
 
+
+        LogUtils.e("AppActivity===mSocketOrLiveIP===="+mSocketOrLiveIP);
+        LogUtils.e("AppActivity===mSocketPort===="+mSocketPort);
         // 初始化沉浸式状态栏
         if (isStatusBarEnabled()) {
             getStatusBarConfig().init();
@@ -156,7 +161,7 @@ public abstract class AppActivity extends BaseActivity
         WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         if (wifiManager.isWifiEnabled()) {
             WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-            currentIP = getIpString(wifiInfo.getIpAddress());
+            mAppIP = getIpString(wifiInfo.getIpAddress());
         }
 
     }
@@ -170,7 +175,7 @@ public abstract class AppActivity extends BaseActivity
     /**
      * 将获取到的int型ip转成string类型
      */
-    private static String getIpString(int i) {
+    public static String getIpString(int i) {
         return (i & 0xFF) + "." + ((i >> 8) & 0xFF) + "."
                 + ((i >> 16) & 0xFF) + "." + (i >> 24 & 0xFF);
     }

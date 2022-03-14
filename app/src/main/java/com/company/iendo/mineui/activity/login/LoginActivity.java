@@ -6,6 +6,8 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.os.Message;
 import android.view.Gravity;
@@ -30,6 +32,7 @@ import com.company.iendo.R;
 import com.company.iendo.aop.Log;
 import com.company.iendo.aop.SingleClick;
 import com.company.iendo.app.AppActivity;
+import com.company.iendo.app.ReceiveSocketService;
 import com.company.iendo.bean.LoginBean;
 import com.company.iendo.bean.RefreshEvent;
 import com.company.iendo.bean.UserListBean;
@@ -40,6 +43,7 @@ import com.company.iendo.green.db.downcase.CaseDBBean;
 import com.company.iendo.manager.InputTextManager;
 import com.company.iendo.mineui.activity.MainActivity;
 import com.company.iendo.mineui.activity.login.device.DeviceActivity;
+import com.company.iendo.mineui.activity.login.device.search.DeviceSearchActivity;
 import com.company.iendo.mineui.offline.AFragment;
 import com.company.iendo.other.Constants;
 import com.company.iendo.other.HttpConstant;
@@ -116,36 +120,34 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                     mPhoneView.setText("" + (String) msg.obj);
                     //之前本地数据库存入了保存密码(存入本地数据库)
                     Boolean isSave = (Boolean) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Flag_UserDBSave, false);
-                        //首先查询当前设备下,记住密码存入数据库的数据
-                        List<UserDBBean> userDBBeans = UserDBUtils.getQueryByDeviceID(getApplicationContext(), deviceID);
-                        //数据库没有
-                        if (userDBBeans.size()!=0){
-                            for (int i = 0; i < userDBBeans.size(); i++) {
-                                UserDBBean userDBBean = userDBBeans.get(i);
-                                String currentName = userDBBean.getUserName();
-                                if (currentName.equals(userName)) {
-                                    mPhoneView.setText("" + userDBBean.getUserName());
-                                    mPasswordView.setText("" + userDBBean.getPassword());
-                                    if (userDBBean.getIsRememberPassword()) {
-                                        mCheckbox.setChecked(true);
-                                    } else {
-                                        mCheckbox.setChecked(false);
-                                    }
-                                }else {
-                                    mPhoneView.setText(userName);
-                                    mPasswordView.setText("");
+                    //首先查询当前设备下,记住密码存入数据库的数据
+                    List<UserDBBean> userDBBeans = UserDBUtils.getQueryByDeviceID(getApplicationContext(), deviceID);
+                    //数据库没有
+                    if (userDBBeans.size() != 0) {
+                        for (int i = 0; i < userDBBeans.size(); i++) {
+                            UserDBBean userDBBean = userDBBeans.get(i);
+                            String currentName = userDBBean.getUserName();
+                            if (currentName.equals(userName)) {
+                                mPhoneView.setText("" + userDBBean.getUserName());
+                                mPasswordView.setText("" + userDBBean.getPassword());
+                                if (userDBBean.getIsRememberPassword()) {
+                                    mCheckbox.setChecked(true);
+                                } else {
                                     mCheckbox.setChecked(false);
-
                                 }
+                            } else {
+                                mPhoneView.setText(userName);
+                                mPasswordView.setText("");
+                                mCheckbox.setChecked(false);
 
                             }
-                        }else {
-                            mPhoneView.setText(userName);
-                            mPasswordView.setText("");
-                            mCheckbox.setChecked(false);
+
                         }
-
-
+                    } else {
+                        mPhoneView.setText(userName);
+                        mPasswordView.setText("");
+                        mCheckbox.setChecked(false);
+                    }
 
 
 //                        if (UserDBUtils.queryListIsExist(getApplicationContext(), userName)) {
@@ -223,7 +225,7 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
         }
 
         //数据库没有
-        if (userDBBeans.size()!=0){
+        if (userDBBeans.size() != 0) {
             for (int i = 0; i < userDBBeans.size(); i++) {
                 UserDBBean userDBBean = userDBBeans.get(i);
                 String currentName = userDBBean.getUserName();
@@ -235,13 +237,13 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                     } else {
                         mCheckbox.setChecked(false);
                     }
-                }else {
+                } else {
                     mPhoneView.setText(userName);
                     mPasswordView.setText("");
                     mCheckbox.setChecked(false);
                 }
             }
-        }else {
+        } else {
             mPhoneView.setText(userName);
             mPasswordView.setText("");
             mCheckbox.setChecked(false);
@@ -332,6 +334,25 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                                 showComplete();
                                 mUserListData = mBean.getData();
                                 LogUtils.e("用户列表===" + response);
+
+
+                                /**
+                                 * 登入成功的时候切换成监听 当前设备授权登入的socket端口
+                                 * 退出登入的时候切换成监听 当前广播发送端口
+                                 */
+                                ReceiveSocketService receiveSocketService = new ReceiveSocketService();
+                                WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+                                if (wifiManager.isWifiEnabled()) {
+                                    WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+                                    mAppIP = getIpString(wifiInfo.getIpAddress());
+                                }
+
+                                if ("".equals(mSocketPort)) {
+                                    toast("本地广播发送端口不能为空");
+                                    return;
+                                } else {
+                                    receiveSocketService.initSettingReceiveThread(mAppIP, Integer.parseInt(mSocketPort), LoginActivity.this);
+                                }
 
                             } else {
                                 showError();

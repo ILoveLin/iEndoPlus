@@ -21,15 +21,36 @@ public class Constants {
 
     public static final String BROADCASTER = "szcme";                //广播发起者名称--暂时固定szcme
     public static final String BROADCAST_IP = "192.168.135.255";      //广播地址
-//    public static final String BROADCAST_IP = "255.255.255.255";      //广播地址
-    public static final int BROADCAST_PORT = 8005;               //广播约定端口
-    public static final int SEND_PORT = 8005;                    //发送端口
-    public static final int RECEIVE_PORT = 8005;                 //本地监听端口
+    //    public static final String BROADCAST_IP = "255.255.255.255";      //广播地址
+    //默认值都是一样的
+    public static final int BROADCAST_PORT = 8005;               //广播约定端口--->默认值
+    public static final int SEND_PORT = 8005;                    //发送端口--->默认值
+    public static final int RECEIVE_PORT = 8005;                 //本地监听端口--->默认值
+
+
+    /**
+     * 手动设置本地广播端口的port之后,服务器发送消息到app也是这个port,
+     * 也就是说BROADCAST_PORT==RECEIVE_PORT,本地需要开启新的线程socket(广播端口)接收消息
+     */
+    public static final String KEY_BROADCAST_PORT = "KEY_BROADCAST_PORT";                 //广播约定端口  MMKV的Key
+    public static final String KEY_RECEIVE_PORT = "KEY_RECEIVE_PORT";                     //本地监听端口  MMKV的Key
+
+    public static final String KEY_SOCKET_RECEIVE_FIRST_IN = "KEY_SOCKET_RECEIVE_FIRST_IN";  //第一次开启接收线程  MMKV的Key
+    public static final String KEY_SEND_PORT = "KEY_SEND_PORT";                           //发送端口  MMKV的Key
+
+
+
+//    public static final String KEY_CURRENT_RECEIVE_PORT = "KEY_CURRENT_RECEIVE_PORT";    //当前设置的,本地监听端口,只要不为空,就在此port上监听数据  MMKV的Key
+//    public static final String KEY_CURRENT_BROADCAST_PORT = "KEY_CURRENT_BROADCAST_PORT";    //当前设置的,本地广播发送端口,只要不为空,就在此port上发送广播数据  MMKV的Key
+
+
+
 
 
     /**
      * 协议命令cmd-->用来区分那个socket回调的消息
      */
+    public static final String UDP_TOAST = "UDP_TOAST";       //提示toast
     public static final String UDP_FD = "FD";                 //网络发现（UDP广播）
     public static final String UDP_FC = "FC";                 //授权接入
     public static final String UDP_HAND = "30";               //握手----所有指令之前必须握手

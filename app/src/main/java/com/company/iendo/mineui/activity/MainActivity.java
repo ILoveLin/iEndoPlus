@@ -103,7 +103,7 @@ public class MainActivity extends AppActivity implements NavigationAdapter.OnNav
 //        mPagerAdapter.addFragment(AFragment.newInstance());
         mViewPager.setAdapter(mPagerAdapter);
         onNewIntent(getIntent());
-        requestPermission();
+//        requestPermission();
     }
 
     private void requestPermission() {
@@ -115,7 +115,6 @@ public class MainActivity extends AppActivity implements NavigationAdapter.OnNav
                 .permission(Permission.RECORD_AUDIO)
                 .permission(Permission.WRITE_EXTERNAL_STORAGE)
                 .permission(Permission.READ_EXTERNAL_STORAGE)
-                .permission(Permission.READ_PHONE_STATE)
                 .request(new OnPermissionCallback() {
 
                     @Override

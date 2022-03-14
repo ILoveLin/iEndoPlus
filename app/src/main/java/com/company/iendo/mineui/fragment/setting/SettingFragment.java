@@ -1,11 +1,15 @@
 package com.company.iendo.mineui.fragment.setting;
 
+import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.view.View;
 import android.widget.TextView;
 
 import com.company.iendo.R;
+import com.company.iendo.app.ReceiveSocketService;
 import com.company.iendo.app.TitleBarFragment;
 import com.company.iendo.bean.UserDeletedBean;
 import com.company.iendo.bean.socket.HandBean;
@@ -30,6 +34,7 @@ import com.company.iendo.utils.SharePreferenceUtil;
 import com.company.iendo.utils.SocketUtils;
 import com.hjq.base.BaseDialog;
 import com.hjq.widget.layout.SettingBar;
+import com.tencent.mmkv.MMKV;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -54,6 +59,7 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
     private SettingBar memory_bar;
     private TextView mUserName;
     private TextView mRelo;
+    private String mAppIP;
 
     public static SettingFragment newInstance() {
         return new SettingFragment();
@@ -189,6 +195,26 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
                         startActivity(LoginActivity.class);
                         // 进行内存优化，销毁除登录页之外的所有界面  --传入相对于的activity
                         // 进行内存优化，销毁掉所有的界面
+
+
+                        ReceiveSocketService receiveSocketService = new ReceiveSocketService();
+                        WifiManager wifiManager = (WifiManager) getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+                        if (wifiManager.isWifiEnabled()) {
+                            WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+                            mAppIP = getIpString(wifiInfo.getIpAddress());
+                        }
+                        MMKV kv = MMKV.defaultMMKV();
+                        int port = kv.decodeInt(Constants.KEY_BROADCAST_PORT);
+                        LogUtils.e("AppActivity=fragment==port===="+port);
+
+                        if ("".equals(port)) {
+                            toast("本地广播发送端口不能为空");
+                            return;
+                        } else {
+                            receiveSocketService.initSettingReceiveThread(mAppIP, port, getAttachActivity());
+                        }
+
+
                         finish();
                     }
                 }).show();

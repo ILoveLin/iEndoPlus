@@ -43,10 +43,10 @@ public class ThreadManager {
 
     static {
         //priority：1 --------------> 10，最低优先级 -----------> 最高优先级。
-        io = EasyThread.Builder.createFixed(1).setName("ReceiveThread").setPriority(Thread.MAX_PRIORITY).setCallback(new DefaultCallback()).build(); //这里给接收线程
+        io = EasyThread.Builder.createFixed(1).setName("ReceiveThread").setPriority(Thread.NORM_PRIORITY).setCallback(new DefaultCallback()).build(); //这里给接收线程
         //适合做大量的耗时较少的任务；
         cache = EasyThread.Builder.createCacheable().setName("SendThread").setCallback(new DefaultCallback()).build();
-        calculator = EasyThread.Builder.createFixed(4).setName("calculator").setPriority(Thread.MAX_PRIORITY).setCallback(new DefaultCallback()).build();
+        calculator = EasyThread.Builder.createFixed(4).setName("calculator").setPriority(Thread.NORM_PRIORITY).setCallback(new DefaultCallback()).build();
         file = EasyThread.Builder.createFixed(4).setName("file").setPriority(3).setCallback(new DefaultCallback()).build();
     }
 
