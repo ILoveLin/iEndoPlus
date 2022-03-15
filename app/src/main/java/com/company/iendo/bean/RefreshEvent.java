@@ -9,6 +9,15 @@ package com.company.iendo.bean;
  */
 public class RefreshEvent {
     private String type;
+    private String Str;
+
+    public String getStr() {
+        return Str;
+    }
+
+    public void setStr(String str) {
+        Str = str;
+    }
 
     public RefreshEvent(String type) {
         this.type = type;

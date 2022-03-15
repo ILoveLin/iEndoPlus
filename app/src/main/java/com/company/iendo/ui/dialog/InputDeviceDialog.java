@@ -12,9 +12,12 @@ import androidx.annotation.StringRes;
 
 import com.company.iendo.R;
 import com.company.iendo.aop.SingleClick;
+import com.company.iendo.bean.RefreshEvent;
 import com.company.iendo.utils.LogUtils;
 import com.hjq.base.BaseDialog;
 import com.hjq.widget.view.ClearEditText;
+
+import org.greenrobot.eventbus.EventBus;
 
 /**
  * author : Android 轮子哥
@@ -77,7 +80,6 @@ public final class InputDeviceDialog {
         public void onClick(View view) {
             int viewId = view.getId();
             if (viewId == R.id.tv_ui_confirm) {
-                autoDismiss();
                 if (mListener == null) {
                     return;
                 }
@@ -104,6 +106,13 @@ public final class InputDeviceDialog {
                 Editable editable10 = mDeviceType.getText();
                 String mDeviceType = editable10 != null ? editable10.toString() : "";
 
+                if ("".equals(mDeviceCode)){
+                    RefreshEvent toast = new RefreshEvent("toast");
+                    toast.setStr("设备码不能为空");
+                    EventBus.getDefault().post(toast);
+                    return;
+                }
+                autoDismiss();
                 LogUtils.e("");
                 mListener.onConfirm(getDialog(), mDeviceName, mDeviceCode, mDeviceNoteMessage, mDeviceIP,
                         mDeviceAccount, mDevicePassword, mHttpPort, mSocketPort, mLivePort, mMicPort, mDeviceType);
@@ -418,5 +427,6 @@ public final class InputDeviceDialog {
          */
         default void onCancel(BaseDialog dialog) {
         }
+
     }
 }

@@ -68,13 +68,13 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
     private int currentItemPosition = -1;
     private String serverItemIP;
     //    private TitleBar mTitleBar;
-    private ArrayList<String> mReceiveBroadCastList = new ArrayList<>();    //接收线程,获取到广播hexString的数据
-    private HashMap<String, String> mReceiveBroadMap = new HashMap<>();    //接收线程,获取到广播hexString的数据
-    private ArrayList<String> mReceivePointList = new ArrayList<>();    //接收线程,获取到点对点hexString的数据
-    private int isIntUIAdapterCount = 0;
+    private ArrayList<String> mReceiveBroadCastList = new ArrayList<>();    //接收线程,获取到广播hexString的数据,之后在存给mReceiveList,设置界面adapter
+    private HashMap<String, String> mReceiveBroadMap = new HashMap<>();    //判断是否包含指定的key:设备码+设备类型,value是hexstring数据
+    private ArrayList<String> mReceivePointList = new ArrayList<>();    //授权之后存入的数据,获取到点对点hexString的数据
     private static final int UDP_BroadCast_Over = 112;
     private static final int UDP_Point_Over = 113;
     private static final int UDP_Anim = 114;
+    private static  Boolean Set_Data = false;
     @SuppressLint("HandlerLeak")
     private Handler mHandler = new Handler() {
         @Override
@@ -82,8 +82,6 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
             super.handleMessage(msg);
             switch (msg.what) {
                 case UDP_BroadCast_Over: //广播结束
-                    isIntUIAdapterCount++;
-                    LogUtils.e("DeviceSearchActivity回调==模拟数据==mRun2DDString==" + isIntUIAdapterCount);
                     getAdapterBeanData();
                     //模拟获取到点对点数据回传
 //                    String str = "AAC50100CA78EE0700000000000000005618B1F96D92837Ca03399cbe9a32d4786abf24e39d3cad576FC7b226970223a223139322e3136382e36342e3133222c227a7074223a2237373838222c226964223a22726f6f74222c227077223a22726f6f74222c2266726f6d223a2241494f2d454e54222c22737470223a2238303035222c22687074223a2237303031222c2272656d61726b223a2231E58FB7E58685E9959CE5AEA4222c2274797065223a223037222c226574223a2233222c22726574636f6465223a2230227dd5DD==192.168.132.102";
@@ -111,12 +109,16 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
     private ReceiveSocketService receiveSocketService;
 
     private void showSearchDialog() {
-        mReceiveList.clear();
+        mReceiveList.clear();   //界面列表的list
+        mReceiveBroadMap.clear();//广播接收到的数据map
+        mReceivePointList.clear();//授权的list
+        mReceiveBroadCastList.clear();//界面列表的list的中转list
+        Set_Data=false;
+//        mReceiveBroadMap.clear();
+//        mReceiveBroadCastList.clear();
+//        mReceivePointList.clear();
         // 自定义搜索对话框
 
-        if (searchCount > 2) {
-            toast("请尝试重新进入该界面,或者断开网络重新搜索");
-        }else {
             mSearchDialog = new BaseDialog.Builder<>(this);
             mSearchDialog.setContentView(R.layout.dialog_search)
                     .setCanceledOnTouchOutside(false)
@@ -164,7 +166,6 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
 
                 }
             });
-        }
 
     }
 
@@ -260,11 +261,22 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
             case Constants.UDP_FD://广播
                 //判断是否包含指定的key:设备码+设备类型
                 boolean flag = mReceiveBroadMap.containsKey(deviceOnlyCode + deviceType);
+
+
+                Iterator<Map.Entry<String, String>> entries = mReceiveBroadMap.entrySet().iterator();
+                while (entries.hasNext()) {
+                    Map.Entry<String, String> entry = entries.next();
+                    LogUtils.e("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+                }
+
+
                 LogUtils.e("Socket回调==广播===flag===" + flag);
                 LogUtils.e("Socket回调==广播===getReceivePort===" + event.getReceivePort());
                 if (!flag) {
                     mReceiveBroadMap.put(deviceOnlyCode + deviceType, mRun2End4 + "==" + event.getIp());
                 }
+
+
                 break;
             case Constants.UDP_FC://授权接入
                 if (!mReceivePointList.contains(mRun2End4)) {
@@ -304,24 +316,21 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
 
     }
 
-    private static int searchCount = 1;
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_left:
+                Set_Data=false;
                 //发送消息刷新设备界面
                 EventBus.getDefault().post(new RefreshEvent("refresh"));
                 finish();
                 break;
             case R.id.tv_right_search:
-                searchCount = ++searchCount;
-                LogUtils.e("Socket回调==searchCount===" + searchCount);
                 showSearchDialog();
                 break;
             case R.id.tv_right_setting:
                 //设置了新的端口重置搜索次数
-                searchCount=1;
                 // 输入对话框
                 showSettingDialog();
                 break;
@@ -348,13 +357,16 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
      */
     private void getAdapterBeanData() {
         //此处只做一次广播结束之后界面数据的刷新,不然会出现数据重复
-        LogUtils.e("DeviceSearchActivity回调==模拟数据==00001==" + mReceiveList.size());
-        if (mReceiveList.size()==0){
+        LogUtils.e("DeviceSearchActivity回调==模拟数据==00001==" + mReceiveBroadMap.size());
+        if (mReceiveBroadMap.size() == 0) {
             showEmpty();
-        }
-        if (isIntUIAdapterCount != 1) {
             return;
         }
+
+        if (Set_Data){ //界面设置过数据的直接return
+            return;
+        }
+
         Iterator<Map.Entry<String, String>> iterator = mReceiveBroadMap.entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry<String, String> entry = iterator.next();
@@ -397,6 +409,7 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
             showEmpty();
         } else {
             mAdapter.setData(mReceiveList);
+            Set_Data=true;
             showComplete();
         }
     }
@@ -828,7 +841,6 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        searchCount = 1;
         EventBus.getDefault().unregister(this);
         //暂时不明确
     }
@@ -840,7 +852,6 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
 //        SocketManage.setIsRuning(true);
         //必须打开不然再次进入界面 不能能接受收据哦
 //        SocketManage.getSocketManageInstance();
-        searchCount = 1;
         mReceiveBroadMap.clear();
         mReceiveBroadCastList.clear();
         mReceivePointList.clear();

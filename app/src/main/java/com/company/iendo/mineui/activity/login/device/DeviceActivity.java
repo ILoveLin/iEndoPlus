@@ -869,7 +869,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
 
 
         }
-        if (null!=mDBBean){
+        if (null != mDBBean) {
             SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_DeviceID, mDBBean.getDeviceID() + "");
         }
 
@@ -1002,22 +1002,22 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onRefreshEvent(RefreshEvent event) {
-
         List<DeviceDBBean> deviceDBBeans = DeviceDBUtils.queryAll(DeviceActivity.this);
         LogUtils.e("========当前设备的备注信息~~~~====DeviceActivity==mDataLest===" + mDataLest.size());
         LogUtils.e("========当前设备的备注信息~~~~====DeviceActivity==deviceDBBeans===" + deviceDBBeans.size());
-
         mDataLest.clear();
         LogUtils.e("========当前设备的备注信息~~~~====DeviceActivity==mBaseUrl===" + mDataLest.size());
         LogUtils.e("========当前设备的备注信息~~~~====DeviceActivity==deviceDBBeans===" + deviceDBBeans.size());
 
-        if (deviceDBBeans.size() == 0) {
+        if ("toast".equals(event.getType())) {
+            toast(event.getStr()+"");
+        } else if (deviceDBBeans.size() == 0) {
             showEmpty();
-
         } else {
             showComplete();
             mAdapter.setData(deviceDBBeans);
         }
+
     }
 
     /**
