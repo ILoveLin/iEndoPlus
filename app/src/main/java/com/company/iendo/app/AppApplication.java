@@ -217,11 +217,22 @@ public final class AppApplication extends Application {
         // MMKV 初始化
         MMKV.initialize(application);
         MMKV kv = MMKV.defaultMMKV();
-        kv.encode(Constants.KEY_RECEIVE_PORT,Constants.RECEIVE_PORT);
-        kv.encode(Constants.KEY_BROADCAST_PORT,Constants.BROADCAST_PORT);
-
         //设置第一次启动App的时候,是否第一次初始化过接收线程
         kv.encode(Constants.KEY_SOCKET_RECEIVE_FIRST_IN,false);
+        int i = kv.decodeInt(Constants.KEY_RECEIVE_PORT);
+        int i2 = kv.decodeInt(Constants.KEY_BROADCAST_PORT);
+        int i3 = kv.decodeInt(Constants.KEY_RECEIVE_PORT_BY_SEARCH);
+//
+        if ("".equals(i+"")){
+            kv.encode(Constants.KEY_RECEIVE_PORT,Constants.RECEIVE_PORT);
+        }
+        if ("".equals(i2+"")){
+            kv.encode(Constants.KEY_BROADCAST_PORT,Constants.BROADCAST_PORT);
+        }
+        if ("".equals(i3+"")){
+            kv.encode(Constants.KEY_RECEIVE_PORT_BY_SEARCH,Constants.BROADCAST_PORT);
+        }
+
 
         // 网络请求框架初始化
         OkHttpClient okHttpClient = new OkHttpClient.Builder()

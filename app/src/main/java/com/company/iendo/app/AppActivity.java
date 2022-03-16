@@ -139,7 +139,7 @@ public abstract class AppActivity extends BaseActivity
         mCurrentTypeNum = (String) SharePreferenceUtil.get(AppActivity.this, SharePreferenceUtil.Current_Type_Num, "07");
         mCurrentReceiveDeviceCode = (String) SharePreferenceUtil.get(AppActivity.this, SharePreferenceUtil.Current_DeviceCode, "00000000000000000000000000000000");
         mSocketOrLiveIP = (String) SharePreferenceUtil.get(AppActivity.this, SharePreferenceUtil.Current_IP, "192.168.132.102");
-        mSocketPort = (String) SharePreferenceUtil.get(AppActivity.this, SharePreferenceUtil.Current_SocketPort, "8005");
+        mSocketPort = (String) SharePreferenceUtil.get(AppActivity.this, SharePreferenceUtil.Current_SocketPort, "7006");
         mUsername = (String) SharePreferenceUtil.get(AppActivity.this, SharePreferenceUtil.Current_DeviceUsername, "root");
         mPassword = (String) SharePreferenceUtil.get(AppActivity.this, SharePreferenceUtil.Current_DevicePassword, "root");
         mLivePort = (String) SharePreferenceUtil.get(AppActivity.this, SharePreferenceUtil.Current_LivePort, "7788");

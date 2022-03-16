@@ -405,7 +405,7 @@ public class CalculateUtils {
         String mRandom = CalculateUtils.getRandomHexString(2);         // //随机数  ---1字节
         String mCMD_ID = "FF";                                              //命令ID   ---2字节-暂时规定,主动发起方为FF 接收方为随机值,PS--移动端目前交互写死值=FF
         String mSend_Type = "A1";                                           //发送方设备类型。--1字节-Android=A1  FF为所有设备
-        String mSend_ID = mSend_IDBy32.toUpperCase();                                     //发送方设备唯一标识。   --16字节
+        String mSend_ID = mSend_IDBy32.toUpperCase();                       //发送方设备唯一标识。   --16字节
         String mReceived_Type = Received_Type;                              //接收方设备类型。   --FF是是所有设备
         String mReceived_ID = Received_ID;                                  //接收方设备唯一标识。   --16字节--目前暂时给32个0,模拟后台给的数据
         String mCMD = CMD;                                                  //UDP广播   --一个字节

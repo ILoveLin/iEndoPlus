@@ -95,8 +95,8 @@ public class SocketUtils {
                     MMKV kv = MMKV.defaultMMKV();
                     int mCastSendPort = kv.decodeInt(Constants.KEY_BROADCAST_PORT);
                     DatagramPacket mSendPacket = new DatagramPacket(data, data.length, finalMAddress, mCastSendPort);
-                    for (int i = 0; i < 5; i++) {
-                        LogUtils.e("SocketUtils=====发送第=====" + i + "====次广播==mCastSendPort==" + mCastSendPort);
+//                    for (int i = 0; i < 5; i++) {
+//                        LogUtils.e("SocketUtils=====发送第=====" + i + "====次广播==mCastSendPort==" + mCastSendPort);
                         Thread.sleep(500);
                         //固定端口
                         DatagramSocket mSendBroadcastSocket = new DatagramSocket(null);
@@ -110,7 +110,7 @@ public class SocketUtils {
 //                        mSendBroadcastSocket.send(mSendPacket);
 //                        mSendBroadcastSocket.setBroadcast(true);
 //                        mSendBroadcastSocket.close();
-                    }
+//                    }
 
                 } catch (Exception e) {
 

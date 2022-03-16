@@ -47,7 +47,10 @@ public class SharePreferenceUtil {
      * 被选中当前登入设备的信息
      */
 //    public static final String Current_MainID = "Current_MainID";                    //设备主键ID--//这个主键ID是需要绑定用户表中的deviceID,确保是这个设备下,离线模式能通过此字段查询绑定用户
-    public static final String Current_DeviceID = "Current_DeviceID";                //设备唯一标识--//这个主键ID是需要绑定用户表中的deviceID,确保是这个设备下,离线模式能通过此字段查询绑定用户
+    //设备唯一标识--//这个主键ID是需要绑定用户表中的deviceID,确保是这个设备下,离线模式能通过此字段查询绑定用Current_DeviceID==Current_DeviceCode
+
+    public static final String Current_DeviceID = "Current_DeviceID";
+
     public static final String Current_IP = "Current_IP";                            //设备ip    直播和通讯的ip
     public static final String Current_HttpPort = "Current_HttpPort";                //设备http端口
     public static final String Current_SocketPort = "Current_SocketPort";            //socket端口

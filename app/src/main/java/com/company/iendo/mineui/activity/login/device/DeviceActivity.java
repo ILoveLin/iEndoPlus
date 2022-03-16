@@ -17,6 +17,7 @@ import com.company.iendo.mineui.activity.ZXingActivity;
 import com.company.iendo.mineui.activity.casemanage.ImageReportActivity;
 import com.company.iendo.mineui.activity.login.device.adapter.DeviceAdapter;
 import com.company.iendo.mineui.activity.login.device.search.DeviceSearchActivity;
+import com.company.iendo.other.Constants;
 import com.company.iendo.ui.dialog.InputDeviceDialog;
 import com.company.iendo.ui.dialog.MessageDialog;
 import com.company.iendo.ui.dialog.ModifyDeviceDialog;
@@ -68,6 +69,8 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
     private ModifyDeviceDialog.Builder mChangeDialog;
     private InputDeviceDialog.Builder mCurrentChoseDialog;    //添加新设备的时候,再次选择不同类型的情况下
     private DeviceDBBean mDBBean;
+    private String currentDeviceCode;
+    private String currentChangeType;
 
 
     @Override
@@ -247,7 +250,8 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
         // 单选对话框
         new SelectDialog.Builder(this)
                 .setTitle("请选择设备类型")
-                .setList("一代一体机", "耳鼻喉治疗台", "妇科治疗台", "泌尿治疗台")
+                .setList(Constants.Type_V1_YiTiJi, Constants.Type_EarNoseTable, Constants.Type_FuKeTable, Constants.Type_MiNiaoTable)
+//                .setList(Constants.Type_V1_YiTiJi, Constants.Type_EarNoseTable, Constants.Type_FuKeTable, Constants.Type_MiNiaoTable)
                 // 设置单选模式
                 .setSingleSelect()
                 // 设置默认选中
@@ -279,13 +283,13 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
      */
     private void showMulti2Dialog(String str) {
         switch (str) {
-            case "妇科治疗台":
+            case Constants.Type_FuKeTable:
                 // 输入对话框
                 mCurrentChoseDialog = new InputDeviceDialog.Builder(this);
                 // 标题可以不用填写
                 mCurrentChoseDialog.setTitle("添加设备")
                         // 内容可以不用填写
-                        .setDeviceNameContent("妇科治疗台")
+                        .setDeviceNameContent(Constants.Type_FuKeTable)
                         .setDeviceNoteContent("妇科治疗台备注信息")
                         .setDeviceIPContent("192.168.1.200")
                         .setAccountContent("root")
@@ -294,7 +298,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                         .setLivePortContent("7788")
                         .setSocketPortContent("8005")
                         .setMicPortContent("7789")
-                        .setTypeContent("妇科治疗台")
+                        .setTypeContent(Constants.Type_FuKeTable)
                         // 提示可以不用填写
                         // 确定按钮文本
                         .setConfirm(getString(R.string.common_confirm))
@@ -351,13 +355,13 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
 
 
                 break;
-            case "一代一体机":
+            case Constants.Type_V1_YiTiJi:
                 // 输入对话框  mOneDeviceDialog
                 mCurrentChoseDialog = new InputDeviceDialog.Builder(this);
                 // 标题可以不用填写
                 mCurrentChoseDialog.setTitle("添加设备")
                         // 内容可以不用填写
-                        .setDeviceNameContent("一代一体机")
+                        .setDeviceNameContent(Constants.Type_V1_YiTiJi)
                         .setDeviceNoteContent("一代一体机备注信息")
                         .setDeviceIPContent("192.168.1.200")
                         .setAccountContent("root")
@@ -366,7 +370,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                         .setLivePortContent("7788")
                         .setSocketPortContent("8005")
                         .setMicPortContent("7789")
-                        .setTypeContent("一代一体机")
+                        .setTypeContent(Constants.Type_V1_YiTiJi)
                         // 提示可以不用填写
                         // 确定按钮文本
                         .setConfirm(getString(R.string.common_confirm))
@@ -418,12 +422,12 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                     }
                 });
                 break;
-            case "耳鼻喉治疗台":
+            case Constants.Type_EarNoseTable:
                 // 输入对话框
                 mCurrentChoseDialog = new InputDeviceDialog.Builder(this);
                 mCurrentChoseDialog.setTitle("添加设备")
                         // 内容可以不用填写
-                        .setDeviceNameContent("耳鼻喉治疗台")
+                        .setDeviceNameContent(Constants.Type_EarNoseTable)
                         .setDeviceNoteContent("耳鼻喉治疗台备注信息")
                         .setDeviceIPContent("192.168.1.200")
                         .setAccountContent("root")
@@ -433,7 +437,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                         .setSocketPortContent("8005")
 
                         .setMicPortContent("7789")
-                        .setTypeContent("耳鼻喉治疗台")
+                        .setTypeContent(Constants.Type_EarNoseTable)
                         // 提示可以不用填写
                         // 确定按钮文本
                         .setConfirm(getString(R.string.common_confirm))
@@ -486,12 +490,12 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                     }
                 });
                 break;
-            case "泌尿治疗台":
+            case Constants.Type_MiNiaoTable:
                 // 输入对话框
                 mCurrentChoseDialog = new InputDeviceDialog.Builder(this);
                 mCurrentChoseDialog.setTitle("添加设备")
                         // 内容可以不用填写
-                        .setDeviceNameContent("泌尿治疗台")
+                        .setDeviceNameContent(Constants.Type_MiNiaoTable)
                         .setDeviceNoteContent("泌尿治疗台备注信息")
                         .setDeviceIPContent("192.168.1.200")
                         .setAccountContent("root")
@@ -500,7 +504,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                         .setLivePortContent("7788")
                         .setSocketPortContent("8005")
                         .setMicPortContent("7789")
-                        .setTypeContent("泌尿治疗台")
+                        .setTypeContent(Constants.Type_MiNiaoTable)
                         // 提示可以不用填写
                         // 确定按钮文本
                         .setConfirm(getString(R.string.common_confirm))
@@ -625,10 +629,12 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
     private void showModifyItemDialog(DeviceDBBean item) {
         LogUtils.e("修改设备=====getMsg=====" + item.getMsg());
         LogUtils.e("修改设备=====getMsg=====" + item.toString());
+        currentDeviceCode = item.getDeviceCode();
+        currentChangeType = item.getType();
         mChangeDialog = new ModifyDeviceDialog.Builder(this);
         mChangeDialog.setTitle("修改设备")
                 .setDeviceNameContent(item.getDeviceName())
-                .setDeviceCodeContent(item.getDeviceID())
+                .setDeviceCodeContent(item.getDeviceCode())
                 .setDeviceNoteContent(item.getMsg())
                 .setDeviceIPContent(item.getIp())
                 .setAccountContent(item.getUsername())
@@ -698,7 +704,8 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
     private void showModifyTypeDialog(String deviceType, String type) {
         new SelectModifyTypeDialog.Builder(this)
                 .setTitle("请选择设备类型")
-                .setList("一代一体机", "耳鼻喉治疗台", "妇科治疗台", "泌尿治疗台")
+                .setList(Constants.Type_V1_YiTiJi, Constants.Type_EarNoseTable, Constants.Type_FuKeTable, Constants.Type_MiNiaoTable)
+//                .setList(Constants.Type_V1_YiTiJi, Constants.Type_EarNoseTable, Constants.Type_FuKeTable, Constants.Type_MiNiaoTable)
                 // 设置单选模式
                 .setSingleSelect()
                 // 设置默认选中
@@ -732,13 +739,21 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
 
     /**
      * type 当前是修改类型的时候点击设备类型选择,  还是添加类型的时候点击设备类型选择
+     * str:当前切换的设备类型,比如:耳鼻喉治疗台
      */
     private void setChangeTypeData(String str, String type) {
+        String code = "";
+        if(str.equals(currentChangeType)){
+            code =currentDeviceCode;
+        }else {
+            code="";
+        }
         switch (str) {
-            case "妇科治疗台":
+            case Constants.Type_FuKeTable:
                 if ("修改类型".equals(type)) {
-                    mChangeDialog.setDeviceNameContent("妇科治疗台")
+                    mChangeDialog.setDeviceNameContent(Constants.Type_FuKeTable)
                             .setDeviceNoteContent("")
+                            .setDeviceCodeContent(code+"")//当修改的时候,选择切换设备类型时候,还是选择同一设备类型,默认使用之前该设备类型的deviceCode
                             .setDeviceNoteContent("妇科治疗台备注信息")
                             .setDeviceIPContent("192.168.1.200")
                             .setAccountContent("root")
@@ -747,10 +762,10 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                             .setLivePortContent("7788")
                             .setSocketPortContent("8005")
                             .setMicPortContent("7789")
-                            .setTypeContent("妇科治疗台")
+                            .setTypeContent(Constants.Type_FuKeTable)
                             .show();
                 } else {
-                    mCurrentChoseDialog.setDeviceNameContent("妇科治疗台")
+                    mCurrentChoseDialog.setDeviceNameContent(Constants.Type_FuKeTable)
                             .setDeviceNoteContent("妇科治疗台备注信息")
                             .setDeviceIPContent("192.168.1.200")
                             .setAccountContent("root")
@@ -759,15 +774,16 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                             .setLivePortContent("7788")
                             .setSocketPortContent("8005")
                             .setMicPortContent("7789")
-                            .setTypeContent("妇科治疗台")
+                            .setTypeContent(Constants.Type_FuKeTable)
                             .show();
                 }
 
                 break;
-            case "泌尿治疗台":
+            case Constants.Type_MiNiaoTable:
                 if ("修改类型".equals(type)) {
-                    mChangeDialog.setDeviceNameContent("泌尿治疗台")
+                    mChangeDialog.setDeviceNameContent(Constants.Type_MiNiaoTable)
                             .setDeviceNoteContent("")
+                            .setDeviceCodeContent(code+"")
                             .setDeviceNoteContent("泌尿治疗台备注信息")
                             .setDeviceIPContent("192.168.1.200")
                             .setAccountContent("root")
@@ -776,10 +792,10 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                             .setLivePortContent("7788")
                             .setSocketPortContent("8005")
                             .setMicPortContent("7789")
-                            .setTypeContent("泌尿治疗台")
+                            .setTypeContent(Constants.Type_MiNiaoTable)
                             .show();
                 } else {
-                    mCurrentChoseDialog.setDeviceNameContent("泌尿治疗台")
+                    mCurrentChoseDialog.setDeviceNameContent(Constants.Type_MiNiaoTable)
                             .setDeviceNoteContent("泌尿治疗台备注信息")
                             .setDeviceIPContent("192.168.1.200")
                             .setAccountContent("root")
@@ -788,15 +804,16 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                             .setLivePortContent("7788")
                             .setSocketPortContent("8005")
                             .setMicPortContent("7789")
-                            .setTypeContent("泌尿治疗台")
+                            .setTypeContent(Constants.Type_MiNiaoTable)
                             .show();
                 }
 
                 break;
-            case "一代一体机":
+            case Constants.Type_V1_YiTiJi:
                 if ("修改类型".equals(type)) {
-                    mChangeDialog.setDeviceNameContent("一代一体机")
+                    mChangeDialog.setDeviceNameContent(Constants.Type_V1_YiTiJi)
                             .setDeviceNoteContent("")
+                            .setDeviceCodeContent(code+"")
                             .setDeviceNoteContent("一代一体机备注信息")
                             .setDeviceIPContent("192.168.1.200")
                             .setAccountContent("root")
@@ -805,10 +822,10 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                             .setLivePortContent("7788")
                             .setSocketPortContent("8005")
                             .setMicPortContent("7789")
-                            .setTypeContent("一代一体机")
+                            .setTypeContent(Constants.Type_V1_YiTiJi)
                             .show();
                 } else {
-                    mCurrentChoseDialog.setDeviceNameContent("一代一体机")
+                    mCurrentChoseDialog.setDeviceNameContent(Constants.Type_V1_YiTiJi)
                             .setDeviceNoteContent("一代一体机备注信息")
                             .setDeviceIPContent("192.168.1.200")
                             .setAccountContent("root")
@@ -817,16 +834,16 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                             .setLivePortContent("7788")
                             .setSocketPortContent("8005")
                             .setMicPortContent("7789")
-                            .setTypeContent("一代一体机")
+                            .setTypeContent(Constants.Type_V1_YiTiJi)
                             .show();
                 }
 
                 break;
-            case "耳鼻喉治疗台":
+            case Constants.Type_EarNoseTable:
                 if ("修改类型".equals(type)) {
-
-                    mChangeDialog.setDeviceNameContent("耳鼻喉治疗台")
+                    mChangeDialog.setDeviceNameContent(Constants.Type_EarNoseTable)
                             .setDeviceNoteContent("")
+                            .setDeviceCodeContent(code+"")
                             .setDeviceNoteContent("耳鼻喉治疗台备注信息")
                             .setDeviceIPContent("192.168.1.200")
                             .setAccountContent("root")
@@ -835,10 +852,10 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                             .setLivePortContent("7788")
                             .setSocketPortContent("8005")
                             .setMicPortContent("7789")
-                            .setTypeContent("耳鼻喉治疗台")
+                            .setTypeContent(Constants.Type_EarNoseTable)
                             .show();
                 } else {
-                    mCurrentChoseDialog.setDeviceNameContent("耳鼻喉治疗台")
+                    mCurrentChoseDialog.setDeviceNameContent(Constants.Type_EarNoseTable)
                             .setDeviceNoteContent("耳鼻喉治疗台备注信息")
                             .setDeviceIPContent("192.168.1.200")
                             .setAccountContent("root")
@@ -847,7 +864,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                             .setLivePortContent("7788")
                             .setSocketPortContent("8005")
                             .setMicPortContent("7789")
-                            .setTypeContent("耳鼻喉治疗台")
+                            .setTypeContent(Constants.Type_EarNoseTable)
                             .show();
                 }
                 break;
@@ -871,6 +888,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
         }
         if (null != mDBBean) {
             SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_DeviceID, mDBBean.getDeviceID() + "");
+            SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_DeviceCode, mDBBean.getDeviceCode() + "");
         }
 
     }
@@ -900,29 +918,29 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
             LogUtils.e("添加病例=== mDBBean.getType()===" + mDBBean.getType());   //通过此字段判断设备类型(中文)
             LogUtils.e("添加病例=== mDBBean.getType_num()===" + mDBBean.getType_num());   //通过此字段判断设备类型(数字)
             switch (mDBBean.getType()) {
-                case "妇科治疗台":
+                case Constants.Type_FuKeTable:
                     SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_EndoType, "4");//妇科
-                    SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_Type, "妇科治疗台");
+                    SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_Type, Constants.Type_FuKeTable);
                     SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_Type_Num, mDBBean.getType_num());
 
                     break;
-                case "一代一体机":
+                case Constants.Type_V1_YiTiJi:
                     SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_EndoType, "3");//一体机
-                    SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_Type, "一代一体机");
+                    SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_Type, Constants.Type_V1_YiTiJi);
                     SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_Type_Num, mDBBean.getType_num());
 
 
                     break;
-                case "耳鼻喉治疗台":
+                case Constants.Type_EarNoseTable:
                     SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_EndoType, "3");//耳鼻喉
-                    SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_Type, "耳鼻喉治疗台");
+                    SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_Type, Constants.Type_EarNoseTable);
                     SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_Type_Num, mDBBean.getType_num());
 
 
                     break;
-                case "泌尿治疗台":
+                case Constants.Type_MiNiaoTable:
                     SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_EndoType, "6");//泌尿
-                    SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_Type, "泌尿治疗台");
+                    SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_Type, Constants.Type_MiNiaoTable);
                     SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_Type_Num, mDBBean.getType_num());
 
                     break;
@@ -978,18 +996,18 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
      * A0-iOS，A1-Android，FF-所有设备
      */
     public String getTypeNum(String str) {
-        if ("妇科治疗台".equals(str)) {
+        if (Constants.Type_FuKeTable.equals(str)) {
             return "9";
-        } else if ("一代一体机".equals(str)) {
+        } else if (Constants.Type_V1_YiTiJi.equals(str)) {
             return "07";
 
-        } else if ("耳鼻喉治疗台".equals(str)) {
+        } else if (Constants.Type_EarNoseTable.equals(str)) {
             return "8";
 
-        } else if ("泌尿治疗台".equals(str)) {
+        } else if (Constants.Type_MiNiaoTable.equals(str)) {
             return "10";
 
-        } else if ("妇科治疗台".equals(str)) {
+        } else if (Constants.Type_FuKeTable.equals(str)) {
             return "9";
 
         }
@@ -1078,6 +1096,27 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
     }
 
 
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        DeviceDBBean bean = DeviceDBUtils.getQueryBeanByAcceptAndInsertDB(DeviceActivity.this, "30000000000000000546017FE6BC28949一代一体机");
+        LogUtils.e("SocketManage回调==onResume==onResume=onResume==" + bean);
+        List<DeviceDBBean> deviceDBBeans = DeviceDBUtils.queryAll(DeviceActivity.this);
+        LogUtils.e("SocketManage回调==onResume==onResume=onResume==" + deviceDBBeans.size());
+
+        for (int i = 0; i < deviceDBBeans.size(); i++) {
+            DeviceDBBean deviceDBBean = deviceDBBeans.get(i);
+
+            LogUtils.e("SocketManage回调==onResume==onResume=getAcceptAndInsertDB==" + deviceDBBean);
+
+        }
+
+    }
+
+
+
+
     //
 //
 //    @Override
@@ -1099,21 +1138,4 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
 //        }, 1000);
 //    }
 
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        DeviceDBBean bean = DeviceDBUtils.getQueryBeanByAcceptAndInsertDB(DeviceActivity.this, "30000000000000000546017FE6BC28949一代一体机");
-        LogUtils.e("SocketManage回调==onResume==onResume=onResume==" + bean);
-        List<DeviceDBBean> deviceDBBeans = DeviceDBUtils.queryAll(DeviceActivity.this);
-        LogUtils.e("SocketManage回调==onResume==onResume=onResume==" + deviceDBBeans.size());
-
-        for (int i = 0; i < deviceDBBeans.size(); i++) {
-            DeviceDBBean deviceDBBean = deviceDBBeans.get(i);
-
-            LogUtils.e("SocketManage回调==onResume==onResume=getAcceptAndInsertDB==" + deviceDBBean);
-
-        }
-
-    }
 }

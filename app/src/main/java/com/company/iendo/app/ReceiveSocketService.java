@@ -349,10 +349,8 @@ public class ReceiveSocketService extends AbsWorkService {
     public void initFirstThread(String currentIP) {
         MMKV kv = MMKV.defaultMMKV();
         int mDefaultReceivePort = kv.decodeInt(Constants.KEY_RECEIVE_PORT);
+        int mReceivePort = kv.decodeInt(Constants.KEY_RECEIVE_PORT_BY_SEARCH);
         int mDefaultCastSendPort = kv.decodeInt(Constants.KEY_BROADCAST_PORT);
-//        int ii = kv.decodeInt(Constants.KEY_SETTING_RECEIVE_PORT);
-//        int mReceivePort = kv.decodeInt(Constants.KEY_RECEIVE_PORT);
-//        int mSendPort = kv.decodeInt(Constants.KEY_SETTING_RECEIVE_PORT);
         //是否开启过接收线程,开启过为true
         boolean b = kv.decodeBool(Constants.KEY_SOCKET_RECEIVE_FIRST_IN);
 
@@ -362,10 +360,10 @@ public class ReceiveSocketService extends AbsWorkService {
 
 
         if (!b) {
-            receiveThread receiveThread = new receiveThread(currentIP, mDefaultReceivePort, this);
+            receiveThread receiveThread = new receiveThread(currentIP, mReceivePort, this);
             receiveThread.start();
             kv.encode(Constants.KEY_SOCKET_RECEIVE_FIRST_IN, true);
-            kv.encode(Constants.KEY_RECEIVE_PORT, mDefaultReceivePort); //当前设置的,本地监听端口
+            kv.encode(Constants.KEY_RECEIVE_PORT_BY_SEARCH, mReceivePort); //当前设置的,本地监听端口
 
         }
 
@@ -379,15 +377,16 @@ public class ReceiveSocketService extends AbsWorkService {
      * @param context            上下文
      */
     public void initSettingReceiveThread(String currentIP, int settingReceivePort, Context context) {
-        MMKV kv = MMKV.defaultMMKV();
         //获取当前开启的接收端口
         LogUtils.e("保活服务开启-My-startWork---bbAA---===bbAA=00==");
+        LogUtils.e("保活服务开启-My-startWork---bbAA---===bbAA=00=="+settingReceivePort);
         receiveThread receiveThread = new receiveThread(currentIP, settingReceivePort, context);
         receiveThread.start();
+
+        MMKV kv = MMKV.defaultMMKV();
         kv.encode(Constants.KEY_SOCKET_RECEIVE_FIRST_IN, true);
         kv.encode(Constants.KEY_RECEIVE_PORT, settingReceivePort); //设置的,本地监听端口
-        boolean bb = kv.decodeBool(Constants.KEY_SOCKET_RECEIVE_FIRST_IN);
-        LogUtils.e("保活服务开启-My-startWork---bbAA---===bbAA=01==" + bb);
+
 
     }
 

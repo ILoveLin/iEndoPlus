@@ -75,7 +75,10 @@ public class DeviceSearchAdapter extends AppAdapter<BroadCastReceiveBean> {
         @Override
         public void onBindView(int position) {
             BroadCastReceiveBean mItemBean = getItem(position);
-
+            LogUtils.e("SocketManage回调==模拟数据==mItemBean.mItemBean==mItemBean===" + mItemBean);
+//            {title='AIO-ENT', remark='1号内镜室', endotype='3', accept='1', mSelected=false, ip='192.168.132.102',
+//            receiveType='07', receiveID='0000000000000000ED3A93DA80A9BA8B', deviceType='一代一体机',
+//            deviceCode='0000000000000000ED3A93DA80A9BA8B', itemId='F9432B11B93E8BB4AE34539B7472C20E', inDB=null, isCheckAccess=false}
             Boolean mSelected = mItemBean.getSelected();
 
             mTitle.setText("" + mItemBean.getTitle());
@@ -124,22 +127,21 @@ public class DeviceSearchAdapter extends AppAdapter<BroadCastReceiveBean> {
                 }
 
 
-//            switch (mDBBean.getType()) {
-//                case "一代一体机":
-//                    mImageChose.setImageResource(R.drawable.icon_yitiji);
-//                    break;
-//                case "耳鼻喉治疗台":
-//                    mImageChose.setImageResource(R.drawable.icon_erbihou);
-//
-//                    break;
-//                case "妇科治疗台":
-//                    mImageChose.setImageResource(R.drawable.icon_shenzhou4k);
-//
-//                    break;
-//                case "泌尿治疗台":
-//                    mImageChose.setImageResource(R.drawable.icon_shenzhou4k);
-//                    break;
-//            }
+            switch (mItemBean.getDeviceType()) {
+                case "一代一体机":
+                    mImageChose.setImageResource(R.drawable.icon_yitiji);
+                    break;
+                case "耳鼻喉治疗台":
+                    mImageChose.setImageResource(R.drawable.icon_erbihou);
+
+                    break;
+                case "妇科治疗台":
+                    mImageChose.setImageResource(R.drawable.icon_shenzhou4k);
+                    break;
+                case "泌尿治疗台":
+                    mImageChose.setImageResource(R.drawable.icon_shenzhou4k);
+                    break;
+            }
 //            http://192.168.64.28:7001/ID/FilePath
 //            Log.e("adapter", "" + "Path:" + bean.getFilePath());
 //            mTextView.setText("Path:" + mDBBean.getMsg());

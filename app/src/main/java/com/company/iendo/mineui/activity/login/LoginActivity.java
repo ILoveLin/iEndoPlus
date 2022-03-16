@@ -64,6 +64,7 @@ import com.hjq.base.action.AnimAction;
 import com.hjq.umeng.Platform;
 import com.hjq.umeng.UmengLogin;
 import com.hjq.widget.view.PasswordEditText;
+import com.tencent.mmkv.MMKV;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -336,24 +337,6 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                                 LogUtils.e("用户列表===" + response);
 
 
-                                /**
-                                 * 登入成功的时候切换成监听 当前设备授权登入的socket端口
-                                 * 退出登入的时候切换成监听 当前广播发送端口
-                                 */
-                                ReceiveSocketService receiveSocketService = new ReceiveSocketService();
-                                WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-                                if (wifiManager.isWifiEnabled()) {
-                                    WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-                                    mAppIP = getIpString(wifiInfo.getIpAddress());
-                                }
-
-                                if ("".equals(mSocketPort)) {
-                                    toast("本地广播发送端口不能为空");
-                                    return;
-                                } else {
-                                    receiveSocketService.initSettingReceiveThread(mAppIP, Integer.parseInt(mSocketPort), LoginActivity.this);
-                                }
-
                             } else {
                                 showError();
                             }
@@ -523,6 +506,32 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                                          */
                                         setTestOffCaseData();
                                         MainActivity.start(getContext(), AFragment.class);
+
+
+
+                                        /**
+                                         * 登入成功的时候切换成监听 当前设备授权登入的socket端口--->Constants.KEY_RECEIVE_PORT
+                                         * 退出登入的时候切换成监听 当前广播发送端口(或者设置设备搜索界面设置成功赋值)----->Constants.KEY_RECEIVE_PORT_BY_SEARCH
+                                         */
+                                        ReceiveSocketService receiveSocketService = new ReceiveSocketService();
+                                        WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+                                        if (wifiManager.isWifiEnabled()) {
+                                            WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+                                            mAppIP = getIpString(wifiInfo.getIpAddress());
+                                        }
+
+                                        if ("".equals(mSocketPort)) {
+                                            toast("本地广播发送端口不能为空");
+                                            return;
+                                        } else {
+                                            LogUtils.e("AppActivity=login==port===="+mSocketPort);
+                                            receiveSocketService.initSettingReceiveThread(mAppIP, Integer.parseInt(mSocketPort), LoginActivity.this);
+
+                                        }
+
+
+
+
                                         finish();
 //                                        postDelayed(() -> {
 ////                                            mCommitView.showSucceed();
@@ -694,6 +703,7 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
     @Override
     protected void onResume() {
         super.onResume();
+
         LogUtils.e("========当前设备的备注信息~~~~====LoginActivity==onResume===");
         mBaseUrl = (String) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Current_BaseUrl, "http://192.168.1.200:3000");
         LogUtils.e("========当前设备的备注信息~~~~====LoginActivity==mBaseUrl===" + mBaseUrl);

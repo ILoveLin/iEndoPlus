@@ -113,16 +113,13 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.memory_bar:
-                HandBean handBean = new HandBean();
-                handBean.setHelloPc("HelloPc");
-                handBean.setComeFrom("Android");
-                byte[] sendByteData = CalculateUtils.getSendByteData(getApplication(), mGson.toJson(handBean),
-                        mCurrentTypeNum, mCurrentReceiveDeviceCode,
-                        Constants.UDP_HAND);
-                ArrayList<Object> objects = new ArrayList<>();
-                objects.get(2);
-                SocketUtils.startSendHandMessage("sendByteData".getBytes(), "192.168.130.196", Integer.parseInt(""));
-
+                MMKV kv = MMKV.defaultMMKV();
+                int port = kv.decodeInt(Constants.KEY_BROADCAST_PORT);
+                int port1 = kv.decodeInt(Constants.KEY_RECEIVE_PORT);
+                int portt = kv.decodeInt(Constants.KEY_RECEIVE_PORT_BY_SEARCH);
+                LogUtils.e("AppActivity=fragment==port===="+port);
+                LogUtils.e("AppActivity=fragment==port1===="+port1);
+                LogUtils.e("AppActivity=fragment==接收portt===="+portt);
                 break;
             case R.id.params_bar:
                 startActivity(DeviceParamsActivity.class);
@@ -205,13 +202,17 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
                         }
                         MMKV kv = MMKV.defaultMMKV();
                         int port = kv.decodeInt(Constants.KEY_BROADCAST_PORT);
+                        int portt = kv.decodeInt(Constants.KEY_RECEIVE_PORT_BY_SEARCH);
                         LogUtils.e("AppActivity=fragment==port===="+port);
+                        LogUtils.e("AppActivity=fragment==接收portt===="+portt);
 
                         if ("".equals(port)) {
                             toast("本地广播发送端口不能为空");
                             return;
                         } else {
-                            receiveSocketService.initSettingReceiveThread(mAppIP, port, getAttachActivity());
+
+                            receiveSocketService.initSettingReceiveThread(mAppIP, portt, getAttachActivity());
+
                         }
 
 

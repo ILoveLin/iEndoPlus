@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.company.iendo.R;
 import com.company.iendo.action.StatusAction;
+import com.company.iendo.aop.SingleClick;
 import com.company.iendo.app.AppActivity;
 import com.company.iendo.app.ReceiveSocketService;
 import com.company.iendo.bean.RefreshEvent;
@@ -74,7 +75,8 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
     private static final int UDP_BroadCast_Over = 112;
     private static final int UDP_Point_Over = 113;
     private static final int UDP_Anim = 114;
-    private static  Boolean Set_Data = false;
+    private static Boolean Set_Data = false;
+    private static Boolean CancleSearchDialog = false;   //主动取消搜索动画框
     @SuppressLint("HandlerLeak")
     private Handler mHandler = new Handler() {
         @Override
@@ -113,68 +115,74 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
         mReceiveBroadMap.clear();//广播接收到的数据map
         mReceivePointList.clear();//授权的list
         mReceiveBroadCastList.clear();//界面列表的list的中转list
-        Set_Data=false;
+        Set_Data = false;
+        showEmpty();
 //        mReceiveBroadMap.clear();
 //        mReceiveBroadCastList.clear();
 //        mReceivePointList.clear();
         // 自定义搜索对话框
 
-            mSearchDialog = new BaseDialog.Builder<>(this);
-            mSearchDialog.setContentView(R.layout.dialog_search)
-                    .setCanceledOnTouchOutside(false)
-                    .setAnimStyle(BaseDialog.ANIM_SCALE)
-                    //.setText(id, "我是预设置的文本")
-                    .setOnClickListener(R.id.btn_dialog_custom_ok, new BaseDialog.OnClickListener<View>() {
-                        @Override
-                        public void onClick(BaseDialog dialog, View view) {
-                            mHandler.sendEmptyMessage(UDP_BroadCast_Over);
-                            dialog.dismiss();
-                        }
-                    })
-                    .setOnKeyListener((dialog, event) -> {
-                        toast("按键代码：" + event.getKeyCode());
-                        return false;
-                    })
-                    .show();
-            mProgressView = mSearchDialog.getContentView().findViewById(R.id.progressview);
-            //        mProgressView.showAnimation(100,3000);
-            //开启计时器
-            countDownTimer.start();
+        mSearchDialog = new BaseDialog.Builder<>(this);
+        mSearchDialog.setContentView(R.layout.dialog_search)
+                .setCanceledOnTouchOutside(false)
+                .setAnimStyle(BaseDialog.ANIM_SCALE)
+                //.setText(id, "我是预设置的文本")
+                .setOnClickListener(R.id.btn_dialog_custom_ok, new BaseDialog.OnClickListener<View>() {
+                    @Override
+                    public void onClick(BaseDialog dialog, View view) {
+//                        mHandler.sendEmptyMessage(UDP_BroadCast_Over);
+                        dialog.dismiss();
+                    }
+                })
+                .setOnKeyListener((dialog, event) -> {
+                    toast("按键代码：" + event.getKeyCode());
+                    return false;
+                })
+                .show();
 
-            //发送广播
-            BroadCastDataBean bean = new BroadCastDataBean();
-            bean.setBroadcaster("szcme");                              //设备名字
-            bean.setRamdom(CalculateUtils.getCurrentTimeString());     //时间戳
-            byte[] sendByteData = CalculateUtils.getSendByteData(DeviceSearchActivity.this, mGson.toJson(bean), "FF",
-                    "00000000000000000000000000000000", "FD");
-            LogUtils.e("sendByteData====" + sendByteData);
-            //发送广播消息
-            if (("".equals(Constants.BROADCAST_PORT))) {
-                toast("通讯端口不能为空!");
-                return;
-            }
+        CircleProgressView mProgressView = mSearchDialog.getContentView().findViewById(R.id.progressview);
+        //        mProgressView.showAnimation(100,3000);
+        //开启计时器
+//        countDownTimer.start();
+        //发送广播
+        BroadCastDataBean bean = new BroadCastDataBean();
+        bean.setBroadcaster("szcme");                              //设备名字
+        bean.setRamdom(CalculateUtils.getCurrentTimeString());     //时间戳
+        byte[] sendByteData = CalculateUtils.getSendByteData(DeviceSearchActivity.this, mGson.toJson(bean), "FF",
+                "00000000000000000000000000000000", "FD");
+        LogUtils.e("sendByteData====" + sendByteData);
+        //发送广播消息
+        if (("".equals(Constants.BROADCAST_PORT))) {
+            toast("通讯端口不能为空!");
+            return;
+        }
 
-            SocketUtils.startSendBroadcastMessage(sendByteData);
-            mProgressView.showAnimation((int) 4000, 4000);
-            mProgressView.setOnChangeListener(new CircleProgressView.OnChangeListener() {
-                @Override
-                public void onProgressChanged(float progress, float max) {
-                    if (progress == max && null != mSearchDialog) {
+        SocketUtils.startSendBroadcastMessage(sendByteData);
+        mProgressView.showAnimation((int) 4000, 4000);
+        //是否显示外环刻度
+        mProgressView.setShowTick(false);
+        //是否旋转
+        mProgressView.setTurn(false);
+        mProgressView.setOnChangeListener(new CircleProgressView.OnChangeListener() {
+            @Override
+            public void onProgressChanged(float progress, float max) {
+                if (progress == max && null != mSearchDialog && mSearchDialog.isShowing()) {
                         mSearchDialog.dismiss();
                         mHandler.sendEmptyMessage(UDP_BroadCast_Over);
-                    }
-
+//
                 }
-            });
+
+            }
+        });
 
     }
 
     private void showSettingDialog() {
         MMKV kv = MMKV.defaultMMKV();
-        int i = kv.decodeInt(Constants.KEY_BROADCAST_PORT);
+        int mCurrentReceivePort = kv.decodeInt(Constants.KEY_RECEIVE_PORT_BY_SEARCH);
         new Input2SettingDialog.Builder(getActivity())
                 .setTitle("配置信息")
-                .set2Content(i + "")
+                .set2Content(mCurrentReceivePort + "")
                 .setCancel("取消")
                 .setConfirm("确定")
                 .setListener(new Input2SettingDialog.OnListener() {
@@ -195,13 +203,18 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
 
                             MMKV kv = MMKV.defaultMMKV();
                             //获取当前开启的接收端口
-                            int mCurrentReceivePort = kv.decodeInt(Constants.KEY_RECEIVE_PORT);
+                            LogUtils.e("保活服务开启-Setting--原本广播port---===mCurrentReceivePort===" + mCurrentReceivePort);
+                            LogUtils.e("保活服务开启-Setting--设置的port---===sendPort===" + sendPort);
+
                             if (mCurrentReceivePort == Integer.parseInt(sendPort)) {//相等,此时不需要开启新的线程
                                 toast("此端口已配置,请勿重复操作!");
                             } else {
                                 receiveSocketService.initSettingReceiveThread(mAppIP, Integer.parseInt(sendPort), DeviceSearchActivity.this);
                                 //存入当前广播发送的port
                                 LogUtils.e("保活服务开启-Setting--原本广播port---===i===" + sendPort);
+                                kv.encode(Constants.KEY_SOCKET_RECEIVE_FIRST_IN, true);
+                                kv.encode(Constants.KEY_RECEIVE_PORT, sendPort); //设置的,本地监听端口
+                                kv.encode(Constants.KEY_RECEIVE_PORT_BY_SEARCH, Integer.parseInt(sendPort)); //设置的,广播本地监听端口
                                 kv.encode(Constants.KEY_BROADCAST_PORT, Integer.parseInt(sendPort));
                                 int mDefaultCastSendPort = kv.decodeInt(Constants.KEY_BROADCAST_PORT);
                                 LogUtils.e("保活服务开启-Setting--原本广播port---===i===" + mDefaultCastSendPort);
@@ -316,17 +329,21 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
 
     }
 
-
+    @SingleClick
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_left:
-                Set_Data=false;
+                Set_Data = false;
                 //发送消息刷新设备界面
                 EventBus.getDefault().post(new RefreshEvent("refresh"));
                 finish();
                 break;
+
             case R.id.tv_right_search:
+                if (null != mSearchDialog && mSearchDialog.isShowing()) {
+                    return;
+                }
                 showSearchDialog();
                 break;
             case R.id.tv_right_setting:
@@ -358,12 +375,13 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
     private void getAdapterBeanData() {
         //此处只做一次广播结束之后界面数据的刷新,不然会出现数据重复
         LogUtils.e("DeviceSearchActivity回调==模拟数据==00001==" + mReceiveBroadMap.size());
+        LogUtils.e("DeviceSearchActivity回调==模拟数据==00001=Set_Data=" + Set_Data);
         if (mReceiveBroadMap.size() == 0) {
             showEmpty();
             return;
         }
 
-        if (Set_Data){ //界面设置过数据的直接return
+        if (Set_Data) { //界面设置过数据的直接return
             return;
         }
 
@@ -409,7 +427,7 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
             showEmpty();
         } else {
             mAdapter.setData(mReceiveList);
-            Set_Data=true;
+            Set_Data = true;
             showComplete();
         }
     }

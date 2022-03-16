@@ -23,9 +23,9 @@ public class Constants {
     public static final String BROADCAST_IP = "192.168.135.255";      //广播地址
     //    public static final String BROADCAST_IP = "255.255.255.255";      //广播地址
     //默认值都是一样的
-    public static final int BROADCAST_PORT = 8005;               //广播约定端口--->默认值
-    public static final int SEND_PORT = 8005;                    //发送端口--->默认值
-    public static final int RECEIVE_PORT = 8005;                 //本地监听端口--->默认值
+    public static final int BROADCAST_PORT = 7006;               //广播约定端口--->默认值
+    public static final int SEND_PORT = 7006;                    //发送端口--->默认值
+    public static final int RECEIVE_PORT = 7006;                 //本地监听端口--->默认值
 
 
     /**
@@ -33,7 +33,8 @@ public class Constants {
      * 也就是说BROADCAST_PORT==RECEIVE_PORT,本地需要开启新的线程socket(广播端口)接收消息
      */
     public static final String KEY_BROADCAST_PORT = "KEY_BROADCAST_PORT";                 //广播约定端口  MMKV的Key
-    public static final String KEY_RECEIVE_PORT = "KEY_RECEIVE_PORT";                     //本地监听端口  MMKV的Key
+    public static final String KEY_RECEIVE_PORT = "KEY_RECEIVE_PORT";                     //登入后和退出前这个时候监听的 本地监听端口  MMKV的Key
+    public static final String KEY_RECEIVE_PORT_BY_SEARCH = "KEY_RECEIVE_PORT_BY_SEARCH";                     //这个是设备搜索的,本地接收端口   MMKV的Key
 
     public static final String KEY_SOCKET_RECEIVE_FIRST_IN = "KEY_SOCKET_RECEIVE_FIRST_IN";  //第一次开启接收线程  MMKV的Key
     public static final String KEY_SEND_PORT = "KEY_SEND_PORT";                           //发送端口  MMKV的Key
@@ -64,6 +65,19 @@ public class Constants {
     public static final String UDP_F1 = "F1";                 //预览报告
     public static final String UDP_F2 = "F2";                 //打印报告
     public static final String UDP_18 = "18";                 //录像
+
+
+    /**
+     * 填写设备Dialog的设备类型标识
+     */
+
+
+    public static final String Type_FuKeTable = "妇科治疗台";                 //妇科治疗台
+    public static final String Type_V1_YiTiJi = "一代一体机";                 //一代一体机
+    public static final String Type_EarNoseTable = "耳鼻喉治疗台";            //耳鼻喉治疗台
+    public static final String Type_MiNiaoTable = "泌尿治疗台";             //泌尿治疗台
+
+
 
 
 }
