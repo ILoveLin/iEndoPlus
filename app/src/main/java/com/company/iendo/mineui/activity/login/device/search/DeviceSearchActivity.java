@@ -6,6 +6,7 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.CountDownTimer;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
@@ -106,11 +107,11 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
     };
 
 
-    private CircleProgressView mProgressView;
     private BaseDialog.Builder<BaseDialog.Builder<?>> mSearchDialog;
     private ReceiveSocketService receiveSocketService;
 
     private void showSearchDialog() {
+
         mReceiveList.clear();   //界面列表的list
         mReceiveBroadMap.clear();//广播接收到的数据map
         mReceivePointList.clear();//授权的list
@@ -131,6 +132,7 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
                     @Override
                     public void onClick(BaseDialog dialog, View view) {
 //                        mHandler.sendEmptyMessage(UDP_BroadCast_Over);
+                        countDownTimer.cancel();
                         dialog.dismiss();
                     }
                 })
@@ -141,9 +143,8 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
                 .show();
 
         CircleProgressView mProgressView = mSearchDialog.getContentView().findViewById(R.id.progressview);
-        //        mProgressView.showAnimation(100,3000);
+
         //开启计时器
-//        countDownTimer.start();
         //发送广播
         BroadCastDataBean bean = new BroadCastDataBean();
         bean.setBroadcaster("szcme");                              //设备名字
@@ -157,7 +158,7 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
             return;
         }
 
-        SocketUtils.startSendBroadcastMessage(sendByteData);
+        SocketUtils.startSendBroadcastMessage(sendByteData,this);
         mProgressView.showAnimation((int) 4000, 4000);
         //是否显示外环刻度
         mProgressView.setShowTick(false);
@@ -166,12 +167,9 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
         mProgressView.setOnChangeListener(new CircleProgressView.OnChangeListener() {
             @Override
             public void onProgressChanged(float progress, float max) {
-                if (progress == max && null != mSearchDialog && mSearchDialog.isShowing()) {
-                        mSearchDialog.dismiss();
-                        mHandler.sendEmptyMessage(UDP_BroadCast_Over);
-//
+                if (0==progress){
+                    countDownTimer.start();
                 }
-
             }
         });
 
@@ -241,16 +239,16 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
     private CountDownTimer countDownTimer = new CountDownTimer(1000 * 4, 1000) {
         @Override
         public void onTick(long millisUntilFinished) {
-            //秒转化成 00:00形式一
-//            timeView2.setText(formatTime1(millisUntilFinished) + "");
-            //秒转化成 00:00形式二
+
             Log.e("hehehe ", millisUntilFinished + " ");
         }
 
         @Override
         public void onFinish() {
             //显示主界面
+            mSearchDialog.dismiss();
             mHandler.sendEmptyMessage(UDP_BroadCast_Over);
+
 
         }
     };
@@ -751,7 +749,7 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
         // 广播 授权,使用的是设置的端口,其他的点对点消息,按照协议data的port的走
         MMKV kv = MMKV.defaultMMKV();
         int mSendPort = kv.decodeInt(Constants.KEY_BROADCAST_PORT);
-        SocketUtils.startSendPointMessage(sendByteData, ip, mSendPort);
+        SocketUtils.startSendPointMessage(sendByteData, ip, mSendPort,this);
 
 //        SocketManage.startSendMessageBySocket(sendByteData, ip, Constants.BROADCAST_PORT, false);
 

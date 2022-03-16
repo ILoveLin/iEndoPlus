@@ -426,7 +426,7 @@ public final class PictureChoseActivity extends AppActivity implements StatusAct
             toast("通讯端口不能为空!");
             return;
         }
-        SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort));
+        SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort),this);
 //        SocketManage.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort));
     }
 

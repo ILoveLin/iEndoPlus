@@ -39,6 +39,7 @@ public class Constants {
     public static final String KEY_SOCKET_RECEIVE_FIRST_IN = "KEY_SOCKET_RECEIVE_FIRST_IN";  //第一次开启接收线程  MMKV的Key
     public static final String KEY_SEND_PORT = "KEY_SEND_PORT";                           //发送端口  MMKV的Key
 
+    public static final String KEY_SEARCH_ING = "KEY_SEARCH_ING";                     //是否播放搜索动画  MMKV的Key
 
 
 //    public static final String KEY_CURRENT_RECEIVE_PORT = "KEY_CURRENT_RECEIVE_PORT";    //当前设置的,本地监听端口,只要不为空,就在此port上监听数据  MMKV的Key

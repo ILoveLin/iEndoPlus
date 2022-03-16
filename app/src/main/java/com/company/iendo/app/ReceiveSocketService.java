@@ -53,6 +53,7 @@ public class ReceiveSocketService extends AbsWorkService {
     private Gson mGson;
     private EasyThread mReceiveThread;
     private static ReceiveSocketService.receiveThread receiveThread;
+    private WifiManager.MulticastLock lock;
 
 
     public void stopService() {
@@ -104,6 +105,9 @@ public class ReceiveSocketService extends AbsWorkService {
         LogUtils.e("保活服务开启====startWork=====startWork");
         //Wifi状态判断
         WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        lock = wifiManager.createMulticastLock("test wifi");
+        //用完之后及时调用lock.release()释放资源，否决多次调用lock.acquire()方法，程序可能会崩
+
         if (wifiManager.isWifiEnabled()) {
             WifiInfo wifiInfo = wifiManager.getConnectionInfo();
             mAppIP = getIpString(wifiInfo.getIpAddress());
@@ -178,6 +182,8 @@ public class ReceiveSocketService extends AbsWorkService {
                         LogUtils.e("======LiveServiceImpl=====AppIP==" + AppIP);
                         LogUtils.e("======LiveServiceImpl=====mReceivePacket.getAddress()==" + mSettingDataPacket.getAddress());
                         if (!AppIP.equals(mSettingDataPacket.getAddress())) {   //不是自己的IP不接受
+                            //申请开启
+                            lock.acquire();
                             mSettingDataSocket.receive(mSettingDataPacket);
                             LogUtils.e("======LiveServiceImpl=====mReceivePacket==AppIP==" + AppIP);
                             int localPort = mSettingDataSocket.getLocalPort();
@@ -326,6 +332,9 @@ public class ReceiveSocketService extends AbsWorkService {
                                     }
                                 }
                             }
+
+                            //及时释放资源不然次数多了会报错
+                            lock.release();
                         }
 
                     } catch (Exception e) {
@@ -379,7 +388,7 @@ public class ReceiveSocketService extends AbsWorkService {
     public void initSettingReceiveThread(String currentIP, int settingReceivePort, Context context) {
         //获取当前开启的接收端口
         LogUtils.e("保活服务开启-My-startWork---bbAA---===bbAA=00==");
-        LogUtils.e("保活服务开启-My-startWork---bbAA---===bbAA=00=="+settingReceivePort);
+        LogUtils.e("保活服务开启-My-startWork---bbAA---===bbAA=00==" + settingReceivePort);
         receiveThread receiveThread = new receiveThread(currentIP, settingReceivePort, context);
         receiveThread.start();
 
