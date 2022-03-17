@@ -211,7 +211,7 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
                                 //存入当前广播发送的port
                                 LogUtils.e("保活服务开启-Setting--原本广播port---===i===" + settingPort);
                                 kv.encode(Constants.KEY_SOCKET_RECEIVE_FIRST_IN, true);
-                                kv.encode(Constants.KEY_RECEIVE_PORT, settingPort); //设置的,本地监听端口
+                                kv.encode(Constants.KEY_RECEIVE_PORT, Integer.parseInt(settingPort)); //设置的,本地监听端口
                                 kv.encode(Constants.KEY_RECEIVE_PORT_BY_SEARCH, Integer.parseInt(settingPort)); //设置的,广播本地监听端口
                                 kv.encode(Constants.KEY_BROADCAST_PORT, Integer.parseInt(settingPort));
                                 int mDefaultCastSendPort = kv.decodeInt(Constants.KEY_BROADCAST_PORT);

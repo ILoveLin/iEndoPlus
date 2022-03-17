@@ -25,13 +25,14 @@ import com.company.iendo.bean.event.SocketRefreshEvent;
 import com.company.iendo.bean.socket.HandBean;
 import com.company.iendo.bean.socket.RecodeBean;
 import com.company.iendo.bean.socket.getpicture.ShotPictureBean;
-import com.company.iendo.mineui.socket.SocketManage;
 import com.company.iendo.other.Constants;
+
 import com.company.iendo.utils.CalculateUtils;
 import com.company.iendo.utils.CommonUtil;
 import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.ScreenSizeUtil;
 import com.company.iendo.utils.SharePreferenceUtil;
+import com.company.iendo.utils.SocketUtils;
 import com.company.iendo.widget.vlc.ENDownloadView;
 import com.company.iendo.widget.vlc.ENPlayView;
 import com.company.iendo.widget.vlc.MyVlcVideoView;
@@ -112,6 +113,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
             switch (msg.what) {
+//                0：查询录像状态 1：开始录像，2：停止录像，3：正在录像  4：未录像  5：采集卡未安装
                 case Record_Request://每次请求录像操作的时候,都需要获取上位机状态再做后续操作
                     if (UDP_RECODE_INIT_TAG) {//true 表示:因为录像中,所以直接停止
                         sendSocketPointRecodeStatusMessage(Constants.UDP_18, "2");
@@ -126,6 +128,8 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                         setTextColor(getResources().getColor(R.color.white), "录像中", true);
                     } else if ("2".equals(tag) || "4".equals(tag)) {
                         setTextColor(getResources().getColor(R.color.white), "录像", false);
+                    }else if ("5".equals(tag)){
+                        toast("采集卡未安装");
                     }
                     LogUtils.e("录像====" + tag);
                     LogUtils.e("录像====" + UDP_RECODE_INIT_TAG);
@@ -177,75 +181,6 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         }
     };
 
-
-    public void setTextColor(int color, String message, Boolean recodeStatus) {
-        UDP_RECODE_INIT_TAG = recodeStatus;
-        mRecordMsg.setText(message);
-        mRecordMsg.setTextColor(color);
-    }
-
-
-    @Override
-    protected int getLayoutId() {
-        return R.layout.activity_get_picture;
-    }
-
-    @Override
-    protected void initView() {
-        EventBus.getDefault().register(this);
-        initLayoutView();
-    }
-
-    @Override
-    protected void initData() {
-
-        rootView.setLongClickable(true);  //手势需要--能触摸
-        rootView.setOnTouchListener(onTouchVideoListener);
-        //rootView.setOnTouchListener(null);
-        //rootView.setLongClickable(false);  //手势不需要需要--不能触摸
-        rtmpOnlyAudio = new RtmpOnlyAudio(this);
-        LogUtils.e("pusherStart====111===" + rtmpOnlyAudio.isStreaming());    //true   断开的时候
-        LogUtils.e("pusherStart====222===" + rtmpOnlyAudio.prepareAudio());   //true
-
-        //获取当前病例ID
-        Bundle bundle = getIntent().getExtras();
-        currentUrl = bundle.getString("currentUrl");
-        mCaseID = bundle.getString("ItemID");
-        LogUtils.e("pusherStart====彩图界面直播地址:currentUrl===" + currentUrl);
-
-        path = currentUrl;
-        startLive(path);
-//        推流音频代码
-//        if (!rtmpOnlyAudio.isStreaming()) {
-//            if (rtmpOnlyAudio.prepareAudio()) {
-//                if (CommonUtil.isFastClick()) {
-//                    if ("一体机".equals(mTitleData.substring(0, 3))) {
-//                        if (isPlayering) {
-//                            pusherStart();
-//                        } else {
-//                            startSendToast("只有在直播开启的时候,才能使用语音功能!");
-//                        }
-//                    } else {
-//                        startSendToast("当前直播没有语音功能!");
-//                    }
-//                }
-//            } else {
-//                startSendToast("Error preparing stream, This device cant do it");
-//            }
-//        } else {
-//            if (CommonUtil.isFastClick()) {
-//                pusherStop("Common");
-//            }
-//        }
-        responseListener();
-
-
-    }
-
-    /**
-     * ***************************************************************************通讯模块**************************************************************************
-     */
-
     /**
      * eventbus 刷新socket数据
      */
@@ -294,176 +229,6 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         }
 
     }
-
-
-    /**
-     * 发送握手消息
-     */
-    public void sendHandLinkMessage() {
-        HandBean handBean = new HandBean();
-        handBean.setHelloPc("HelloPc");
-        handBean.setComeFrom("Android");
-        byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(handBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
-                Constants.UDP_HAND);
-        if (("".equals(mSocketPort))) {
-            toast("通讯端口不能为空!");
-            return;
-        }
-        SocketManage.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort));
-//        SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort));
-//        SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort));
-    }
-
-    /**
-     * 发送点对点消息,必须握手成功
-     *
-     * @param CMDCode 命令cmd
-     * @param status  状态值
-     */
-    public void sendSocketPointRecodeStatusMessage(String CMDCode, String status) {
-        if (UDP_HAND_TAG) {
-            RecodeBean bean = new RecodeBean();
-            bean.setQrycode(status);
-            if (!("".equals(mCaseID))) {
-                String id = CalculateUtils.numToHex16(Integer.parseInt(mCaseID));
-                bean.setRecordid(id);
-            } else {
-                bean.setRecordid("");
-            }
-            byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(bean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
-                    CMDCode);
-            if (("".equals(mSocketPort))) {
-                toast("通讯端口不能为空!");
-                return;
-            }
-            SocketManage.startSendMessageBySocket(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), false);
-        } else {
-            toast("请先建立握手链接!");
-            sendHandLinkMessage();
-        }
-
-    }
-
-    /**
-     * 发送点对点消息,必须握手成功
-     *
-     * @param CMDCode 命令cmd
-     */
-    public void sendSocketPointMessage(String CMDCode) {
-        if (UDP_HAND_TAG) {
-            HandBean handBean = new HandBean();
-            handBean.setHelloPc("HelloPc");
-            handBean.setComeFrom("Android");
-            byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(handBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
-                    CMDCode);
-            if (("".equals(mSocketPort))) {
-                toast("通讯端口不能为空!");
-                return;
-            }
-            SocketManage.startSendMessageBySocket(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), false);
-        } else {
-            toast("请先建立握手链接!");
-            sendHandLinkMessage();
-
-        }
-
-    }
-
-    /**
-     * 发送点对点消息,必须握手成功
-     *
-     * @param CMDCode 命令cmd
-     */
-    public void sendSocketPointShotMessage(String CMDCode) {
-        if (UDP_HAND_TAG) {
-            ShotPictureBean bean = new ShotPictureBean();
-            String spCaseID = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_Chose_CaseID, "");
-            String hexID = CalculateUtils.numToHex16(Integer.parseInt(spCaseID));
-            bean.setRecordid(hexID);
-            LogUtils.e("======GetPictureActivity==回调===获取当前病例==" + bean.toString());
-
-            byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(bean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
-                    CMDCode);
-            if (("".equals(mSocketPort))) {
-                toast("通讯端口不能为空!");
-                return;
-            }
-            SocketManage.startSendMessageBySocket(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), false);
-        } else {
-            toast("请先建立握手链接!");
-            sendHandLinkMessage();
-        }
-
-    }
-
-    /**
-     * ***************************************************************************通讯模块**************************************************************************
-     */
-
-    private void responseListener() {
-        setOnClickListener(R.id.linear_record, R.id.linear_picture, R.id.linear_cold, R.id.linear_mic, R.id.full_change, R.id.lock_screen, R.id.root_layout_vlc, R.id.video_back, R.id.control_start_view);
-        mVLCView.setMediaListenerEvent(new MediaListenerEvent() {
-            @Override
-            public void eventBuffing(int event, float buffing) {
-                if (buffing < 100) {
-                    mLoadingView.start();
-                    mLoadingView.setVisibility(View.VISIBLE);
-                } else if (buffing == 100) {
-                    isPlayering = true;
-                    mLoadingView.release();
-                    mLoadingView.setVisibility(View.INVISIBLE);
-
-                }
-            }
-
-            @Override
-            public void eventStop(boolean isPlayError) {
-                mLoadingView.setVisibility(View.INVISIBLE);
-                mStartView.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void eventError(int event, boolean show) {
-                isPlayering = false;
-                mStartView.setVisibility(View.VISIBLE);
-                mLoadingView.setVisibility(View.INVISIBLE);
-            }
-
-            @Override
-            public void eventPlayInit(boolean openClose) {
-                mStartView.setVisibility(View.INVISIBLE);
-//                error_text.setVisibility(View.INVISIBLE);
-            }
-
-            @Override
-            public void eventPlay(boolean isPlaying) {
-
-            }
-
-            @Override
-            public void eventSystemEnd(String isStringed) {
-                isPlayering = false;
-                if ("EndReached".equals(isStringed)) {
-//                    if (mFlagRecord) { //如果在录像，断开录像
-//                        vlcRecordOver();
-//                    }
-                    if (mFlagMicOnLine) {//如果在连麦，断开连麦
-//                        pusherStop("Common");
-                    }
-
-                }
-            }
-
-            @Override
-            public void eventCurrentTime(String time) {
-                currentTime = time;
-                mHandler.sendEmptyMessageDelayed(Time, 1000);
-            }
-
-
-        });
-    }
-
 
     @Override
     public void onClick(View view) {
@@ -569,6 +334,245 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                 break;
         }
     }
+
+    public void setTextColor(int color, String message, Boolean recodeStatus) {
+        UDP_RECODE_INIT_TAG = recodeStatus;
+        mRecordMsg.setText(message);
+        mRecordMsg.setTextColor(color);
+    }
+
+
+    @Override
+    protected int getLayoutId() {
+        return R.layout.activity_get_picture;
+    }
+
+    @Override
+    protected void initView() {
+        EventBus.getDefault().register(this);
+        initLayoutView();
+    }
+
+    @Override
+    protected void initData() {
+
+        rootView.setLongClickable(true);  //手势需要--能触摸
+        rootView.setOnTouchListener(onTouchVideoListener);
+        //rootView.setOnTouchListener(null);
+        //rootView.setLongClickable(false);  //手势不需要需要--不能触摸
+        rtmpOnlyAudio = new RtmpOnlyAudio(this);
+        LogUtils.e("pusherStart====111===" + rtmpOnlyAudio.isStreaming());    //true   断开的时候
+        LogUtils.e("pusherStart====222===" + rtmpOnlyAudio.prepareAudio());   //true
+
+        //获取当前病例ID
+        Bundle bundle = getIntent().getExtras();
+        currentUrl = bundle.getString("currentUrl");
+        mCaseID = bundle.getString("ItemID");
+        LogUtils.e("pusherStart====彩图界面直播地址:currentUrl===" + currentUrl);
+
+        path = currentUrl;
+        startLive(path);
+//        推流音频代码
+//        if (!rtmpOnlyAudio.isStreaming()) {
+//            if (rtmpOnlyAudio.prepareAudio()) {
+//                if (CommonUtil.isFastClick()) {
+//                    if ("一体机".equals(mTitleData.substring(0, 3))) {
+//                        if (isPlayering) {
+//                            pusherStart();
+//                        } else {
+//                            startSendToast("只有在直播开启的时候,才能使用语音功能!");
+//                        }
+//                    } else {
+//                        startSendToast("当前直播没有语音功能!");
+//                    }
+//                }
+//            } else {
+//                startSendToast("Error preparing stream, This device cant do it");
+//            }
+//        } else {
+//            if (CommonUtil.isFastClick()) {
+//                pusherStop("Common");
+//            }
+//        }
+        responseListener();
+
+
+    }
+
+    /**
+     * ***************************************************************************通讯模块**************************************************************************
+     */
+
+
+
+    /**
+     * 发送握手消息
+     */
+    public void sendHandLinkMessage() {
+        HandBean handBean = new HandBean();
+        handBean.setHelloPc("HelloPc");
+        handBean.setComeFrom("Android");
+        byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(handBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
+                Constants.UDP_HAND);
+        if (("".equals(mSocketPort))) {
+            toast("通讯端口不能为空!");
+            return;
+        }
+        LogUtils.e("SocketUtils===发送消息==点对点==GetPictureActivity==mSocketPort==" + mSocketPort);
+
+        SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort),GetPictureActivity.this);
+    }
+
+    /**
+     * 发送点对点消息,必须握手成功
+     *
+     * @param CMDCode 命令cmd
+     * @param status  状态值
+     */
+    public void sendSocketPointRecodeStatusMessage(String CMDCode, String status) {
+        if (UDP_HAND_TAG) {
+            RecodeBean bean = new RecodeBean();
+            bean.setQrycode(status);
+            if (!("".equals(mCaseID))) {
+                String id = CalculateUtils.numToHex16(Integer.parseInt(mCaseID));
+                bean.setRecordid(id);
+            } else {
+                bean.setRecordid("");
+            }
+            byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(bean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
+                    CMDCode);
+            if (("".equals(mSocketPort))) {
+                toast("通讯端口不能为空!");
+                return;
+            }
+            SocketUtils.startSendPointMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort),GetPictureActivity.this);
+        } else {
+            toast("请先建立握手链接!");
+            sendHandLinkMessage();
+        }
+
+    }
+
+    /**
+     * 发送点对点消息,必须握手成功
+     *
+     * @param CMDCode 命令cmd
+     */
+    public void sendSocketPointMessage(String CMDCode) {
+        if (UDP_HAND_TAG) {
+            HandBean handBean = new HandBean();
+            handBean.setHelloPc("HelloPc");
+            handBean.setComeFrom("Android");
+            byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(handBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
+                    CMDCode);
+            if (("".equals(mSocketPort))) {
+                toast("通讯端口不能为空!");
+                return;
+            }
+            SocketUtils.startSendPointMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort),GetPictureActivity.this);
+        } else {
+            toast("请先建立握手链接!");
+            sendHandLinkMessage();
+
+        }
+
+    }
+
+    /**
+     * 发送点对点消息,必须握手成功
+     *
+     * @param CMDCode 命令cmd
+     */
+    public void sendSocketPointShotMessage(String CMDCode) {
+        if (UDP_HAND_TAG) {
+            ShotPictureBean bean = new ShotPictureBean();
+            String spCaseID = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_Chose_CaseID, "");
+            String hexID = CalculateUtils.numToHex16(Integer.parseInt(spCaseID));
+            bean.setRecordid(hexID);
+            LogUtils.e("======GetPictureActivity==回调===获取当前病例==" + bean.toString());
+
+            byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(bean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
+                    CMDCode);
+            if (("".equals(mSocketPort))) {
+                toast("通讯端口不能为空!");
+                return;
+            }
+            SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort),GetPictureActivity.this);
+        } else {
+            toast("请先建立握手链接!");
+            sendHandLinkMessage();
+        }
+
+    }
+
+    /**
+     * ***************************************************************************通讯模块**************************************************************************
+     */
+
+    private void responseListener() {
+        setOnClickListener(R.id.linear_record, R.id.linear_picture, R.id.linear_cold, R.id.linear_mic, R.id.full_change, R.id.lock_screen, R.id.root_layout_vlc, R.id.video_back, R.id.control_start_view);
+        mVLCView.setMediaListenerEvent(new MediaListenerEvent() {
+            @Override
+            public void eventBuffing(int event, float buffing) {
+                if (buffing < 100) {
+                    mLoadingView.start();
+                    mLoadingView.setVisibility(View.VISIBLE);
+                } else if (buffing == 100) {
+                    isPlayering = true;
+                    mLoadingView.release();
+                    mLoadingView.setVisibility(View.INVISIBLE);
+
+                }
+            }
+
+            @Override
+            public void eventStop(boolean isPlayError) {
+                mLoadingView.setVisibility(View.INVISIBLE);
+                mStartView.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void eventError(int event, boolean show) {
+                isPlayering = false;
+                mStartView.setVisibility(View.VISIBLE);
+                mLoadingView.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void eventPlayInit(boolean openClose) {
+                mStartView.setVisibility(View.INVISIBLE);
+//                error_text.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void eventPlay(boolean isPlaying) {
+
+            }
+
+            @Override
+            public void eventSystemEnd(String isStringed) {
+                isPlayering = false;
+                if ("EndReached".equals(isStringed)) {
+//                    if (mFlagRecord) { //如果在录像，断开录像
+//                        vlcRecordOver();
+//                    }
+                    if (mFlagMicOnLine) {//如果在连麦，断开连麦
+//                        pusherStop("Common");
+                    }
+
+                }
+            }
+
+            @Override
+            public void eventCurrentTime(String time) {
+                currentTime = time;
+                mHandler.sendEmptyMessageDelayed(Time, 1000);
+            }
+
+
+        });
+    }
+
 
     private void finishThisActivity() {
 //        if (mFlagRecord) {

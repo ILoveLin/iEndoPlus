@@ -66,9 +66,9 @@ public class CalculateUtils {
                 result = "耳鼻喉控制板";
             } else if ("07".equals(str)) {
                 result = "一代一体机";
-            } else if ("8".equals(str)) {
+            } else if ("08".equals(str)) {
                 result = "耳鼻喉治疗台";
-            } else if ("9".equals(str)) {
+            } else if ("09".equals(str)) {
                 result = "妇科治疗台";
             } else if ("10".equals(str)) {
                 result = "泌尿治疗台";
@@ -396,7 +396,13 @@ public class CalculateUtils {
 //      bean.setBroadcaster("szcme");                              //设备名字
 //      bean.setRamdom(CalculateUtils.getCurrentTimeString());
 //      广播发起随机时间戳:20220127104645
-
+        //不转换的时候最后在CalculateUtils.hexString2Bytes(sendCommandString);回返回null,因为我那边模了不是偶数就会返回null
+        if ("9".equals(Received_Type)){
+            Received_Type ="09";
+        }
+        if ("8".equals(Received_Type)){
+            Received_Type ="08";
+        }
         String mSend_IDBy32 = MD5ChangeUtil.Md5_32(DeviceIdUtil.getDeviceId(mContext));
         String mData = CalculateUtils.str2HexStr(bean);                   //data  json字符串转16进制
         String mHead = "AAC5";                                             //帧头    ---2字节
@@ -611,6 +617,8 @@ public class CalculateUtils {
         try {
 
             //      String str = "AAC501006A22 EE0700000000000000005618B1F96D92837Ca1f9432b11b93e8bb4ae34539b7472c20eFD7b227469746c65223a2241494f2d454e54222c2272656d61726b223a226f6e65686f6d65222c22656e646f74797065223a2233222c22616363657074223a2230227d b4DD";
+            LogUtils.e("UDP==命令===str=====" + str);
+
             String substring = str.substring(12, str.length() - 4);
             LogUtils.e("UDP==命令===getReceiveRun2End4String=====" + substring);
             String s1 = hexStr2Str(substring);

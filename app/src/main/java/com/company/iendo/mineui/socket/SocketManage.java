@@ -247,7 +247,7 @@ public class SocketManage {
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
-            getSendSocketRunnable(data, mAddress, receivePort);
+//            getSendSocketRunnable(data, mAddress, receivePort);
             if (null == easyCacheThread) {
                 easyCacheThread = ThreadManager.getCache();
             }
@@ -273,10 +273,10 @@ public class SocketManage {
             easyCacheThread = ThreadManager.getCache();
         }
         if (isBroadcast) {//发送广播
-            getSendBroadcastRunnable(data, mAddress, receivePort);
+//            getSendBroadcastRunnable(data, mAddress, receivePort);
             easyCacheThread.execute(mSendBroadcastRunnable);
         } else {  //点对点消息
-            getSendSocketRunnable(data, mAddress, receivePort);
+//            getSendSocketRunnable(data, mAddress, receivePort);
             easyCacheThread.execute(mSendRunnable);
         }
 

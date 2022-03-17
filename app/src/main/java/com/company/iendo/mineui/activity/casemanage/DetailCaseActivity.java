@@ -359,7 +359,10 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
                 toast("通讯端口不能为空!");
                 return;
             }
-            SocketManage.startSendMessageBySocket(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), false);
+
+            SocketUtils.startSendPointMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort),DetailCaseActivity.this);
+//            SocketManage.startSendMessageBySocket(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), false);
+
         } else {
             sendHandLinkMessage();
             toast("请先建立握手链接!");
@@ -376,10 +379,14 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
         handBean.setComeFrom("Android");
         byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(handBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
                 Constants.UDP_HAND);
+
         if (("".equals(mSocketPort))) {
             toast("通讯端口不能为空!");
             return;
         }
+        LogUtils.e("SocketUtils===发送消息==点对点==detailCaseActivity==sendByteData==" + sendByteData);
+        LogUtils.e("SocketUtils===发送消息==点对点==detailCaseActivity==mSocketPort==" + mSocketPort);
+
         SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort),this);
 //        SocketManage.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort));
     }
@@ -417,7 +424,6 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
      * 查询服务端是否已经生成报告
      */
     private void sendRequest() {
-
         OkHttpUtils.get()
                 .url(mBaseUrl + HttpConstant.CaseManager_Report_Exists)
                 .addParams("ID", currentItemID)

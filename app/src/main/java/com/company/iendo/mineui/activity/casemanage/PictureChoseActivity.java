@@ -25,6 +25,7 @@ import com.company.iendo.bean.socket.HandBean;
 import com.company.iendo.bean.socket.getpicture.ShotPictureBean;
 import com.company.iendo.mineui.activity.MainActivity;
 import com.company.iendo.mineui.activity.casemanage.fragment.adapter.ChosePictureAdapter;
+import com.company.iendo.mineui.activity.vlc.GetPictureActivity;
 import com.company.iendo.mineui.socket.SocketManage;
 import com.company.iendo.other.Constants;
 import com.company.iendo.other.GridSpaceDecoration;
@@ -343,7 +344,11 @@ public final class PictureChoseActivity extends AppActivity implements StatusAct
                             LogUtils.e("图片" + "response===" + response);////原图路径
                             if (0 == code) {
                                 //成功,之后才开启动画显示报告预览
-                                showStartReportAnim();
+                                if(UDP_HAND_TAG){
+                                    showStartReportAnim();
+                                }else {
+                                    toast("请先建立握手连接");
+                                }
                             } else {
                                 toast("请求失败");
                                 showError(listener -> {
@@ -371,11 +376,9 @@ public final class PictureChoseActivity extends AppActivity implements StatusAct
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void SocketRefreshEvent(SocketRefreshEvent event) {
         LogUtils.e("Socket回调==PictureChoseActivity==event.getData()==" + event.getData());
-        String mRun2End4 = CalculateUtils.getReceiveRun2End4String(event.getData());//随机数之后到data结尾的String
         String deviceType = CalculateUtils.getSendDeviceType(event.getData());
         String deviceOnlyCode = CalculateUtils.getSendDeviceOnlyCode(event.getData());
         String currentCMD = CalculateUtils.getCMD(event.getData());
-        LogUtils.e("Socket回调==PictureChoseActivity==随机数之后到data的Str==mRun2End4==" + mRun2End4);
         LogUtils.e("Socket回调==PictureChoseActivity==发送方设备类型==deviceType==" + deviceType);
         LogUtils.e("Socket回调==PictureChoseActivity==获取发送方设备Code==deviceOnlyCode==" + deviceOnlyCode);
         LogUtils.e("Socket回调==PictureChoseActivity==当前UDP命令==currentCMD==" + currentCMD);
@@ -448,7 +451,9 @@ public final class PictureChoseActivity extends AppActivity implements StatusAct
                 toast("通讯端口不能为空!");
                 return;
             }
-            SocketManage.startSendMessageBySocket(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), false);
+
+            SocketUtils.startSendPointMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), PictureChoseActivity.this);
+//            SocketManage.startSendMessageBySocket(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), false);
         } else {
             sendHandLinkMessage();
             toast("请先建立握手链接!");

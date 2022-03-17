@@ -17,6 +17,7 @@ import com.company.iendo.bean.ListDialogDateBean;
 import com.company.iendo.bean.event.SocketRefreshEvent;
 import com.company.iendo.bean.socket.HandBean;
 import com.company.iendo.manager.ActivityManager;
+import com.company.iendo.mineui.activity.vlc.GetPictureActivity;
 import com.company.iendo.mineui.socket.SocketManage;
 import com.company.iendo.other.Constants;
 import com.company.iendo.other.HttpConstant;
@@ -24,6 +25,7 @@ import com.company.iendo.ui.dialog.MenuDialog;
 import com.company.iendo.utils.CalculateUtils;
 import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.SharePreferenceUtil;
+import com.company.iendo.utils.SocketUtils;
 import com.company.iendo.widget.LinesEditView;
 import com.company.iendo.widget.StatusLayout;
 import com.gyf.immersionbar.ImmersionBar;
@@ -371,7 +373,8 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
             toast("通讯端口不能为空!");
             return;
         }
-        SocketManage.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort));
+        SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), AddCaseActivity.this);
+//        SocketManage.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort));
     }
 
     /**
@@ -390,7 +393,8 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
                 toast("通讯端口不能为空!");
                 return;
             }
-            SocketManage.startSendMessageBySocket(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), false);
+            SocketUtils.startSendPointMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort),AddCaseActivity.this);
+
         } else {
             sendHandLinkMessage();
             toast("请先建立握手链接!");

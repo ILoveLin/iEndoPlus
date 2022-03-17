@@ -508,7 +508,6 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                                         MainActivity.start(getContext(), AFragment.class);
 
 
-
                                         /**
                                          * 登入成功的时候切换成监听 当前设备授权登入的socket端口--->Constants.KEY_RECEIVE_PORT
                                          * 退出登入的时候切换成监听 当前广播发送端口(或者设置设备搜索界面设置成功赋值)----->Constants.KEY_RECEIVE_PORT_BY_SEARCH

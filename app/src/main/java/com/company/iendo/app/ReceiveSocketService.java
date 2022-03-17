@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import com.company.iendo.bean.event.SocketRefreshEvent;
 import com.company.iendo.bean.socket.RecodeBean;
+import com.company.iendo.bean.socket.UpdateCaseBean;
 import com.company.iendo.bean.socket.getpicture.ColdPictureBean;
 import com.company.iendo.bean.socket.getpicture.LookReportBean;
 import com.company.iendo.bean.socket.getpicture.PrintReportBean;
@@ -144,7 +145,6 @@ public class ReceiveSocketService extends AbsWorkService {
      * 此为接收线程具体解析
      * ip 本地app的ip地址
      * port 本地监听的端口
-     *
      */
     public class receiveThread extends Thread {
         private int settingReceivePort;
@@ -187,7 +187,7 @@ public class ReceiveSocketService extends AbsWorkService {
                         //不是自己的IP不接受
                         if (!AppIP.equals(mSettingDataPacket.getAddress())) {
                             //申请开启
-                            lock.acquire();
+//                            lock.acquire();
                             mSettingDataSocket.receive(mSettingDataPacket);
                             LogUtils.e("======LiveServiceImpl=====mReceivePacket==AppIP==" + AppIP);
                             int localPort = mSettingDataSocket.getLocalPort();
@@ -331,6 +331,17 @@ public class ReceiveSocketService extends AbsWorkService {
                                             event.setUdpCmd(Constants.UDP_18);
                                             EventBus.getDefault().post(event);
                                             break;
+                                        case Constants.UDP_13://更新病例
+                                            LogUtils.e("======LiveServiceImpl==回调===更新病例==");
+                                            UpdateCaseBean updateBean = mGson.fromJson(str, UpdateCaseBean.class);
+                                            //hex转成十进制
+                                            String caseID = CalculateUtils.hex16To10(updateBean.getRecordid()) + "";
+                                            event.setTga(true);
+                                            event.setData(caseID);
+                                            event.setIp(hostAddressIP);
+                                            event.setUdpCmd(Constants.UDP_13);
+                                            EventBus.getDefault().post(event);
+                                            break;
 
 
                                     }
@@ -338,7 +349,7 @@ public class ReceiveSocketService extends AbsWorkService {
                             }
 
                             //及时释放资源不然次数多了会报错
-                            lock.release();
+//                            lock.release();
                         }
 
                     } catch (Exception e) {
@@ -369,7 +380,7 @@ public class ReceiveSocketService extends AbsWorkService {
 
         LogUtils.e("保活服务开启-startWork--原本port---===i===" + mDefaultReceivePort);
         LogUtils.e("保活服务开启-startWork--原本广播port---===i===" + mDefaultCastSendPort);
-        LogUtils.e("保活服务开启-startWork---b---===b===" + b);
+        LogUtils.e("保活服务开启-startWork---b---===mReceivePort===" + mReceivePort);
 
 
         if (!b) {

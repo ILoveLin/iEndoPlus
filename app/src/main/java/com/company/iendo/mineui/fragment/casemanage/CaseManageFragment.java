@@ -16,6 +16,7 @@ import com.company.iendo.action.StatusAction;
 import com.company.iendo.app.TitleBarFragment;
 import com.company.iendo.bean.CaseManageListBean;
 import com.company.iendo.bean.ZXBean;
+import com.company.iendo.bean.event.SocketRefreshEvent;
 import com.company.iendo.http.glide.GlideRequest;
 import com.company.iendo.mineui.activity.MainActivity;
 import com.company.iendo.mineui.activity.casemanage.AddCaseActivity;
@@ -24,8 +25,10 @@ import com.company.iendo.mineui.activity.login.device.DeviceActivity;
 import com.company.iendo.mineui.activity.search.SearchActivity;
 import com.company.iendo.mineui.activity.search.SearchSelectedActivity;
 import com.company.iendo.mineui.fragment.casemanage.adapter.CaseManageAdapter;
+import com.company.iendo.other.Constants;
 import com.company.iendo.other.HttpConstant;
 import com.company.iendo.ui.dialog.DateDialog;
+import com.company.iendo.utils.CalculateUtils;
 import com.company.iendo.utils.DateUtil;
 import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.ScreenSizeUtil;
@@ -50,6 +53,9 @@ import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Type;
@@ -65,8 +71,9 @@ import okhttp3.Call;
  * author： LoveLin
  * time：2021/10/29 13:55
  * desc：病例列表 --此处开启监听线程,上位机删除或者更新,接受的到数据从新请求列表刷新数据
+ * , OnRefreshLoadMoreListener
  */
-public class CaseManageFragment extends TitleBarFragment<MainActivity> implements StatusAction, BaseAdapter.OnItemClickListener, OnRefreshLoadMoreListener {
+public class CaseManageFragment extends TitleBarFragment<MainActivity> implements StatusAction, BaseAdapter.OnItemClickListener {
     private SmartRefreshLayout mRefreshLayout;
     private WrapRecyclerView mRecyclerView;
     private CaseManageAdapter mAdapter;
@@ -90,6 +97,7 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
 
     @Override
     protected void initView() {
+        EventBus.getDefault().register(this);
         endoType = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_EndoType, "3");
         mRefreshLayout = findViewById(R.id.rl_b_refresh);
         mRecyclerView = findViewById(R.id.rv_b_recyclerview);
@@ -255,39 +263,6 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
         startActivity(intent);
     }
 
-
-    /**
-     * {@link OnRefreshLoadMoreListener}
-     */
-
-    @Override
-    public void onRefresh(@NonNull RefreshLayout refreshLayout) {
-        postDelayed(() -> {
-            mAdapter.clearData();
-            mAdapter.setData(mDataLest);
-            mRefreshLayout.finishRefresh();
-//            mAdapter.clearData();
-//            mAdapter.setData(analogData());
-//            mRefreshLayout.finishRefresh();
-        }, 1000);
-    }
-
-    @Override
-    public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
-        postDelayed(() -> {
-//            mAdapter.addData(mRequestListData);
-            mRefreshLayout.finishLoadMore();
-            mAdapter.setLastPage(true);
-            mRefreshLayout.setNoMoreData(mAdapter.isLastPage());
-//
-//            mAdapter.addData(analogData());
-//            mRefreshLayout.finishLoadMore();
-//
-//            mAdapter.setLastPage(mAdapter.getCount() >= 100);
-//            mRefreshLayout.setNoMoreData(mAdapter.isLastPage());
-        }, 1000);
-    }
-
     @Override
     public boolean isStatusBarEnabled() {
         // 使用沉浸式状态栏
@@ -325,4 +300,74 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
         super.onPause();
 
     }
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
+
+
+
+    /**
+     * eventbus 刷新socket数据
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void SocketRefreshEvent(SocketRefreshEvent event) {
+        LogUtils.e("Socket回调==DetailFragment==event.getData()==" + event.getData());
+//        String mRun2End4 = CalculateUtils.getReceiveRun2End4String(event.getData());//随机数之后到data结尾的String
+//        String deviceType = CalculateUtils.getSendDeviceType(event.getData());
+//        String deviceOnlyCode = CalculateUtils.getSendDeviceOnlyCode(event.getData());
+//        String currentCMD = CalculateUtils.getCMD(event.getData());
+//        LogUtils.e("Socket回调==DetailFragment==随机数之后到data的Str==mRun2End4==" + mRun2End4);
+//        LogUtils.e("Socket回调==DetailFragment==发送方设备类型==deviceType==" + deviceType);
+//        LogUtils.e("Socket回调==DetailFragment==获取发送方设备Code==deviceOnlyCode==" + deviceOnlyCode);
+//        LogUtils.e("Socket回调==DetailFragment==当前UDP命令==currentCMD==" + currentCMD);
+//        LogUtils.e("Socket回调==DetailFragment==当前UDP命令==event.getUdpCmd()==" + event.getUdpCmd());
+        String data = event.getData();
+        switch (event.getUdpCmd()) {
+            case Constants.UDP_13://更新病例,刷新界面数据
+                if (!mTitle.getText().toString().trim().isEmpty()) {
+                    sendRequest(mTitle.getText().toString().trim());
+                } else {
+                    sendRequest(currentChoseDate);
+                }
+                break;
+        }
+
+    }
+
+//    /**
+//     * {@link OnRefreshLoadMoreListener}
+//     */
+//
+//    @Override
+//    public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+//        postDelayed(() -> {
+//            mAdapter.clearData();
+//            mAdapter.setData(mDataLest);
+//            mRefreshLayout.finishRefresh();
+////            mAdapter.clearData();
+////            mAdapter.setData(analogData());
+////            mRefreshLayout.finishRefresh();
+//        }, 1000);
+//    }
+
+//    @Override
+//    public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
+//        postDelayed(() -> {
+////            mAdapter.addData(mRequestListData);
+//            mRefreshLayout.finishLoadMore();
+//            mAdapter.setLastPage(true);
+//            mRefreshLayout.setNoMoreData(mAdapter.isLastPage());
+////
+////            mAdapter.addData(analogData());
+////            mRefreshLayout.finishLoadMore();
+////
+////            mAdapter.setLastPage(mAdapter.getCount() >= 100);
+////            mRefreshLayout.setNoMoreData(mAdapter.isLastPage());
+//        }, 1000);
+//    }
+
 }

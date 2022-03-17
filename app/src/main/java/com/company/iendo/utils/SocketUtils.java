@@ -34,10 +34,10 @@ public class SocketUtils {
      * @param data 字节数组    广播 授权,使用的是设置的端口,其他的点对点消息,按照协议data的port的走
      */
     public static void startSendBroadcastMessage(byte[] data, Context mContext) {
-        WifiManager manager = (WifiManager) mContext.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        WifiManager.MulticastLock lock = manager.createMulticastLock("test wifi");
+//        WifiManager manager = (WifiManager) mContext.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+//        WifiManager.MulticastLock lock = manager.createMulticastLock("test wifi");
         //申请广播开启
-        lock.acquire();
+//        lock.acquire();
         InetAddress mAddress = null;
         //点对点消息,握手
         try {
@@ -57,7 +57,7 @@ public class SocketUtils {
                     int mCastSendPort = kv.decodeInt(Constants.KEY_BROADCAST_PORT);
                     DatagramPacket mSendPacket = new DatagramPacket(data, data.length, finalMAddress, mCastSendPort);
                     for (int i = 0; i < 5; i++) {
-//                        LogUtils.e("SocketUtils=====发送第=====" + i + "====次广播==mCastSendPort==" + mCastSendPort);
+                        LogUtils.e("SocketUtils=====发送第=====" + i + "====次广播==mCastSendPort==" + mCastSendPort);
                         Thread.sleep(500);
                         //固定端口
                         DatagramSocket mSendBroadcastSocket = new DatagramSocket(null);
@@ -74,7 +74,7 @@ public class SocketUtils {
 //                        mSendBroadcastSocket.close();
                     }
                     //释放资源
-                    lock.release();
+//                    lock.release();
 
                 } catch (Exception e) {
 
@@ -93,9 +93,9 @@ public class SocketUtils {
      * @param receivePort 目标端口
      */
     public static void startSendHandMessage(byte[] data, String ip, int receivePort,Context mContext) {
-        WifiManager manager = (WifiManager) mContext.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        WifiManager.MulticastLock lock = manager.createMulticastLock("test wifi");
-        lock.acquire();    //申请开启
+//        WifiManager manager = (WifiManager) mContext.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+//        WifiManager.MulticastLock lock = manager.createMulticastLock("test wifi");
+//        lock.acquire();    //申请开启
         InetAddress mAddress = null;
         //点对点消息,握手
         try {
@@ -105,6 +105,7 @@ public class SocketUtils {
         }
         InetAddress finalMAddress = mAddress;
 
+        LogUtils.e("SocketUtils===发送消息==点对点==hand==data111111==" + data);
 
         new Thread() {
             @Override
@@ -112,10 +113,14 @@ public class SocketUtils {
                 super.run();
                 try {
                     LogUtils.e("SocketUtils===发送消息==点对点==hand==ip==" + ip);
+                    LogUtils.e("SocketUtils===发送消息==点对点==hand==receivePort==" + receivePort);
+                    LogUtils.e("SocketUtils===发送消息==点对点==hand==data==" + data);
 
 //                    byte[] sendData = data.getBytes();
                     MMKV kv = MMKV.defaultMMKV();
                     int mReceivePort = kv.decodeInt(Constants.KEY_RECEIVE_PORT);
+                    LogUtils.e("SocketUtils===发送消息==点对点==hand==key=01=" + mReceivePort);
+
                     DatagramPacket mSendPacket = new DatagramPacket(data, data.length, finalMAddress, receivePort);
 //                    for (int i = 0; i < 5; i++) {
                     //随机端口
@@ -125,15 +130,16 @@ public class SocketUtils {
                     //固定端口
                     DatagramSocket mSendSocket = new DatagramSocket(null);
                     mSendSocket.setReuseAddress(true);
-                    mSendSocket.bind(new InetSocketAddress(mReceivePort));
+                    mSendSocket.bind(new InetSocketAddress(receivePort));
                     mSendSocket.send(mSendPacket);
                     mSendSocket.close();
                     LogUtils.e("SocketUtils===发送消息==点对点==hand==" + mReceivePort);
                     LogUtils.e("SocketUtils===发送消息==点对点==hand==ip==" + ip);
                     //释放资源
-                    lock.release();
+//                    lock.release();
 //                    }
                 } catch (Exception e) {
+                    LogUtils.e("SocketUtils===发送消息==点对点==hand==Exception==" + e);
 
                 }
             }
@@ -148,10 +154,10 @@ public class SocketUtils {
      *                    广播 授权,使用的是设置的端口,其他的点对点消息,按照协议data的port的走
      */
     public static void startSendPointMessage(byte[] data, String ip, int receivePort,Context mContext) {
-        WifiManager manager = (WifiManager) mContext.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        WifiManager.MulticastLock lock = manager.createMulticastLock("test wifi");
-        //申请开启
-        lock.acquire();
+//        WifiManager manager = (WifiManager) mContext.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+//        WifiManager.MulticastLock lock = manager.createMulticastLock("test wifi");
+//        申请开启
+//        lock.acquire();
 
         InetAddress mAddress = null;
         //点对点消息,握手
@@ -168,26 +174,35 @@ public class SocketUtils {
                 try {
 //                    byte[] sendData = data.getBytes();
                     MMKV kv = MMKV.defaultMMKV();
+                    LogUtils.e("SocketUtils===发送消息==点对点==Point===00===" );
+                    LogUtils.e("SocketUtils===发送消息==点对点==Point===ip==="+ip );
+                    LogUtils.e("SocketUtils===发送消息==点对点==Point===00==="+data );
+
                     int mReceivePort = kv.decodeInt(Constants.KEY_RECEIVE_PORT);
+                    LogUtils.e("SocketUtils===发送消息==点对点==Point===00===mReceivePort"+mReceivePort );
+                    LogUtils.e("SocketUtils===发送消息==点对点==Point===00===receivePort"+receivePort);
+
                     DatagramPacket mSendPacket = new DatagramPacket(data, data.length, finalMAddress, receivePort);
 //                    for (int i = 0; i < 5; i++) {
                     //随机端口
-
 //                    DatagramSocket mSendSocket = new DatagramSocket();
 //                    mSendSocket.send(mSendPacket);
 //                    mSendSocket.close();
                     //固定端口
                     DatagramSocket mSendSocket = new DatagramSocket(null);
                     mSendSocket.setReuseAddress(true);
-                    mSendSocket.bind(new InetSocketAddress(mReceivePort));
+                    mSendSocket.bind(new InetSocketAddress(receivePort));
                     mSendSocket.send(mSendPacket);
+                    LogUtils.e("SocketUtils===发送消息==点对点==Point===01===" );
                     mSendSocket.close();
+                    LogUtils.e("SocketUtils===发送消息==点对点==Point===02===" );
                     //释放资源
-                    lock.release();
+//                    lock.release();
                     LogUtils.e("SocketUtils===发送消息==点对点==Point==" + receivePort);
 
 //                    }
                 } catch (Exception e) {
+                    LogUtils.e("SocketUtils===发送消息==点对点==Point===Exception==="+e );
 
                 }
             }

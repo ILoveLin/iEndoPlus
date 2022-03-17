@@ -28,6 +28,7 @@ import com.company.iendo.manager.ActivityManager;
 import com.company.iendo.mineui.activity.MainActivity;
 import com.company.iendo.mineui.activity.casemanage.AddCaseActivity;
 import com.company.iendo.mineui.activity.casemanage.DetailCaseActivity;
+import com.company.iendo.mineui.activity.vlc.GetPictureActivity;
 import com.company.iendo.mineui.socket.SocketManage;
 import com.company.iendo.other.Constants;
 import com.company.iendo.other.HttpConstant;
@@ -37,6 +38,7 @@ import com.company.iendo.ui.dialog.SelectDialog;
 import com.company.iendo.utils.CalculateUtils;
 import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.SharePreferenceUtil;
+import com.company.iendo.utils.SocketUtils;
 import com.company.iendo.widget.LinesEditView;
 import com.company.iendo.widget.StatusLayout;
 import com.hjq.base.BaseDialog;
@@ -59,6 +61,8 @@ import okhttp3.Call;
 
 /**
  * company：江西神州医疗设备有限公司
+ *
+
  * author： LoveLin
  * time：2021/10/29 13:55
  * desc：第2个tab-fragment
@@ -117,7 +121,6 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
     @Override
     protected void initView() {
         EventBus.getDefault().register(this);
-
         mStatusLayout = findViewById(R.id.detail_hint);
         mBaseUrl = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_BaseUrl, "192.168.132.102");
         mDeviceID = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_DeviceID, "");
@@ -129,7 +132,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         setEditStatus();
         responseListener();
 
-
+        //请求界面数据
         sendRequest(currentItemCaseID);
     }
 
@@ -277,6 +280,8 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 
 
         showLoading();
+        LogUtils.e("Socket回调==DetailFragment==当前UDP命令==event.====相等====开始请求界面=" );
+
         OkHttpUtils.get()
                 .url(mBaseUrl + HttpConstant.CaseManager_CaseInfo)
                 .addParams("ID", currentItemID)
@@ -292,6 +297,8 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                     @Override
                     public void onResponse(String response, int id) {
                         if ("" != response) {
+                            LogUtils.e("详情界面---8病例详情response===" + response);
+
                             mBean = mGson.fromJson(response, CaseDetailBean.class);
                             if (0 == mBean.getCode()) {  //成功
                                 showComplete();
@@ -350,7 +357,8 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         et_03_device.setText("" + mDataBean.getDevice());
         et_01_fee.setText("" + mDataBean.getFee());
         //        String FeeType = et_03_tel.getText().toString().trim();       //收费类型         ???
-        et_01_i_tell_you.setContentText("" + mDataBean.getChiefComplaint());
+
+        et_01_get_check_doctor.setText("" + mDataBean.getSubmitDoctor());
         etlines_02_test.setContentText("" + mDataBean.getTest());
         etlines_02_advice.setContentText("" + mDataBean.getAdvice());
         et_03_in_hospital_num.setText("" + mDataBean.getInpatientID());
@@ -542,7 +550,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         caseDBBean.setRecord_date(mDataBean.getRecord_date() + "");    // 创建时间
         caseDBBean.setImagesCount(mDataBean.getImageCount() + "");    // 图片数量
 //        caseDBBean.setVideosCount(mDataBean.getVid() + "");    // 视频数量
-        caseDBBean.setSubmitDoctor(mDataBean.getSubmitDoctor() + "");    // 申请医生
+        caseDBBean.setSubmitDoctor(mDataBean.getSubmitDoctor() + "");    //送检医生
         caseDBBean.setRace(mDataBean.getRace() + "");    // 民族种族
         caseDBBean.setRecordType(mDataBean.getRecordType() + "");    // 病例类型
         caseDBBean.setUpdate_time(mDataBean.getUpdate_time() + "");    // 更新时间
@@ -1260,19 +1268,35 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void SocketRefreshEvent(SocketRefreshEvent event) {
         LogUtils.e("Socket回调==DetailFragment==event.getData()==" + event.getData());
-        String mRun2End4 = CalculateUtils.getReceiveRun2End4String(event.getData());//随机数之后到data结尾的String
-        String deviceType = CalculateUtils.getSendDeviceType(event.getData());
-        String deviceOnlyCode = CalculateUtils.getSendDeviceOnlyCode(event.getData());
-        String currentCMD = CalculateUtils.getCMD(event.getData());
-        LogUtils.e("Socket回调==DetailFragment==随机数之后到data的Str==mRun2End4==" + mRun2End4);
-        LogUtils.e("Socket回调==DetailFragment==发送方设备类型==deviceType==" + deviceType);
-        LogUtils.e("Socket回调==DetailFragment==获取发送方设备Code==deviceOnlyCode==" + deviceOnlyCode);
-        LogUtils.e("Socket回调==DetailFragment==当前UDP命令==currentCMD==" + currentCMD);
-        LogUtils.e("Socket回调==DetailFragment==当前UDP命令==event.getUdpCmd()==" + event.getUdpCmd());
+//        String mRun2End4 = CalculateUtils.getReceiveRun2End4String(event.getData());//随机数之后到data结尾的String
+//        String deviceType = CalculateUtils.getSendDeviceType(event.getData());
+//        String deviceOnlyCode = CalculateUtils.getSendDeviceOnlyCode(event.getData());
+//        String currentCMD = CalculateUtils.getCMD(event.getData());
+//        LogUtils.e("Socket回调==DetailFragment==随机数之后到data的Str==mRun2End4==" + mRun2End4);
+//        LogUtils.e("Socket回调==DetailFragment==发送方设备类型==deviceType==" + deviceType);
+//        LogUtils.e("Socket回调==DetailFragment==获取发送方设备Code==deviceOnlyCode==" + deviceOnlyCode);
+//        LogUtils.e("Socket回调==DetailFragment==当前UDP命令==currentCMD==" + currentCMD);
+//        LogUtils.e("Socket回调==DetailFragment==当前UDP命令==event.getUdpCmd()==" + event.getUdpCmd());
         String data = event.getData();
         switch (event.getUdpCmd()) {
             case Constants.UDP_HAND://握手
                 UDP_HAND_TAG = true;
+                break;
+            case Constants.UDP_13://有病例,并且当前病例id==回调病例id则更新界面数据
+                LogUtils.e("Socket回调==DetailFragment==当前UDP命令==event.getData()==" + event.getData());
+                LogUtils.e("Socket回调==DetailFragment==当前UDP命令==currentItemCaseID==" +currentItemCaseID);
+
+                if (event.getTga()){
+                    if (currentItemCaseID.equals(event.getData())){
+                        //请求界面数据
+                        sendRequest(currentItemCaseID);
+                        LogUtils.e("Socket回调==DetailFragment==当前UDP命令==event.====相等==" );
+
+                    }
+                    LogUtils.e("Socket回调==DetailFragment==当前UDP命令==event.===不=相等==" );
+
+
+                }
                 break;
         }
 
@@ -1293,7 +1317,10 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
             toast("通讯端口不能为空!");
             return;
         }
-        SocketManage.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort));
+        LogUtils.e("SocketUtils===发送消息==点对点==detailfragment==sendByteData==" + sendByteData);
+        LogUtils.e("SocketUtils===发送消息==点对点==detailfragment==mSocketPort==" + mSocketPort);
+
+        SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), getAttachActivity());
     }
 
     /**
@@ -1312,7 +1339,8 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                 toast("通讯端口不能为空!");
                 return;
             }
-            SocketManage.startSendMessageBySocket(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), false);
+
+            SocketUtils.startSendPointMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort),getAttachActivity());
         } else {
             sendHandLinkMessage();
             toast("请先建立握手链接!");
