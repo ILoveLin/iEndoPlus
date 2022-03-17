@@ -185,15 +185,15 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
                 .setConfirm("确定")
                 .setListener(new Input2SettingDialog.OnListener() {
                     @Override
-                    public void onConfirm(BaseDialog dialog, String sendPort) {
-                        LogUtils.e("本地广播发送端口==" + sendPort);//222222222   本地广播发送端口
+                    public void onConfirm(BaseDialog dialog, String settingPort) {
+                        LogUtils.e("本地广播发送端口==" + settingPort);//222222222   本地广播发送端口
                         ReceiveSocketService receiveSocketService = new ReceiveSocketService();
                         WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
                         if (wifiManager.isWifiEnabled()) {
                             WifiInfo wifiInfo = wifiManager.getConnectionInfo();
                             mAppIP = getIpString(wifiInfo.getIpAddress());
                         }
-                        if ("".equals(sendPort)) {
+                        if ("".equals(settingPort)) {
                             toast("本地广播发送端口不能为空");
                             return;
                         } else {
@@ -202,18 +202,18 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
                             MMKV kv = MMKV.defaultMMKV();
                             //获取当前开启的接收端口
                             LogUtils.e("保活服务开启-Setting--原本广播port---===mCurrentReceivePort===" + mCurrentReceivePort);
-                            LogUtils.e("保活服务开启-Setting--设置的port---===sendPort===" + sendPort);
+                            LogUtils.e("保活服务开启-Setting--设置的port---===sendPort===" + settingPort);
 
-                            if (mCurrentReceivePort == Integer.parseInt(sendPort)) {//相等,此时不需要开启新的线程
+                            if (mCurrentReceivePort == Integer.parseInt(settingPort)) {//相等,此时不需要开启新的线程
                                 toast("此端口已配置,请勿重复操作!");
                             } else {
-                                receiveSocketService.initSettingReceiveThread(mAppIP, Integer.parseInt(sendPort), DeviceSearchActivity.this);
+                                receiveSocketService.initSettingReceiveThread(mAppIP, Integer.parseInt(settingPort), DeviceSearchActivity.this);
                                 //存入当前广播发送的port
-                                LogUtils.e("保活服务开启-Setting--原本广播port---===i===" + sendPort);
+                                LogUtils.e("保活服务开启-Setting--原本广播port---===i===" + settingPort);
                                 kv.encode(Constants.KEY_SOCKET_RECEIVE_FIRST_IN, true);
-                                kv.encode(Constants.KEY_RECEIVE_PORT, sendPort); //设置的,本地监听端口
-                                kv.encode(Constants.KEY_RECEIVE_PORT_BY_SEARCH, Integer.parseInt(sendPort)); //设置的,广播本地监听端口
-                                kv.encode(Constants.KEY_BROADCAST_PORT, Integer.parseInt(sendPort));
+                                kv.encode(Constants.KEY_RECEIVE_PORT, settingPort); //设置的,本地监听端口
+                                kv.encode(Constants.KEY_RECEIVE_PORT_BY_SEARCH, Integer.parseInt(settingPort)); //设置的,广播本地监听端口
+                                kv.encode(Constants.KEY_BROADCAST_PORT, Integer.parseInt(settingPort));
                                 int mDefaultCastSendPort = kv.decodeInt(Constants.KEY_BROADCAST_PORT);
                                 LogUtils.e("保活服务开启-Setting--原本广播port---===i===" + mDefaultCastSendPort);
                                 //再次打开搜索动画
@@ -746,7 +746,7 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
         LogUtils.e("sendByteData==点对点消息===ip==" + ip);
 
 
-        // 广播 授权,使用的是设置的端口,其他的点对点消息,按照协议data的port的走
+        // 广播 授权,使用的是设置的端口,其他的点对点消息,按照协议data的返回的port的通讯
         MMKV kv = MMKV.defaultMMKV();
         int mSendPort = kv.decodeInt(Constants.KEY_BROADCAST_PORT);
         SocketUtils.startSendPointMessage(sendByteData, ip, mSendPort,this);

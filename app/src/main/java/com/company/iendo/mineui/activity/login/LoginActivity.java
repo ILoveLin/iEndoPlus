@@ -519,7 +519,8 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                                             WifiInfo wifiInfo = wifiManager.getConnectionInfo();
                                             mAppIP = getIpString(wifiInfo.getIpAddress());
                                         }
-
+                                        MMKV kv = MMKV.defaultMMKV();
+                                        int mCastSendPort = kv.decodeInt(Constants.KEY_BROADCAST_PORT);
                                         if ("".equals(mSocketPort)) {
                                             toast("本地广播发送端口不能为空");
                                             return;

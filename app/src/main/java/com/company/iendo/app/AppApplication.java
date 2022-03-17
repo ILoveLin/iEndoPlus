@@ -230,7 +230,7 @@ public final class AppApplication extends Application {
             kv.encode(Constants.KEY_BROADCAST_PORT,Constants.BROADCAST_PORT);
         }
         if ("".equals(i3+"")){
-            kv.encode(Constants.KEY_RECEIVE_PORT_BY_SEARCH,Constants.BROADCAST_PORT);
+            kv.encode(Constants.KEY_RECEIVE_PORT_BY_SEARCH,Constants.RECEIVE_PORT);
         }
 
 

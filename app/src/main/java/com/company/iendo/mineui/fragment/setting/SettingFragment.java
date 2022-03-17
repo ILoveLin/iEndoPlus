@@ -202,16 +202,15 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
                         }
                         MMKV kv = MMKV.defaultMMKV();
                         int port = kv.decodeInt(Constants.KEY_BROADCAST_PORT);
-                        int portt = kv.decodeInt(Constants.KEY_RECEIVE_PORT_BY_SEARCH);
+                        int searchPort = kv.decodeInt(Constants.KEY_RECEIVE_PORT_BY_SEARCH);
                         LogUtils.e("AppActivity=fragment==port===="+port);
-                        LogUtils.e("AppActivity=fragment==接收portt===="+portt);
+                        LogUtils.e("AppActivity=fragment==接收searchPort===="+searchPort);
 
-                        if ("".equals(port)) {
+                        if ("".equals(searchPort)) {
                             toast("本地广播发送端口不能为空");
                             return;
                         } else {
-
-                            receiveSocketService.initSettingReceiveThread(mAppIP, portt, getAttachActivity());
+                            receiveSocketService.initSettingReceiveThread(mAppIP, searchPort, getAttachActivity());
 
                         }
 

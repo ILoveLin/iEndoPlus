@@ -142,6 +142,9 @@ public class ReceiveSocketService extends AbsWorkService {
 
     /**
      * 此为接收线程具体解析
+     * ip 本地app的ip地址
+     * port 本地监听的端口
+     *
      */
     public class receiveThread extends Thread {
         private int settingReceivePort;
@@ -150,8 +153,8 @@ public class ReceiveSocketService extends AbsWorkService {
         DatagramSocket mSettingDataSocket = null;
         DatagramPacket mSettingDataPacket = null;
 
-        public receiveThread(String ip, int i, Context context) {
-            this.settingReceivePort = i;
+        public receiveThread(String ip, int port, Context context) {
+            this.settingReceivePort = port;
             this.AppIP = ip;
             this.context = context;
             mGson = GsonFactory.getSingletonGson();
@@ -181,7 +184,8 @@ public class ReceiveSocketService extends AbsWorkService {
                         LogUtils.e("======LiveServiceImpl=====000==");
                         LogUtils.e("======LiveServiceImpl=====AppIP==" + AppIP);
                         LogUtils.e("======LiveServiceImpl=====mReceivePacket.getAddress()==" + mSettingDataPacket.getAddress());
-                        if (!AppIP.equals(mSettingDataPacket.getAddress())) {   //不是自己的IP不接受
+                        //不是自己的IP不接受
+                        if (!AppIP.equals(mSettingDataPacket.getAddress())) {
                             //申请开启
                             lock.acquire();
                             mSettingDataSocket.receive(mSettingDataPacket);
@@ -360,7 +364,7 @@ public class ReceiveSocketService extends AbsWorkService {
         int mDefaultReceivePort = kv.decodeInt(Constants.KEY_RECEIVE_PORT);
         int mReceivePort = kv.decodeInt(Constants.KEY_RECEIVE_PORT_BY_SEARCH);
         int mDefaultCastSendPort = kv.decodeInt(Constants.KEY_BROADCAST_PORT);
-        //是否开启过接收线程,开启过为true
+        //是否开启过接收线程,开启过为true,避免初始化的时候创建三个接受线程
         boolean b = kv.decodeBool(Constants.KEY_SOCKET_RECEIVE_FIRST_IN);
 
         LogUtils.e("保活服务开启-startWork--原本port---===i===" + mDefaultReceivePort);
