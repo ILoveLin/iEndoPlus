@@ -14,7 +14,7 @@ public class Constants {
 
 
     public static final String BROADCASTER = "szcme";                //广播发起者名称--暂时固定szcme
-//    public static final String BROADCAST_IP = "192.168.135.255";      //广播地址
+    //    public static final String BROADCAST_IP = "192.168.135.255";      //广播地址
     public static final String BROADCAST_IP = "255.255.255.255";      //广播地址
     //默认值都是一样的
     public static final int BROADCAST_PORT = 7006;               //广播约定端口--->默认值
@@ -62,5 +62,25 @@ public class Constants {
     public static final String Type_EarNoseTable = "耳鼻喉治疗台";            //耳鼻喉治疗台
     public static final String Type_MiNiaoTable = "泌尿治疗台";             //泌尿治疗台
 
+
+    /**
+     * 协议里面设备类型,文档里面和传输都用16进制表示
+     *  int用十六进制表示
+     * 统一用十六进制表示 协议返回的也是16进制
+     */
+
+    public static final int Type_00 = 0x00;     //"工作站";
+    public static final int Type_01 = 0x01;     //"HD3摄像机";
+    public static final int Type_02 = 0x02;     //冷光源
+    public static final int Type_03 = 0x03;     //气腹机
+    public static final int Type_04 = 0x04;     //冲洗机
+    public static final int Type_05 = 0x05;     //4K摄像机
+    public static final int Type_06 = 0x06;     //耳鼻喉控制板
+    public static final int Type_07 = 0x07;     //一代一体机
+    public static final int Type_08 = 0x08;     //耳鼻喉治疗台
+    public static final int Type_09 = 0x09;     //妇科治疗台
+    public static final int Type_0A = 0x0A;     //泌尿治疗台
+    public static final int Type_A0 = 0xA0;     //iOS
+    public static final int Type_A1 = 0xA1;     //Android
 
 }

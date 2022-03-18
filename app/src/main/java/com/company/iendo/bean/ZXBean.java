@@ -141,4 +141,23 @@ public class ZXBean {
     public void setUsername(String username) {
         this.username = username;
     }
+
+    @Override
+    public String toString() {
+        return "ZXBean{" +
+                "deviceID='" + deviceID + '\'' +
+                ", deviceType=" + deviceType +
+                ", endoType=" + endoType +
+                ", httpPort=" + httpPort +
+                ", ip='" + ip + '\'' +
+                ", makemsg='" + makemsg + '\'' +
+                ", micport=" + micport +
+                ", password='" + password + '\'' +
+                ", port=" + port +
+                ", socketPort=" + socketPort +
+                ", title='" + title + '\'' +
+                ", type=" + type +
+                ", username='" + username + '\'' +
+                '}';
+    }
 }

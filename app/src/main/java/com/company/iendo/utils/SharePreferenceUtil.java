@@ -60,7 +60,7 @@ public class SharePreferenceUtil {
     public static final String Current_DevicePassword = "Current_DevicePassword";    //设备密码(直播)
     public static final String Current_Type = "Current_Type";                        //设备类型  --一体机 ,耳鼻喉治疗台等等类型
     public static final String Current_EndoType = "Current_EndoType";                //工作站类型
-    public static final String Current_Type_Num = "Current_Type_Num";                //工作站类型
+    public static final String Current_Type_Num = "Current_Type_Num";                //工作站类型  数字标识
     /**
      * mDeviceCode  mDBBean.getDeviceName----这个是智能搜索之后返回过来的设备码
      * 需要再搜索完成后创建dialog的时候设置上去,不然为null

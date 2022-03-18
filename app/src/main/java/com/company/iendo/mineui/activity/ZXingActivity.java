@@ -21,6 +21,7 @@ import com.company.iendo.bean.ZXBean;
 import com.company.iendo.green.db.DeviceDBBean;
 import com.company.iendo.green.db.DeviceDBUtils;
 import com.company.iendo.mineui.activity.login.device.DeviceActivity;
+import com.company.iendo.other.Constants;
 import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.db.DBManager;
 import com.company.iendo.widget.StatusLayout;
@@ -125,7 +126,7 @@ public final class ZXingActivity extends AppActivity implements QRCodeView.Deleg
         setTitle("扫描结果为：" + result);
         Log.e("扫描成功====结果为：", "result===" + result);
         Log.e("扫描成功====结果为：", "result===" + result);
-        toast(result);
+//        toast(result);
         //取消震动
 //        vibrate();
         if (null == result) {
@@ -165,11 +166,19 @@ public final class ZXingActivity extends AppActivity implements QRCodeView.Deleg
         Type type = new TypeToken<ZXBean>() {
         }.getType();
         ZXBean mBean = gson.fromJson(result, type);
+        LogUtils.e("Zingx==========" + mBean.toString());
 //            VideoDBBean01 videoDBBean = new VideoDBBean01();
 
         DeviceDBBean deviceDBBean = new DeviceDBBean();
+
+        String deviceTypeString = getDeviceTypeNum(mBean.getDeviceType());
+        LogUtils.e("Zingx=====deviceTypeString=====" + deviceTypeString);
+
         deviceDBBean.setDeviceID("" + mBean.getDeviceID());//
-        deviceDBBean.setEndoType("" + mBean.getDeviceType());//PC端 对应的endotype  比如我们这边耳鼻喉治疗台是3   这个对应是8
+        deviceDBBean.setDeviceCode("" + mBean.getDeviceID());//
+        deviceDBBean.setEndoType("" + mBean.getEndoType());//PC端 对应的endotype  比如我们这边耳鼻喉治疗台是3   这个对应是8
+        deviceDBBean.setType_num("" +mBean.getDeviceType());//PC端 对呀的设备类型比如07 对应一代一体机    此处typeNum是数字表示:07
+        deviceDBBean.setType("" + deviceTypeString);//PC端 对呀的设备类型比如07 对应一代一体机    此处type是中文表示:一代一体机
         deviceDBBean.setDeviceName("" + mBean.getTitle());//设备名字
         deviceDBBean.setHttpPort("" + mBean.getHttpPort());//
         deviceDBBean.setIp("" + mBean.getIp());//
@@ -182,25 +191,7 @@ public final class ZXingActivity extends AppActivity implements QRCodeView.Deleg
         deviceDBBean.setTitle("" + mBean.getTitle());//
         deviceDBBean.setUsername("" + mBean.getUsername());//
         deviceDBBean.setMSelected(false);//
-        String deviceType = mBean.getDeviceType() + "";   //比如耳鼻喉PC端是8 手机端是3
 
-
-
-        //备注,我们确定当前选中设备是通过后去数据库bean的type 字段判断的 (type=一代一体机=endoType=3=扫码的结果对应数字是7)
-        switch (deviceType) {
-            case "7":  //（一代一体机）     endtype 3     扫码的结果对应数字是7
-                deviceDBBean.setType("一代一体机");//   endoType;
-                break;
-            case "8": //（耳鼻喉治疗台）   endtype 3     扫码的结果对应数字是8
-                deviceDBBean.setType("耳鼻喉治疗台");//   endoType;
-                break;
-            case "9"://（妇科治疗台）    //4            扫码的结果对应数字是9
-                deviceDBBean.setType("妇科治疗台");//   endoType;
-                break;
-            case "10"://（泌尿治疗台）   //6            扫码的结果对应数字是10
-                deviceDBBean.setType("泌尿治疗台");//   endoType;
-                break;
-        }
 //
         LogUtils.e("========当前设备的备注信息~~~~====ZXingActivity==deviceDBBean===" + deviceDBBean.toString());
 
@@ -216,6 +207,28 @@ public final class ZXingActivity extends AppActivity implements QRCodeView.Deleg
 //            toast("请选择有用的二维码图片");
 //
 //        }
+    }
+
+    /**
+     * 根据设备名-中文获取对应数字
+     * 一代一体机=07
+     *
+     * @param str
+     * @return
+     */
+    public String getDeviceTypeNum(int str) {
+        if (Constants.Type_07 == str) {
+            return Constants.Type_V1_YiTiJi;
+        } else if (Constants.Type_08 == str) {
+            return Constants.Type_EarNoseTable;
+        } else if (Constants.Type_09 == str) {
+            return Constants.Type_MiNiaoTable;
+        } else if (Constants.Type_0A == str) {
+            return Constants.Type_FuKeTable;
+        }
+
+
+        return Constants.Type_V1_YiTiJi + "";
     }
 
     public static boolean isGoodJson(String json) {

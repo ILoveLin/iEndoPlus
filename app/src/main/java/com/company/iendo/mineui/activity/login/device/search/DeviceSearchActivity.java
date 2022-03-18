@@ -158,7 +158,7 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
             return;
         }
 
-        SocketUtils.startSendBroadcastMessage(sendByteData,this);
+        SocketUtils.startSendBroadcastMessage(sendByteData, this);
         mProgressView.showAnimation((int) 4000, 4000);
         //是否显示外环刻度
         mProgressView.setShowTick(false);
@@ -167,7 +167,7 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
         mProgressView.setOnChangeListener(new CircleProgressView.OnChangeListener() {
             @Override
             public void onProgressChanged(float progress, float max) {
-                if (0==progress){
+                if (0 == progress) {
                     countDownTimer.start();
                 }
             }
@@ -359,7 +359,6 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
         mReceiveBroadMap.clear();
         mReceiveBroadCastList.clear();
         mReceivePointList.clear();
-
         mHandler.sendEmptyMessage(UDP_Anim);
 
 
@@ -406,7 +405,6 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
             LogUtils.e("DeviceSearchActivity回调==模拟数据==ip==" + ip);
             BroadCastReceiveBean bean = mGson.fromJson(CalculateUtils.hexStr2Str(s), BroadCastReceiveBean.class);
             LogUtils.e("DeviceSearchActivity回调==广播回调数据Bean==ip==" + bean.toString());
-
             bean.setSelected(false); //默认都是未选中
             bean.setDeviceType(CalculateUtils.getDeviceTypeFromRoom(str));
             bean.setDeviceCode(CalculateUtils.getReceiveID(str));
@@ -638,17 +636,18 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
     private void insertData2DB(PutInDeviceMsgBean bean, String deviceOnlyCodeFromRoom) {
         List<DeviceDBBean> deviceDBBeans = DeviceDBUtils.queryAll(DeviceSearchActivity.this);
         //备注,我们确定当前选中设备是通过后去数据库bean的type 字段判断的 (type=一代一体机=扫码的结果对应数字是7)
-        switch (bean.getType()) {
-            case "07":  //（一代一体机）         扫码的结果对应数字是07
+        int i = Integer.parseInt(bean.getType());
+        switch (i) {
+            case Constants.Type_07:  //（一代一体机）         扫码的结果对应数字是07
                 bean.setType("一代一体机");        //设置设备类型
                 break;
-            case "08": //（耳鼻喉治疗台）     扫码的结果对应数字是8   这里需要统一添加0
+            case Constants.Type_08: //（耳鼻喉治疗台）     扫码的结果对应数字是8   这里需要统一添加0
                 bean.setType("耳鼻喉治疗台");
                 break;
-            case "09"://（妇科治疗台）                扫码的结果对应数字是9  这里需要统一添加0
+            case Constants.Type_09://（妇科治疗台）                扫码的结果对应数字是9  这里需要统一添加0
                 bean.setType("妇科治疗台");
                 break;
-            case "10"://（泌尿治疗台）             扫码的结果对应数字是10
+            case Constants.Type_0A://（泌尿治疗台）             扫码的结果对应数字是10
                 bean.setType("泌尿治疗台");
                 break;
         }
@@ -749,7 +748,7 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
         // 广播 授权,使用的是设置的端口,其他的点对点消息,按照协议data的返回的port的通讯
         MMKV kv = MMKV.defaultMMKV();
         int mSendPort = kv.decodeInt(Constants.KEY_BROADCAST_PORT);
-        SocketUtils.startSendPointMessage(sendByteData, ip, mSendPort,this);
+        SocketUtils.startSendPointMessage(sendByteData, ip, mSendPort, this);
 
 //        SocketManage.startSendMessageBySocket(sendByteData, ip, Constants.BROADCAST_PORT, false);
 
@@ -824,15 +823,15 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
      */
     public String getDeviceTypeNum(String str) {
         if ("一代一体机".equals(str)) {
-            return "07";
+            return Constants.Type_07 + "";
         } else if ("耳鼻喉治疗台".equals(str)) {
-            return "8";
+            return Constants.Type_08 + "";
         } else if ("妇科治疗台".equals(str)) {
-            return "9";
+            return Constants.Type_09 + "";
         } else if ("泌尿治疗台".equals(str)) {
-            return "10";
+            return Constants.Type_0A + "";
         }
-        return "07";
+        return Constants.Type_07 + "";
     }
 
     @Override

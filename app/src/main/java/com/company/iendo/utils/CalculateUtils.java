@@ -7,6 +7,7 @@ import android.view.ContextThemeWrapper;
 
 import com.company.iendo.mineui.socket.BroadCastDataBean;
 import com.company.iendo.mineui.socket.SocketDataBean;
+import com.company.iendo.other.Constants;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.hjq.gson.factory.GsonFactory;
@@ -43,42 +44,74 @@ public class CalculateUtils {
 
 
     public static String getSendDeviceType(String string) {
+        LogUtils.e("SocketManage回调==哇哈哈==string==" + string);//0A
+
         //字符串--48位--50位表示的是设备类型
         if (!("".equals(string)) && string.length() >= 50) {
             String str = string.substring(14, 16);
-            LogUtils.e("SocketManage回调==哇哈哈==str==" + str);
-
+            LogUtils.e("SocketManage回调==哇哈哈==str==" + str);//0A
+            int i = hex16To10(str);
+            LogUtils.e("SocketManage回调==哇哈哈==i==" + i);//10
 //            String str = string.substring(48, 50);
             String result = null;
-            if ("00".equals(str)) {
+            if (Constants.Type_00 == i) {
                 result = "工作站";
-            } else if ("01".equals(str)) {
+            } else if (Constants.Type_01 == i) {
                 result = "HD3摄像机";
-            } else if ("02".equals(str)) {
+            } else if (Constants.Type_02 == i) {
                 result = "冷光源";
-            } else if ("03".equals(str)) {
+            } else if (Constants.Type_03 == i) {
                 result = "气腹机";
-            } else if ("04".equals(str)) {
+            } else if (Constants.Type_04 == i) {
                 result = "冲洗机";
-            } else if ("05".equals(str)) {
+            } else if (Constants.Type_05 == i) {
                 result = "4K摄像机";
-            } else if ("06".equals(str)) {
+            } else if (Constants.Type_06 == i) {
                 result = "耳鼻喉控制板";
-            } else if ("07".equals(str)) {
+            } else if (Constants.Type_07 == i) {
                 result = "一代一体机";
-            } else if ("08".equals(str)) {
+            } else if (Constants.Type_08 == i) {
                 result = "耳鼻喉治疗台";
-            } else if ("09".equals(str)) {
+            } else if (Constants.Type_09 == i) {
                 result = "妇科治疗台";
-            } else if ("10".equals(str)) {
+            } else if (Constants.Type_0A == i) {
                 result = "泌尿治疗台";
-            } else if ("A0".equals(str)) {
+            } else if (Constants.Type_A0 == i) {
                 result = "iOS";
-            } else if ("A1".equals(str)) {
+            } else if (Constants.Type_A1 == i) {
                 result = "Android";
             }
-            return result;
+//            if (Constants.Type_00.equals(str)) {
+//                result = "工作站";
+//            } else if (Constants.Type_01.equals(str)) {
+//                result = "HD3摄像机";
+//            } else if (Constants.Type_02.equals(str)) {
+//                result = "冷光源";
+//            } else if (Constants.Type_03.equals(str)) {
+//                result = "气腹机";
+//            } else if (Constants.Type_04.equals(str)) {
+//                result = "冲洗机";
+//            } else if (Constants.Type_05.equals(str)) {
+//                result = "4K摄像机";
+//            } else if (Constants.Type_06.equals(str)) {
+//                result = "耳鼻喉控制板";
+//            } else if (Constants.Type_07.equals(str)) {
+//                result = "一代一体机";
+//            } else if (Constants.Type_08.equals(str)) {
+//                result = "耳鼻喉治疗台";
+//            } else if (Constants.Type_09.equals(str)) {
+//                result = "妇科治疗台";
+//            } else if (Constants.Type_0A.equals(str)) {
+//                result = "泌尿治疗台";
+//            } else if (Constants.Type_A0.equals(str)) {
+//                result = "iOS";
+//            } else if (Constants.Type_A1.equals(str)) {
+//                result = "Android";
+//            }
 
+            LogUtils.e("SocketManage回调==哇哈哈==result==" + result);
+
+            return result;
         }
         return "传入的String有误";
 
@@ -92,47 +125,49 @@ public class CalculateUtils {
      * * 9-妇科治疗台，10-泌尿治疗台，A0-iOS，A1-Android
      * * FF-所有设备
      * * 更多设备类型依次类推，平台最大可连接255种受控设备
-     *
+     * <p>
      * 我们手动吧 8  9  改成了 08 09 所以需要在这里替换下
      *
-     * @param string从随机之开始到校验和处结束的String
+     *  string从随机之开始到校验和处结束的String
      * @return
      */
     public static String getDeviceTypeFromRoom(String string) {
         //字符串--48位--50位表示的是设备类型
+        LogUtils.e("SocketManage回调==哇哈哈==string==" + string);
 
         if (!("".equals(string)) && string.length() >= 38) {
             String str = string.substring(2, 4);
             String result = null;
-            if ("00".equals(str)) {
-                result = "工作站";
-            } else if ("01".equals(str)) {
-                result = "HD3摄像机";
-            } else if ("02".equals(str)) {
-                result = "冷光源";
-            } else if ("03".equals(str)) {
-                result = "气腹机";
-            } else if ("04".equals(str)) {
-                result = "冲洗机";
-            } else if ("05".equals(str)) {
-                result = "4K摄像机";
-            } else if ("06".equals(str)) {
-                result = "耳鼻喉控制板";
-            } else if ("07".equals(str)) {
-                result = "一代一体机";
-            } else if ("08".equals(str)) {
-                result = "耳鼻喉治疗台";
-            } else if ("09".equals(str)) {
-                result = "妇科治疗台";
-            } else if ("10".equals(str)) {
-                result = "泌尿治疗台";
-            } else if ("A0".equals(str)) {
-                result = "iOS";
-            } else if ("A1".equals(str)) {
-                result = "Android";
-            } else {
-                result = str;
+            int i = hex16To10(str);
+            LogUtils.e("SocketManage回调==哇哈哈==i==" + str);
 
+//            String str = string.substring(48, 50);
+            if (Constants.Type_00 == i) {
+                result = "工作站";
+            } else if (Constants.Type_01 == i) {
+                result = "HD3摄像机";
+            } else if (Constants.Type_02 == i) {
+                result = "冷光源";
+            } else if (Constants.Type_03 == i) {
+                result = "气腹机";
+            } else if (Constants.Type_04 == i) {
+                result = "冲洗机";
+            } else if (Constants.Type_05 == i) {
+                result = "4K摄像机";
+            } else if (Constants.Type_06 == i) {
+                result = "耳鼻喉控制板";
+            } else if (Constants.Type_07 == i) {
+                result = "一代一体机";
+            } else if (Constants.Type_08 == i) {
+                result = "耳鼻喉治疗台";
+            } else if (Constants.Type_09 == i) {
+                result = "妇科治疗台";
+            } else if (Constants.Type_0A == i) {
+                result = "泌尿治疗台";
+            } else if (Constants.Type_A0 == i) {
+                result = "iOS";
+            } else if (Constants.Type_A1 == i) {
+                result = "Android";
             }
             return result;
 
@@ -220,8 +255,8 @@ public class CalculateUtils {
             String currentDevice = MD5ChangeUtil.Md5_32(DeviceIdUtil.getDeviceId(activity)); //记得大写
             String currentDeviceID = currentDevice.toUpperCase(); //记得大写
 
-            if (string.length()< 82){
-                LogUtils.e("======ReceiveThread==getDataIfForMe==接收到数据但是!!!数据格式长度不对 ====" );
+            if (string.length() < 82) {
+                LogUtils.e("======ReceiveThread==getDataIfForMe==接收到数据但是!!!数据格式长度不对 ====");
                 return false;
             }
             //获取发送给什么设备类型的
@@ -399,11 +434,13 @@ public class CalculateUtils {
 //      bean.setRamdom(CalculateUtils.getCurrentTimeString());
 //      广播发起随机时间戳:20220127104645
         //不转换的时候最后在CalculateUtils.hexString2Bytes(sendCommandString);回返回null,因为我那边模了不是偶数就会返回null
-        if ("9".equals(Received_Type)){
-            Received_Type ="09";
+
+        LogUtils.e("SocketManage回调==哇哈哈==getSendByteData====Received_Type=="+Received_Type);
+        if ("9".equals(Received_Type)) {
+            Received_Type = "09";
         }
-        if ("8".equals(Received_Type)){
-            Received_Type ="08";
+        if ("8".equals(Received_Type)) {
+            Received_Type = "08";
         }
         String mSend_IDBy32 = MD5ChangeUtil.Md5_32(DeviceIdUtil.getDeviceId(mContext));
         String mData = CalculateUtils.str2HexStr(bean);                   //data  json字符串转16进制
@@ -491,8 +528,8 @@ public class CalculateUtils {
      */
     public static String getReceiveDataString(String str) {
 //        String str = "AAC5 01 0059 D8 FF A1f9432b11b93e8bb4ae34539b7472c20eFF00000000000000000000000000000000FD7B2262726F6164636173746572223A22737A636D65222C2272616D646F6D223A223230323230313237313133353130227DEEDD";
-        if (str.length()< 82){
-            LogUtils.e("======ReceiveThread==getReceiveDataString==接收到数据但是!!!数据格式长度不对 ====" );
+        if (str.length() < 82) {
+            LogUtils.e("======ReceiveThread==getReceiveDataString==接收到数据但是!!!数据格式长度不对 ====");
             return "";
         }
         String substring = str.substring(82 + 2, str.length() - 4);
