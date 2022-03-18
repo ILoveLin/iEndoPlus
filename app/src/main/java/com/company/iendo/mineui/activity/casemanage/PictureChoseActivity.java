@@ -129,6 +129,7 @@ public final class PictureChoseActivity extends AppActivity implements StatusAct
             @Override
             public void onLeftClick(View view) {
                 showCloseReportAnim();
+                sendRequest(currentItemID);
 
             }
 
@@ -246,8 +247,8 @@ public final class PictureChoseActivity extends AppActivity implements StatusAct
 
                     @Override
                     public void onResponse(String response, int id) {
+                        oldIDS="";
                         mPathList = new ArrayList<>();
-
                         showComplete();
                         if ("" != response) {
                             DetailPictureBean mBean = mGson.fromJson(response, DetailPictureBean.class);

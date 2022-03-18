@@ -55,6 +55,8 @@ public class SocketUtils {
 //                    byte[] sendData = data.getBytes();
                     MMKV kv = MMKV.defaultMMKV();
                     int mCastSendPort = kv.decodeInt(Constants.KEY_BROADCAST_PORT);
+                    LogUtils.e("SocketUtils===发送消息==点对点==hand==key=mCastSendPort=" + mCastSendPort);
+
                     DatagramPacket mSendPacket = new DatagramPacket(data, data.length, finalMAddress, mCastSendPort);
                     for (int i = 0; i < 5; i++) {
                         LogUtils.e("SocketUtils=====发送第=====" + i + "====次广播==mCastSendPort==" + mCastSendPort);
@@ -119,7 +121,7 @@ public class SocketUtils {
 //                    byte[] sendData = data.getBytes();
                     MMKV kv = MMKV.defaultMMKV();
                     int mReceivePort = kv.decodeInt(Constants.KEY_RECEIVE_PORT);
-                    LogUtils.e("SocketUtils===发送消息==点对点==hand==key=01=" + mReceivePort);
+                    LogUtils.e("SocketUtils===发送消息==点对点==hand==key==" + mReceivePort);
 
                     DatagramPacket mSendPacket = new DatagramPacket(data, data.length, finalMAddress, receivePort);
 //                    for (int i = 0; i < 5; i++) {
@@ -179,7 +181,8 @@ public class SocketUtils {
                     LogUtils.e("SocketUtils===发送消息==点对点==Point===00==="+data );
 
                     int mReceivePort = kv.decodeInt(Constants.KEY_RECEIVE_PORT);
-                    LogUtils.e("SocketUtils===发送消息==点对点==Point===00===mReceivePort"+mReceivePort );
+                    LogUtils.e("SocketUtils===发送消息==点对点==hand==key=01=" + mReceivePort);
+
                     LogUtils.e("SocketUtils===发送消息==点对点==Point===00===receivePort"+receivePort);
 
                     DatagramPacket mSendPacket = new DatagramPacket(data, data.length, finalMAddress, receivePort);

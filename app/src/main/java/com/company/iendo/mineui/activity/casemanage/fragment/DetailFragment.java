@@ -21,6 +21,7 @@ import com.company.iendo.bean.DialogItemBean;
 import com.company.iendo.bean.ListDialogDateBean;
 import com.company.iendo.bean.event.SocketRefreshEvent;
 import com.company.iendo.bean.socket.HandBean;
+import com.company.iendo.bean.socket.UpdateCaseBean;
 import com.company.iendo.green.db.CaseDBUtils;
 import com.company.iendo.green.db.downcase.CaseDBBean;
 import com.company.iendo.green.db.downcase.CaseImageListBean;
@@ -61,8 +62,8 @@ import okhttp3.Call;
 
 /**
  * company：江西神州医疗设备有限公司
- *
-
+ * <p>
+ * <p>
  * author： LoveLin
  * time：2021/10/29 13:55
  * desc：第2个tab-fragment
@@ -107,7 +108,8 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
     private static final int UDP_Hand = 126;   //握手
     private static boolean UDP_HAND_TAG = false; //握手成功表示  true 成功
     private static boolean Details_Reault_Ok = false; //握手成功表示  true 成功
-
+    private String itemID;
+    private String mCaseID;
 
     public static DetailFragment newInstance() {
         return new DetailFragment();
@@ -126,6 +128,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         mDeviceID = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_DeviceID, "");
         mUserID = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_Login_UserID, "");
         mUserName = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_Login_UserName, "Admin");
+        mCaseID = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_Chose_CaseID, "4600");
 
         currentItemCaseID = MainActivity.getCurrentItemID();
         initLayoutViewDate();
@@ -280,7 +283,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 
 
         showLoading();
-        LogUtils.e("Socket回调==DetailFragment==当前UDP命令==event.====相等====开始请求界面=" );
+        LogUtils.e("Socket回调==DetailFragment==当前UDP命令==event.====相等====开始请求界面=");
 
         OkHttpUtils.get()
                 .url(mBaseUrl + HttpConstant.CaseManager_CaseInfo)
@@ -302,7 +305,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                             mBean = mGson.fromJson(response, CaseDetailBean.class);
                             if (0 == mBean.getCode()) {  //成功
                                 showComplete();
-                                Details_Reault_Ok =true;
+                                Details_Reault_Ok = true;
                                 setLayoutData(mBean);
 
                             } else {
@@ -416,16 +419,21 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
             }
         }
         if (!mEditStatus) {//切换到了不可编辑模式,发送请求
-            if (mFirstIn) {  //解决  首次进来 tosat 提示
-                mFirstIn = false;
-            } else {
-                checkDataAndRequest();
+            checkDataAndRequest();
 
-            }
+//            if (mFirstIn) {  //解决  首次进来 tosat 提示
+//                mFirstIn = false;
+//            } else {
+//                checkDataAndRequest();
+//
+//            }
         }
         if (isFatherExit) {//父类界面主动退出,保存当前数据
-            showComplete();
-            checkDataAndRequest();
+            if (mEditStatus){
+                showComplete();
+                checkDataAndRequest();
+            }
+
         }
 
     }
@@ -648,7 +656,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 
     //删除用户请求
     private void sendDeleteRequest() {
-        if (Details_Reault_Ok){
+        if (Details_Reault_Ok) {
             LogUtils.e("删除用户==params=" + mBean.getData().getID() + "");
             showLoading();
             OkHttpUtils.post()
@@ -688,7 +696,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                             }
                         }
                     });
-        }else {
+        } else {
             toast("稍后在尝试删除!");
         }
 
@@ -1098,10 +1106,10 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 
     private void checkDataAndRequest() {
         String Name = et_01_name.getText().toString().trim();
-        if (!Name.isEmpty()) {
-            getElseCanSelected();
-        } else {
+        if (Name.isEmpty()) {
             toast("用户名不能为空!");
+        } else {
+            getElseCanSelected();
         }
     }
 
@@ -1242,11 +1250,11 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                             if (0 == mBean.getCode()) {  //成功
                                 showComplete();
                                 //socket告知上位机更新病例
-                                sendSocketPointMessage(Constants.UDP_13);
+                                sendSocketPointUpdateMessage(Constants.UDP_13);
                                 ActivityManager.getInstance().finishActivity(AddCaseActivity.class);
 
                             } else {
-                              toast(mBean.getMsg()+"");
+                                toast(mBean.getMsg() + "");
                             }
                         } else {
                             showError(listener -> {
@@ -1284,16 +1292,16 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                 break;
             case Constants.UDP_13://有病例,并且当前病例id==回调病例id则更新界面数据
                 LogUtils.e("Socket回调==DetailFragment==当前UDP命令==event.getData()==" + event.getData());
-                LogUtils.e("Socket回调==DetailFragment==当前UDP命令==currentItemCaseID==" +currentItemCaseID);
+                LogUtils.e("Socket回调==DetailFragment==当前UDP命令==currentItemCaseID==" + currentItemCaseID);
 
-                if (event.getTga()){
-                    if (currentItemCaseID.equals(event.getData())){
+                if (event.getTga()) {
+                    if (currentItemCaseID.equals(event.getData())) {
                         //请求界面数据
                         sendRequest(currentItemCaseID);
-                        LogUtils.e("Socket回调==DetailFragment==当前UDP命令==event.====相等==" );
+                        LogUtils.e("Socket回调==DetailFragment==当前UDP命令==event.====相等==");
 
                     }
-                    LogUtils.e("Socket回调==DetailFragment==当前UDP命令==event.===不=相等==" );
+                    LogUtils.e("Socket回调==DetailFragment==当前UDP命令==event.===不=相等==");
 
 
                 }
@@ -1328,6 +1336,37 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
      *
      * @param CMDCode 命令cmd
      */
+    public void sendSocketPointUpdateMessage(String CMDCode) {
+        if (UDP_HAND_TAG) {
+//            mCaseID
+            UpdateCaseBean bean = new UpdateCaseBean();
+            if (!"".equals(mCaseID)) {
+                String hexStringID = CalculateUtils.numToHex16(Integer.parseInt(mCaseID));
+                bean.setRecordid(hexStringID);
+            }
+            LogUtils.e("SocketUtils===发送消息==点对点==Point===bean===" + bean.toString());
+
+            byte[] sendByteData = CalculateUtils.getSendByteData(getAttachActivity(), mGson.toJson(bean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
+                    CMDCode);
+            if (("".equals(mSocketPort))) {
+                toast("通讯端口不能为空!");
+                return;
+            }
+
+            SocketUtils.startSendPointMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), getAttachActivity());
+        } else {
+            sendHandLinkMessage();
+            toast("请先建立握手链接!");
+        }
+
+    }
+
+
+    /**
+     * 发送点对点消息,必须握手成功
+     *
+     * @param CMDCode 命令cmd
+     */
     public void sendSocketPointMessage(String CMDCode) {
         if (UDP_HAND_TAG) {
             HandBean handBean = new HandBean();
@@ -1340,7 +1379,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                 return;
             }
 
-            SocketUtils.startSendPointMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort),getAttachActivity());
+            SocketUtils.startSendPointMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), getAttachActivity());
         } else {
             sendHandLinkMessage();
             toast("请先建立握手链接!");

@@ -410,6 +410,10 @@ public class ReceiveSocketService extends AbsWorkService {
         MMKV kv = MMKV.defaultMMKV();
         kv.encode(Constants.KEY_SOCKET_RECEIVE_FIRST_IN, true);
         kv.encode(Constants.KEY_RECEIVE_PORT, settingReceivePort); //设置的,本地监听端口
+        int i = kv.decodeInt(Constants.KEY_RECEIVE_PORT);
+        LogUtils.e("保活服务开启-My-startWork---bbAA---===bbAA=i==" + i);
+
+
 
 
     }

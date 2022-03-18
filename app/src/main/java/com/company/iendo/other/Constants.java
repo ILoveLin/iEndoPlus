@@ -30,7 +30,7 @@ public class Constants {
     //广播约定端口  只有在设备搜索的时候进行了设置才会更改这个值                                           MMKV的Key
     public static final String KEY_BROADCAST_PORT = "KEY_BROADCAST_PORT";
     //(登入后------退出前)这个时间段监听的本地监听端口,并且这个值,是时刻更新的不管是搜索还是登入之后          MMKV的Key
-    public static final String KEY_RECEIVE_PORT = "KEY_RECEIVE_PORT";               //   bug结果是4     int mReceivePort = kv.decodeInt(Constants.KEY_RECEIVE_PORT);
+    public static final String KEY_RECEIVE_PORT = "KEY_RECEIVE_PORT";
     //(设备搜索的时候)监听的本地监听端口,并且这个值,只在搜索的时候设置端口变化                              MMKV的Key
     public static final String KEY_RECEIVE_PORT_BY_SEARCH = "KEY_RECEIVE_PORT_BY_SEARCH";
     //第一次开启接收线程 避免初始化的时候开启多次线程                                                    MMKV的Key

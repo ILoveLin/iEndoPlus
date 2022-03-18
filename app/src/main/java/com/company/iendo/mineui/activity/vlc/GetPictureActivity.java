@@ -308,9 +308,9 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             case R.id.linear_cold:              //冻结
                 sendSocketPointMessage(Constants.UDP_F3);
                 break;
-            case R.id.linear_mic:               //麦克风
-
-                break;
+//            case R.id.linear_mic:               //麦克风
+//
+//                break;
             case R.id.lock_screen:  //锁屏
                 if (mLockScreen.getTag().equals("lock")) {   //解锁
                     mHandler.sendEmptyMessage(Unlock);
@@ -510,7 +510,8 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
      */
 
     private void responseListener() {
-        setOnClickListener(R.id.linear_record, R.id.linear_picture, R.id.linear_cold, R.id.linear_mic, R.id.full_change, R.id.lock_screen, R.id.root_layout_vlc, R.id.video_back, R.id.control_start_view);
+//        R.id.linear_mic,
+        setOnClickListener(R.id.linear_record, R.id.linear_picture, R.id.linear_cold, R.id.full_change, R.id.lock_screen, R.id.root_layout_vlc, R.id.video_back, R.id.control_start_view);
         mVLCView.setMediaListenerEvent(new MediaListenerEvent() {
             @Override
             public void eventBuffing(int event, float buffing) {

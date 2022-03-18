@@ -125,7 +125,22 @@ public class DeviceSearchAdapter extends AppAdapter<BroadCastReceiveBean> {
 
 
                 }
-
+//            switch (mDBBean.getType()) {
+//                case "一代一体机":
+//                    mImageChose.setImageResource(R.drawable.icon_yitiji);
+//                    break;
+//                case "耳鼻喉治疗台":
+//                    mImageChose.setImageResource(R.drawable.icon_erbihou);
+//
+//                    break;
+//                case "妇科治疗台":
+//                    mImageChose.setImageResource(R.drawable.icon_shenzhou4k);
+//
+//                    break;
+//                case "泌尿治疗台":
+//                    mImageChose.setImageResource(R.drawable.icon_shenzhou4k);
+//                    break;
+//            }
 
             switch (mItemBean.getDeviceType()) {
                 case "一代一体机":
@@ -133,7 +148,6 @@ public class DeviceSearchAdapter extends AppAdapter<BroadCastReceiveBean> {
                     break;
                 case "耳鼻喉治疗台":
                     mImageChose.setImageResource(R.drawable.icon_erbihou);
-
                     break;
                 case "妇科治疗台":
                     mImageChose.setImageResource(R.drawable.icon_shenzhou4k);
