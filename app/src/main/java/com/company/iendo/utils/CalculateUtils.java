@@ -93,6 +93,8 @@ public class CalculateUtils {
      * * FF-所有设备
      * * 更多设备类型依次类推，平台最大可连接255种受控设备
      *
+     * 我们手动吧 8  9  改成了 08 09 所以需要在这里替换下
+     *
      * @param string从随机之开始到校验和处结束的String
      * @return
      */
@@ -118,9 +120,9 @@ public class CalculateUtils {
                 result = "耳鼻喉控制板";
             } else if ("07".equals(str)) {
                 result = "一代一体机";
-            } else if ("8".equals(str)) {
+            } else if ("08".equals(str)) {
                 result = "耳鼻喉治疗台";
-            } else if ("9".equals(str)) {
+            } else if ("09".equals(str)) {
                 result = "妇科治疗台";
             } else if ("10".equals(str)) {
                 result = "泌尿治疗台";

@@ -84,6 +84,7 @@ public class DeviceAdapter extends AppAdapter<DeviceDBBean> {
             mRemark.setText("" + mDBBean.getMsg());
             mIP.setText("" + mDBBean.getIp());
 
+            LogUtils.e("SocketManage回调==模拟数据==DeviceDBBean.toString==DeviceAdapter===" + mDBBean.toString());
 
             if (null != mDBBean.getUsemsg01()) {
                 if ("false".equals(mDBBean.getUsemsg01())) {
@@ -112,7 +113,6 @@ public class DeviceAdapter extends AppAdapter<DeviceDBBean> {
                         break;
                     case "耳鼻喉治疗台":
                         mImageChose.setImageResource(R.drawable.icon_erbihou);
-
                         break;
                     case "妇科治疗台":
                         mImageChose.setImageResource(R.drawable.icon_shenzhou4k);

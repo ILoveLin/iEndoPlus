@@ -418,18 +418,16 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                 }
             }
         }
+//        //编辑状态为true,不可编辑状态为flase,默认false不可编辑
         if (!mEditStatus) {//切换到了不可编辑模式,发送请求
-            checkDataAndRequest();
-
-//            if (mFirstIn) {  //解决  首次进来 tosat 提示
-//                mFirstIn = false;
-//            } else {
-//                checkDataAndRequest();
-//
-//            }
+            if (mFirstIn) {  //解决  首次进来 tosat 提示
+                mFirstIn = false;
+            } else {
+                checkDataAndRequest();
+            }
         }
         if (isFatherExit) {//父类界面主动退出,保存当前数据
-            if (mEditStatus){
+            if (mEditStatus) {
                 showComplete();
                 checkDataAndRequest();
             }
@@ -1396,13 +1394,13 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
     public void onResume() {
         super.onResume();
         isFatherExit = false;
-        mFirstIn = true;
         sendListDictsRequest();
         sendHandLinkMessage();
     }
 
     @Override
     public void onPause() {
+        mFirstIn = false;
         super.onPause();
     }
 

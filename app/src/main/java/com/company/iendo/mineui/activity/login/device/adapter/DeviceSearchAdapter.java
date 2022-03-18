@@ -93,7 +93,7 @@ public class DeviceSearchAdapter extends AppAdapter<BroadCastReceiveBean> {
                 mMsgChose.setVisibility(View.INVISIBLE);
 
             }
-            LogUtils.e("SocketManage回调==模拟数据==DeviceDBBean.toString==Adapter===" + mItemBean.toString());
+            LogUtils.e("SocketManage回调==模拟数据==DeviceDBBean.toString==SearchAdapter===" + mItemBean.toString());
             String tag = mItemBean.getEndotype() + mItemBean.getDeviceCode() + mItemBean.getDeviceType();
 
             DeviceDBBean codeBean = DeviceDBUtils.getQueryBeanByAcceptAndInsertDB(mContext, tag);

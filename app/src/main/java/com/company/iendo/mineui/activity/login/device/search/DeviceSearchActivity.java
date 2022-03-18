@@ -642,10 +642,10 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
             case "07":  //（一代一体机）         扫码的结果对应数字是07
                 bean.setType("一代一体机");        //设置设备类型
                 break;
-            case "8": //（耳鼻喉治疗台）     扫码的结果对应数字是8
+            case "08": //（耳鼻喉治疗台）     扫码的结果对应数字是8   这里需要统一添加0
                 bean.setType("耳鼻喉治疗台");
                 break;
-            case "9"://（妇科治疗台）                扫码的结果对应数字是9
+            case "09"://（妇科治疗台）                扫码的结果对应数字是9  这里需要统一添加0
                 bean.setType("妇科治疗台");
                 break;
             case "10"://（泌尿治疗台）             扫码的结果对应数字是10
