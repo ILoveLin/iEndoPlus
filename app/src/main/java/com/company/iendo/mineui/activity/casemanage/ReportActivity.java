@@ -1,41 +1,20 @@
 package com.company.iendo.mineui.activity.casemanage;
 
-import android.annotation.SuppressLint;
-import android.os.Handler;
-import android.os.Message;
 import android.view.View;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 
-import com.bumptech.glide.Glide;
 import com.company.iendo.R;
 import com.company.iendo.action.StatusAction;
 import com.company.iendo.app.AppActivity;
-import com.company.iendo.bean.event.SocketRefreshEvent;
-import com.company.iendo.bean.socket.HandBean;
-import com.company.iendo.bean.socket.getpicture.LookReportBean;
-import com.company.iendo.bean.socket.getpicture.PrintReportBean;
-import com.company.iendo.bean.socket.getpicture.ShotPictureBean;
-import com.company.iendo.mineui.socket.SocketManage;
-import com.company.iendo.other.Constants;
-import com.company.iendo.utils.CalculateUtils;
 import com.company.iendo.utils.LogUtils;
-import com.company.iendo.utils.SharePreferenceUtil;
-import com.company.iendo.utils.SocketUtils;
 import com.company.iendo.widget.StatusLayout;
 import com.gyf.immersionbar.ImmersionBar;
 import com.hjq.bar.OnTitleBarListener;
 import com.hjq.bar.TitleBar;
 
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
-import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetSocketAddress;
 
 /**
  * company：江西神州医疗设备有限公司

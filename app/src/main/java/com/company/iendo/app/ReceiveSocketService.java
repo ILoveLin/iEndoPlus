@@ -11,8 +11,10 @@ import com.company.iendo.bean.event.SocketRefreshEvent;
 import com.company.iendo.bean.socket.RecodeBean;
 import com.company.iendo.bean.socket.UpdateCaseBean;
 import com.company.iendo.bean.socket.getpicture.ColdPictureBean;
+import com.company.iendo.bean.socket.getpicture.EditPictureBean;
 import com.company.iendo.bean.socket.getpicture.LookReportBean;
 import com.company.iendo.bean.socket.getpicture.PrintReportBean;
+import com.company.iendo.bean.socket.getpicture.ShotPictureCallBlackBean;
 import com.company.iendo.bean.socket.getpicture.UserIDBean;
 import com.company.iendo.other.Constants;
 import com.company.iendo.utils.CalculateUtils;
@@ -327,7 +329,7 @@ public class ReceiveSocketService extends AbsWorkService {
                                             RecodeBean recodeBean = mGson.fromJson(str, RecodeBean.class);
                                             event.setTga(true);
                                             event.setData(recodeBean.getQrycode());
-                                            event.setIp(hostAddressIP);
+                                            event.setIp(CalculateUtils.hex16To10(recodeBean.getRecordid()) + "");//16进制转10进制
                                             event.setUdpCmd(Constants.UDP_18);
                                             EventBus.getDefault().post(event);
                                             break;
@@ -340,6 +342,34 @@ public class ReceiveSocketService extends AbsWorkService {
                                             event.setData(caseID);
                                             event.setIp(hostAddressIP);
                                             event.setUdpCmd(Constants.UDP_13);
+                                            EventBus.getDefault().post(event);
+                                            break;
+                                        case Constants.UDP_15://采图
+                                            LogUtils.e("======LiveServiceImpl==回调===采图==");
+                                            ShotPictureCallBlackBean pictureCallBlackBean = mGson.fromJson(str, ShotPictureCallBlackBean.class);
+                                            //hex转成十进制
+                                            String picCaseID = CalculateUtils.hex16To10(pictureCallBlackBean.getRecordid()) + "";
+                                            String imageID = CalculateUtils.hex16To10(pictureCallBlackBean.getImageid()) + "";
+                                            LogUtils.e("======LiveServiceImpl==回调===采图==picCaseID==" + picCaseID);
+                                            LogUtils.e("======LiveServiceImpl==回调===采图==imageID==" + imageID);
+                                            event.setTga(true);
+                                            event.setData(picCaseID);//只回调病例ID,回调的病例ID和当前App操作的病例ID 不同的时候不作处理
+                                            event.setIp(hostAddressIP);
+                                            event.setUdpCmd(Constants.UDP_15);
+                                            EventBus.getDefault().post(event);
+                                            break;
+                                        case Constants.UDP_17://编辑图片
+                                            LogUtils.e("======LiveServiceImpl==回调===编辑图片==");
+                                            EditPictureBean editBean = mGson.fromJson(str, EditPictureBean.class);
+                                            //hex转成十进制
+                                            String editCaseID = CalculateUtils.hex16To10(editBean.getRecordid()) + "";
+                                            String editCaseImageID = CalculateUtils.hex16To10(editBean.getImageid()) + "";
+                                            LogUtils.e("======LiveServiceImpl==回调===编辑图片==picCaseID==" + editCaseID);
+                                            LogUtils.e("======LiveServiceImpl==回调===编辑图片==imageID==" + editCaseImageID);
+                                            event.setTga(true);
+                                            event.setData(editCaseID);//只回调病例ID,回调的病例ID和当前App操作的病例ID 不同的时候不作处理
+                                            event.setIp(editCaseImageID);  //此处设置为图片ID
+                                            event.setUdpCmd(Constants.UDP_17);
                                             EventBus.getDefault().post(event);
                                             break;
 
@@ -412,8 +442,6 @@ public class ReceiveSocketService extends AbsWorkService {
         kv.encode(Constants.KEY_RECEIVE_PORT, settingReceivePort); //设置的,本地监听端口
         int i = kv.decodeInt(Constants.KEY_RECEIVE_PORT);
         LogUtils.e("保活服务开启-My-startWork---bbAA---===bbAA=i==" + i);
-
-
 
 
     }

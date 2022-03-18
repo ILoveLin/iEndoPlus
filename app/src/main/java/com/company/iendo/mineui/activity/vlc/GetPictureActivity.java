@@ -21,12 +21,14 @@ import androidx.annotation.NonNull;
 import com.company.iendo.R;
 import com.company.iendo.action.StatusAction;
 import com.company.iendo.app.AppActivity;
+import com.company.iendo.bean.CaseDetailBean;
 import com.company.iendo.bean.event.SocketRefreshEvent;
 import com.company.iendo.bean.socket.HandBean;
 import com.company.iendo.bean.socket.RecodeBean;
 import com.company.iendo.bean.socket.getpicture.ShotPictureBean;
 import com.company.iendo.other.Constants;
 
+import com.company.iendo.other.HttpConstant;
 import com.company.iendo.utils.CalculateUtils;
 import com.company.iendo.utils.CommonUtil;
 import com.company.iendo.utils.LogUtils;
@@ -43,6 +45,8 @@ import com.pedro.rtplibrary.rtmp.RtmpOnlyAudio;
 import com.vlc.lib.RecordEvent;
 import com.vlc.lib.VlcVideoView;
 import com.vlc.lib.listener.MediaListenerEvent;
+import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.callback.StringCallback;
 
 import net.ossrs.rtmp.ConnectCheckerRtmp;
 
@@ -51,6 +55,8 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
+
+import okhttp3.Call;
 
 /**
  * author : Android 轮子哥
@@ -122,17 +128,17 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                     }
                     break;
                 case Record:
-//                    0：查询录像状态 1：开始录像，2：停止录像，3：正在录像  4：未录像
-                    String tag = (String) msg.obj;
-                    if ("1".equals(tag) || "3".equals(tag)) {
-                        setTextColor(getResources().getColor(R.color.white), "录像中", true);
-                    } else if ("2".equals(tag) || "4".equals(tag)) {
-                        setTextColor(getResources().getColor(R.color.white), "录像", false);
-                    }else if ("5".equals(tag)){
-                        toast("采集卡未安装");
-                    }
-                    LogUtils.e("录像====" + tag);
-                    LogUtils.e("录像====" + UDP_RECODE_INIT_TAG);
+////                    0：查询录像状态 1：开始录像，2：停止录像，3：正在录像  4：未录像
+//                    String tag = (String) msg.obj;
+//                    if ("1".equals(tag) || "3".equals(tag)) {
+//                        setTextColor(getResources().getColor(R.color.white), "录像中", true);
+//                    } else if ("2".equals(tag) || "4".equals(tag)) {
+//                        setTextColor(getResources().getColor(R.color.white), "录像", false);
+//                    } else if ("5".equals(tag)) {
+//                        toast("采集卡未安装");
+//                    }
+//                    LogUtils.e("录像====" + tag);
+//                    LogUtils.e("录像====" + UDP_RECODE_INIT_TAG);
 //                    switch ((String) msg.obj) {
 //                        case "0":
 //                            break;
@@ -180,6 +186,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             }
         }
     };
+    private TextView mPictureDes;
 
     /**
      * eventbus 刷新socket数据
@@ -187,14 +194,6 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void SocketRefreshEvent(SocketRefreshEvent event) {
         LogUtils.e("Socket回调==DeviceSearchActivity==event.getData()==" + event.getData());
-        String mRun2End4 = CalculateUtils.getReceiveRun2End4String(event.getData());//随机数之后到data结尾的String
-        String deviceType = CalculateUtils.getSendDeviceType(event.getData());
-        String deviceOnlyCode = CalculateUtils.getSendDeviceOnlyCode(event.getData());
-        String currentCMD = CalculateUtils.getCMD(event.getData());
-        LogUtils.e("Socket回调==DeviceSearchActivity==随机数之后到data的Str==mRun2End4==" + mRun2End4);
-        LogUtils.e("Socket回调==DeviceSearchActivity==发送方设备类型==deviceType==" + deviceType);
-        LogUtils.e("Socket回调==DeviceSearchActivity==获取发送方设备Code==deviceOnlyCode==" + deviceOnlyCode);
-        LogUtils.e("Socket回调==DeviceSearchActivity==当前UDP命令==currentCMD==" + currentCMD);
         LogUtils.e("Socket回调==DeviceSearchActivity==当前UDP命令==event.getUdpCmd()==" + event.getUdpCmd());
         String data = event.getData();
         switch (event.getUdpCmd()) {
@@ -221,10 +220,30 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                 }
                 break;
             case Constants.UDP_18://录像--->0：查询录像状态 1：开始录像，2：停止录像，3：正在录像  4：未录像
-                Message obtain = Message.obtain();
-                obtain.obj = data;
-                obtain.what = Record;
-                mHandler.sendMessage(obtain);
+                //获取当前上位机操作的病例ID
+                String mUpCaseID = event.getIp();
+                if (mUpCaseID.equals(mCaseID)){
+                    String tag = (String) event.getData();
+                    if ("1".equals(tag) || "3".equals(tag)) {
+                        setTextColor(getResources().getColor(R.color.white), "录像中", true);
+                    } else if ("2".equals(tag) || "4".equals(tag)) {
+                        setTextColor(getResources().getColor(R.color.white), "录像", false);
+                    } else if ("5".equals(tag)) {
+                        toast("采集卡未安装");
+                    }
+                    LogUtils.e("录像====" + tag);
+                    LogUtils.e("录像====" + UDP_RECODE_INIT_TAG);
+                }
+//                Message obtain = Message.obtain();
+//                obtain.obj = data;
+//                obtain.what = Record;
+//                mHandler.sendMessage(obtain);
+                break;
+            case Constants.UDP_15://截图
+                LogUtils.e("======LiveServiceImpl==回调=event==采图=="+event.getData());
+                if (mCaseID.equals(event.getData())){
+                    sendRequest(mCaseID);
+                }
                 break;
         }
 
@@ -404,7 +423,6 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
      */
 
 
-
     /**
      * 发送握手消息
      */
@@ -420,7 +438,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         }
         LogUtils.e("SocketUtils===发送消息==点对点==GetPictureActivity==mSocketPort==" + mSocketPort);
 
-        SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort),GetPictureActivity.this);
+        SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), GetPictureActivity.this);
     }
 
     /**
@@ -445,7 +463,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                 toast("通讯端口不能为空!");
                 return;
             }
-            SocketUtils.startSendPointMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort),GetPictureActivity.this);
+            SocketUtils.startSendPointMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), GetPictureActivity.this);
         } else {
             toast("请先建立握手链接!");
             sendHandLinkMessage();
@@ -469,7 +487,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                 toast("通讯端口不能为空!");
                 return;
             }
-            SocketUtils.startSendPointMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort),GetPictureActivity.this);
+            SocketUtils.startSendPointMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), GetPictureActivity.this);
         } else {
             toast("请先建立握手链接!");
             sendHandLinkMessage();
@@ -497,7 +515,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                 toast("通讯端口不能为空!");
                 return;
             }
-            SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort),GetPictureActivity.this);
+            SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), GetPictureActivity.this);
         } else {
             toast("请先建立握手链接!");
             sendHandLinkMessage();
@@ -655,6 +673,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         mStatusLayout = findViewById(R.id.picture_status_hint);
         mChangeFull = findViewById(R.id.full_change);
+        mPictureDes = findViewById(R.id.case_picture); //采图
         mTime = findViewById(R.id.tv_time);
         mLinearBottom = findViewById(R.id.linear_bottom);
         mTopControl = findViewById(R.id.relative_top_control);
@@ -710,6 +729,49 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         //握手通讯
         LogUtils.e("onResume===GetPictureActivity===开始建立握手链接!");
         sendHandLinkMessage();
+        sendRequest(mCaseID);
+    }
+
+    //获取病例图片数目
+    private void sendRequest(String mCaseID) {
+        OkHttpUtils.get()
+                .url(mBaseUrl + HttpConstant.CaseManager_CaseInfo)
+                .addParams("ID", mCaseID)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        showError(listener -> {
+                            sendRequest(mCaseID);
+                        });
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        if ("" != response) {
+                            LogUtils.e("详情界面---截图界面===病例详情response==itemID=" + mCaseID);
+                            LogUtils.e("详情界面---截图界面===病例详情response===" + response);
+
+                            CaseDetailBean mBean = mGson.fromJson(response, CaseDetailBean.class);
+                            if (0 == mBean.getCode()) {  //成功
+                                showComplete();
+                                int imageCount = mBean.getData().getImagesCount();
+                                CaseDetailBean.DataDTO data = mBean.getData();
+                                LogUtils.e("详情界面---截图界面===病例详情response==imageCount=" + imageCount);
+                                mPictureDes.setText("采图(" + imageCount + ")");
+
+                            } else {
+                                showError(listener -> {
+                                    sendRequest(mCaseID);
+                                });
+                            }
+                        } else {
+                            showError(listener -> {
+                                sendRequest(mCaseID);
+                            });
+                        }
+                    }
+                });
     }
 
     private void startLive(String path) {

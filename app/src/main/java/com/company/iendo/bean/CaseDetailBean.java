@@ -163,6 +163,8 @@ public class CaseDetailBean {
         private Object ReportSeriesInstanceUID;
         @SerializedName("ImageCount")
         private int ImageCount;
+        @SerializedName("imagesCount")
+        private int imagesCount;
         @SerializedName("UpdateTime")
         private String UpdateTime;
         @SerializedName("EndoType")
@@ -702,6 +704,14 @@ public class CaseDetailBean {
 
         public void setCheckDiagnosis(String CheckDiagnosis) {
             this.CheckDiagnosis = CheckDiagnosis;
+        }
+
+        public int getImagesCount() {
+            return imagesCount;
+        }
+
+        public void setImagesCount(int imagesCount) {
+            this.imagesCount = imagesCount;
         }
 
         @Override

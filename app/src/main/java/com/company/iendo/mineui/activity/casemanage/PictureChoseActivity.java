@@ -402,7 +402,7 @@ public final class PictureChoseActivity extends AppActivity implements StatusAct
                             .load(path)
                             .placeholder(R.drawable.ic_bg_splash_des) //占位符 也就是加载中的图片，可放个gif
                             .error(R.mipmap.bg_splash_des)
-                            .signature(new ObjectKey(System.currentTimeMillis()))//不适用缓存
+                            .signature(new ObjectKey(System.currentTimeMillis()))//不使用缓存
                             .into(mAnimReport);
                 }
                 break;

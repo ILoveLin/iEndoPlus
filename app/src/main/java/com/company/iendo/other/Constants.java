@@ -51,6 +51,7 @@ public class Constants {
     public static final String UDP_15 = "15";                 //新增图片（采图）
     public static final String UDP_F1 = "F1";                 //预览报告
     public static final String UDP_F2 = "F2";                 //打印报告
+    public static final String UDP_17 = "17";                 //编辑图片
     public static final String UDP_18 = "18";                 //录像
 
 

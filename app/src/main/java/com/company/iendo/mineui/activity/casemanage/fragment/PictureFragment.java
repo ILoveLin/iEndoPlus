@@ -10,8 +10,10 @@ import com.company.iendo.R;
 import com.company.iendo.action.StatusAction;
 import com.company.iendo.app.TitleBarFragment;
 import com.company.iendo.bean.DetailPictureBean;
+import com.company.iendo.bean.event.SocketRefreshEvent;
 import com.company.iendo.mineui.activity.MainActivity;
 import com.company.iendo.mineui.activity.casemanage.fragment.adapter.PictureAdapter;
+import com.company.iendo.other.Constants;
 import com.company.iendo.other.GridSpaceDecoration;
 import com.company.iendo.other.HttpConstant;
 import com.company.iendo.ui.activity.ImagePreviewActivity;
@@ -26,6 +28,10 @@ import com.scwang.smart.refresh.layout.api.RefreshLayout;
 import com.scwang.smart.refresh.layout.listener.OnRefreshLoadMoreListener;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,6 +53,8 @@ public class PictureFragment extends TitleBarFragment<MainActivity> implements S
     private PictureAdapter mAdapter;
     private String mBaseUrl;
     private ArrayList<String> mPathList;
+    private String currentItemCaseID;
+    private Boolean firstInitAdapter = true;
 
     public static PictureFragment newInstance() {
         return new PictureFragment();
@@ -60,11 +68,13 @@ public class PictureFragment extends TitleBarFragment<MainActivity> implements S
 
     @Override
     protected void initView() {
+        EventBus.getDefault().register(this);
+
 //        mRefreshLayout = findViewById(R.id.rl_pic_refresh);
         mRecyclerView = findViewById(R.id.rv_pic_list);
         mStatusLayout = findViewById(R.id.pic_hint);
         mBaseUrl = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_BaseUrl, "111");
-        mAdapter = new PictureAdapter(getActivity(), MainActivity.getCurrentItemID(), mBaseUrl);
+        mAdapter = new PictureAdapter(getActivity(), MainActivity.getCurrentItemID(), mBaseUrl, "",firstInitAdapter );
 
         mAdapter.setOnItemClickListener(this);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 3);
@@ -73,9 +83,39 @@ public class PictureFragment extends TitleBarFragment<MainActivity> implements S
         mRecyclerView.setAdapter(mAdapter);
 
         mAdapter.setData(mDataLest);
-        sendRequest(MainActivity.getCurrentItemID());
+        currentItemCaseID = MainActivity.getCurrentItemID();
+
+        sendRequest(currentItemCaseID);
 
 
+    }
+
+    /**
+     * eventbus 刷新socket数据
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void SocketRefreshEvent(SocketRefreshEvent event) {
+        LogUtils.e("Socket回调==PictureFragment===回调===编辑图片====" + event.getData());
+
+        String data = event.getData();
+        switch (event.getUdpCmd()) {
+            case Constants.UDP_17://编辑图片
+                if (data.equals(currentItemCaseID)) {//当前病例一样,才更新
+                    String changePicID = event.getIp();
+                    for (int i = 0; i < mDataLest.size(); i++) {
+                        DetailPictureBean.DataDTO dataDTO = mDataLest.get(i);
+                        String id = dataDTO.getID();
+                        if (changePicID.equals(id)) {
+                            mAdapter.setItem(i, dataDTO);
+                        }
+                    }
+//                    mAdapter.setCurrentChangeImageID(changePicID);
+                    LogUtils.e("Socket回调==PictureFragment===回调===编辑图片==changePicID==" + changePicID);
+
+                    break;
+                }
+
+        }
     }
 
     /**
@@ -84,6 +124,7 @@ public class PictureFragment extends TitleBarFragment<MainActivity> implements S
      * @param currentItemID
      */
     private void sendRequest(String currentItemID) {
+        firstInitAdapter = true;
         showLoading();
         LogUtils.e("currentItemID" + currentItemID);
         OkHttpUtils.get()
@@ -120,10 +161,12 @@ public class PictureFragment extends TitleBarFragment<MainActivity> implements S
                                     //添加跳转大图界面的前提是,把图片url 添加到集合之中
                                     for (int i = 0; i < mBean.getData().size(); i++) {
                                         String imageName = mBean.getData().get(i).getImagePath();
+                                        String id1 = mBean.getData().get(i).getID();
                                         String url = mBaseUrl + "/" + MainActivity.getCurrentItemID() + "/" + imageName;
                                         LogUtils.e("图片fragment===" + imageName);
+                                        LogUtils.e("图片fragment=id1==" + id1);
                                         LogUtils.e("图片fragment===" + url);
-                                        mPathList.add(url);
+                                        mPathList.add( url);
 
                                     }
                                 } else {
@@ -159,7 +202,13 @@ public class PictureFragment extends TitleBarFragment<MainActivity> implements S
 
     }
 
-//    /**
+    @Override
+    public void onResume() {
+        super.onResume();
+        sendRequest(currentItemCaseID);
+    }
+
+    //    /**
 //     * {@link OnRefreshLoadMoreListener}
 //     */
 //
@@ -194,4 +243,9 @@ public class PictureFragment extends TitleBarFragment<MainActivity> implements S
     }
 
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
 }
