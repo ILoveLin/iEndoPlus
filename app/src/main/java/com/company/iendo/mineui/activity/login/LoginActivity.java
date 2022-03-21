@@ -324,6 +324,8 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                         showComplete();
                         mPasswordView.setText("");
                         mPhoneView.setText("");
+                        LogUtils.e("用户列表==onError=" + e);
+
                     }
 
                     @Override

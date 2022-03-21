@@ -74,7 +74,7 @@ public class PictureFragment extends TitleBarFragment<MainActivity> implements S
         mRecyclerView = findViewById(R.id.rv_pic_list);
         mStatusLayout = findViewById(R.id.pic_hint);
         mBaseUrl = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_BaseUrl, "111");
-        mAdapter = new PictureAdapter(getActivity(), MainActivity.getCurrentItemID(), mBaseUrl, "",firstInitAdapter );
+        mAdapter = new PictureAdapter(getActivity(), MainActivity.getCurrentItemID(), mBaseUrl, "", firstInitAdapter);
 
         mAdapter.setOnItemClickListener(this);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 3);
@@ -96,7 +96,6 @@ public class PictureFragment extends TitleBarFragment<MainActivity> implements S
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void SocketRefreshEvent(SocketRefreshEvent event) {
         LogUtils.e("Socket回调==PictureFragment===回调===编辑图片====" + event.getData());
-
         String data = event.getData();
         switch (event.getUdpCmd()) {
             case Constants.UDP_17://编辑图片
@@ -111,10 +110,15 @@ public class PictureFragment extends TitleBarFragment<MainActivity> implements S
                     }
 //                    mAdapter.setCurrentChangeImageID(changePicID);
                     LogUtils.e("Socket回调==PictureFragment===回调===编辑图片==changePicID==" + changePicID);
-
-                    break;
                 }
-
+                break;
+            case Constants.UDP_15://截图
+                LogUtils.e("======LiveServiceImpl==回调=图片fragment==截图==" + event.getData());
+                LogUtils.e("======LiveServiceImpl==回调=图片fragment==截图=currentItemCaseID=" + currentItemCaseID);
+                if (currentItemCaseID.equals(event.getData())) {
+                    sendRequest(currentItemCaseID);
+                }
+                break;
         }
     }
 
@@ -166,7 +170,7 @@ public class PictureFragment extends TitleBarFragment<MainActivity> implements S
                                         LogUtils.e("图片fragment===" + imageName);
                                         LogUtils.e("图片fragment=id1==" + id1);
                                         LogUtils.e("图片fragment===" + url);
-                                        mPathList.add( url);
+                                        mPathList.add(url);
 
                                     }
                                 } else {

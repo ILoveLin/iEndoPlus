@@ -3,9 +3,13 @@ package com.company.iendo.mineui.activity.casemanage;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.content.Context;
 import android.content.Intent;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -18,22 +22,21 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.signature.ObjectKey;
 import com.company.iendo.R;
 import com.company.iendo.app.AppActivity;
-import com.company.iendo.bean.DetailPictureBean;
-import com.company.iendo.bean.PictureChoseBean;
+import com.company.iendo.app.ReceiveSocketService;
 import com.company.iendo.bean.ReportExistBean;
 import com.company.iendo.bean.event.SocketRefreshEvent;
 import com.company.iendo.bean.socket.HandBean;
 import com.company.iendo.bean.socket.getpicture.ShotPictureBean;
 import com.company.iendo.manager.ActivityManager;
-import com.company.iendo.mineui.activity.MainActivity;
 import com.company.iendo.mineui.activity.casemanage.fragment.DetailFragment;
 import com.company.iendo.mineui.activity.casemanage.fragment.PictureFragment;
 import com.company.iendo.mineui.activity.casemanage.fragment.VideoFragment;
+import com.company.iendo.mineui.activity.login.LoginActivity;
 import com.company.iendo.mineui.activity.vlc.GetPictureActivity;
-import com.company.iendo.mineui.socket.SocketManage;
 import com.company.iendo.other.Constants;
 import com.company.iendo.other.HttpConstant;
 import com.company.iendo.ui.adapter.TabAdapter;
+import com.company.iendo.ui.dialog.MessageDialog;
 import com.company.iendo.ui.dialog.SelectDialog;
 import com.company.iendo.utils.CalculateUtils;
 import com.company.iendo.utils.LogUtils;
@@ -45,6 +48,7 @@ import com.hjq.bar.TitleBar;
 import com.hjq.base.BaseDialog;
 import com.hjq.base.FragmentPagerAdapter;
 import com.hjq.widget.layout.NestedViewPager;
+import com.tencent.mmkv.MMKV;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -52,9 +56,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import okhttp3.Call;
 
@@ -80,6 +82,7 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
     private TitleBar mReportBar;
     private AppCompatImageView mReportImageView;
     private static boolean UDP_HAND_TAG = false; //握手成功表示  true 成功
+    private static boolean UDP_EQUALS_ID = false; //获取当前操作id,和进入该界面的id 是否相等,相等才可以进行各种操作,默认不相等,
 
     @Override
     protected int getLayoutId() {
@@ -168,7 +171,6 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
             @Override
             public void onRightClick(View view) {
                 LogUtils.e("Socket回调==DetailCaseActivity==握手==onRightClick==" + UDP_HAND_TAG);
-
                 if (UDP_HAND_TAG) {
                     sendSocketPointMessage(Constants.UDP_F2);
                 } else {
@@ -280,7 +282,7 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
 //                if (!"".equals(FLAG_PICTURE_URL)){
         //194/Report/电脑022021091403.bmp
         String path = "http://" + mSocketOrLiveIP + ":" + mBaseUrlPort + "/" + FLAG_PICTURE_URL;
-        LogUtils.e("历史报告地址=="+path);
+        LogUtils.e("历史报告地址==" + path);
         Glide.with(DetailCaseActivity.this)
                 .load(path)
                 .placeholder(R.drawable.ic_bg_splash_des) //占位符 也就是加载中的图片，可放个gif
@@ -298,22 +300,32 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void SocketRefreshEvent(SocketRefreshEvent event) {
-        LogUtils.e("Socket回调==PictureChoseActivity==event.getData()==" + event.getData());
-        String mRun2End4 = CalculateUtils.getReceiveRun2End4String(event.getData());//随机数之后到data结尾的String
-        String deviceType = CalculateUtils.getSendDeviceType(event.getData());
-        String deviceOnlyCode = CalculateUtils.getSendDeviceOnlyCode(event.getData());
-        String currentCMD = CalculateUtils.getCMD(event.getData());
-        LogUtils.e("Socket回调==PictureChoseActivity==随机数之后到data的Str==mRun2End4==" + mRun2End4);
-        LogUtils.e("Socket回调==PictureChoseActivity==发送方设备类型==deviceType==" + deviceType);
-        LogUtils.e("Socket回调==PictureChoseActivity==获取发送方设备Code==deviceOnlyCode==" + deviceOnlyCode);
-        LogUtils.e("Socket回调==PictureChoseActivity==当前UDP命令==currentCMD==" + currentCMD);
-        LogUtils.e("Socket回调==PictureChoseActivity==当前UDP命令==event.getUdpCmd()==" + event.getUdpCmd());
-        LogUtils.e("Socket回调==PictureChoseActivity==SocketRefreshEvent==event.toString()==" + event.toString());
-
         String data = event.getData();
         switch (event.getUdpCmd()) {
             case Constants.UDP_HAND://握手
                 UDP_HAND_TAG = true;
+                //获取当前病例ID
+                sendSocketPointMessage(Constants.UDP_F0);
+                break;
+            case Constants.UDP_F0://获取当前病例
+                if ("true".equals(data)) {//当前病例相同才能操作
+                    UDP_EQUALS_ID = true;
+                    //获取当前病例ID
+                } else {
+                    UDP_EQUALS_ID = false;
+                }
+                break;
+            case Constants.UDP_CUSTOM14://自定义命令---->在图像采集界面,接受到删除病例,需要退到病例列表界面而不是回退病例详情界面
+                LogUtils.e("删除病例了===UDP_CUSTOM14=" + UDP_EQUALS_ID);
+
+                if (Constants.UDP_CUSTOM14.equals(data)) {//当前病例相同才能操作
+                    finish();
+                }
+                break;
+            case Constants.UDP_14://删除病例了
+                if (data.equals(currentItemID)) {//被删除的病例ID和当前的病例ID相同,退出该界面
+                    showExitDialog();
+                }
                 break;
             case Constants.UDP_F1://预览报告
                 if ("".equals(data)) {
@@ -331,7 +343,7 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
                 }
                 break;
             case Constants.UDP_F2://打印报告
-                LogUtils.e("Socket回调==DetailCaseActivity==当前UDP命令==打印报告=="+data );
+                LogUtils.e("Socket回调==DetailCaseActivity==当前UDP命令==打印报告==" + data);
                 if ("00".equals(data)) {
                     toast("报告打印成功!");
                 } else {
@@ -340,6 +352,29 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
                 break;
         }
 
+    }
+
+    /**
+     * 当前用户被其他设备或者上位机删除了 同步更新退出界面
+     */
+    private void showExitDialog() {
+        // 自定义对话框
+        new BaseDialog.Builder<>(this)
+                .setContentView(R.layout.dialog_custom_exit)
+                .setAnimStyle(BaseDialog.ANIM_SCALE)
+                //.setText(id, "我是预设置的文本")
+                .setOnClickListener(R.id.btn_dialog_custom_ok, new BaseDialog.OnClickListener<View>() {
+                    @Override
+                    public void onClick(BaseDialog dialog, View view) {
+                        dialog.dismiss();
+                        finish();
+                    }
+                })
+                .setOnKeyListener((dialog, event) -> {
+                    toast("按键代码：" + event.getKeyCode());
+                    return false;
+                })
+                .show();
     }
 
     /**
@@ -360,7 +395,7 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
                 return;
             }
 
-            SocketUtils.startSendPointMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort),DetailCaseActivity.this);
+            SocketUtils.startSendPointMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), DetailCaseActivity.this);
 //            SocketManage.startSendMessageBySocket(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), false);
 
         } else {
@@ -387,7 +422,7 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
         LogUtils.e("SocketUtils===发送消息==点对点==detailCaseActivity==sendByteData==" + sendByteData);
         LogUtils.e("SocketUtils===发送消息==点对点==detailCaseActivity==mSocketPort==" + mSocketPort);
 
-        SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort),this);
+        SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), this);
 //        SocketManage.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort));
     }
 

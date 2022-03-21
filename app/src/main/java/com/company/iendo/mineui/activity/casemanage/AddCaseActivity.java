@@ -335,7 +335,7 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
                             AddCaseBean mBean = mGson.fromJson(response, AddCaseBean.class);
                             if (0 == mBean.getCode()) {  //成功
                                 showComplete();
-                                toast("" + mBean.getMsg());
+                                toast("添加成功");
                                 //socket告知上位机新增病例
                                 sendSocketPointMessage(Constants.UDP_12);
                                 ActivityManager.getInstance().finishActivity(AddCaseActivity.class);

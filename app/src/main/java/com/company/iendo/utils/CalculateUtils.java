@@ -325,10 +325,14 @@ public class CalculateUtils {
      */
     public static String getLength(String data) {
 //        40(固定长度)加变化data的长度然后-->字符串的长度转成hex进制
+        LogUtils.e("SocketUtils===发送消息==点对点==hexString2Bytes==getLength==" + data.length());
         byte[] bytes = hexString2Bytes(data);
 
         int i = bytes.length + 40;
+        //10进制转换成16进制  --保留 4位，不足补0
         String s = hex10To16Result4(i);
+        LogUtils.e("SocketUtils===发送消息==点对点==hexString2Bytes==getLength转换后==" + s.length());
+
         return s.toUpperCase();
     }
 
@@ -442,6 +446,9 @@ public class CalculateUtils {
         if ("8".equals(Received_Type)) {
             Received_Type = "08";
         }
+        if ("7".equals(Received_Type)) {
+            Received_Type = "07";
+        }
         String mSend_IDBy32 = MD5ChangeUtil.Md5_32(DeviceIdUtil.getDeviceId(mContext));
         String mData = CalculateUtils.str2HexStr(bean);                   //data  json字符串转16进制
         String mHead = "AAC5";                                             //帧头    ---2字节
@@ -465,6 +472,7 @@ public class CalculateUtils {
         LogUtils.e("UDP==命令===mRandom===" + mRandom);
         LogUtils.e("UDP==命令===异或的CSString===" + CSString);
         LogUtils.e("UDP==命令===异或的结果===" + mCheck_Sum);
+        LogUtils.e("UDP==命令===最后发送的String===" + sendCommandString.length());
         LogUtils.e("UDP==命令===最后发送的String===" + sendCommandString);
         byte[] bytes = CalculateUtils.hexString2Bytes(sendCommandString);
         //AAC5 01 0059 EE22 FF A1 f9432b11b93e8bb4ae34539b7472c20e FF 00000000000000000000000000000000
@@ -787,10 +795,13 @@ public class CalculateUtils {
      * 16进制字符串--转--字节数组-----UDP---发包
      */
     public static byte[] hexString2Bytes(String hex) {
+        LogUtils.e("SocketUtils===发送消息==点对点==hexString2Bytes==hex.length()==" + hex.length());
 
         if ((hex == null) || (hex.equals(""))) {
             return null;
         } else if (hex.length() % 2 != 0) {
+            LogUtils.e("SocketUtils===发送消息==点对点==hexString2Bytes==hex.length()==" + hex.length());
+
             return null;
         } else {
             hex = hex.toUpperCase();

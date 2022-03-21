@@ -8,6 +8,9 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -41,6 +44,11 @@ import com.company.iendo.widget.vlc.MyVlcVideoView;
 import com.company.iendo.widget.StatusLayout;
 import com.gyf.immersionbar.ImmersionBar;
 import com.hjq.bar.TitleBar;
+import com.hjq.base.BaseDialog;
+import com.hjq.widget.view.ClearEditText;
+import com.hjq.widget.view.SwitchButton;
+import com.jaygoo.widget.OnRangeChangedListener;
+import com.jaygoo.widget.RangeSeekBar;
 import com.pedro.rtplibrary.rtmp.RtmpOnlyAudio;
 import com.vlc.lib.RecordEvent;
 import com.vlc.lib.VlcVideoView;
@@ -55,6 +63,8 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import okhttp3.Call;
 
@@ -64,7 +74,8 @@ import okhttp3.Call;
  * time   : 2018/10/18
  * desc   : 获取图片界面
  */
-public final class GetPictureActivity extends AppActivity implements StatusAction, ConnectCheckerRtmp {
+public final class GetPictureActivity extends AppActivity implements StatusAction, OnRangeChangedListener,
+        SwitchButton.OnCheckedChangeListener, TextView.OnEditorActionListener, ConnectCheckerRtmp, TextWatcher {
     public static String path = "http://9890.vod.myqcloud.com/9890_4e292f9a3dd011e6b4078980237cc3d3.f20.mp4";
     public boolean isFullscreen = false;
     private StatusLayout mStatusLayout;
@@ -127,7 +138,25 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                         sendSocketPointRecodeStatusMessage(Constants.UDP_18, "1");
                     }
                     break;
-                case Record:
+                case Time:
+                    String string = CommonUtil.stringForTime(Integer.parseInt(currentTime));
+                    mTime.setText("" + string);
+                    break;
+                case Lock: //锁屏
+                    mLockScreen.setImageDrawable(getResources().getDrawable(R.drawable.video_lock_close_ic));
+                    rootView.setOnTouchListener(null);
+                    rootView.setLongClickable(false);  //手势不需要需要--不能触摸
+                    mTopControl.setVisibility(View.INVISIBLE);
+                    mBottomControl.setVisibility(View.INVISIBLE);
+                    break;
+                case Unlock: //解锁
+                    mLockScreen.setImageDrawable(getResources().getDrawable(R.drawable.video_lock_open_ic));
+                    rootView.setLongClickable(true);  //手势需要--能触摸
+                    rootView.setOnTouchListener(onTouchVideoListener);
+                    mTopControl.setVisibility(View.VISIBLE);
+                    mBottomControl.setVisibility(View.VISIBLE);
+                    break;
+//                case Record:
 ////                    0：查询录像状态 1：开始录像，2：停止录像，3：正在录像  4：未录像
 //                    String tag = (String) msg.obj;
 //                    if ("1".equals(tag) || "3".equals(tag)) {
@@ -155,25 +184,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
 //                            setTextColor(getResources().getColor(R.color.white), "录像", false);
 //                            break;
 //                    }
-                    break;
-                case Time:
-                    String string = CommonUtil.stringForTime(Integer.parseInt(currentTime));
-                    mTime.setText("" + string);
-                    break;
-                case Lock: //锁屏
-                    mLockScreen.setImageDrawable(getResources().getDrawable(R.drawable.video_lock_close_ic));
-                    rootView.setOnTouchListener(null);
-                    rootView.setLongClickable(false);  //手势不需要需要--不能触摸
-                    mTopControl.setVisibility(View.INVISIBLE);
-                    mBottomControl.setVisibility(View.INVISIBLE);
-                    break;
-                case Unlock: //解锁
-                    mLockScreen.setImageDrawable(getResources().getDrawable(R.drawable.video_lock_open_ic));
-                    rootView.setLongClickable(true);  //手势需要--能触摸
-                    rootView.setOnTouchListener(onTouchVideoListener);
-                    mTopControl.setVisibility(View.VISIBLE);
-                    mBottomControl.setVisibility(View.VISIBLE);
-                    break;
+//                    break;
 //                case Record_Start:
 //                    mFlagMicOnLine = true;
 //                    setTextColor(getResources().getColor(R.color.red), "录像中", false);
@@ -187,6 +198,10 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         }
     };
     private TextView mPictureDes;
+    private ClearEditText mEditLight;
+    private RangeSeekBar mLightRangeBar;
+    private SwitchButton mSwitchBlood;
+    private SwitchButton mSwitchWhite;
 
     /**
      * eventbus 刷新socket数据
@@ -212,6 +227,11 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                     UDP_EQUALS_ID = false;
                 }
                 break;
+            case Constants.UDP_14://删除病例了
+                if (data.equals(mCaseID)) {//被删除的病例ID和当前的病例ID相同,退出该界面
+                    showExitDialog();
+                }
+                break;
             case Constants.UDP_F3:////冻结与解冻:00冻结，01解冻,未调试
                 if ("00".equals(data)) {
                     toast("冻结成功");
@@ -222,7 +242,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             case Constants.UDP_18://录像--->0：查询录像状态 1：开始录像，2：停止录像，3：正在录像  4：未录像
                 //获取当前上位机操作的病例ID
                 String mUpCaseID = event.getIp();
-                if (mUpCaseID.equals(mCaseID)){
+                if (mUpCaseID.equals(mCaseID)) {
                     String tag = (String) event.getData();
                     if ("1".equals(tag) || "3".equals(tag)) {
                         setTextColor(getResources().getColor(R.color.white), "录像中", true);
@@ -240,8 +260,8 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
 //                mHandler.sendMessage(obtain);
                 break;
             case Constants.UDP_15://截图
-                LogUtils.e("======LiveServiceImpl==回调=event==采图=="+event.getData());
-                if (mCaseID.equals(event.getData())){
+                LogUtils.e("======LiveServiceImpl==回调=event==采图==" + event.getData());
+                if (mCaseID.equals(event.getData())) {
                     sendRequest(mCaseID);
                 }
                 break;
@@ -377,6 +397,8 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
 
         rootView.setLongClickable(true);  //手势需要--能触摸
         rootView.setOnTouchListener(onTouchVideoListener);
+        //设置拖动条数字格式
+        mLightRangeBar.setIndicatorTextDecimalFormat("0");
         //rootView.setOnTouchListener(null);
         //rootView.setLongClickable(false);  //手势不需要需要--不能触摸
         rtmpOnlyAudio = new RtmpOnlyAudio(this);
@@ -422,24 +444,6 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
      * ***************************************************************************通讯模块**************************************************************************
      */
 
-
-    /**
-     * 发送握手消息
-     */
-    public void sendHandLinkMessage() {
-        HandBean handBean = new HandBean();
-        handBean.setHelloPc("HelloPc");
-        handBean.setComeFrom("Android");
-        byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(handBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
-                Constants.UDP_HAND);
-        if (("".equals(mSocketPort))) {
-            toast("通讯端口不能为空!");
-            return;
-        }
-        LogUtils.e("SocketUtils===发送消息==点对点==GetPictureActivity==mSocketPort==" + mSocketPort);
-
-        SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), GetPictureActivity.this);
-    }
 
     /**
      * 发送点对点消息,必须握手成功
@@ -497,6 +501,27 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
     }
 
     /**
+     * 发送握手消息
+     */
+    public void sendHandLinkMessage() {
+        HandBean handBean = new HandBean();
+        handBean.setHelloPc("HelloPc");
+        handBean.setComeFrom("Android");
+        byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(handBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
+                Constants.UDP_HAND);
+
+        if (("".equals(mSocketPort))) {
+            toast("通讯端口不能为空!");
+            return;
+        }
+        LogUtils.e("SocketUtils===发送消息==点对点==detailCaseActivity==sendByteData==" + sendByteData);
+        LogUtils.e("SocketUtils===发送消息==点对点==detailCaseActivity==mSocketPort==" + mSocketPort);
+
+        SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), this);
+//        SocketManage.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort));
+    }
+
+    /**
      * 发送点对点消息,必须握手成功
      *
      * @param CMDCode 命令cmd
@@ -530,6 +555,17 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
     private void responseListener() {
 //        R.id.linear_mic,
         setOnClickListener(R.id.linear_record, R.id.linear_picture, R.id.linear_cold, R.id.full_change, R.id.lock_screen, R.id.root_layout_vlc, R.id.video_back, R.id.control_start_view);
+        //设置拖动条监听
+        mLightRangeBar.setOnRangeChangedListener(this);
+        //设置switch的按钮监听
+        mSwitchBlood.setOnCheckedChangeListener(this);
+        mSwitchWhite.setOnCheckedChangeListener(this);
+        //文本变化监听器
+        mEditLight.addTextChangedListener(this);
+        //edittext编辑监听器
+        mEditLight.setOnEditorActionListener(this);
+
+
         mVLCView.setMediaListenerEvent(new MediaListenerEvent() {
             @Override
             public void eventBuffing(int event, float buffing) {
@@ -659,7 +695,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             mTitle.setVisibility(View.VISIBLE);
             mLinearBottom.setVisibility(View.VISIBLE);
             RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                    ScreenSizeUtil.dp2px(GetPictureActivity.this, getResources().getDimension(R.dimen.dp_70)));//工具类哦
+                    ScreenSizeUtil.dp2px(GetPictureActivity.this, getResources().getDimension(R.dimen.dp_80)));//工具类哦
             mRelativePlayerAll.setLayoutParams(layoutParams);
             mPlayer.setLayoutParams(layoutParams);
             mImageBack.setVisibility(View.INVISIBLE);
@@ -689,6 +725,10 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
 //        LinearLayout mCold = findViewById(R.id.linear_cold);
 //        LinearLayout mMic = findViewById(R.id.linear_mic);
         mRecordMsg = findViewById(R.id.case_record);
+        mEditLight = findViewById(R.id.edit_light);
+        mLightRangeBar = findViewById(R.id.sb_single_light);
+        mSwitchBlood = findViewById(R.id.sb_find_switch_blood);
+        mSwitchWhite = findViewById(R.id.sb_find_switch_white);
 
 
         mImageBack.setVisibility(View.INVISIBLE);
@@ -698,6 +738,37 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         mTitle = findViewById(R.id.titlebar);
 
     }
+
+
+    /**
+     * 当前用户被其他设备或者上位机删除了 同步更新退出界面
+     */
+    private void showExitDialog() {
+        // 自定义对话框
+        new BaseDialog.Builder<>(this)
+                .setContentView(R.layout.dialog_custom_exit)
+                .setAnimStyle(BaseDialog.ANIM_SCALE)
+                //.setText(id, "我是预设置的文本")
+                .setOnClickListener(R.id.btn_dialog_custom_ok, new BaseDialog.OnClickListener<View>() {
+                    @Override
+                    public void onClick(BaseDialog dialog, View view) {
+                        dialog.dismiss();
+                        SocketRefreshEvent event1 = new SocketRefreshEvent();
+                        event1.setTga(true);
+                        event1.setData(Constants.UDP_CUSTOM14);//只回调病例ID,回调的病例ID和当前App操作的病例ID 不同的时候不作处理
+                        event1.setIp(Constants.UDP_CUSTOM14);
+                        event1.setUdpCmd(Constants.UDP_CUSTOM14);
+                        EventBus.getDefault().post(event1);
+                        finish();
+                    }
+                })
+                .setOnKeyListener((dialog, event) -> {
+                    toast("按键代码：" + event.getKeyCode());
+                    return false;
+                })
+                .show();
+    }
+
 
     @Override
     public StatusLayout getStatusLayout() {
@@ -812,6 +883,101 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
 
     }
 
+    /**
+     * switch 按钮的监听
+     *
+     * @param button  切换按钮
+     * @param checked 是否选中
+     */
+    @Override
+    public void onCheckedChanged(SwitchButton button, boolean checked) {
+        switch (button.getId()) {
+            case R.id.sb_find_switch_white:
+                LogUtils.e("progress==SwitchButton-----Light==" + checked);
+                toast("Light==" + checked);
+                break;
+            case R.id.sb_find_switch_blood:
+                LogUtils.e("progress==SwitchButton-----Blood==" + checked);
+                toast("Blood==" + checked);
+                break;
+
+        }
+    }
+
+    /**
+     * RangeBar 监听器
+     *
+     * @param view
+     * @param leftValue
+     * @param rightValue
+     * @param isFromUser
+     */
+    @Override
+    public void onRangeChanged(RangeSeekBar view, float leftValue, float rightValue, boolean isFromUser) {
+
+    }
+
+
+    @Override
+    public void onStartTrackingTouch(RangeSeekBar view, boolean isLeft) {
+
+    }
+
+    @Override
+    public void onStopTrackingTouch(RangeSeekBar view, boolean isLeft) {
+        float progress = view.getLeftSeekBar().getProgress();
+        String round = (Math.round(progress) + "").replace(".", "");
+        switch (view.getId()) {
+            case R.id.sb_single_light:
+                LogUtils.e("progress==balance==" + round);
+                toast("白平衡===" + round);
+                mEditLight.setText("" + round);
+                break;
+
+        }
+    }
+
+    @Override
+    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+        switch (v.getId()) {
+            case R.id.edit_light:
+                mLightRangeBar.setProgress(Integer.parseInt(mEditLight.getText().toString().trim()));
+                mEditLight.clearFocus();
+                break;
+
+        }
+        return true;
+    }
+
+    /**
+     * EditText 文本监听器
+     * 数值0-100的限制监听
+     *
+     * @param s
+     * @param start
+     * @param count
+     * @param after
+     */
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+    }
+
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
+        Pattern p = Pattern.compile("^(100|[1-9]\\d|\\d)$");//处理0~100正则
+        Matcher m = p.matcher(s.toString());
+        if (m.find() || ("").equals(s.toString())) {
+        } else {
+            toast("请输入正确的数值!");
+        }
+    }
+
+    @Override
+    public void afterTextChanged(Editable s) {
+
+    }
+
 
     /**
      * rtmp推流 音频
@@ -845,4 +1011,5 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
     public void onAuthSuccessRtmp() {
 
     }
+
 }

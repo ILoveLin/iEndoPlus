@@ -8,6 +8,7 @@ import android.os.IBinder;
 import android.widget.Toast;
 
 import com.company.iendo.bean.event.SocketRefreshEvent;
+import com.company.iendo.bean.socket.DeleteUserBean;
 import com.company.iendo.bean.socket.RecodeBean;
 import com.company.iendo.bean.socket.UpdateCaseBean;
 import com.company.iendo.bean.socket.getpicture.ColdPictureBean;
@@ -370,6 +371,30 @@ public class ReceiveSocketService extends AbsWorkService {
                                             event.setData(editCaseID);//只回调病例ID,回调的病例ID和当前App操作的病例ID 不同的时候不作处理
                                             event.setIp(editCaseImageID);  //此处设置为图片ID
                                             event.setUdpCmd(Constants.UDP_17);
+                                            EventBus.getDefault().post(event);
+                                            break;
+                                        case Constants.UDP_14://删除病例
+                                            LogUtils.e("======LiveServiceImpl==回调===删除病例==");
+                                            DeleteUserBean deleteBean = mGson.fromJson(str, DeleteUserBean.class);
+                                            //hex转成十进制
+                                            String deleteCaseID = CalculateUtils.hex16To10(deleteBean.getRecordid()) + "";
+                                            LogUtils.e("======LiveServiceImpl==回调===删除病例==deleteCaseID==" + deleteCaseID);
+                                            event.setTga(true);
+                                            event.setData(deleteCaseID);//只回调病例ID,回调的病例ID和当前App操作的病例ID 不同的时候不作处理
+                                            event.setIp(hostAddressIP);  //此处设置为图片ID
+                                            event.setUdpCmd(Constants.UDP_14);
+                                            EventBus.getDefault().post(event);
+                                            break;
+                                        case Constants.UDP_12://新增病例
+                                            LogUtils.e("======LiveServiceImpl==回调===新增病例==");
+                                            DeleteUserBean addBean = mGson.fromJson(str, DeleteUserBean.class);
+                                            //hex转成十进制
+                                            String addBeanCaseID = CalculateUtils.hex16To10(addBean.getRecordid()) + "";
+                                            LogUtils.e("======LiveServiceImpl==回调===删除病例==deleteCaseID==" + addBeanCaseID);
+                                            event.setTga(true);
+                                            event.setData(addBeanCaseID);//只回调病例ID,回调的病例ID和当前App操作的病例ID 不同的时候不作处理
+                                            event.setIp(hostAddressIP);
+                                            event.setUdpCmd(Constants.UDP_14);
                                             EventBus.getDefault().post(event);
                                             break;
 

@@ -119,7 +119,6 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
             case R.id.ib_left:
                 //跳转病例添加界面
                 startActivity(AddCaseActivity.class);
-
                 break;
             case R.id.ib_right:
 
@@ -309,7 +308,6 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
     }
 
 
-
     /**
      * eventbus 刷新socket数据
      */
@@ -327,6 +325,7 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
 //        LogUtils.e("Socket回调==DetailFragment==当前UDP命令==event.getUdpCmd()==" + event.getUdpCmd());
         String data = event.getData();
         switch (event.getUdpCmd()) {
+            case Constants.UDP_12://新增病例,刷新界面数据
             case Constants.UDP_13://更新病例,刷新界面数据
                 if (!mTitle.getText().toString().trim().isEmpty()) {
                     sendRequest(mTitle.getText().toString().trim());
