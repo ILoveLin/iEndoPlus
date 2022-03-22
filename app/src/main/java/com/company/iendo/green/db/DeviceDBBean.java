@@ -27,7 +27,7 @@ import org.greenrobot.greendao.annotation.Unique;
  * //内镜科室
  * #define  GASTROSCOPY                  1 //胃镜
  * #define  COLONOSCOPY                  2 //肠镜
- * #define  ENT                          3 //耳鼻喉镜              接入授权-Type:设备类型
+ * #define  ENT                          3 //耳鼻喉镜
  * #define  HYSTEROSCOPY				  4 //宫腔镜
  * #define  CHOLEDOCHOSCOPE              5 //胆道镜
  * #define  CYSTOSCOPY					  6 //膀胱镜
@@ -57,6 +57,15 @@ import org.greenrobot.greendao.annotation.Unique;
  * <p>
  * <p>
  * 通过设备表查找用户
+ */
+
+
+/**
+ * type对应中文
+ * type_num对应数字
+ * 00-工作站， 01-HD3摄像机，02-冷光源，03-气腹机，04-冲洗机，05-4K摄像机，06-耳鼻喉控制板，
+ * 07-一代一体机，8-耳鼻喉治疗台，9-妇科治疗台，10-泌尿治疗台
+ * A0-iOS，A1-Android，FF-所有设备
  */
 
 @Entity

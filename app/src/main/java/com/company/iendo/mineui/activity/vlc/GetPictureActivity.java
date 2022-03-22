@@ -20,6 +20,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.FileProvider;
 
 import com.company.iendo.R;
 import com.company.iendo.action.StatusAction;
@@ -29,6 +30,9 @@ import com.company.iendo.bean.event.SocketRefreshEvent;
 import com.company.iendo.bean.socket.HandBean;
 import com.company.iendo.bean.socket.RecodeBean;
 import com.company.iendo.bean.socket.getpicture.ShotPictureBean;
+import com.company.iendo.bean.socket.params.DeviceParamsBean;
+import com.company.iendo.bean.socket.params.Type02Bean;
+import com.company.iendo.bean.socket.params.Type01Bean;
 import com.company.iendo.other.Constants;
 
 import com.company.iendo.other.HttpConstant;
@@ -73,6 +77,7 @@ import okhttp3.Call;
  * github : https://github.com/getActivity/AndroidProject
  * time   : 2018/10/18
  * desc   : 获取图片界面
+ * 放大倍数  1-2.5 显示的数字    传的的值是1--15
  */
 public final class GetPictureActivity extends AppActivity implements StatusAction, OnRangeChangedListener,
         SwitchButton.OnCheckedChangeListener, TextView.OnEditorActionListener, ConnectCheckerRtmp, TextWatcher {
@@ -198,10 +203,11 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         }
     };
     private TextView mPictureDes;
-    private ClearEditText mEditLight;
-    private RangeSeekBar mLightRangeBar;
-    private SwitchButton mSwitchBlood;
-    private SwitchButton mSwitchWhite;
+    private ClearEditText mEdit01Light, mEdit02Light, mEdit02Saturation, mEdit02Definition, mEdit02Zoom;
+    private RangeSeekBar mRangeBar01Light, mRangeBar02Light, mRangeBar02Saturation, mRangeBar02Definition, mRangeBar02Zoom;
+    private SwitchButton mSwitchBlood, mSwitchVertical, mSwitchHorizontal;
+    private TextView mLightLine, mDeviceLine;
+    private LinearLayout mLightTab, mDeviceTab, mLightPart, mDevicePart;
 
     /**
      * eventbus 刷新socket数据
@@ -214,6 +220,8 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         switch (event.getUdpCmd()) {
             case Constants.UDP_HAND://握手
                 UDP_HAND_TAG = true;
+                //获取当前设备参数
+                getSocketLightData(Constants.UDP_F5);
                 //获取当前病例ID
                 sendSocketPointMessage(Constants.UDP_F0);
                 //实时获取当前上位机,录像的状态
@@ -254,10 +262,6 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                     LogUtils.e("录像====" + tag);
                     LogUtils.e("录像====" + UDP_RECODE_INIT_TAG);
                 }
-//                Message obtain = Message.obtain();
-//                obtain.obj = data;
-//                obtain.what = Record;
-//                mHandler.sendMessage(obtain);
                 break;
             case Constants.UDP_15://截图
                 LogUtils.e("======LiveServiceImpl==回调=event==采图==" + event.getData());
@@ -265,13 +269,85 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                     sendRequest(mCaseID);
                 }
                 break;
+            case Constants.UDP_F5://获取当前设备参数
+                LogUtils.e("======LiveServiceImpl==回调=event==获取当前设备参数==" + event.getData());
+                DeviceParamsBean deviceParamsBean = mGson.fromJson(event.getData(), DeviceParamsBean.class);
+                //设置Tab
+                setTypeTabData(deviceParamsBean);
+
+                break;
         }
+
+    }
+
+    private void setTypeTabData(DeviceParamsBean deviceParamsBean) {
+        DeviceParamsBean.Type01 type01 = deviceParamsBean.getType01(); //摄像机
+        DeviceParamsBean.Type02 type02 = deviceParamsBean.getType02(); //光源
+        if (type02 != null) {
+            mEdit01Light.setText(type02.getBrightness());
+            mRangeBar01Light.setProgress(Integer.parseInt(type02.getBrightness()));
+        }
+        if (type01 != null) {
+            //光源
+            mEdit02Light.setText(type01.getBrightness());
+            mRangeBar02Light.setProgress(Integer.parseInt(type01.getBrightness()));
+
+            //饱和度
+            mEdit02Saturation.setText(type01.getBrightness());
+            mRangeBar02Saturation.setProgress(Integer.parseInt(type01.getBrightness()));
+
+            //清晰度
+            mEdit02Saturation.setText(type01.getSharpness());
+            mRangeBar02Saturation.setProgress(Integer.parseInt(type01.getSharpness()));
+
+            //放大倍数           //显示是1到2.5倍,传值是0--15
+            float rangeBarNeedSetData = CommonUtil.getRangeBarNeedSetData(type01.getZoomrate());
+            mEdit02Zoom.setText(rangeBarNeedSetData + "");
+            mRangeBar02Zoom.setProgress(rangeBarNeedSetData);
+
+            //:影像翻转取值：  0（无翻转），1（水平翻转），2（垂直翻转），3（水平翻转+垂直翻转）
+
+            switch (type01.getReversal()) {
+                case "0":
+                    mSwitchHorizontal.setChecked(false);
+                    mSwitchVertical.setChecked(false);
+                    break;
+                case "1":
+                    mSwitchHorizontal.setChecked(true);
+                    mSwitchVertical.setChecked(false);
+                    break;
+                case "2":
+                    mSwitchHorizontal.setChecked(false);
+                    mSwitchVertical.setChecked(true);
+                    break;
+                case "3":
+                    mSwitchHorizontal.setChecked(true);
+                    mSwitchVertical.setChecked(true);
+                    break;
+
+            }
+            //血管增强-->8是关闭 0是打开
+            //血管增强
+            if ("8".equals(type01.getBloodenhance())) {
+                mSwitchBlood.setChecked(false);
+            } else {
+                mSwitchBlood.setChecked(true);
+            }
+
+        }
+
 
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.linear_light_tab:        //点击光源tab
+                setLightTab();
+                break;
+            case R.id.linear_device_tab:        //点击摄像机tab
+                setDeviceTab();
+                break;
             case R.id.video_back:               //全屏的时候退出界面
                 finishThisActivity();
                 break;
@@ -288,7 +364,6 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                 } else {
                     toast("当前病例ID和操作病例ID不相等,不能操作!");
                 }
-
 //                if (isPlayering) {
 //                    if (mVLCView.isPrepare()) {
 //                        if ("录像".equals(mRecordMsg.getText())) {
@@ -344,9 +419,9 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
 //                    toast("只有在播放的时候才能截图!");
 //                }
                 break;
-            case R.id.linear_cold:              //冻结
-                sendSocketPointMessage(Constants.UDP_F3);
-                break;
+//            case R.id.linear_cold:              //冻结
+//                sendSocketPointMessage(Constants.UDP_F3);
+//                break;
 //            case R.id.linear_mic:               //麦克风
 //
 //                break;
@@ -374,6 +449,24 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         }
     }
 
+    private void setDeviceTab() {
+        mLightLine.setVisibility(View.INVISIBLE);
+        mDeviceLine.setVisibility(View.VISIBLE);
+        mLightPart.setVisibility(View.INVISIBLE);
+        mDevicePart.setVisibility(View.VISIBLE);
+        mLightTab.setBackgroundResource(R.drawable.shape_bg_getpicture_light_nor);
+        mDeviceTab.setBackgroundResource(R.drawable.shape_bg_getpicture_device_pre);
+    }
+
+    private void setLightTab() {
+        mLightLine.setVisibility(View.VISIBLE);
+        mDeviceLine.setVisibility(View.INVISIBLE);
+        mLightPart.setVisibility(View.VISIBLE);
+        mDevicePart.setVisibility(View.INVISIBLE);
+        mLightTab.setBackgroundResource(R.drawable.shape_bg_getpicture_light_pre);
+        mDeviceTab.setBackgroundResource(R.drawable.shape_bg_getpicture_device_nor);
+    }
+
     public void setTextColor(int color, String message, Boolean recodeStatus) {
         UDP_RECODE_INIT_TAG = recodeStatus;
         mRecordMsg.setText(message);
@@ -398,7 +491,11 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         rootView.setLongClickable(true);  //手势需要--能触摸
         rootView.setOnTouchListener(onTouchVideoListener);
         //设置拖动条数字格式
-        mLightRangeBar.setIndicatorTextDecimalFormat("0");
+        mRangeBar01Light.setIndicatorTextDecimalFormat("0");
+        mRangeBar02Light.setIndicatorTextDecimalFormat("0");
+        mRangeBar02Saturation.setIndicatorTextDecimalFormat("0");
+        mRangeBar02Definition.setIndicatorTextDecimalFormat("0");
+        mRangeBar02Zoom.setIndicatorTextDecimalFormat("0.0");
         //rootView.setOnTouchListener(null);
         //rootView.setLongClickable(false);  //手势不需要需要--不能触摸
         rtmpOnlyAudio = new RtmpOnlyAudio(this);
@@ -549,21 +646,121 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
     }
 
     /**
+     * 参数下发-->获取冷光源参数
+     * 02-冷光源(type02)
+     *
+     * @param CMDCode 命令cmd
+     */
+    public void getSocketLightData(String CMDCode) {
+        if (UDP_HAND_TAG) {
+            Type02Bean bean = new Type02Bean();
+            Type02Bean.Type02 Type02 = new Type02Bean.Type02();
+            Type02.setBrightness("60");
+            bean.setType02(Type02);
+            LogUtils.e("======GetPictureActivity==回调===获取当前病例00==" + mGson.toJson(bean));
+            byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(bean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
+                    CMDCode);
+            LogUtils.e("======GetPictureActivity==回调===>发送冷光源参数==" + sendByteData);
+
+            if (("".equals(mSocketPort))) {
+                toast("通讯端口不能为空!");
+                return;
+            }
+            SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), GetPictureActivity.this);
+        } else {
+            toast("请先建立握手链接!");
+            sendHandLinkMessage();
+        }
+
+    }
+
+
+    /**
+     * 参数上传-->发送冷光源参数
+     * 02-冷光源(type02)
+     *
+     * @param CMDCode 命令cmd
+     */
+    public void sendSocketPointLight(String CMDCode, String data) {
+        if (UDP_HAND_TAG) {
+            Type02Bean bean = new Type02Bean();
+            Type02Bean.Type02 typeBean = new Type02Bean.Type02();
+            typeBean.setBrightness(data);
+            bean.setType02(typeBean);
+
+            LogUtils.e("======GetPictureActivity==回调===获取当前病例==" + mGson.toJson(bean));
+            byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(bean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
+                    CMDCode);
+            LogUtils.e("======GetPictureActivity==回调===>发送冷光源参数==" + sendByteData);
+
+            if (("".equals(mSocketPort))) {
+                toast("通讯端口不能为空!");
+                return;
+            }
+            SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), GetPictureActivity.this);
+        } else {
+            toast("请先建立握手链接!");
+            sendHandLinkMessage();
+        }
+
+    }
+
+    /**
+     * 参数上传-->发送摄像机
+     * 01-冷光源(type01)
+     *
+     * @param CMDCode 命令cmd
+     */
+    public void sendSocketPointVideoDevice(String CMDCode, Type01Bean bean) {
+        if (UDP_HAND_TAG) {
+            LogUtils.e("======GetPictureActivity==回调===获取当前病例==" + mGson.toJson(bean));
+            byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(bean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
+                    CMDCode);
+            LogUtils.e("======GetPictureActivity==回调===>发送摄像机==" + sendByteData);
+
+            if (("".equals(mSocketPort))) {
+                toast("通讯端口不能为空!");
+                return;
+            }
+            SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), GetPictureActivity.this);
+        } else {
+            toast("请先建立握手链接!");
+            sendHandLinkMessage();
+        }
+
+    }
+
+
+    /**
      * ***************************************************************************通讯模块**************************************************************************
      */
 
     private void responseListener() {
-//        R.id.linear_mic,
-        setOnClickListener(R.id.linear_record, R.id.linear_picture, R.id.linear_cold, R.id.full_change, R.id.lock_screen, R.id.root_layout_vlc, R.id.video_back, R.id.control_start_view);
+//        R.id.linear_mic, R.id.linear_cold,
+        setOnClickListener(R.id.linear_light_tab, R.id.linear_device_tab, R.id.linear_record, R.id.linear_picture, R.id.full_change, R.id.lock_screen, R.id.root_layout_vlc, R.id.video_back, R.id.control_start_view);
         //设置拖动条监听
-        mLightRangeBar.setOnRangeChangedListener(this);
+        mRangeBar01Light.setOnRangeChangedListener(this);
+        mRangeBar02Light.setOnRangeChangedListener(this);
+        mRangeBar02Saturation.setOnRangeChangedListener(this);
+        mRangeBar02Definition.setOnRangeChangedListener(this);
+        mRangeBar02Zoom.setOnRangeChangedListener(this);
+
         //设置switch的按钮监听
         mSwitchBlood.setOnCheckedChangeListener(this);
-        mSwitchWhite.setOnCheckedChangeListener(this);
+        mSwitchVertical.setOnCheckedChangeListener(this);
+        mSwitchHorizontal.setOnCheckedChangeListener(this);
         //文本变化监听器
-        mEditLight.addTextChangedListener(this);
+        mEdit01Light.addTextChangedListener(this);
+        mEdit02Light.addTextChangedListener(this);
+        mEdit02Saturation.addTextChangedListener(this);
+        mEdit02Definition.addTextChangedListener(this);
+        mEdit02Zoom.addTextChangedListener(this);
         //edittext编辑监听器
-        mEditLight.setOnEditorActionListener(this);
+        mEdit01Light.setOnEditorActionListener(this);
+        mEdit02Light.setOnEditorActionListener(this);
+        mEdit02Saturation.setOnEditorActionListener(this);
+        mEdit02Definition.setOnEditorActionListener(this);
+        mEdit02Zoom.setOnEditorActionListener(this);
 
 
         mVLCView.setMediaListenerEvent(new MediaListenerEvent() {
@@ -725,12 +922,35 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
 //        LinearLayout mCold = findViewById(R.id.linear_cold);
 //        LinearLayout mMic = findViewById(R.id.linear_mic);
         mRecordMsg = findViewById(R.id.case_record);
-        mEditLight = findViewById(R.id.edit_light);
-        mLightRangeBar = findViewById(R.id.sb_single_light);
+        //亮度
+        mEdit01Light = findViewById(R.id.edit_01_light);
+        mRangeBar01Light = findViewById(R.id.sb_01_range_light);
+        //亮度
+        mEdit02Light = findViewById(R.id.edit_02_light);
+        mRangeBar02Light = findViewById(R.id.sb_02_range_light);
+        //饱和度
+        mEdit02Saturation = findViewById(R.id.edit_02_saturation);
+        mRangeBar02Saturation = findViewById(R.id.sb_02_range_saturation);
+        //清晰度
+        mEdit02Definition = findViewById(R.id.edit_02_definition);
+        mRangeBar02Definition = findViewById(R.id.sb_02_range_definition);
+        //放大倍数
+        mEdit02Zoom = findViewById(R.id.edit_02_zoom);
+        mRangeBar02Zoom = findViewById(R.id.sb_02_range_zoom);
+        //水平翻转
+        mSwitchHorizontal = findViewById(R.id.sb_find_switch_horizontal);
+        //垂直翻转
+        mSwitchVertical = findViewById(R.id.sb_find_switch_vertical);
+        //血管增强
         mSwitchBlood = findViewById(R.id.sb_find_switch_blood);
-        mSwitchWhite = findViewById(R.id.sb_find_switch_white);
-
-
+        mLightLine = findViewById(R.id.view_light);
+        mDeviceLine = findViewById(R.id.view_device);
+        mLightTab = findViewById(R.id.linear_light_tab);
+        mDeviceTab = findViewById(R.id.linear_device_tab);
+        mLightPart = findViewById(R.id.linear_light_part);
+        mDevicePart = findViewById(R.id.linear_device_part);
+        //默认选中光源tab
+        setLightTab();
         mImageBack.setVisibility(View.INVISIBLE);
         rootView = mPlayer.getRootView();                         //点击控制锁显示和隐藏的
         onTouchVideoListener = mPlayer.getOnTouchVideoListener();
@@ -891,13 +1111,44 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
      */
     @Override
     public void onCheckedChanged(SwitchButton button, boolean checked) {
+        Type01Bean bean = new Type01Bean();
+        Type01Bean.Type01 typeBean = new Type01Bean.Type01();
+        //影像翻转取值：  0（无翻转），1（水平翻转），2（垂直翻转），3（水平翻转+垂直翻转）
         switch (button.getId()) {
-            case R.id.sb_find_switch_white:
-                LogUtils.e("progress==SwitchButton-----Light==" + checked);
-                toast("Light==" + checked);
+            // 先判断两者状态
+            //水平和垂直都是关闭  发0
+            //两者都是开         发3
+            //水平开 垂直关       发1
+            //水平关 垂直开       发2
+            case R.id.sb_find_switch_vertical:  //水平翻转
+            case R.id.sb_find_switch_horizontal://垂直翻转
+                boolean mFlagHorizontal = mSwitchHorizontal.isChecked();
+                boolean mFlagVertical = mSwitchVertical.isChecked();
+
+                if (mFlagHorizontal && mFlagVertical) {
+                    typeBean.setReversal("3");
+
+                } else if (!mFlagHorizontal && !mFlagVertical) {
+                    typeBean.setReversal("0");
+
+                } else if (mFlagHorizontal && !mFlagVertical) {
+                    typeBean.setReversal("1");
+
+                } else if (!mFlagHorizontal && mFlagVertical) {
+                    typeBean.setReversal("2");
+
+                }
+                bean.setType01(typeBean);
+                sendSocketPointVideoDevice(Constants.UDP_F6, bean);
                 break;
-            case R.id.sb_find_switch_blood:
-                LogUtils.e("progress==SwitchButton-----Blood==" + checked);
+            case R.id.sb_find_switch_blood://血管增强   关闭是8  打开是0
+                if (checked) {
+                    typeBean.setBloodenhance("0");
+                } else {
+                    typeBean.setBloodenhance("8");
+                }
+                bean.setType01(typeBean);
+                sendSocketPointVideoDevice(Constants.UDP_F6, bean);
                 toast("Blood==" + checked);
                 break;
 
@@ -927,11 +1178,55 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
     public void onStopTrackingTouch(RangeSeekBar view, boolean isLeft) {
         float progress = view.getLeftSeekBar().getProgress();
         String round = (Math.round(progress) + "").replace(".", "");
+        //创建摄像机数据bean
+        Type01Bean bean = new Type01Bean();
+        Type01Bean.Type01 typeBean = new Type01Bean.Type01();
+
         switch (view.getId()) {
-            case R.id.sb_single_light:
+            case R.id.sb_01_range_light:  //冷光源,亮度
                 LogUtils.e("progress==balance==" + round);
-                toast("白平衡===" + round);
-                mEditLight.setText("" + round);
+                toast("亮度=01==" + round);
+                mEdit01Light.setText("" + round);
+                sendSocketPointLight(Constants.UDP_F6, "" + round);
+                break;
+            case R.id.sb_02_range_light://摄像机,亮度
+                LogUtils.e("progress==balance==" + round);
+                toast("亮度=02==" + round);
+                mEdit02Light.setText("" + round);
+                typeBean.setBrightness(round);
+                bean.setType01(typeBean);
+                sendSocketPointVideoDevice(Constants.UDP_F6, bean);
+
+                break;
+            case R.id.sb_02_range_saturation://摄像机,饱和度
+                LogUtils.e("progress==balance==" + round);
+                toast("饱和度===" + round);
+                mEdit02Saturation.setText("" + round);
+                typeBean.setSaturation(round);
+                bean.setType01(typeBean);
+                sendSocketPointVideoDevice(Constants.UDP_F6, bean);
+                break;
+            case R.id.sb_02_range_definition://摄像机,清晰度
+                LogUtils.e("progress==balance==" + round);
+                toast("清晰度===" + round);
+                mEdit02Definition.setText("" + round);
+                typeBean.setSharpness(round);
+                bean.setType01(typeBean);
+                sendSocketPointVideoDevice(Constants.UDP_F6, bean);
+                break;
+            case R.id.sb_02_range_zoom://摄像机,放大倍数
+                //显示是1到2.5倍,传值是0--15
+                float progress1 = ((view.getLeftSeekBar().getProgress()) * 10) - 10;
+                int round2 = Math.round(progress1); //传的值
+                String s = view.getLeftSeekBar().getProgress() + ""; //editText设置的值
+                LogUtils.e("progress==倍数=progress1=" + progress1 + "");
+                LogUtils.e("progress==倍数=round2=" + round2);
+                LogUtils.e("progress==倍数=progress1111=" + s.substring(0, 3));
+                toast("放大倍数===" + round);
+                mEdit02Zoom.setText("" + s.substring(0, 3));
+                typeBean.setZoomrate(round2 + "");
+                bean.setType01(typeBean);
+                sendSocketPointVideoDevice(Constants.UDP_F6, bean);
                 break;
 
         }
@@ -939,10 +1234,49 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
 
     @Override
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+        //创建摄像机数据bean
+        Type01Bean bean = new Type01Bean();
+        Type01Bean.Type01 typeBean = new Type01Bean.Type01();
         switch (v.getId()) {
-            case R.id.edit_light:
-                mLightRangeBar.setProgress(Integer.parseInt(mEditLight.getText().toString().trim()));
-                mEditLight.clearFocus();
+            case R.id.edit_01_light: //冷光源,亮度
+                sendSocketPointLight(Constants.UDP_F5, "" + Integer.parseInt(mEdit01Light.getText().toString().trim()));
+                mRangeBar01Light.setProgress(Integer.parseInt(mEdit01Light.getText().toString().trim()));
+                mEdit01Light.clearFocus();
+                break;
+            case R.id.edit_02_light://摄像机,亮度
+                typeBean.setBrightness(mEdit02Light.getText().toString().trim());
+                bean.setType01(typeBean);
+                sendSocketPointVideoDevice(Constants.UDP_F6, bean);
+                mRangeBar02Light.setProgress(Integer.parseInt(mEdit02Light.getText().toString().trim()));
+                mEdit02Light.clearFocus();
+                break;
+            case R.id.edit_02_saturation://摄像机,饱和度
+                typeBean.setSaturation(mEdit02Light.getText().toString().trim());
+                bean.setType01(typeBean);
+                sendSocketPointVideoDevice(Constants.UDP_F6, bean);
+                mRangeBar02Saturation.setProgress(Integer.parseInt(mEdit02Saturation.getText().toString().trim()));
+                mEdit02Saturation.clearFocus();
+                break;
+            case R.id.edit_02_definition://摄像机,清晰度
+                typeBean.setBrightness(mEdit02Light.getText().toString().trim());
+                bean.setType01(typeBean);
+                sendSocketPointVideoDevice(Constants.UDP_F6, bean);
+                mRangeBar02Definition.setProgress(Integer.parseInt(mEdit02Definition.getText().toString().trim()));
+                mEdit02Definition.clearFocus();
+                break;
+            case R.id.edit_02_zoom://摄像机,放大倍数
+                //放大倍数           //显示是1到2.5倍,传值是0--15
+                //获取需要发送的数值
+                int rangeBarNeedSetData = CommonUtil.getEditDataToSend(mEdit02Zoom.getText() + "");
+                //获取需要设置到rangebar上的数值
+                LogUtils.e("progress==倍数=rangeBarNeedSetData发送==" + rangeBarNeedSetData);
+                typeBean.setZoomrate(rangeBarNeedSetData + "");
+                bean.setType01(typeBean);
+                sendSocketPointVideoDevice(Constants.UDP_F6, bean);
+                mRangeBar02Zoom.setProgress(Float.parseFloat(mEdit02Zoom.getText().toString()));
+                mEdit02Zoom.clearFocus();
+
+
                 break;
 
         }
@@ -969,7 +1303,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         Matcher m = p.matcher(s.toString());
         if (m.find() || ("").equals(s.toString())) {
         } else {
-            toast("请输入正确的数值!");
+//            toast("请输入正确的数值!");
         }
     }
 

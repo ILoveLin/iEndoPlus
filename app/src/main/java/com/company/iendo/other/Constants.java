@@ -54,6 +54,8 @@ public class Constants {
     public static final String UDP_F2 = "F2";                 //打印报告
     public static final String UDP_17 = "17";                 //编辑图片
     public static final String UDP_18 = "18";                 //录像    //录像--->0：查询录像状态 1：开始录像，，(我的命令)2：停止录像，(我的命令)3：正在录像，(后台返回操作)  4：未录像(后台返回操作)
+    public static final String UDP_F5 = "F5";                 //查询 设备参数
+    public static final String UDP_F6 = "F6";                 //设置 设备参数
 
 
     /**

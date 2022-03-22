@@ -31,6 +31,103 @@ public class CommonUtil {
     private static final int MIN_CLICK_DELAY_TIME = 1000;
     private static long lastClickTime;
 
+    /**
+     * 获取需要设置到bar里面去的数值   更具获取到的设备参数
+     * /显示是1到2.5倍,传值是0--15
+     *
+     * @param str 0--15  socket获取到的设备参数
+     * @return RangeBar 需要设置的值
+     */
+    public static float getRangeBarNeedSetData(String str) {
+        switch (str) {
+            case "0":
+                return 1;
+            case "1":
+                return (float) 1.1;
+            case "2":
+                return (float) 1.2;
+            case "3":
+                return (float) 1.3;
+            case "4":
+                return (float) 1.4;
+            case "5":
+                return (float) 1.5;
+            case "6":
+                return (float) 1.6;
+            case "7":
+                return (float) 1.7;
+            case "8":
+                return (float) 1.8;
+            case "9":
+                return (float) 1.9;
+            case "10":
+                return 10;
+            case "11":
+                return 11;
+            case "12":
+                return 12;
+            case "13":
+                return 13;
+            case "14":
+                return 14;
+            case "15":
+                return 15;
+
+
+        }
+
+        return 5;
+    }
+
+
+    /**
+     * 获取需要设置到bar里面去的数值   更具获取到的设备参数
+     * /显示是1到2.5倍,传值是0--15
+     *
+     * @param str 0--15  1-2.5
+     * @return 发送socket需要传输的数据0--15
+     */
+    public static int getEditDataToSend(String str) {
+        switch (str) {
+            case "1":
+                return 0;
+            case "1.1":
+                return 1;
+            case "1.2":
+                return 2;
+            case "1.3":
+                return 3;
+            case "1.4":
+                return 4;
+            case "1.5":
+                return 5;
+            case "1.6":
+                return 6;
+            case "1.7":
+                return 7;
+            case "1.8":
+                return 8;
+            case "1.9":
+                return 9;
+            case "2.0":
+                return 10;
+            case "2.1":
+                return 11;
+            case "2.2":
+                return 12;
+            case "2.3":
+                return 13;
+            case "2.4":
+                return 14;
+            case "2.5":
+                return 15;
+
+
+        }
+
+        return 5;
+    }
+
     public synchronized static boolean isFastClick() {
         boolean flag = false;
         long curClickTime = System.currentTimeMillis();
@@ -40,6 +137,7 @@ public class CommonUtil {
         lastClickTime = curClickTime;
         return flag;
     }
+
     /**
      * 将长度转换为时间
      *
@@ -61,10 +159,8 @@ public class CommonUtil {
         }
 
 
-
-
-
     }
+
     public static String getSaveDirectory() {
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
             return Environment.getExternalStorageDirectory().getAbsolutePath();
@@ -91,6 +187,7 @@ public class CommonUtil {
             bitmap.recycle();
         }
     }
+
     /**
      * EditText获取焦点并显示软键盘
      */
@@ -125,7 +222,6 @@ public class CommonUtil {
         sb.append(File.separator);
         return sb.toString();
     }
-
 
 
     /**

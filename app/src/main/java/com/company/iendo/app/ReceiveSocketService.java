@@ -394,10 +394,17 @@ public class ReceiveSocketService extends AbsWorkService {
                                             event.setTga(true);
                                             event.setData(addBeanCaseID);//只回调病例ID,回调的病例ID和当前App操作的病例ID 不同的时候不作处理
                                             event.setIp(hostAddressIP);
-                                            event.setUdpCmd(Constants.UDP_14);
+                                            event.setUdpCmd(Constants.UDP_12);
                                             EventBus.getDefault().post(event);
                                             break;
-
+                                        case Constants.UDP_F5://查询设备参数
+                                            LogUtils.e("======LiveServiceImpl==回调===设备参数下发==");
+                                            event.setTga(true);
+                                            event.setData(str);//此处直接把数据bean的string回传到GetPictureActivity界面
+                                            event.setIp(hostAddressIP);
+                                            event.setUdpCmd(Constants.UDP_F5);
+                                            EventBus.getDefault().post(event);
+                                            break;
 
                                     }
                                 }

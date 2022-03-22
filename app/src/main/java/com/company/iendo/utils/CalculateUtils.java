@@ -469,6 +469,7 @@ public class CalculateUtils {
                 mReceived_ID + mCMD + mData + mCheck_Sum + "DD";
         LogUtils.e("UDP==命令===mData===" + mData);
         LogUtils.e("UDP==命令===mSend_IDBy32===" + mSend_IDBy32);
+        LogUtils.e("UDP==命令===mReceived_ID===" + Received_ID);
         LogUtils.e("UDP==命令===mRandom===" + mRandom);
         LogUtils.e("UDP==命令===异或的CSString===" + CSString);
         LogUtils.e("UDP==命令===异或的结果===" + mCheck_Sum);

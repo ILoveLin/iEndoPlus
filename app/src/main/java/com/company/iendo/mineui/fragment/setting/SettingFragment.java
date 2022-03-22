@@ -13,6 +13,9 @@ import com.company.iendo.app.ReceiveSocketService;
 import com.company.iendo.app.TitleBarFragment;
 import com.company.iendo.bean.UserDeletedBean;
 import com.company.iendo.bean.socket.HandBean;
+import com.company.iendo.bean.socket.params.DeviceParamsBean;
+import com.company.iendo.bean.socket.params.Type01Bean;
+import com.company.iendo.bean.socket.params.Type02Bean;
 import com.company.iendo.mineui.activity.MainActivity;
 import com.company.iendo.mineui.activity.UserListActivity;
 import com.company.iendo.mineui.activity.login.LoginActivity;
@@ -20,7 +23,6 @@ import com.company.iendo.mineui.activity.setting.DeviceParamsActivity;
 import com.company.iendo.mineui.activity.setting.HospitalActivity;
 import com.company.iendo.other.Constants;
 import com.company.iendo.other.HttpConstant;
-import com.company.iendo.ui.activity.CopyActivity;
 import com.company.iendo.ui.dialog.Input2Dialog;
 import com.company.iendo.ui.dialog.MessageAboutDialog;
 import com.company.iendo.ui.dialog.MessageDialog;
@@ -31,14 +33,12 @@ import com.company.iendo.utils.FileUtil;
 import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.MD5ChangeUtil;
 import com.company.iendo.utils.SharePreferenceUtil;
-import com.company.iendo.utils.SocketUtils;
 import com.hjq.base.BaseDialog;
 import com.hjq.widget.layout.SettingBar;
 import com.tencent.mmkv.MMKV;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 
 import okhttp3.Call;
@@ -76,7 +76,7 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
         mUserName = findViewById(R.id.tv_current_name);
         mRelo = findViewById(R.id.tv_current_relo);
         mBaseUrl = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_BaseUrl, "192.168.312.102");
-        setOnClickListener( R.id.memory_bar,R.id.params_bar, R.id.hospital_bar, R.id.user_bar, R.id.about_bar, R.id.memory_bar, R.id.password_bar, R.id.linear_exit);
+        setOnClickListener(R.id.memory_bar, R.id.params_bar, R.id.hospital_bar, R.id.user_bar, R.id.about_bar, R.id.memory_bar, R.id.password_bar, R.id.linear_exit);
 
     }
 
@@ -117,9 +117,66 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
                 int port = kv.decodeInt(Constants.KEY_BROADCAST_PORT);
                 int port1 = kv.decodeInt(Constants.KEY_RECEIVE_PORT);
                 int portt = kv.decodeInt(Constants.KEY_RECEIVE_PORT_BY_SEARCH);
-                LogUtils.e("AppActivity=fragment==port===="+port);
-                LogUtils.e("AppActivity=fragment==port1===="+port1);
-                LogUtils.e("AppActivity=fragment==接收portt===="+portt);
+                LogUtils.e("AppActivity=fragment==port====" + port);
+                LogUtils.e("AppActivity=fragment==port1====" + port1);
+                LogUtils.e("AppActivity=fragment==接收portt====" + portt);
+
+                DeviceParamsBean deviceParamsBean = new DeviceParamsBean();
+                String str = "{\n" +
+                        "    \"01\":{\n" +
+                        "        \"brightess\":\"30\",\n" +
+                        "        \"zoom\":\"1\",\n" +
+                        "        \"sharpenss\":\"10\",\n" +
+                        "        \"saturation\":\"30\"\n" +
+                        "    },\n" +
+                        "    \"02\":{\n" +
+                        "        \"brightess\":\"30\"\n" +
+                        "    }\n" +
+                        "}";
+                String str2 = "{\n" +
+                        "    \"01\":{\n" +
+                        "        \"brightess\":\"30\",\n" +
+                        "        \"zoom\":\"1\",\n" +
+                        "        \"sharpenss\":\"10\",\n" +
+                        "        \"saturation\":\"30\"\n" +
+                        "    }\n" +
+                        " \n" +
+                        "}";
+
+
+                DeviceParamsBean deviceParamsBean1 = mGson.fromJson(str, DeviceParamsBean.class);
+                DeviceParamsBean deviceParamsBean2 = mGson.fromJson(str2, DeviceParamsBean.class);
+                LogUtils.e("SettingFragment====deviceParamsBean1====" + deviceParamsBean1.toString());
+                LogUtils.e("SettingFragment====deviceParamsBean2====" + deviceParamsBean2.toString());
+                HandBean handBean = new HandBean();
+                handBean.setHelloPc("HelloPc");
+                handBean.setComeFrom("Android");
+
+
+                LogUtils.e("SettingFragment====handBean====" + handBean.toString());
+                LogUtils.e("SettingFragment====handBeantoJson====" + mGson.toJson(handBean));
+
+
+                Type01Bean videoDeviceBean = new Type01Bean();
+                Type01Bean.Type01 dto = new Type01Bean.Type01();
+                dto.setBrightness("60");
+                videoDeviceBean.setType01(dto);
+
+                String string = videoDeviceBean.toString();
+                LogUtils.e("SettingFragment====bean====" + string);
+                LogUtils.e("SettingFragment====bean====" + mGson.toJson(videoDeviceBean));
+
+                Type02Bean bean = new Type02Bean();
+                LogUtils.e("======GetPictureActivity==回调===获取当前病例00==" + mGson.toJson(bean));
+
+                Type02Bean.Type02 type02 = new Type02Bean.Type02();
+                bean.setType02(type02);
+                LogUtils.e("======GetPictureActivity==回调===获取当前病例00==" + mGson.toJson(bean));
+                byte[] sendByteData = CalculateUtils.getSendByteData(getApplication(), mGson.toJson(bean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
+                        Constants.UDP_F6);
+                LogUtils.e("======GetPictureActivity==回调===>发送冷光源参数==" + sendByteData);
+                //Type01{brightess='60', zoom='null', sharpenss='null', saturation='null', reversal='null', bloodenhance='null'}
+
                 break;
             case R.id.params_bar:
                 startActivity(DeviceParamsActivity.class);
@@ -203,8 +260,8 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
                         MMKV kv = MMKV.defaultMMKV();
                         int port = kv.decodeInt(Constants.KEY_BROADCAST_PORT);
                         int searchPort = kv.decodeInt(Constants.KEY_RECEIVE_PORT_BY_SEARCH);
-                        LogUtils.e("AppActivity=fragment==port===="+port);
-                        LogUtils.e("AppActivity=fragment==接收searchPort===="+searchPort);
+                        LogUtils.e("AppActivity=fragment==port====" + port);
+                        LogUtils.e("AppActivity=fragment==接收searchPort====" + searchPort);
 
                         if ("".equals(searchPort)) {
                             toast("本地广播发送端口不能为空");
