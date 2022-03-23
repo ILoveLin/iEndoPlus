@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
@@ -15,10 +14,10 @@ import com.company.iendo.R;
 import com.company.iendo.app.AppActivity;
 import com.company.iendo.app.AppFragment;
 import com.company.iendo.manager.ActivityManager;
-import com.company.iendo.mineui.activity.login.LoginActivity;
 import com.company.iendo.mineui.fragment.casemanage.CaseManageFragment;
 import com.company.iendo.mineui.fragment.setting.SettingFragment;
-import com.company.iendo.mineui.offline.AFragment;
+import com.company.iendo.mineui.offline.CaseOffLineFragment;
+import com.company.iendo.mineui.offline.SettingOffLineFragment;
 import com.company.iendo.other.DoubleClickHelper;
 import com.company.iendo.ui.adapter.NavigationAdapter;
 import com.company.iendo.ui.fragment.HomeFragment;
@@ -28,7 +27,6 @@ import com.hjq.base.FragmentPagerAdapter;
 import com.hjq.permissions.OnPermissionCallback;
 import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
-import com.hjq.toast.ToastUtils;
 
 import java.util.List;
 
@@ -96,10 +94,11 @@ public class MainActivity extends AppActivity implements NavigationAdapter.OnNav
         mPagerAdapter = new FragmentPagerAdapter<>(this);
         if (mOnLineFlag) {
             mPagerAdapter.addFragment(CaseManageFragment.newInstance());
+            mPagerAdapter.addFragment(SettingFragment.newInstance());
         } else {
-            mPagerAdapter.addFragment(AFragment.newInstance());
+            mPagerAdapter.addFragment(CaseOffLineFragment.newInstance());
+            mPagerAdapter.addFragment(SettingOffLineFragment.newInstance());
         }
-        mPagerAdapter.addFragment(SettingFragment.newInstance());
 //        mPagerAdapter.addFragment(AFragment.newInstance());
         mViewPager.setAdapter(mPagerAdapter);
         onNewIntent(getIntent());

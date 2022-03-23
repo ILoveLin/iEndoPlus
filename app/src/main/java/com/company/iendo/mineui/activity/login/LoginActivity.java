@@ -43,8 +43,7 @@ import com.company.iendo.green.db.downcase.CaseDBBean;
 import com.company.iendo.manager.InputTextManager;
 import com.company.iendo.mineui.activity.MainActivity;
 import com.company.iendo.mineui.activity.login.device.DeviceActivity;
-import com.company.iendo.mineui.activity.login.device.search.DeviceSearchActivity;
-import com.company.iendo.mineui.offline.AFragment;
+import com.company.iendo.mineui.offline.CaseOffLineFragment;
 import com.company.iendo.other.Constants;
 import com.company.iendo.other.HttpConstant;
 import com.company.iendo.other.KeyboardWatcher;
@@ -507,7 +506,7 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                                          *
                                          */
                                         setTestOffCaseData();
-                                        MainActivity.start(getContext(), AFragment.class);
+                                        MainActivity.start(getContext(), CaseOffLineFragment.class);
 
 
                                         /**

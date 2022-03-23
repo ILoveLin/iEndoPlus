@@ -2,6 +2,7 @@ package com.company.iendo.mineui.offline;
 
 import android.util.Log;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.company.iendo.R;
@@ -25,14 +26,14 @@ import java.util.List;
  * time：2021/10/29 13:55
  * desc：第2个tab-fragment
  */
-public class AFragment extends TitleBarFragment<MainActivity> {
+public class CaseOffLineFragment extends TitleBarFragment<MainActivity> {
 
     private RecyclerView mRecyclerView;
     private StickyHeaderLayout mStickyLayout;
     private OffCaseAdapter mAdapter;
 
-    public static AFragment newInstance() {
-        return new AFragment();
+    public static CaseOffLineFragment newInstance() {
+        return new CaseOffLineFragment();
     }
 
     @Override
@@ -89,8 +90,9 @@ public class AFragment extends TitleBarFragment<MainActivity> {
             }
         });
 
-        GroupedGridLayoutManager gridLayoutManager = new GroupedGridLayoutManager(getActivity(), 2, mAdapter);
-        mRecyclerView.setLayoutManager(gridLayoutManager);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getAttachActivity(), LinearLayoutManager.VERTICAL,false);
+//        GroupedGridLayoutManager gridLayoutManager = new GroupedGridLayoutManager(getActivity(), 2, mAdapter);
+        mRecyclerView.setLayoutManager(linearLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
 
 

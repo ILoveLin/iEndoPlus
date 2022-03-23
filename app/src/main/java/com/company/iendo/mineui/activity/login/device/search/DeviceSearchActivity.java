@@ -222,7 +222,6 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
 
                         }
                     }
-
                     @Override
                     public void onCancel(BaseDialog dialog) {
 
