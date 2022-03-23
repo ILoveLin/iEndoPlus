@@ -31,28 +31,29 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="设备搜索"
+            android:text="智能搜索"
             android:textColor="@color/black" />
 
-        <TextView
-            android:id="@+id/tv_right_search"
+        <ImageView
+            android:id="@+id/iv_right_search"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="@dimen/dp_10"
-            android:text="搜索"
-            android:textColor="@color/color_409bf0" />
+            android:src="@drawable/ic_broadcast_icon_refresh"
+            />
 
-        <TextView
-            android:id="@+id/tv_right_setting"
+
+        <ImageView
+            android:src="@drawable/ic_player_icon_setting"
+            android:id="@+id/iv_right_setting"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginRight="@dimen/dp_10"
-            android:layout_toLeftOf="@+id/tv_right_search"
-            android:text="设置"
-            android:textColor="@color/color_409bf0" />
+            android:layout_toLeftOf="@+id/iv_right_search"
+          />
 
     </RelativeLayout>
 

@@ -6,7 +6,6 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.CountDownTimer;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
@@ -317,7 +316,7 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
         mRefreshLayout = findViewById(R.id.rl_device_search_refresh);
         mRecyclerView = findViewById(R.id.rv_device_search_recyclerview);
 //        mTitleBar = findViewById(R.id.search_titlebar);
-        setOnClickListener(R.id.tv_left, R.id.tv_right_search, R.id.tv_right_setting);
+        setOnClickListener(R.id.tv_left, R.id.iv_right_search, R.id.iv_right_setting);
         mAdapter = new DeviceSearchAdapter(this, mRecyclerView, mReceiveList);
         mAdapter.setOnItemClickListener(this);
         mAdapter.setData(mReceiveList);
@@ -338,13 +337,13 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
                 finish();
                 break;
 
-            case R.id.tv_right_search:
+            case R.id.iv_right_search:
                 if (null != mSearchDialog && mSearchDialog.isShowing()) {
                     return;
                 }
                 showSearchDialog();
                 break;
-            case R.id.tv_right_setting:
+            case R.id.iv_right_setting:
                 //设置了新的端口重置搜索次数
                 // 输入对话框
                 showSettingDialog();

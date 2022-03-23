@@ -115,9 +115,9 @@ public class DeviceAdapter extends AppAdapter<DeviceDBBean> {
                         mImageChose.setImageResource(R.drawable.icon_erbihou);
                         break;
                     case "妇科治疗台":
-                        mImageChose.setImageResource(R.drawable.icon_shenzhou4k);
+                        mImageChose.setImageResource(R.drawable.icon_erbihou);
                     case "泌尿治疗台":
-                        mImageChose.setImageResource(R.drawable.icon_shenzhou4k);
+                        mImageChose.setImageResource(R.drawable.icon_erbihou);
                         break;
                 }
             }

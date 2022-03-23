@@ -150,10 +150,10 @@ public class DeviceSearchAdapter extends AppAdapter<BroadCastReceiveBean> {
                     mImageChose.setImageResource(R.drawable.icon_erbihou);
                     break;
                 case "妇科治疗台":
-                    mImageChose.setImageResource(R.drawable.icon_shenzhou4k);
+                    mImageChose.setImageResource(R.drawable.icon_erbihou);
                     break;
                 case "泌尿治疗台":
-                    mImageChose.setImageResource(R.drawable.icon_shenzhou4k);
+                    mImageChose.setImageResource(R.drawable.icon_erbihou);
                     break;
             }
 //            http://192.168.64.28:7001/ID/FilePath
