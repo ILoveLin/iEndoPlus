@@ -63,7 +63,7 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
     private HashMap mDialogItemMap;
     private TextView tv_01_age_type;
     private LinesEditView et_01_i_tell_you, et_01_bad_tell;
-    private ClearEditText et_01_check_num, et_01_name, et_01_sex_type, et_01_age, et_01_jop, et_01_fee, et_01_get_check_doctor;
+    private ClearEditText  et_01_name, et_01_sex_type, et_01_age, et_01_jop, et_01_fee, et_01_get_check_doctor;
 
     private LinesEditView etlines_02_mirror_see, etlines_02_mirror_result, etlines_02_live_check, etlines_02_cytology,
             etlines_02_test, etlines_02_pathology, etlines_02_advice;
@@ -218,7 +218,6 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
 
         String Tel = et_03_tel.getText().toString().trim();       //电话
         String Address = et_03_address.getText().toString().trim();       //住址
-//        String PatientNo = et_01_check_num.getText().toString().trim();       //病人编号---检查号???
         String CardID = et_03_my_id_num.getText().toString().trim();       //身份证号
         String MedHistory = et_03_case_history.getText().toString().trim();       //医疗病史
         String FamilyHistory = et_03_family_case_history.getText().toString().trim();       //家族病史
@@ -679,8 +678,6 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
         /**
          * 获取基本信息id
          */
-        //检查号
-        et_01_check_num = findViewById(R.id.et_01_check_num);
         //姓名
         et_01_name = findViewById(R.id.et_01_name);
         //性别

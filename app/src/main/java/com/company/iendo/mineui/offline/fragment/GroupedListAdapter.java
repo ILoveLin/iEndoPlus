@@ -1,12 +1,14 @@
-package com.company.iendo.mineui.offline;
+package com.company.iendo.mineui.offline.fragment;
 
 import android.content.Context;
 
 import com.company.iendo.R;
-import com.company.iendo.mineui.offline.entity.ChildEntity;
-import com.company.iendo.mineui.offline.entity.GroupEntity;
+import com.company.iendo.green.db.downcase.CaseDBBean;
+import com.company.iendo.mineui.offline.entitydb.GroupEntity;
 import com.donkingliang.groupedadapter.adapter.GroupedRecyclerViewAdapter;
 import com.donkingliang.groupedadapter.holder.BaseViewHolder;
+import com.google.gson.Gson;
+import com.hjq.gson.factory.GsonFactory;
 
 import java.util.ArrayList;
 
@@ -15,11 +17,14 @@ import java.util.ArrayList;
  */
 public class GroupedListAdapter extends GroupedRecyclerViewAdapter {
 
-    protected ArrayList<GroupEntity> mGroups;
+    protected  ArrayList<GroupEntity> mGroups;
+    private final Gson mGson;
 
     public GroupedListAdapter(Context context, ArrayList<GroupEntity> groups) {
         super(context);
         mGroups = groups;
+        mGson = GsonFactory.getSingletonGson();
+
     }
 
     @Override
@@ -29,7 +34,8 @@ public class GroupedListAdapter extends GroupedRecyclerViewAdapter {
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        ArrayList<ChildEntity> children = mGroups.get(groupPosition).getChildren();
+        ArrayList<CaseDBBean> children = mGroups.get(groupPosition).getChildren();
+//        ArrayList<ChildEntity> children = mGroups.get(groupPosition).getChildren();
         return children == null ? 0 : children.size();
     }
 
@@ -65,24 +71,31 @@ public class GroupedListAdapter extends GroupedRecyclerViewAdapter {
 
     @Override
     public int getChildLayout(int viewType) {
-        return R.layout.adapter_child;
+        return R.layout.item_case_listv2_offline;
     }
 
     @Override
     public void onBindHeaderViewHolder(BaseViewHolder holder, int groupPosition) {
-        GroupEntity entity = mGroups.get(groupPosition);
-        holder.setText(R.id.tv_header, entity.getHeader());
+        GroupEntity groupEntity = mGroups.get(groupPosition);
+//        GroupEntity entity = mGroups.get(groupPosition);
+        holder.setText(R.id.tv_header, groupEntity.getHeader());
     }
 
     @Override
     public void onBindFooterViewHolder(BaseViewHolder holder, int groupPosition) {
-        GroupEntity entity = mGroups.get(groupPosition);
-        holder.setText(R.id.tv_footer, entity.getFooter());
+        GroupEntity groupEntity = mGroups.get(groupPosition);
+//        GroupEntity entity = mGroups.get(groupPosition);
+        holder.setText(R.id.tv_footer, groupEntity.getFooter());
     }
 
     @Override
     public void onBindChildViewHolder(BaseViewHolder holder, int groupPosition, int childPosition) {
-        ChildEntity entity = mGroups.get(groupPosition).getChildren().get(childPosition);
-        holder.setText(R.id.tv_child, entity.getChild());
+        CaseDBBean caseDBBean = mGroups.get(groupPosition).getChildren().get(childPosition);
+        holder.setText(R.id.tv_case_name, caseDBBean.getName()+"");
+        holder.setText(R.id.iv_sex_logo, caseDBBean.getSex()+"");
+        holder.setText(R.id.tv_case_age,caseDBBean.getPatientAge()+""+caseDBBean.getAgeUnit() );
+        holder.setText(R.id.tv_case_num, caseDBBean.getCaseNo()+"");
+//        ChildEntity entity = mGroups.get(groupPosition).getChildren().get(childPosition);
+//        holder.setText(R.id.tv_child, entity.getChild());
     }
 }

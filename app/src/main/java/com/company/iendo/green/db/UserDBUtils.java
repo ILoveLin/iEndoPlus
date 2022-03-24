@@ -3,6 +3,7 @@ package com.company.iendo.green.db;
 import android.content.Context;
 import android.util.Log;
 
+import com.company.iendo.green.db.downcase.CaseDBBean;
 import com.company.iendo.utils.db.DBManager;
 
 import org.greenrobot.greendao.query.QueryBuilder;
@@ -52,6 +53,36 @@ public class UserDBUtils {
         UserDBBean queryBean = userDBBeanDao.queryBuilder().where(UserDBBeanDao.Properties.Id.eq("1")).unique();
 
         return queryBean;
+
+    }
+
+    //条件查询
+    //精确查询  获取到bean
+    public static List<UserDBBean>  getQueryBeanByUserName(Context context,String Name) {
+        UserDBBeanDao userDBBeanDao = DBManager.getDaoSession(context).getUserDBBeanDao();
+        List<UserDBBean> list = userDBBeanDao.queryBuilder().where(UserDBBeanDao.Properties.UserName.eq(Name)).list();
+
+        return list;
+
+    }
+
+    //条件查询
+    //精确查询  获取到bean
+    public static List<UserDBBean>  getQueryBeanByCode(Context context,String Code) {
+        UserDBBeanDao userDBBeanDao = DBManager.getDaoSession(context).getUserDBBeanDao();
+        List<UserDBBean> list = userDBBeanDao.queryBuilder().where(UserDBBeanDao.Properties.DeviceUserID.eq(Code)).list();
+
+        return list;
+
+    }
+
+    public static List<UserDBBean> getQueryBeanByTow(Context context, String code, String Name) {
+        UserDBBeanDao userDBBeanDao = DBManager.getDaoSession(context).getUserDBBeanDao();
+
+        List<UserDBBean> beanList = userDBBeanDao.queryBuilder().where(UserDBBeanDao.Properties.DeviceUserID.eq(code),UserDBBeanDao.Properties.UserName.eq(Name)).list();
+
+        return beanList;
+
 
     }
 

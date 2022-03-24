@@ -75,7 +75,6 @@
 
 
 
-
         <!--Bugly,App版本升级-->
 
         <activity
@@ -177,6 +176,11 @@
         <!-- 病例详情 -->
         <activity
             android:name=".mineui.activity.casemanage.DetailCaseActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <!-- 病例详情  离线界面 -->
+        <activity
+            android:name=".mineui.offline.activity.DetailCaseOfflineActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         <!-- 用户列表 -->

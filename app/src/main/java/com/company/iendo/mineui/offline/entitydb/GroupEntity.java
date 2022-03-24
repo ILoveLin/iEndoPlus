@@ -1,4 +1,5 @@
-package com.company.iendo.mineui.offline.entity;
+package com.company.iendo.mineui.offline.entitydb;
+import com.company.iendo.green.db.downcase.CaseDBBean;
 
 import java.util.ArrayList;
 
@@ -9,9 +10,9 @@ public class GroupEntity {
 
     private String header;
     private String footer;
-    private ArrayList<ChildEntity> children;
+    private ArrayList<CaseDBBean> children;
 
-    public GroupEntity(String header, String footer, ArrayList<ChildEntity> children) {
+    public GroupEntity(String header, String footer, ArrayList<CaseDBBean> children) {
         this.header = header;
         this.footer = footer;
         this.children = children;
@@ -33,11 +34,11 @@ public class GroupEntity {
         this.footer = footer;
     }
 
-    public ArrayList<ChildEntity> getChildren() {
+    public ArrayList<CaseDBBean> getChildren() {
         return children;
     }
 
-    public void setChildren(ArrayList<ChildEntity> children) {
+    public void setChildren(ArrayList<CaseDBBean> children) {
         this.children = children;
     }
 }

@@ -183,7 +183,7 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
      * @param mAddCurrentCode
      */
     private void sendAddUserRequest(String userName, String passwrod, int mAddCurrentCode) {
-
+        String UserID = (String) SharePreferenceUtil.get(UserListActivity.this, SharePreferenceUtil.Current_Login_UserID, "");
         showLoading();
         OkHttpUtils.post()
                 .url(mBaseUrl+HttpConstant.UserManager_AddUser)
@@ -193,6 +193,7 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
                 .addParams("Password", passwrod)    //新用户的密码
                 .addParams("Des", mAddCurrentString)    //新用户的描述
                 .addParams("CanSUE", "1")    //新用户是否激活1激活，0是未激活
+                .addParams("UserID", UserID)    //用户ID
                 .build()
                 .execute(new StringCallback() {
                     @Override

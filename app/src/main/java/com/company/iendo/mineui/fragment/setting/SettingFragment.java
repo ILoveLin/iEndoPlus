@@ -85,26 +85,25 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
         mLoginUserID = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_Login_UserID, "");
         mLoginPassword = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_Login_Password, "");
         mLoginUserName = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_Login_UserName, "");
+//         最终确定确实表现:0管理员，1操作员，2普通用户，3自定义
         mLoginReol = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_Login_Role, "");
         String romAvailableSize = FileUtil.getROMAvailableSize(getActivity());
         memory_bar.setRightText(romAvailableSize);
         mUserName.setText("" + mLoginUserName);
         switch (mLoginReol) {
             case "0":
-                mRelo.setText("超级管理员");
-                break;
-            case "1":
                 mRelo.setText("管理员");
                 break;
-            case "2":
+            case "1":
                 mRelo.setText("操作员");
                 break;
-            case "3":
-                mRelo.setText("查询员");
+            case "2":
+                mRelo.setText("普通用户");
                 break;
-            case "4":
+            case "3":
                 mRelo.setText("自定义");
                 break;
+
         }
     }
 

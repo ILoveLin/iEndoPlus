@@ -1,11 +1,12 @@
-package com.company.iendo.mineui.offline;
+package com.company.iendo.mineui.offline.fragment;
 
 import android.content.Context;
 
-import com.company.iendo.mineui.offline.entity.GroupEntity;
+import com.company.iendo.mineui.offline.entitydb.GroupEntity;
 import com.donkingliang.groupedadapter.holder.BaseViewHolder;
 
 import java.util.ArrayList;
+
 
 /**
  * company：江西神州医疗设备有限公司
@@ -13,8 +14,8 @@ import java.util.ArrayList;
  * time：2022/1/13 15:11
  * desc：离线数据病例列表
  */
-public class OffCaseAdapter  extends GroupedListAdapter{
-    public OffCaseAdapter(Context context, ArrayList<GroupEntity> groups) {
+public class CaseOfflineAdapter extends GroupedListAdapter{
+    public CaseOfflineAdapter(Context context, ArrayList<GroupEntity> groups) {
         super(context, groups);
     }
 

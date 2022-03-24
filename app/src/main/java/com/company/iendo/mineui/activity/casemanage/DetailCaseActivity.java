@@ -101,7 +101,6 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
         mTitlebar = findViewById(R.id.titlebar);
         mPicture = findViewById(R.id.case_picture);
         mDelete = findViewById(R.id.case_delete);
-        mDown = findViewById(R.id.case_down);
         mFatherExit = false;
         FragmentPagerAdapter mPagerAdapter = new FragmentPagerAdapter<>(this);
         mPagerAdapter.addFragment(DetailFragment.newInstance(), "详情");
@@ -119,7 +118,7 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
     }
 
     private void responseListener() {
-        setOnClickListener(R.id.linear_get_picture, R.id.linear_get_report, R.id.linear_delete, R.id.case_down, R.id.linear_down);
+        setOnClickListener(R.id.linear_get_picture, R.id.linear_get_report, R.id.linear_delete, R.id.linear_down);
         mTitlebar.setOnTitleBarListener(new OnTitleBarListener() {
             @Override
             public void onLeftClick(View view) {

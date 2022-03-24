@@ -4,6 +4,7 @@ import org.greenrobot.greendao.annotation.Convert;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.greenrobot.greendao.annotation.Generated;
@@ -16,15 +17,15 @@ import org.greenrobot.greendao.annotation.Generated;
  * 因为所有用户绑定的是设备
  * 病例绑定的是用户
  * <p>
- * 所有的病例都是绑定设备的,也就是说病例表的deviceCaseID==设备表的主键id
+ * 所有的病例都是绑定设备的,也就是说病例表的deviceCaseID==设备表的deviceCode
  */
 @Entity
-public class CaseDBBean {
+public class CaseDBBean  {
 
     //主键
     @Id(autoincrement = true)
     private Long id;
-    //病例ID(线上设备上主键ID)
+    //病例ID(这个是绑定相对于的设备id ,比如下载病例的是会把当前设备code赋值给他确保离线模式下能查找到,当前设备下绑定的用户)
     private String deviceCaseID;    //把设备的主键id赋值给deviceID(相当于他是主键ID)
     // 本地数据库设备id
     private String Did;
@@ -129,7 +130,8 @@ public class CaseDBBean {
     // 社保卡号
     private String InsuranceID;
     // 其他
-    private String Others;
+    //  此处上位机返回来的病例ID  病例详情界面数据====DataDTO   里面的这个字段ID=1158,用来在下载的时候来判断当前病例是否下载过,如果设备码和ID  都一样,有数据返回则更新不然新增病例
+    private String Others;   //设置是否下载过的标识 ==上位机返回的ID
     // 其他01
     private String Others01;
 
@@ -641,5 +643,63 @@ public class CaseDBBean {
         this.Others01 = Others01;
     }
 
-
+    @Override
+    public String toString() {
+        return "CaseDBBean{" +
+                "id=" + id +
+                ", deviceCaseID='" + deviceCaseID + '\'' +
+                ", Did='" + Did + '\'' +
+                ", Occupatior='" + Occupatior + '\'' +
+                ", NativePlace='" + NativePlace + '\'' +
+                ", Fee='" + Fee + '\'' +
+                ", ChiefComplaint='" + ChiefComplaint + '\'' +
+                ", ImageList=" + ImageList +
+                ", VideoList=" + VideoList +
+                ", Biopsy='" + Biopsy + '\'' +
+                ", Pathology='" + Pathology + '\'' +
+                ", FeeType='" + FeeType + '\'' +
+                ", MedHistory='" + MedHistory + '\'' +
+                ", LastCheckUserID='" + LastCheckUserID + '\'' +
+                ", AgeUnit='" + AgeUnit + '\'' +
+                ", Advice='" + Advice + '\'' +
+                ", UserName='" + UserName + '\'' +
+                ", record_date='" + record_date + '\'' +
+                ", imagesCount='" + imagesCount + '\'' +
+                ", videosCount='" + videosCount + '\'' +
+                ", SubmitDoctor='" + SubmitDoctor + '\'' +
+                ", Race='" + Race + '\'' +
+                ", RecordType='" + RecordType + '\'' +
+                ", update_time='" + update_time + '\'' +
+                ", PatientAge='" + PatientAge + '\'' +
+                ", CardID='" + CardID + '\'' +
+                ", Tel='" + Tel + '\'' +
+                ", check_date='" + check_date + '\'' +
+                ", PatientNo='" + PatientNo + '\'' +
+                ", InpatientID='" + InpatientID + '\'' +
+                ", BedID='" + BedID + '\'' +
+                ", CheckContent='" + CheckContent + '\'' +
+                ", ReturnVisit='" + ReturnVisit + '\'' +
+                ", CaseNo='" + CaseNo + '\'' +
+                ", Ctology='" + Ctology + '\'' +
+                ", DOB='" + DOB + '\'' +
+                ", ExaminingPhysician='" + ExaminingPhysician + '\'' +
+                ", CheckDiagnosis='" + CheckDiagnosis + '\'' +
+                ", Sex='" + Sex + '\'' +
+                ", EndoType='" + EndoType + '\'' +
+                ", Device='" + Device + '\'' +
+                ", IsInHospital='" + IsInHospital + '\'' +
+                ", Married='" + Married + '\'' +
+                ", FamilyHistory='" + FamilyHistory + '\'' +
+                ", Test='" + Test + '\'' +
+                ", ClinicalDiagnosis='" + ClinicalDiagnosis + '\'' +
+                ", Department='" + Department + '\'' +
+                ", WardID='" + WardID + '\'' +
+                ", CaseID='" + CaseID + '\'' +
+                ", Name='" + Name + '\'' +
+                ", Address='" + Address + '\'' +
+                ", InsuranceID='" + InsuranceID + '\'' +
+                ", Others='" + Others + '\'' +
+                ", Others01='" + Others01 + '\'' +
+                '}';
+    }
 }

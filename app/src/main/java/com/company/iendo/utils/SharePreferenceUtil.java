@@ -31,10 +31,11 @@ public class SharePreferenceUtil {
     public static final String Current_Chose_CaseID = "Current_Chose_CaseID";    //当前选中的病例ID
 
 
-    public static final String Current_Login_Role = "login_role";  //登录用户的role  权限
+    public static final String Current_Login_Role = "login_role";  //登录用户的role  权限    最终确定确实表现:0管理员，1操作员，2普通用户，3自定义
     public static final String Current_Login_UserID = "login_userid";  //登录用户的ID
     public static final String Current_Login_UserName = "login_username";  //登录用户的username
     public static final String Current_Login_Password = "login_password";  //登录用户的password
+    public static final String Current_Login_Remember_Password = "Current_Login_Remember_Password";  //登录用户的是否选中了记住密码,因为在下载的时候,会把此状态值 存入用户表数据库的  isRememberPassword   字段
 
     // 角色 0-超级管理员 1-管理员 2-操作员 3-查询员 4-自定义
     // 角色 0-超级管理员 1-管理员 2-操作员 3-查询员 4-自定义

@@ -43,7 +43,8 @@ import com.company.iendo.green.db.downcase.CaseDBBean;
 import com.company.iendo.manager.InputTextManager;
 import com.company.iendo.mineui.activity.MainActivity;
 import com.company.iendo.mineui.activity.login.device.DeviceActivity;
-import com.company.iendo.mineui.offline.CaseOffLineFragment;
+import com.company.iendo.mineui.fragment.casemanage.CaseManageFragment;
+import com.company.iendo.mineui.offline.fragment.CaseManageOfflineFragment;
 import com.company.iendo.other.Constants;
 import com.company.iendo.other.HttpConstant;
 import com.company.iendo.other.KeyboardWatcher;
@@ -52,6 +53,7 @@ import com.company.iendo.ui.dialog.TipsDialog;
 import com.company.iendo.ui.dialog.WaitDialog;
 import com.company.iendo.ui.popup.ListPopup;
 import com.company.iendo.utils.CalculateUtils;
+import com.company.iendo.utils.CommonUtil;
 import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.MD5ChangeUtil;
 import com.company.iendo.utils.ScreenSizeUtil;
@@ -63,6 +65,7 @@ import com.hjq.base.action.AnimAction;
 import com.hjq.umeng.Platform;
 import com.hjq.umeng.UmengLogin;
 import com.hjq.widget.view.PasswordEditText;
+import com.tencent.bugly.proguard.B;
 import com.tencent.mmkv.MMKV;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
@@ -90,6 +93,7 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
     private int mPhoneViewWidth;
     private WaitDialog.Builder mWaitDialog;
     private List<UserListBean.DataDTO> mUserListData = new ArrayList<UserListBean.DataDTO>();
+    private List<UserListBean.DataDTO> mUserOflineListData = new ArrayList<UserListBean.DataDTO>();
     private TextView mSettingView;
     private TextView mDeviceType;
     private String mBaseUrl;
@@ -121,50 +125,61 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                     //之前本地数据库存入了保存密码(存入本地数据库)
                     Boolean isSave = (Boolean) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Flag_UserDBSave, false);
                     //首先查询当前设备下,记住密码存入数据库的数据
-                    List<UserDBBean> userDBBeans = UserDBUtils.getQueryByDeviceID(getApplicationContext(), deviceID);
-                    //数据库没有
-                    if (userDBBeans.size() != 0) {
-                        for (int i = 0; i < userDBBeans.size(); i++) {
-                            UserDBBean userDBBean = userDBBeans.get(i);
-                            String currentName = userDBBean.getUserName();
-                            if (currentName.equals(userName)) {
-                                mPhoneView.setText("" + userDBBean.getUserName());
-                                mPasswordView.setText("" + userDBBean.getPassword());
-                                if (userDBBean.getIsRememberPassword()) {
-                                    mCheckbox.setChecked(true);
-                                } else {
-                                    mCheckbox.setChecked(false);
-                                }
-                            } else {
-                                mPhoneView.setText(userName);
-                                mPasswordView.setText("");
-                                mCheckbox.setChecked(false);
+                    refreshUI(userName);
+                    break;
+            }
+        }
+    };
 
-                            }
-
+    private void refreshUI(String userName) {
+        Boolean loginType = (Boolean) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.OnLine_Flag, true);
+        if (loginType) {//在线登录
+            List<UserDBBean> userDBBeans = UserDBUtils.getQueryByDeviceID(getApplicationContext(), deviceID);
+            //数据库没有
+            if (userDBBeans.size() != 0) {
+                for (int i = 0; i < userDBBeans.size(); i++) {
+                    UserDBBean userDBBean = userDBBeans.get(i);
+                    String currentName = userDBBean.getUserName();
+                    if (currentName.equals(userName)) {
+                        mPhoneView.setText("" + userDBBean.getUserName());
+                        mPasswordView.setText("" + userDBBean.getPassword());
+                        if (userDBBean.getIsRememberPassword()) {
+                            mCheckbox.setChecked(true);
+                        } else {
+                            mCheckbox.setChecked(false);
                         }
                     } else {
                         mPhoneView.setText(userName);
                         mPasswordView.setText("");
                         mCheckbox.setChecked(false);
+
                     }
 
-
-//                        if (UserDBUtils.queryListIsExist(getApplicationContext(), userName)) {
-//                            UserDBBean userDBBean = UserDBUtils.queryListByName(getApplicationContext(), userName);
-//                            mPhoneView.setText("" + userDBBean.getUserName());
-//                            mPasswordView.setText("" + userDBBean.getPassword());
-//                            mCheckbox.setChecked(true);
-//
-//                        } else {
-//                            mPhoneView.setText("" + userName);
-//                            mPasswordView.setText("");
-//                            mCheckbox.setChecked(false);
-//                        }
-                    break;
+                }
+            } else {
+                mPhoneView.setText(userName);
+                mPasswordView.setText("");
+                mCheckbox.setChecked(false);
+            }
+        } else {//离线登录
+            List<UserDBBean> userList = UserDBUtils.getQueryBeanByTow(getActivity(), mCurrentReceiveDeviceCode,userName);
+            if (null != userList && userList.size() > 0) {
+                    UserDBBean bean = userList.get(0);
+                mPhoneView.setText(userName);
+                //记住密码
+                if (bean.getIsRememberPassword()){
+                    mPasswordView.setText(bean.getPassword());
+                    mCheckbox.setChecked(true);
+                }else {
+                    mPasswordView.setText("");
+                    mCheckbox.setChecked(false);
+                }
             }
         }
-    };
+
+
+    }
+
     private int screenWidth;
     private TextView mLoginType;
     private String deviceID;
@@ -183,9 +198,12 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
             userDBBean.setDeviceUserID(bean.getUserID());
             userDBBean.setRelo(bean.getRole() + "");
             userDBBean.setIsRememberPassword(true);
+            //记住密码
+            SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Current_Login_Remember_Password, true);
+
             /**
              * 设备ID
-             * 这个用户是在哪个设备上的     用户和病例都是和设备绑定的
+             * 这个用户是在哪个设备上的     用户和病例都是和设备绑定的     :用户表设置的是这个字段 deviceID ==  deviceUserID  病历表设置的是这个字段deviceCaseID
              * 当前选中设备的主键id,因为离线模式下就能通过这个主键id查找这个设备下的所有用户
              */
             String deviceID = (String) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Current_DeviceID, "1");
@@ -195,6 +213,9 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
             UserDBUtils.insertOrReplaceInTx(LoginActivity.this, userDBBean);
             SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Flag_UserDBSave, true);
 
+        }else {
+            //没有记住密码
+            SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Current_Login_Remember_Password, false);
         }
 
     }
@@ -337,7 +358,6 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                                 mUserListData = mBean.getData();
                                 LogUtils.e("用户列表===" + response);
 
-
                             } else {
                                 showError();
                             }
@@ -358,6 +378,9 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
         }, 500);
 
         showHistoryDialog();
+
+        mLoginType.setText("在线登录");
+        SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.OnLine_Flag, true);
     }
 
 
@@ -367,88 +390,118 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
     private void showHistoryDialog() {
 
         username_right.setImageResource(R.drawable.login_icon_down);
-        username_right.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                LogUtils.e("==========Tag======Tag===" + username_right.getTag());
-                if ("close".equals(username_right.getTag())) {
-                    username_right.setTag("open");
-                    username_right.setImageResource(R.drawable.login_icon_up);
+        boolean fastClick = CommonUtil.isFastClick();
+        if (fastClick) {
+            username_right.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    LogUtils.e("==========Tag======Tag===" + username_right.getTag());
+                    if ("close".equals(username_right.getTag())) {
+                        username_right.setTag("open");
+                        username_right.setImageResource(R.drawable.login_icon_up);
 
-                } else {
-                    username_right.setTag("close");
-                    username_right.setImageResource(R.drawable.login_icon_down);
+                    } else {
+                        username_right.setTag("close");
+                        username_right.setImageResource(R.drawable.login_icon_down);
+                    }
+
+                    LogUtils.e("==========screenWidth======screenWidth===" + screenWidth);
+
+                    String string = getResources().getString(R.dimen.dp_74);
+                    String dip = string.replace("dip", "");
+                    Float mFloatDate = Float.valueOf(dip).floatValue();
+                    LogUtils.e("==========screenWidth======mPhoneView===" + mPhoneView.getWidth());
+                    LogUtils.e("==========screenWidth======string===" + dip);
+                    LogUtils.e("==========screenWidth======mFloatDate===" + mFloatDate);
+                    LogUtils.e("==========screenWidth======screenWidth - mFloatDate===" + (screenWidth - mFloatDate));
+
+                    if (!getListData().isEmpty()) {
+                        historyBuilder = new ListPopup.Builder(LoginActivity.this);
+                        historyBuilder.setList(getListData())
+                                .setGravity(Gravity.CENTER_VERTICAL)
+                                .setAutoDismiss(true)
+                                .setOutsideTouchable(false) //80dp
+                                .setWidth(mPhoneView.getWidth())
+                                .setAnimStyle(AnimAction.ANIM_SCALE)
+                                .setListener((ListPopup.OnListener<String>) (popupWindow, position, str) -> {
+                                            Message tempMsg = mHandler.obtainMessage();
+                                            tempMsg.what = 1;
+                                            tempMsg.obj = str;
+                                            mHandler.sendMessage(tempMsg);
+                                        }
+
+                                )
+                                .showAsDropDown(mPhoneView);
+                    } else {
+                        toast("暂无数据哦!");
+
+                    }
+
+                    if (null != historyBuilder) {
+                        historyBuilder.getPopupWindow().addOnDismissListener(new BasePopupWindow.OnDismissListener() {
+                            @Override
+                            public void onDismiss(BasePopupWindow popupWindow) {
+                                username_right.setTag("close");
+                                username_right.setImageResource(R.drawable.login_icon_down);
+                            }
+                        });
+                    }
                 }
+            });
 
-                LogUtils.e("==========screenWidth======screenWidth===" + screenWidth);
+        }
 
-                String string = getResources().getString(R.dimen.dp_74);
-                String dip = string.replace("dip", "");
-                Float mFloatDate = Float.valueOf(dip).floatValue();
-                LogUtils.e("==========screenWidth======mPhoneView===" + mPhoneView.getWidth());
-                LogUtils.e("==========screenWidth======string===" + dip);
-                LogUtils.e("==========screenWidth======mFloatDate===" + mFloatDate);
-                LogUtils.e("==========screenWidth======screenWidth - mFloatDate===" + (screenWidth - mFloatDate));
+    }
 
-                if (!getListData().isEmpty()) {
-                    historyBuilder = new ListPopup.Builder(LoginActivity.this);
-                    historyBuilder.setList(getListData())
-                            .setGravity(Gravity.CENTER_VERTICAL)
-                            .setAutoDismiss(true)
-                            .setOutsideTouchable(false) //80dp
-                            .setWidth(mPhoneView.getWidth())
-                            .setAnimStyle(AnimAction.ANIM_SCALE)
-                            .setListener((ListPopup.OnListener<String>) (popupWindow, position, str) -> {
-                                        Message tempMsg = mHandler.obtainMessage();
-                                        tempMsg.what = 1;
-                                        tempMsg.obj = str;
-                                        mHandler.sendMessage(tempMsg);
-                                    }
+    /**
+     * 设置离线用户列表
+     */
+    private void setOfflineHistoryData() {
+        mCurrentReceiveDeviceCode = (String) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Current_DeviceCode, "00000000000000000000000000000000");
+//        showHistoryDialog
+//        List<UserDBBean> userList = UserDBUtils.getQueryBeanByCode(getActivity(), mCurrentReceiveDeviceCode);
+        //查询当前设备是否下载过病例
+        List<UserDBBean> userList = UserDBUtils.getQueryBeanByCode(getActivity(), mCurrentReceiveDeviceCode);
 
-                            )
-                            .showAsDropDown(mPhoneView);
-                } else {
-                    toast("暂无数据哦!");
+        //动态清零用户列表
+        mUserOflineListData.clear();
+        UserListBean.DataDTO mOfflineHistoryBean = new UserListBean.DataDTO();
+        if (null != userList && userList.size() > 0) {
+            for (int i = 0; i < userList.size(); i++) {
+                UserDBBean bean = userList.get(i);
+                LogUtils.e("用户表====登录====" + bean.getUserName());
 
-                }
+//                mOfflineHistoryBean.setUserName(caseDBBean.getName());//caseDBBean.getName()   是病例的名字
+                mOfflineHistoryBean.setUserName(bean.getUserName());//caseDBBean.getUserName()   操作这个病例的操作员的名字  用户名字
+                mUserOflineListData.add(mOfflineHistoryBean);
+                mUserOflineListData.size();
 
-//                historyBuilder.setList(getListData())
-//                        .setGravity(Gravity.CENTER_VERTICAL)
-//                        .setAutoDismiss(true)
-//                        .setOutsideTouchable(false)
-//                        .setWidth(mPhoneViewWidth + 60)
-//                        .setXOffset(-30)
-//                        .setHeight(650)
-//                        .setAnimStyle(AnimAction.ANIM_SCALE)
-//                        .setListener((ListPopup.OnListener<String>) (popupWindow, position, str) -> {
-//                                    Message tempMsg = mHandler.obtainMessage();
-//                                    tempMsg.what = 1;
-//                                    tempMsg.obj = str;
-//                                    mHandler.sendMessage(tempMsg);
-//                                }
-//
-//                        )
-//                        .showAsDropDown(mPhoneView);
-                if (null != historyBuilder) {
-                    historyBuilder.getPopupWindow().addOnDismissListener(new BasePopupWindow.OnDismissListener() {
-                        @Override
-                        public void onDismiss(BasePopupWindow popupWindow) {
-                            username_right.setTag("close");
-                            username_right.setImageResource(R.drawable.login_icon_down);
-                        }
-                    });
-                }
             }
-        });
-
+        }
     }
 
     private ArrayList<String> getListData() {
         ArrayList<String> mList = new ArrayList<>();
+        Boolean loginType = (Boolean) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.OnLine_Flag, true);
+        mList.clear();
+        if (loginType) { //在线登录
+            for (int i = 0; i < mUserListData.size(); i++) {
+                mList.add(mUserListData.get(i).getUserName() + "");
+                LogUtils.e("用户表===getListData=用户名:" + mUserListData.get(i).getUserName());
+            }
+            return mList;
 
-        for (int i = 0; i < mUserListData.size(); i++) {
-            mList.add(mUserListData.get(i).getUserName() + "");
-            LogUtils.e("用户名:" + mUserListData.get(i).getUserName());
+        } else {  //离线登录
+
+            List<UserDBBean> userList = UserDBUtils.getQueryBeanByCode(getActivity(), mCurrentReceiveDeviceCode);
+            if (null != userList && userList.size() > 0) {
+                for (int i = 0; i < userList.size(); i++) {
+                    UserDBBean bean = userList.get(i);
+                    LogUtils.e("用户表===mUserOflineListData=用户名:" + bean.getUserName());
+                    mList.add(bean.getUserName());
+
+                }
+            }
         }
         return mList;
     }
@@ -458,103 +511,16 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_login_commit:
-                // 隐藏软键盘
-                hideKeyboard(getCurrentFocus());
-                LogUtils.e("登录===" + MD5ChangeUtil.Md5_16(mPasswordView.getText().toString()));
-                LogUtils.e("登录===" + MD5ChangeUtil.Md5_32(mPasswordView.getText().toString()));
-                LogUtils.e("登录==url=" + mBaseUrl + HttpConstant.UserManager_Login);
-                String mUrl = (String) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Current_BaseUrl, "http://192.168.1.200:3000");
-                LogUtils.e("登录==url==02=" + mBaseUrl);
-                LogUtils.e("登录==url==02=" + mBaseUrl + HttpConstant.UserManager_Login);
-//                登录按钮动画
-                showLoading();
-                OkHttpUtils.post()
-                        .url(mUrl + HttpConstant.UserManager_Login)
-                        .addParams("UserName", mPhoneView.getText().toString())
-                        .addParams("Password", MD5ChangeUtil.Md5_32(mPasswordView.getText().toString()))
-                        .build()
-                        .execute(new StringCallback() {
-                            @Override
-                            public void onError(Call call, Exception e, int id) {
-                                LogUtils.e("登录===" + e);
-                                showError();
-                                showComplete();
-                                mPasswordView.setText("");
-                                mPhoneView.setText("");
-
-                            }
-
-                            @Override
-                            public void onResponse(String response, int id) {
-//                                mCommitView.showProgress();
-                                showComplete();
-                                LogUtils.e("登录===" + response);
-                                if (!"".equals(response)) {
-                                    LoginBean mBean = mGson.fromJson(response, LoginBean.class);
-                                    if (0 == mBean.getCode()) {
-                                        LogUtils.e("登录==role==" + mBean.getData().getRole());
-                                        LogUtils.e("登录==userid==" + mBean.getData().getUserID());
-                                        SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Current_Login_Role, mBean.getData().getRole() + "");
-                                        SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Current_Login_UserID, mBean.getData().getUserID() + "");
-                                        SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Current_Login_UserName, mPhoneView.getText().toString());
-                                        SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Current_Login_Password, mPasswordView.getText().toString());
-                                        SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Flag_UserDBSave, true);
-                                        SharePreferenceUtil.put(LoginActivity.this, Constants.Is_Logined, true);
-                                        saveRememberPassword(mBean);
-                                        /**
-                                         * 测试离线病例显示
-                                         *
-                                         */
-                                        setTestOffCaseData();
-                                        MainActivity.start(getContext(), CaseOffLineFragment.class);
+                CharSequence text = mLoginType.getText();
+                if (text.equals("在线登录")) {  //在线登录
+                    SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.OnLine_Flag, true);
+                    LoginByOnline();
+                } else if (text.equals("离线登录")) {//离线登录
+                    SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.OnLine_Flag, false);
+                    LoginByOffline();
+                }
 
 
-                                        /**
-                                         * 登入成功的时候切换成监听 当前设备授权登入的socket端口--->Constants.KEY_RECEIVE_PORT
-                                         * 退出登入的时候切换成监听 当前广播发送端口(或者设置设备搜索界面设置成功赋值)----->Constants.KEY_RECEIVE_PORT_BY_SEARCH
-                                         */
-                                        ReceiveSocketService receiveSocketService = new ReceiveSocketService();
-                                        WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-                                        if (wifiManager.isWifiEnabled()) {
-                                            WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-                                            mAppIP = getIpString(wifiInfo.getIpAddress());
-                                        }
-                                        MMKV kv = MMKV.defaultMMKV();
-                                        int mCastSendPort = kv.decodeInt(Constants.KEY_BROADCAST_PORT);
-                                        if ("".equals(mSocketPort)) {
-                                            toast("本地广播发送端口不能为空");
-                                            return;
-                                        } else {
-                                            LogUtils.e("AppActivity=login==port===="+mSocketPort);
-                                            receiveSocketService.initSettingReceiveThread(mAppIP, Integer.parseInt(mSocketPort), LoginActivity.this);
-
-                                        }
-
-
-
-
-                                        finish();
-//                                        postDelayed(() -> {
-////                                            mCommitView.showSucceed();
-//                                            postDelayed(() -> {
-//                                                MainActivity.start(getContext(), AFragment.class);
-//                                                finish();
-//                                            }, 1000);
-//                                        }, 2000);
-                                    } else {
-//                                        postDelayed(() -> {
-//                                            mCommitView.showError(1500);
-//                                        }, 1000);
-                                        toast("密码错误!!");
-                                    }
-
-                                } else {
-                                    showError();
-                                    toast("返回数据为空!");
-                                }
-
-                            }
-                        });
                 break;
             case R.id.checkbox_remember: //记住密码
                 mCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -564,7 +530,7 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                 });
                 break;
             case R.id.login_type:
-                showLoginType();
+                choseLoginType();
                 break;
             case R.id.btn_login_setting: //设备管理界面
                 startActivity(DeviceActivity.class);
@@ -574,8 +540,171 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
 
     }
 
+    /**
+     * 在线登录
+     */
+    private void LoginByOnline() {
+        //动态清零用户列表
+        mUserListData.clear();
+        // 隐藏软键盘
+        hideKeyboard(getCurrentFocus());
+        LogUtils.e("登录===" + MD5ChangeUtil.Md5_16(mPasswordView.getText().toString()));
+        LogUtils.e("登录===" + MD5ChangeUtil.Md5_32(mPasswordView.getText().toString()));
+        LogUtils.e("登录==url=" + mBaseUrl + HttpConstant.UserManager_Login);
+        String mUrl = (String) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Current_BaseUrl, "http://192.168.1.200:3000");
+        LogUtils.e("登录==url==02=" + mBaseUrl);
+        LogUtils.e("登录==url==02=" + mBaseUrl + HttpConstant.UserManager_Login);
+//                登录按钮动画
+        showLoading();
+        OkHttpUtils.post()
+                .url(mUrl + HttpConstant.UserManager_Login)
+                .addParams("UserName", mPhoneView.getText().toString())
+                .addParams("Password", MD5ChangeUtil.Md5_32(mPasswordView.getText().toString()))
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        LogUtils.e("登录===" + e);
+                        showError();
+                        showComplete();
+                        mPasswordView.setText("");
+                        mPhoneView.setText("");
+
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+//                                mCommitView.showProgress();
+                        showComplete();
+                        LogUtils.e("登录===" + response);
+                        if (!"".equals(response)) {
+                            LoginBean mBean = mGson.fromJson(response, LoginBean.class);
+                            if (0 == mBean.getCode()) {
+                                LogUtils.e("登录==role==" + mBean.getData().getRole());
+                                LogUtils.e("登录==userid==" + mBean.getData().getUserID());
+                                SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Current_Login_Role, mBean.getData().getRole() + "");
+                                SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Current_Login_UserID, mBean.getData().getUserID() + "");
+                                SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Current_Login_UserName, mPhoneView.getText().toString());
+                                SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Current_Login_Password, mPasswordView.getText().toString());
+                                SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Flag_UserDBSave, true);
+                                SharePreferenceUtil.put(LoginActivity.this, Constants.Is_Logined, true);
+                                saveRememberPassword(mBean);
+
+                                /**
+                                 * 登入成功的时候切换成监听 当前设备授权登入的socket端口--->Constants.KEY_RECEIVE_PORT
+                                 * 退出登入的时候切换成监听 当前广播发送端口(或者设置设备搜索界面设置成功赋值)----->Constants.KEY_RECEIVE_PORT_BY_SEARCH
+                                 */
+                                ReceiveSocketService receiveSocketService = new ReceiveSocketService();
+                                WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+                                if (wifiManager.isWifiEnabled()) {
+                                    WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+                                    mAppIP = getIpString(wifiInfo.getIpAddress());
+                                }
+                                MMKV kv = MMKV.defaultMMKV();
+                                int mCastSendPort = kv.decodeInt(Constants.KEY_BROADCAST_PORT);
+                                if ("".equals(mSocketPort)) {
+                                    toast("本地广播发送端口不能为空");
+                                    return;
+                                } else {
+                                    LogUtils.e("AppActivity=login==port====" + mSocketPort);
+                                    receiveSocketService.initSettingReceiveThread(mAppIP, Integer.parseInt(mSocketPort), LoginActivity.this);
+
+                                }
+                                MainActivity.start(getContext(), CaseManageFragment.class);
+                                finish();
+
+//                                        postDelayed(() -> {
+////                                            mCommitView.showSucceed();
+//                                            postDelayed(() -> {
+//                                                MainActivity.start(getContext(), AFragment.class);
+//                                                finish();
+//                                            }, 1000);
+//                                        }, 2000);
+                            } else {
+//                                        postDelayed(() -> {
+//                                            mCommitView.showError(1500);
+//                                        }, 1000);
+                                toast("密码错误!!");
+                            }
+
+                        } else {
+                            showError();
+                            toast("返回数据为空!");
+                        }
+
+                    }
+                });
+    }
+
+    /**
+     * 离线登录
+     */
+    private void LoginByOffline() {
+        // 隐藏软键盘
+        hideKeyboard(getCurrentFocus());
+        setOfflineHistoryData();
+
+        String username = mPhoneView.getText().toString();
+        String password = mPasswordView.getText().toString();
+
+        List<UserDBBean> userList = UserDBUtils.getQueryBeanByUserName(getActivity(), username);
+
+
+        if (null != userList && userList.size() > 0) {
+            UserDBBean bean = userList.get(0);
+            String password1 = bean.getPassword();
+            if (password1.equals(password)) {
+                SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Current_Login_Role, bean.getRelo() + "");
+                SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Current_Login_UserName, username);
+                SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Current_Login_Password, password);
+                SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Flag_UserDBSave, true);
+                SharePreferenceUtil.put(LoginActivity.this, Constants.Is_Logined, true);
+
+                if (mCheckbox.isChecked()) {
+                    //记住密码
+                    SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Current_Login_Remember_Password, true);
+                }else {
+                    //没有记住密码
+                    SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Current_Login_Remember_Password, false);
+                }
+                Boolean isSave = (Boolean) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Flag_UserDBSave, false);
+
+                /**
+                 * 登入成功的时候切换成监听 当前设备授权登入的socket端口--->Constants.KEY_RECEIVE_PORT
+                 * 退出登入的时候切换成监听 当前广播发送端口(或者设置设备搜索界面设置成功赋值)----->Constants.KEY_RECEIVE_PORT_BY_SEARCH
+                 */
+                ReceiveSocketService receiveSocketService = new ReceiveSocketService();
+                WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+                if (wifiManager.isWifiEnabled()) {
+                    WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+                    mAppIP = getIpString(wifiInfo.getIpAddress());
+                }
+                MMKV kv = MMKV.defaultMMKV();
+                int mCastSendPort = kv.decodeInt(Constants.KEY_BROADCAST_PORT);
+                if ("".equals(mSocketPort)) {
+                    toast("本地广播发送端口不能为空");
+                    return;
+                } else {
+                    LogUtils.e("AppActivity=login==port====" + mSocketPort);
+                    receiveSocketService.initSettingReceiveThread(mAppIP, Integer.parseInt(mSocketPort), LoginActivity.this);
+
+                }
+
+                MainActivity.start(getContext(), CaseManageOfflineFragment.class);
+                finish();
+            } else {
+                toast("密码错误");
+            }
+
+
+        }
+
+
+    }
+
+
     //选择登录模式
-    private void showLoginType() {
+    private void choseLoginType() {
         //默认是在线登录
         new SelectDialog.Builder(getActivity())
                 .setTitle("请选择")
@@ -593,27 +722,14 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                         if (value.equals("在线登录")) {  //在线登录
                             mLoginType.setText("在线登录");
                             SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.OnLine_Flag, true);
+                            sendRequest(mBaseUrl);
                         } else if (value.equals("离线登录")) {//离线登录
                             mLoginType.setText("离线登录");
                             SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.OnLine_Flag, false);
+                            setOfflineHistoryData();
                         }
                     }
                 }).show();
-    }
-
-    //存点假数据
-    private void setTestOffCaseData() {
-        List<CaseDBBean> mCaseDBList = CaseDBUtils.queryAll(getActivity());
-        if (0 == mCaseDBList.size()) {
-            for (int i = 0; i < 10; i++) {
-                CaseDBBean caseDBBean = new CaseDBBean();
-                caseDBBean.setDeviceCaseID(i + "");  //用户表和设备表进行绑定, //用户表和设备表进行绑定, //用户表和设备表进行绑定
-                caseDBBean.setName("姓名" + i);    // 姓名
-                caseDBBean.setOccupatior(i + "--职业");    // 职业
-                caseDBBean.setRecord_date("2022-01-" + i);    // 创建时间
-                CaseDBUtils.insertOrReplaceInTx(getActivity(), caseDBBean);
-            }
-        }
     }
 
 

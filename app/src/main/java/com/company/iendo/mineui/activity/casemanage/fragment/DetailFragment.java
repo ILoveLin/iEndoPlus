@@ -17,25 +17,26 @@ import com.company.iendo.bean.AddCaseBean;
 import com.company.iendo.bean.CaseDetailBean;
 import com.company.iendo.bean.DeleteBean;
 import com.company.iendo.bean.DetailPictureBean;
+import com.company.iendo.bean.DetailVideoBean;
 import com.company.iendo.bean.DialogItemBean;
 import com.company.iendo.bean.ListDialogDateBean;
 import com.company.iendo.bean.event.SocketRefreshEvent;
 import com.company.iendo.bean.socket.HandBean;
 import com.company.iendo.bean.socket.UpdateCaseBean;
 import com.company.iendo.green.db.CaseDBUtils;
+import com.company.iendo.green.db.UserDBBean;
+import com.company.iendo.green.db.UserDBUtils;
 import com.company.iendo.green.db.downcase.CaseDBBean;
 import com.company.iendo.green.db.downcase.CaseImageListBean;
+import com.company.iendo.green.db.downcase.CaseVideoListBean;
 import com.company.iendo.manager.ActivityManager;
 import com.company.iendo.mineui.activity.MainActivity;
 import com.company.iendo.mineui.activity.casemanage.AddCaseActivity;
 import com.company.iendo.mineui.activity.casemanage.DetailCaseActivity;
-import com.company.iendo.mineui.activity.vlc.GetPictureActivity;
-import com.company.iendo.mineui.socket.SocketManage;
 import com.company.iendo.other.Constants;
 import com.company.iendo.other.HttpConstant;
 import com.company.iendo.ui.dialog.MenuDialog;
 import com.company.iendo.ui.dialog.MessageDialog;
-import com.company.iendo.ui.dialog.SelectDialog;
 import com.company.iendo.utils.CalculateUtils;
 import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.SharePreferenceUtil;
@@ -43,6 +44,9 @@ import com.company.iendo.utils.SocketUtils;
 import com.company.iendo.widget.LinesEditView;
 import com.company.iendo.widget.StatusLayout;
 import com.hjq.base.BaseDialog;
+import com.hjq.permissions.OnPermissionCallback;
+import com.hjq.permissions.Permission;
+import com.hjq.permissions.XXPermissions;
 import com.hjq.widget.view.ClearEditText;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.FileCallBack;
@@ -94,12 +98,13 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
             et_03_my_id_num, et_03_case_history, et_03_family_case_history;
     private ArrayList<ClearEditText> mEditList;
     private ArrayList<ClearEditText> mNotFocusableEditList;   //解决编辑状态点击两次弹窗Bug
-    private String mDeviceID;  //当前设备id
+    private String mDeviceCode;  //当前设备id-code
     private String mUserID;    //当前用户id
     private String currentItemCaseID;
     private ArrayList<String> ageList;
     private ArrayList<String> mNameList;
     private HashMap<String, String> mPathMap;     //例如imageName=001.jpg  url=http://192.168.64.56:7001/1_3/001.jpg
+    private ArrayList<String> mVideoPathList = new ArrayList<>();     //视频的标题
     private ArrayList<LinesEditView> linesEditViewList;
     private ClearEditText lines_edit_01_i_tell_you;
     private ClearEditText lines_edit_01_i_bad_tell;
@@ -110,6 +115,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
     private static boolean Details_Reault_Ok = false; //握手成功表示  true 成功
     private String itemID;
     private String mCaseID;
+    private String mCurrentDonwTime;
 
     public static DetailFragment newInstance() {
         return new DetailFragment();
@@ -125,7 +131,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         EventBus.getDefault().register(this);
         mStatusLayout = findViewById(R.id.detail_hint);
         mBaseUrl = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_BaseUrl, "192.168.132.102");
-        mDeviceID = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_DeviceID, "");
+        mDeviceCode = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_DeviceCode, "");
         mUserID = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_Login_UserID, "");
         mUserName = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_Login_UserName, "Admin");
         mCaseID = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_Chose_CaseID, "4600");
@@ -227,8 +233,8 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
     }
 
 
+    //下载的时候从这里开始
     private void sendRequest(String currentItemID) {
-
         //获取图片并且把用户名添加到集合当中,以备下载需要
         OkHttpUtils.get()
                 .url(mBaseUrl + HttpConstant.CaseManager_CasePictures)
@@ -450,70 +456,158 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 
     @Override
     public void onDown(boolean userInfo, boolean userPicture) {
-        new SelectDialog.Builder(getActivity())
-                .setTitle("信息下载")
-                .setSelect(0, 1)
-                .setMinSelect(2)
-                .setList("用户信息", "图片信息")
-                .setListener(new SelectDialog.OnListener() {
+
+        // 消息对话框
+        new MessageDialog.Builder(getActivity())
+                // 标题可以不用填写
+                .setTitle("提示")
+                // 内容必须要填写
+                .setMessage("确定下载吗?")
+                // 确定按钮文本
+                .setConfirm(getString(R.string.common_confirm))
+                // 设置 null 表示不显示取消按钮
+                .setCancel(getString(R.string.common_cancel))
+                // 设置点击按钮后不关闭对话框
+                //.setAutoDismiss(false)
+                .setListener(new MessageDialog.OnListener() {
                     @Override
-                    public void onSelected(BaseDialog dialog, HashMap data) {
-                        String string = data.toString();
-                        LogUtils.e("下载===" + data.toString());
-                        int size = data.size();
-                        LogUtils.e("下载===size=" + size);
-                        if (size == 2) {//下载用户信息和图片信息
-//                            https://images.csdn.net/20150817/1.jpg
-                            //下载图片
-                            startDownPicture();
+                    public void onConfirm(BaseDialog dialog) {
+                        //下载图片
 
-                        } else {//筛选下载哪种信息
-                            int i = string.indexOf("=");
-                            String value = string.substring(i + 1, string.length() - 1);
-                            LogUtils.e("下载===value=" + value);
-                            if (value.equals("用户信息")) {  //下载用户信息
-
-                            } else if (value.equals("图片信息")) {//下载图片信息
-
-                            }
-
-                        }
-
-
+                        requestPermission();
                     }
-                }).show();
+
+                    @Override
+                    public void onCancel(BaseDialog dialog) {
+                        toast("取消了");
+                    }
+                })
+                .show();
+
 
     }
 
     private void startDownPicture() {
 
-//      Log.e("adapter", "item==path==" + "http://192.168.64.28:7001/" + mID + "/" + item.getImagePath());
-//      String path = "http://192.168.64.28:7001/" + mID + "/" + item.getImagePath();
-//      https://images.csdn.net/20150817/1.jpg
-
         /**
-         * 本地文件夹命名规则:文件夹（设备ID-病例ID）
+         * 本地文件夹命名规则:文件夹（设备ID_病例ID）
          */
-        //创建本地的/MyData/Images/mID文件夹  再把图片下载到这个文件夹下  文件夹（设备ID-病例ID）
-        String dirName = Environment.getExternalStorageDirectory() + "/MyDownImages/" + mDeviceID + "_" + currentItemCaseID;
-        LogUtils.e("文件下载=====文件夹名字===" + dirName);
+        //创建本地的/MyDownImages/mID文件夹  再把图片下载到这个文件夹下  文件夹（设备ID-病例ID）
+        String dirName = Environment.getExternalStorageDirectory() + "/MyDownImages/" + mDeviceCode + "_" + currentItemCaseID;
+        LogUtils.e("文件下载===01==文件夹名字===" + dirName);// /storage/emulated/0/MyDownImages/0000000000000000546017FE6BC28949_1154
+        LogUtils.e("文件下载===01==mDeviceCode===" + mDeviceCode);//0000000000000000546017FE6BC28949
+        LogUtils.e("文件下载===01==currentItemCaseID===" + currentItemCaseID);//1154
+        LogUtils.e("文件下载===01==mUserID===" + mUserID);//1154
         File toLocalFile = new File(dirName);
-        if (!toLocalFile.exists()) {
+
+
+        //此处做校验,本文件夹创建过,并且里面的图片数量和请求结果数量一直,表示下载过
+        boolean FileExists = toLocalFile.exists();
+        sendGetVidePahtListRequest(currentItemCaseID);
+        if (FileExists) {
+            LogUtils.e("文件下载===01==toLocalFile.exists()===" + toLocalFile.exists());
+            LogUtils.e("文件下载===01==toLocalFile.exists()===" + toLocalFile.listFiles().length);
+            int length = toLocalFile.listFiles().length;  //本地下载的图片数量
+            if (null != mPathMap && !mPathMap.isEmpty()) {
+                int size = mPathMap.keySet().size();
+                //下载的图片数量和请求的图片数量一样
+                if (length == size) {
+                    // 消息对话框
+                    new MessageDialog.Builder(getActivity())
+                            // 标题可以不用填写
+                            .setTitle("提示")
+                            // 内容必须要填写
+                            .setMessage("本地已下载过该病例信息和图片,确认是否从新下载?")
+                            // 确定按钮文本
+                            .setConfirm(getString(R.string.common_confirm))
+                            // 设置 null 表示不显示取消按钮
+                            .setCancel(getString(R.string.common_cancel))
+                            // 设置点击按钮后不关闭对话框
+                            //.setAutoDismiss(false)
+                            .setListener(new MessageDialog.OnListener() {
+
+                                @Override
+                                public void onConfirm(BaseDialog dialog) {
+                                    downCaseMsgPictureData(toLocalFile);
+                                }
+
+                                @Override
+                                public void onCancel(BaseDialog dialog) {
+                                }
+                            })
+                            .show();
+                } else {
+                    //图片数目不等,直接更新
+                    downCaseMsgPictureData(toLocalFile);
+                }
+            }
+        } else if (!toLocalFile.exists()) {
             toLocalFile.mkdir();
+            downCaseMsgPictureData(toLocalFile);
+
         }
-        LogUtils.e("详情界面---mPathMap===" + mPathMap.isEmpty());
+
+    }
+
+    private void sendGetVidePahtListRequest(String currentItemID) {
+
+        //这里请求是为了获取视频总数,在需要下载的时候存入视频标题
+        OkHttpUtils.get()
+                .url(mBaseUrl + HttpConstant.CaseManager_CaseVideos)
+                .addParams("ID", currentItemID)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        showError(listener -> {
+                            sendRequest(currentItemID);
+                        });
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        if ("" != response) {
+                            DetailVideoBean mBean = mGson.fromJson(response, DetailVideoBean.class);
+                            List<DetailVideoBean.DataDTO> data = mBean.getData();
+                            if (0 == mBean.getCode()) {  //成功
+                                showComplete();
+                                if (mBean.getData().size() != 0) {
+                                    mVideoPathList.clear();
+                                    for (int i = 0; i < mBean.getData().size(); i++) {
+                                        DetailVideoBean.DataDTO dataDTO = mBean.getData().get(i);
+                                        mVideoPathList.add(dataDTO.getFilePath());
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+    }
+
+
+    /**
+     * 开始下载病例信息和图片到本地
+     *
+     * @param toLocalFile
+     */
+    private void downCaseMsgPictureData(File toLocalFile) {
+        //mPathMap===例如imageName=001.jpg  url=http://192.168.64.56:7001/1_3/001.jpg
+        LogUtils.e("文件下载===01==详情界面---mPathMap===" + mPathMap.isEmpty());
         if (null != mPathMap && !mPathMap.isEmpty()) {   //说明有图片
             for (String key : mPathMap.keySet()) {
-                LogUtils.e("文件下载=====entry.getKey()===" + key);
-                LogUtils.e("文件下载=====entry.getValue()===" + mPathMap.get(key));
+                //001.jpg     http://192.168.131.43:7001/1154/001.jpg
+                //001.jpg     http://192.168.131.43:7001/1154/001.jpg
+                LogUtils.e("文件下载===01==entry.getKey()===" + key);
+                LogUtils.e("文件下载===01==entry.getValue()===" + mPathMap.get(key));
                 int size = mPathMap.keySet().size();
+                LogUtils.e("文件下载===01==mPathMap.keySet().size()==" + size);
+
                 sendPictureRequest(toLocalFile, mPathMap.get(key), key, false);
             }
 
         }
         //下载病例和图片信息---到本地sd卡里面
         downLocalCaseData(toLocalFile);
-
     }
 
     /**
@@ -522,77 +616,309 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
      */
     private void downLocalCaseData(File toLocalFile) {
 
+        //创建需要下载的本地病例DBBean
         CaseDBBean caseDBBean = new CaseDBBean();
-        caseDBBean.setDeviceCaseID(mDeviceID + "");  //用户表和设备表进行绑定, //用户表和设备表进行绑定, //用户表和设备表进行绑定
-        caseDBBean.setOccupatior(mDataBean.getOccupatior() + "");// 职业
-        caseDBBean.setNativePlace(mDataBean.getAddress() + "");    //籍贯
-        caseDBBean.setFee(mDataBean.getFee() + "");    //收费
-        caseDBBean.setChiefComplaint(mDataBean.getChiefComplaint() + "");  //主诉
-        //图片路径集合--文件夹（设备ID-病例ID）
+        //避免多次创建,需要区别赋值
+
+        //查询当前设备码下绑定的所有病例数据
+        List<CaseDBBean> caseList = CaseDBUtils.getQueryBeanByCode(getApplication(), mDeviceCode);
+        List<CaseDBBean> myList = CaseDBUtils.getQueryBeanByTow02(getApplication(), mDeviceCode,  mDataBean.getID() + "");
+
+        /**
+         *   存在这个设备
+         */
+        if (null != myList && myList.size() > 0) {
+//            CaseDBBean mCaseBean = caseList.get(0);
+//            //设置当前数据Bean 自增长的id  避免多次创建case
+//            caseDBBean.setId(mCaseBean.getId());
+//            //设置是否下载过的标识 ==上位机返回的ID
+//            caseDBBean.setOthers(mCaseBean.getOthers());
+//            UserDBUtils.insertOrReplaceInTx(getAttachActivity(), bean);
+
+//
+//
+//            caseDBBean.setDeviceCaseID(mDeviceCode + "");  //用户表和设备表进行绑定, //用户表和设备表进行绑定, //用户表和设备表进行绑定
+//            caseDBBean.setOccupatior(mCaseBean.getOccupatior() + "");// 职业
+//            caseDBBean.setNativePlace(mCaseBean.getAddress() + "");    //籍贯
+//            caseDBBean.setFee(mCaseBean.getFee() + "");    //收费
+//            caseDBBean.setChiefComplaint(mCaseBean.getChiefComplaint() + "");  //主诉
+//            //图片路径集合--文件夹（设备ID_病例ID）
+////      /storage/emulated/0/MyDownImages/2_3/004.jpg
+////      LogUtils.e("下载图片==更新相册图片==" + toLocalFile.getAbsolutePath() + "/" + pictureName);       本地存的路径
+////     toLocalFile.getAbsolutePath()==/storage/emulated/0/MyDownImages/0000000000000000546017FE6BC28949_1154
+////     pictureName==001.jpg
+//            ArrayList<CaseImageListBean> caseImageList = new ArrayList<CaseImageListBean>();
+//            if (null != mPathMap && !mPathMap.isEmpty()) {
+//                for (String key : mPathMap.keySet()) {
+//                    //001.jpg     http://192.168.131.43:7001/1154/001.jpg
+//                    LogUtils.e("文件下载===02==存储图片==entry.getKey()===" + key);
+//                    LogUtils.e("文件下载===02==存储图片==entry.getValue()===" + mPathMap.get(key));
+//                    int size = mPathMap.keySet().size();
+////                sendPictureRequest(toLocalFile, mPathMap.get(key), key, false);
+//                    CaseImageListBean imageBean = new CaseImageListBean();
+//                    // /storage/emulated/0/MyDownImages/0000000000000000546017FE6BC28949_1154/001.jpg
+//                    LogUtils.e("文件下载===02==存储图片==ImagePath===" + toLocalFile.getAbsolutePath() + "/" + key);
+//
+//
+//                    imageBean.setImagePath(toLocalFile.getAbsolutePath() + "/" + key);  //存入本地存储路径
+//                    caseImageList.add(imageBean);
+//                }
+//                caseDBBean.setImageList(caseImageList);    //图片路径集合--文件夹（设备ID-病例ID）
+//            }
+//
+//            //存入视频 标题
+//            ArrayList<CaseVideoListBean> VideoList = new ArrayList<CaseVideoListBean>();
+//            if (null != mVideoPathList && mVideoPathList.size() > 0) {
+//                for (int i = 0; i < mVideoPathList.size(); i++) {
+//                    CaseVideoListBean caseVideoListBean = new CaseVideoListBean();
+//                    caseVideoListBean.setVideoPath(mVideoPathList.get(i));
+//                    VideoList.add(caseVideoListBean);
+//                    LogUtils.e("文件下载===02==视频存储==VideoPath===" + mVideoPathList.get(i));
+//
+//                }
+//                caseDBBean.setVideoList(VideoList);
+//            }
+//
+//
+//            caseDBBean.setBiopsy(mDataBean.getBiopsy() + "");    //活检
+//            caseDBBean.setPathology(mDataBean.getPathology() + "");    //病理学
+//            caseDBBean.setFeeType(mDataBean.getFeeType() + "");    //收费类型
+//            caseDBBean.setMedHistory(mDataBean.getMedHistory() + "");    // 医疗病史
+//            caseDBBean.setLastCheckUserID(mDataBean.getLastCheckUserID() + "");    // 最后一个来查房的医生
+//            caseDBBean.setAgeUnit(mDataBean.getAgeUnit() + "");    // 年龄单位
+//            caseDBBean.setAdvice(mDataBean.getAdvice() + "");    // 建议
+//            caseDBBean.setUserName(mDataBean.getUserName() + "");    // 操作员用户名
+//            caseDBBean.setRecord_date(mDataBean.getRecord_date() + "");    // 创建时间
+//            caseDBBean.setImagesCount(mDataBean.getImageCount() + "");    // 图片数量
+////        caseDBBean.setVideosCount(mDataBean.getVid() + "");    // 视频数量
+//            caseDBBean.setSubmitDoctor(mDataBean.getSubmitDoctor() + "");    //送检医生
+//            caseDBBean.setRace(mDataBean.getRace() + "");    // 民族种族
+//            caseDBBean.setRecordType(mDataBean.getRecordType() + "");    // 病例类型
+//            caseDBBean.setUpdate_time(mDataBean.getUpdate_time() + "");    // 更新时间
+//            caseDBBean.setPatientAge(mDataBean.getPatientAge() + "");    // 患者年龄
+//            caseDBBean.setCardID(mDataBean.getCardID() + "");    // 身份证号
+//            caseDBBean.setTel(mDataBean.getTel() + "");    // 电话
+//
+//            //2022-03-23 08:13:16
+//            String check_date = mBean.getData().getCheck_date();
+//            int i = check_date.indexOf(" ");
+//            //获取到需要在下载病例的时候,需要存入时间的正确值 2022-03-23
+//            mCurrentDonwTime = check_date.substring(0, i);
+//            LogUtils.e("病例下载==存入当前病例时间==mCurrentDonwTime===" + mCurrentDonwTime);
+//
+//            caseDBBean.setCheck_date(mCurrentDonwTime + "");    // 检查时间,也是下载的时候当前时间的标识!!!
+//
+//            caseDBBean.setPatientNo(mDataBean.getPatientNo() + "");    // 病人编号
+//            caseDBBean.setInpatientID(mDataBean.getInpatientID() + "");    // 住院号
+//            caseDBBean.setBedID(mDataBean.getBedID() + "");    // 病床号
+//            caseDBBean.setCheckContent(mDataBean.getCheckContent() + "");    // 检查内容（镜检所见）
+//            caseDBBean.setReturnVisit(mDataBean.isReturnVisit() + "");    // 初复诊 (0-初诊 1-复诊)
+//            caseDBBean.setCaseNo(mDataBean.getCaseNo() + "");    // 病例编号
+//            caseDBBean.setCtology(mDataBean.getCtology() + "");    // 细胞学
+//            caseDBBean.setDOB(mDataBean.getDOB() + "");    // 生日
+//            caseDBBean.setExaminingPhysician(mDataBean.getExaminingPhysician() + "");    // 检查医生
+//            caseDBBean.setCheckDiagnosis(mDataBean.getCheckDiagnosis() + "");    // 镜检诊断
+//            caseDBBean.setSex(mDataBean.getSex() + "");    // 性别
+//            caseDBBean.setEndoType(mDataBean.getEndoType() + "");    // 工作站类型
+//            caseDBBean.setDevice(mDataBean.getDevice() + "");    // 设备
+//            caseDBBean.setIsInHospital(mDataBean.isIsInHospital() + "");    // 是否还在医院住院
+//            caseDBBean.setMarried(mDataBean.getMarried() + "");    // 婚否
+//            caseDBBean.setFamilyHistory(mDataBean.getFamilyHistory() + "");    // 家族病史
+//            caseDBBean.setTest(mDataBean.getTest() + "");    // 试验
+//            caseDBBean.setClinicalDiagnosis(mDataBean.getClinicalDiagnosis() + "");    // 临床诊断
+//            caseDBBean.setDepartment(mDataBean.getDepartment() + "");    // 科室
+//            caseDBBean.setWardID(mDataBean.getWardID() + "");    // 病区号
+//            caseDBBean.setCaseID(mDataBean.getCaseID() + "");    // 病例号
+//            caseDBBean.setName(mDataBean.getName() + "");    // 姓名
+//            caseDBBean.setAddress(mDataBean.getAddress() + "");    // 住址
+//            caseDBBean.setInsuranceID(mDataBean.getInsuranceID() + "");    // 社保卡号
+//            CaseDBUtils.insertOrReplaceInTx(getActivity(), caseDBBean);
+//
+
+        }else {
+            /**
+             * 不存在这个设备
+             */
+            //设置是否下载过的标识 ==上位机返回的ID
+            caseDBBean.setOthers(mDataBean.getID() + "");
+            caseDBBean.setDeviceCaseID(mDeviceCode + "");  //用户表和设备表进行绑定, //用户表和设备表进行绑定, //用户表和设备表进行绑定
+            caseDBBean.setOccupatior(mDataBean.getOccupatior() + "");// 职业
+            caseDBBean.setNativePlace(mDataBean.getAddress() + "");    //籍贯
+            caseDBBean.setFee(mDataBean.getFee() + "");    //收费
+            caseDBBean.setChiefComplaint(mDataBean.getChiefComplaint() + "");  //主诉
+            //图片路径集合--文件夹（设备ID_病例ID）
 //      /storage/emulated/0/MyDownImages/2_3/004.jpg
 //      LogUtils.e("下载图片==更新相册图片==" + toLocalFile.getAbsolutePath() + "/" + pictureName);       本地存的路径
-//     toLocalFile.getAbsolutePath()==/storage/emulated/0/MyDownImages/2_3         pictureName==004.jpg
-        ArrayList<CaseImageListBean> caseImageList = new ArrayList<CaseImageListBean>();
-        if (null != mPathMap && !mPathMap.isEmpty()) {
-            for (String key : mPathMap.keySet()) {
-                LogUtils.e("文件下载===存储图片==entry.getKey()===" + key);
-                LogUtils.e("文件下载===存储图片==entry.getValue()===" + mPathMap.get(key));
-                int size = mPathMap.keySet().size();
+//     toLocalFile.getAbsolutePath()==/storage/emulated/0/MyDownImages/0000000000000000546017FE6BC28949_1154
+//     pictureName==001.jpg
+            ArrayList<CaseImageListBean> caseImageList = new ArrayList<CaseImageListBean>();
+            if (null != mPathMap && !mPathMap.isEmpty()) {
+                for (String key : mPathMap.keySet()) {
+                    //001.jpg     http://192.168.131.43:7001/1154/001.jpg
+                    LogUtils.e("文件下载===02==存储图片==entry.getKey()===" + key);
+                    LogUtils.e("文件下载===02==存储图片==entry.getValue()===" + mPathMap.get(key));
+                    int size = mPathMap.keySet().size();
 //                sendPictureRequest(toLocalFile, mPathMap.get(key), key, false);
-                CaseImageListBean imageBean = new CaseImageListBean();
-                imageBean.setImagePath(toLocalFile.getAbsolutePath() + "/" + key);  //存入本地存储路径
-                caseImageList.add(imageBean);
-            }
-            caseDBBean.setImageList(caseImageList);    //图片路径集合--文件夹（设备ID-病例ID）
-        }
-        caseDBBean.setBiopsy(mDataBean.getBiopsy() + "");    //活检
-        caseDBBean.setPathology(mDataBean.getPathology() + "");    //病理学
-        caseDBBean.setFeeType(mDataBean.getFeeType() + "");    //收费类型
-        caseDBBean.setMedHistory(mDataBean.getMedHistory() + "");    // 医疗病史
-        caseDBBean.setLastCheckUserID(mDataBean.getLastCheckUserID() + "");    // 最后一个来查房的医生
-        caseDBBean.setAgeUnit(mDataBean.getAgeUnit() + "");    // 年龄单位
-        caseDBBean.setAdvice(mDataBean.getAdvice() + "");    // 建议
-        caseDBBean.setUserName(mDataBean.getUserName() + "");    // 操作员用户名
-        caseDBBean.setRecord_date(mDataBean.getRecord_date() + "");    // 创建时间
-        caseDBBean.setImagesCount(mDataBean.getImageCount() + "");    // 图片数量
-//        caseDBBean.setVideosCount(mDataBean.getVid() + "");    // 视频数量
-        caseDBBean.setSubmitDoctor(mDataBean.getSubmitDoctor() + "");    //送检医生
-        caseDBBean.setRace(mDataBean.getRace() + "");    // 民族种族
-        caseDBBean.setRecordType(mDataBean.getRecordType() + "");    // 病例类型
-        caseDBBean.setUpdate_time(mDataBean.getUpdate_time() + "");    // 更新时间
-        caseDBBean.setPatientAge(mDataBean.getPatientAge() + "");    // 患者年龄
-        caseDBBean.setCardID(mDataBean.getCardID() + "");    // 身份证号
-        caseDBBean.setTel(mDataBean.getTel() + "");    // 电话
-        caseDBBean.setCheck_date(mDataBean.getCheck_date() + "");    // 检查时间
-        caseDBBean.setPatientNo(mDataBean.getPatientNo() + "");    // 病人编号
-        caseDBBean.setInpatientID(mDataBean.getInpatientID() + "");    // 住院号
-        caseDBBean.setBedID(mDataBean.getBedID() + "");    // 病床号
-        caseDBBean.setCheckContent(mDataBean.getCheckContent() + "");    // 检查内容（镜检所见）
-        caseDBBean.setReturnVisit(mDataBean.isReturnVisit() + "");    // 初复诊 (0-初诊 1-复诊)
-        caseDBBean.setCaseNo(mDataBean.getCaseNo() + "");    // 病例编号
-        caseDBBean.setCtology(mDataBean.getCtology() + "");    // 细胞学
-        caseDBBean.setDOB(mDataBean.getDOB() + "");    // 生日
-        caseDBBean.setExaminingPhysician(mDataBean.getExaminingPhysician() + "");    // 检查医生
-        caseDBBean.setCheckDiagnosis(mDataBean.getCheckDiagnosis() + "");    // 镜检诊断
-        caseDBBean.setSex(mDataBean.getSex() + "");    // 性别
-        caseDBBean.setEndoType(mDataBean.getEndoType() + "");    // 工作站类型
-        caseDBBean.setDevice(mDataBean.getDevice() + "");    // 设备
-        caseDBBean.setIsInHospital(mDataBean.isIsInHospital() + "");    // 是否还在医院住院
-        caseDBBean.setMarried(mDataBean.getMarried() + "");    // 婚否
-        caseDBBean.setFamilyHistory(mDataBean.getFamilyHistory() + "");    // 家族病史
-        caseDBBean.setTest(mDataBean.getTest() + "");    // 试验
-        caseDBBean.setClinicalDiagnosis(mDataBean.getClinicalDiagnosis() + "");    // 临床诊断
-        caseDBBean.setDepartment(mDataBean.getDepartment() + "");    // 科室
-        caseDBBean.setWardID(mDataBean.getWardID() + "");    // 病区号
-        caseDBBean.setCaseID(mDataBean.getCaseID() + "");    // 病例号
-        caseDBBean.setName(mDataBean.getName() + "");    // 姓名
-        caseDBBean.setAddress(mDataBean.getAddress() + "");    // 住址
-        caseDBBean.setInsuranceID(mDataBean.getInsuranceID() + "");    // 社保卡号
-        CaseDBUtils.insertOrReplaceInTx(getActivity(), caseDBBean);
+                    CaseImageListBean imageBean = new CaseImageListBean();
+                    // /storage/emulated/0/MyDownImages/0000000000000000546017FE6BC28949_1154/001.jpg
+                    LogUtils.e("文件下载===02==存储图片==ImagePath===" + toLocalFile.getAbsolutePath() + "/" + key);
 
+
+                    imageBean.setImagePath(toLocalFile.getAbsolutePath() + "/" + key);  //存入本地存储路径
+                    caseImageList.add(imageBean);
+                }
+                caseDBBean.setImageList(caseImageList);    //图片路径集合--文件夹（设备ID-病例ID）
+            }
+
+            //存入视频 标题
+            ArrayList<CaseVideoListBean> VideoList = new ArrayList<CaseVideoListBean>();
+            if (null != mVideoPathList && mVideoPathList.size() > 0) {
+                for (int i = 0; i < mVideoPathList.size(); i++) {
+                    CaseVideoListBean caseVideoListBean = new CaseVideoListBean();
+                    caseVideoListBean.setVideoPath(mVideoPathList.get(i));
+                    VideoList.add(caseVideoListBean);
+                    LogUtils.e("文件下载===02==视频存储==VideoPath===" + mVideoPathList.get(i));
+
+                }
+                caseDBBean.setVideoList(VideoList);
+            }
+
+
+            caseDBBean.setBiopsy(mDataBean.getBiopsy() + "");    //活检
+            caseDBBean.setPathology(mDataBean.getPathology() + "");    //病理学
+            caseDBBean.setFeeType(mDataBean.getFeeType() + "");    //收费类型
+            caseDBBean.setMedHistory(mDataBean.getMedHistory() + "");    // 医疗病史
+            caseDBBean.setLastCheckUserID(mDataBean.getLastCheckUserID() + "");    // 最后一个来查房的医生
+            caseDBBean.setAgeUnit(mDataBean.getAgeUnit() + "");    // 年龄单位
+            caseDBBean.setAdvice(mDataBean.getAdvice() + "");    // 建议
+            caseDBBean.setUserName(mDataBean.getUserName() + "");    // 操作员用户名
+            caseDBBean.setRecord_date(mDataBean.getRecord_date() + "");    // 创建时间
+            caseDBBean.setImagesCount(mDataBean.getImageCount() + "");    // 图片数量
+//        caseDBBean.setVideosCount(mDataBean.getVid() + "");    // 视频数量
+            caseDBBean.setSubmitDoctor(mDataBean.getSubmitDoctor() + "");    //送检医生
+            caseDBBean.setRace(mDataBean.getRace() + "");    // 民族种族
+            caseDBBean.setRecordType(mDataBean.getRecordType() + "");    // 病例类型
+            caseDBBean.setUpdate_time(mDataBean.getUpdate_time() + "");    // 更新时间
+            caseDBBean.setPatientAge(mDataBean.getPatientAge() + "");    // 患者年龄
+            caseDBBean.setCardID(mDataBean.getCardID() + "");    // 身份证号
+            caseDBBean.setTel(mDataBean.getTel() + "");    // 电话
+
+            //2022-03-23 08:13:16
+            String check_date = mBean.getData().getCheck_date();
+            int i = check_date.indexOf(" ");
+            //获取到需要在下载病例的时候,需要存入时间的正确值 2022-03-23
+            mCurrentDonwTime = check_date.substring(0, i);
+            LogUtils.e("病例下载==存入当前病例时间==mCurrentDonwTime===" + mCurrentDonwTime);
+
+            caseDBBean.setCheck_date(mCurrentDonwTime + "");    // 检查时间,也是下载的时候当前时间的标识!!!
+
+            caseDBBean.setPatientNo(mDataBean.getPatientNo() + "");    // 病人编号
+            caseDBBean.setInpatientID(mDataBean.getInpatientID() + "");    // 住院号
+            caseDBBean.setBedID(mDataBean.getBedID() + "");    // 病床号
+            caseDBBean.setCheckContent(mDataBean.getCheckContent() + "");    // 检查内容（镜检所见）
+            caseDBBean.setReturnVisit(mDataBean.isReturnVisit() + "");    // 初复诊 (0-初诊 1-复诊)
+            caseDBBean.setCaseNo(mDataBean.getCaseNo() + "");    // 病例编号
+            caseDBBean.setCtology(mDataBean.getCtology() + "");    // 细胞学
+            caseDBBean.setDOB(mDataBean.getDOB() + "");    // 生日
+            caseDBBean.setExaminingPhysician(mDataBean.getExaminingPhysician() + "");    // 检查医生
+            caseDBBean.setCheckDiagnosis(mDataBean.getCheckDiagnosis() + "");    // 镜检诊断
+            caseDBBean.setSex(mDataBean.getSex() + "");    // 性别
+            caseDBBean.setEndoType(mDataBean.getEndoType() + "");    // 工作站类型
+            caseDBBean.setDevice(mDataBean.getDevice() + "");    // 设备
+            caseDBBean.setIsInHospital(mDataBean.isIsInHospital() + "");    // 是否还在医院住院
+            caseDBBean.setMarried(mDataBean.getMarried() + "");    // 婚否
+            caseDBBean.setFamilyHistory(mDataBean.getFamilyHistory() + "");    // 家族病史
+            caseDBBean.setTest(mDataBean.getTest() + "");    // 试验
+            caseDBBean.setClinicalDiagnosis(mDataBean.getClinicalDiagnosis() + "");    // 临床诊断
+            caseDBBean.setDepartment(mDataBean.getDepartment() + "");    // 科室
+            caseDBBean.setWardID(mDataBean.getWardID() + "");    // 病区号
+            caseDBBean.setCaseID(mDataBean.getCaseID() + "");    // 病例号
+            caseDBBean.setName(mDataBean.getName() + "");    // 姓名
+            caseDBBean.setAddress(mDataBean.getAddress() + "");    // 住址
+            caseDBBean.setInsuranceID(mDataBean.getInsuranceID() + "");    // 社保卡号
+            CaseDBUtils.insertOrReplaceInTx(getActivity(), caseDBBean);
+        }
+
+
+        String userLoginUserName = (String) SharePreferenceUtil.get(getAttachActivity(), SharePreferenceUtil.Current_Login_UserName, "");
+        String userLoginPassword = (String) SharePreferenceUtil.get(getAttachActivity(), SharePreferenceUtil.Current_Login_Password, "");
+        String mLoginReol = (String) SharePreferenceUtil.get(getAttachActivity(), SharePreferenceUtil.Current_Login_Role, "");
+        Boolean isRemember = (Boolean) SharePreferenceUtil.get(getAttachActivity(), SharePreferenceUtil.Current_Login_Remember_Password, true);
+
+        //设备码和当前操作用户绑定
+        //查询当前设备码下 绑定的所有用户
+        //查询当前设备码下绑定的用户,并且是操作用户是当前登入的用户
+        List<UserDBBean> userListt = UserDBUtils.getQueryBeanByTow(getAttachActivity(), mDeviceCode, userLoginUserName);
+        if (null != userListt && userListt.size() > 0) {
+            UserDBBean userDBBean = userListt.get(0);
+            //有数据,更新
+            LogUtils.e("用户表====有数据,更新====" + userDBBean.getUserName());
+
+            userDBBean.setId(userDBBean.getId());
+            userDBBean.setDeviceID(mDeviceCode + "");
+            userDBBean.setDeviceUserID(mDeviceCode + "");
+            userDBBean.setUserName(userDBBean.getUserName() + "");
+            userDBBean.setPassword(userDBBean.getPassword() + "");
+            userDBBean.setRelo(userDBBean.getRelo() + "");
+            userDBBean.setIsRememberPassword(userDBBean.getIsRememberPassword());
+            UserDBUtils.insertOrReplaceInTx(getAttachActivity(), userDBBean);
+
+        } else {
+            LogUtils.e("用户表====无数据,新增====" + userLoginUserName);
+            //无数据,新增
+            UserDBBean bean = new UserDBBean();
+            bean.setDeviceID(mDeviceCode + "");
+            bean.setDeviceUserID(mDeviceCode + "");
+            bean.setUserName(userLoginUserName);
+            bean.setPassword(userLoginPassword);
+            bean.setRelo(mLoginReol + "");
+            bean.setIsRememberPassword(isRemember);
+            UserDBUtils.insertOrReplaceInTx(getAttachActivity(), bean);
+        }
+
+
+//
+//            //说明数据库有数据
+//        if (null != userList && userList.size() > 0) {
+//            for (int i1 = 0; i1 < userList.size(); i1++) {
+//                UserDBBean userDBBean = userList.get(i1);
+//                //是当前操作员
+//                String userName = userDBBean.getUserName();
+//                if (userLoginUserName.equals(userName)) {
+//                    userDBBean.setId(userDBBean.getId());
+//                    userDBBean.setDeviceID(mDeviceCode + "");
+//                    userDBBean.setDeviceUserID(mDeviceCode + "");
+//                    userDBBean.setPassword(userDBBean.getPassword() + "");
+//                    userDBBean.setRelo(userDBBean.getRelo() + "");
+//                    userDBBean.setIsRememberPassword(userDBBean.getIsRememberPassword());
+//                    UserDBUtils.insertOrReplaceInTx(getAttachActivity(), userDBBean);
+//                }else {
+//                    //数据库没有该条用户数据,必须重新创建
+//                    UserDBBean bean = new UserDBBean();
+//                    bean.setDeviceID(mDeviceCode + "");
+//                    bean.setDeviceUserID(mDeviceCode + "");
+//                    bean.setUserName(userLoginUserName);
+//                    bean.setPassword(userLoginPassword);
+//                    bean.setRelo(mLoginReol + "");
+//                    bean.setIsRememberPassword(false);
+//                    UserDBUtils.insertOrReplaceInTx(getAttachActivity(), bean);
+//                }
+//            }
+//        }else {
+//            //第一次进入开始下载的时候,数据库没有该条用户数据,必须重新创建
+//            UserDBBean bean = new UserDBBean();
+//            bean.setDeviceID(mDeviceCode + "");
+//            bean.setDeviceUserID(mDeviceCode + "");
+//            bean.setUserName(userLoginUserName);
+//            bean.setPassword(userLoginPassword);
+//            bean.setRelo(mLoginReol + "");
+//            bean.setIsRememberPassword(false);
+//            UserDBUtils.insertOrReplaceInTx(getAttachActivity(), bean);
+//        }
 
     }
 
+    //下载图片
     private void sendPictureRequest(File toLocalFile, String path, String pictureName, Boolean lastPicture) {
 //        String url = "http://images.csdn.net/20150817/1.jpg";
         if (!toLocalFile.exists()) {
@@ -614,15 +940,46 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                         LogUtils.e("下载图片==onResponse==" + response.toString());
                         LogUtils.e("下载图片==更新相册图片==" + toLocalFile.getAbsolutePath() + "/" + pictureName);
                         //=====/storage/emulated/0/MyDownImages/2_3/004.jpg
-                        //刷新相册
+                        //刷新相册 必须下载完了才能退出不然容易出现bug ,所以我们放在每次进入该界面的时候刷新
                         try {
-                            MediaStore.Images.Media.insertImage(getActivity().getContentResolver(), toLocalFile.getAbsolutePath() + "/" + pictureName, pictureName, "");
+                            MediaStore.Images.Media.insertImage(getApplication().getContentResolver(), toLocalFile.getAbsolutePath() + "/" + pictureName, pictureName, "");
                         } catch (FileNotFoundException e) {
                             e.printStackTrace();
                         }
 
                     }
                 });
+    }
+
+    private void requestPermission() {
+        XXPermissions.with(this)
+                // 不适配 Android 11 可以这样写
+//                .permission(Permission.Group.STORAGE)
+                // 适配 Android 11 需要这样写，这里无需再写 Permission.Group.STORAGE
+//                .permission(Permission.MANAGE_EXTERNAL_STORAGE)
+                .permission(Permission.WRITE_EXTERNAL_STORAGE)
+                .permission(Permission.READ_EXTERNAL_STORAGE)
+                .request(new OnPermissionCallback() {
+
+                    @Override
+                    public void onGranted(List<String> permissions, boolean all) {
+                        if (all) {
+                            startDownPicture();
+                        }
+                    }
+
+                    @Override
+                    public void onDenied(List<String> permissions, boolean never) {
+                        if (never) {
+                            toast("被永久拒绝授权，请手动授予存储权限");
+                            // 如果是被永久拒绝就跳转到应用权限系统设置页面
+                            XXPermissions.startPermissionActivity(getActivity(), permissions);
+                        } else {
+                            toast("获取存储权限失败");
+                        }
+                    }
+                });
+
     }
 
     @Override

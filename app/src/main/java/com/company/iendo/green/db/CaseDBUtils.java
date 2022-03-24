@@ -5,6 +5,7 @@ import android.content.Context;
 import com.company.iendo.green.db.downcase.CaseDBBean;
 import com.company.iendo.utils.db.DBManager;
 import com.company.iendo.green.db.CaseDBBeanDao;
+import com.tencent.bugly.proguard.C;
 
 import java.util.List;
 
@@ -30,6 +31,7 @@ public class CaseDBUtils {
     public static void delete(Context context, CaseDBBean bean) {
         DBManager.getDaoSession(context).getCaseDBBeanDao().delete(bean);
     }
+
     //删除
     public static void deleteAll(Context context) {
         DBManager.getDaoSession(context).getCaseDBBeanDao().deleteAll();
@@ -46,17 +48,45 @@ public class CaseDBUtils {
      * eq 相等
      * noteq 不相等
      * like 模糊搜索
+     *
      * @param context
-     * @param DeviceCaseID
-     * @return  精确查询  获取到bean
+     * @param code
+     * @return 精确查询  获取到bean
      */
 
-    public static CaseDBBean getQueryBeanById(Context context, String DeviceCaseID) {
+    public static List<CaseDBBean> getQueryBeanByCode(Context context, String code) {
         CaseDBBeanDao caseDBBeanDao = DBManager.getDaoSession(context).getCaseDBBeanDao();
 
-        CaseDBBean queryBean = caseDBBeanDao.queryBuilder().where(CaseDBBeanDao.Properties.DeviceCaseID.eq(DeviceCaseID)).unique();
+        List<CaseDBBean> beanList = caseDBBeanDao.queryBuilder().where(CaseDBBeanDao.Properties.DeviceCaseID.eq(code)).list();
 
-        return queryBean;
+        return beanList;
+
+
+    }
+    public static List<CaseDBBean> getQueryBeanByTow(Context context, String code, String Data) {
+        CaseDBBeanDao caseDBBeanDao = DBManager.getDaoSession(context).getCaseDBBeanDao();
+
+        List<CaseDBBean> beanList = caseDBBeanDao.queryBuilder().where(CaseDBBeanDao.Properties.DeviceCaseID.eq(code),CaseDBBeanDao.Properties.Check_date.eq(Data)).list();
+
+        return beanList;
+
+
+    }
+    public static List<CaseDBBean> getQueryBeanByTow02(Context context, String code, String Others) {
+        CaseDBBeanDao caseDBBeanDao = DBManager.getDaoSession(context).getCaseDBBeanDao();
+
+        List<CaseDBBean> beanList = caseDBBeanDao.queryBuilder().where(CaseDBBeanDao.Properties.DeviceCaseID.eq(code),CaseDBBeanDao.Properties.Others.eq(Others)).list();
+
+        return beanList;
+
+
+    }
+    public static List<CaseDBBean> getQueryBeanByName(Context context, String Name) {
+        CaseDBBeanDao caseDBBeanDao = DBManager.getDaoSession(context).getCaseDBBeanDao();
+
+        List<CaseDBBean> beanList = caseDBBeanDao.queryBuilder().where(CaseDBBeanDao.Properties.Name.eq(Name)).list();
+
+        return beanList;
 
 
     }
@@ -64,14 +94,15 @@ public class CaseDBUtils {
      * eq 相等
      * noteq 不相等
      * like 模糊搜索
+     *
      * @param context
      * @param DeviceCaseID
-     * @return  精确查询  获取到list
+     * @return 精确查询  获取到list
      */
 
     public static List<CaseDBBean> getQueryList(Context context, String DeviceCaseID) {
         CaseDBBeanDao caseDBBeanDao = DBManager.getDaoSession(context).getCaseDBBeanDao();
-        List<CaseDBBean> beanList = caseDBBeanDao.queryBuilder().where(CaseDBBeanDao.Properties.DeviceCaseID.notEq( DeviceCaseID)).list();
+        List<CaseDBBean> beanList = caseDBBeanDao.queryBuilder().where(CaseDBBeanDao.Properties.DeviceCaseID.notEq(DeviceCaseID)).list();
         return beanList;
     }
 

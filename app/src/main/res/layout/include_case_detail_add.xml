@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/transparent"
+    android:orientation="vertical">
+
+    <!--第一部分:基础-->
+    <include layout="@layout/include_case_detail_01_add" />
+    <!--第二部分:镜检-->
+    <include layout="@layout/include_case_detail_02" />
+    <!--第三部分:其他-->
+    <include layout="@layout/include_case_detail_03" />
+
+</LinearLayout>

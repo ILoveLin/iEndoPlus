@@ -16,8 +16,8 @@ import com.company.iendo.app.AppFragment;
 import com.company.iendo.manager.ActivityManager;
 import com.company.iendo.mineui.fragment.casemanage.CaseManageFragment;
 import com.company.iendo.mineui.fragment.setting.SettingFragment;
-import com.company.iendo.mineui.offline.CaseOffLineFragment;
-import com.company.iendo.mineui.offline.SettingOffLineFragment;
+import com.company.iendo.mineui.offline.fragment.CaseManageOfflineFragment;
+import com.company.iendo.mineui.offline.fragment.SettingOfflineFragment;
 import com.company.iendo.other.DoubleClickHelper;
 import com.company.iendo.ui.adapter.NavigationAdapter;
 import com.company.iendo.ui.fragment.HomeFragment;
@@ -96,8 +96,8 @@ public class MainActivity extends AppActivity implements NavigationAdapter.OnNav
             mPagerAdapter.addFragment(CaseManageFragment.newInstance());
             mPagerAdapter.addFragment(SettingFragment.newInstance());
         } else {
-            mPagerAdapter.addFragment(CaseOffLineFragment.newInstance());
-            mPagerAdapter.addFragment(SettingOffLineFragment.newInstance());
+            mPagerAdapter.addFragment(CaseManageOfflineFragment.newInstance());
+            mPagerAdapter.addFragment(SettingOfflineFragment.newInstance());
         }
 //        mPagerAdapter.addFragment(AFragment.newInstance());
         mViewPager.setAdapter(mPagerAdapter);

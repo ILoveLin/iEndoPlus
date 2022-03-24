@@ -1,4 +1,5 @@
-package com.company.iendo.mineui.offline.entity;
+package com.company.iendo.mineui.offline.entitydb;
+
 
 import java.util.ArrayList;
 
