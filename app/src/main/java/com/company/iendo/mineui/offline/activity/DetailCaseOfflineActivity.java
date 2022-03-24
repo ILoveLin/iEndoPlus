@@ -8,23 +8,26 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.company.iendo.R;
 import com.company.iendo.app.AppActivity;
-import com.company.iendo.bean.event.SocketRefreshEvent;
+import com.company.iendo.bean.event.RefreshOfflineCaseListEvent;
+import com.company.iendo.green.db.CaseDBUtils;
+import com.company.iendo.green.db.downcase.CaseDBBean;
 import com.company.iendo.manager.ActivityManager;
 import com.company.iendo.mineui.activity.casemanage.AddCaseActivity;
+import com.company.iendo.mineui.offline.fragment.CaseManageOfflineFragment;
 import com.company.iendo.mineui.offline.fragment.DetailOfflineFragment;
 import com.company.iendo.mineui.offline.fragment.PictureOfflineFragment;
 import com.company.iendo.mineui.offline.fragment.VideoOfflineFragment;
 import com.company.iendo.ui.adapter.TabAdapter;
+import com.company.iendo.ui.dialog.MessageDialog;
 import com.company.iendo.utils.LogUtils;
 import com.gyf.immersionbar.ImmersionBar;
 import com.hjq.bar.OnTitleBarListener;
 import com.hjq.bar.TitleBar;
+import com.hjq.base.BaseDialog;
 import com.hjq.base.FragmentPagerAdapter;
 import com.hjq.widget.layout.NestedViewPager;
 
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 /**
  * company：江西神州医疗设备有限公司
@@ -47,7 +50,6 @@ public class DetailCaseOfflineActivity extends AppActivity implements TabAdapter
 
     @Override
     protected void initView() {
-        EventBus.getDefault().register(this);
         mTabView = findViewById(R.id.rv_detail_tab);
         mViewPager = findViewById(R.id.vp_detail_pager);
         //报告view
@@ -82,20 +84,36 @@ public class DetailCaseOfflineActivity extends AppActivity implements TabAdapter
 
             @Override
             public void onRightClick(View view) {
+                // 消息对话框
+                new MessageDialog.Builder(getActivity())
+                        // 标题可以不用填写
+                        .setTitle("提醒")
+                        // 内容必须要填写
+                        .setMessage("确定要删除该病例吗?")
+                        // 确定按钮文本
+                        .setConfirm(getString(R.string.common_confirm))
+                        // 设置 null 表示不显示取消按钮
+                        .setCancel(getString(R.string.common_cancel))
+                        // 设置点击按钮后不关闭对话框
+                        //.setAutoDismiss(false)
+                        .setListener(new MessageDialog.OnListener() {
 
+                            @Override
+                            public void onConfirm(BaseDialog dialog) {
+                                CaseDBBean currentItemClickDBBean = CaseManageOfflineFragment.currentItemClickDBBean;
+                                CaseDBUtils.delete(DetailCaseOfflineActivity.this, currentItemClickDBBean);
+                                EventBus.getDefault().post(new RefreshOfflineCaseListEvent(true));
+                                finish();
+                            }
+
+                            @Override
+                            public void onCancel(BaseDialog dialog) {
+                            }
+                        })
+                        .show();
             }
         });
 
-
-    }
-
-
-    /**
-     * eventbus 刷新socket数据
-     */
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void SocketRefreshEvent(SocketRefreshEvent event) {
-        String data = event.getData();
 
     }
 
@@ -169,7 +187,6 @@ public class DetailCaseOfflineActivity extends AppActivity implements TabAdapter
         mViewPager.setAdapter(null);
         mViewPager.removeOnPageChangeListener(this);
         mTabAdapter.setOnTabListener(null);
-        EventBus.getDefault().unregister(this);
 
     }
 }
