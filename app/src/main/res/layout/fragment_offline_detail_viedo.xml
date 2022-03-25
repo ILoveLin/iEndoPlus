@@ -13,19 +13,46 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-<!--        <com.scwang.smart.refresh.layout.SmartRefreshLayout-->
-<!--            android:id="@+id/rl_video_refresh"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="match_parent"-->
-<!--            app:srlEnablePreviewInEditMode="false">-->
+        <!--        <com.scwang.smart.refresh.layout.SmartRefreshLayout-->
+        <!--            android:id="@+id/rl_video_refresh"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="match_parent"-->
+        <!--            app:srlEnablePreviewInEditMode="false">-->
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.hjq.shape.view.ShapeTextView
+                android:id="@+id/stv"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_40"
+                android:layout_marginTop="@dimen/dp_1"
+                android:layout_marginBottom="@dimen/dp_1"
+                android:gravity="center"
+                android:text="离线登录不支持视频播放,只展示视频标题!"
+                android:textColor="@color/red"
+                android:textSize="@dimen/sp_16"
+                app:shape="rectangle"
+                app:shape_dashGap="5dp"
+                app:shape_dashWidth="10dp"
+                app:shape_strokeColor="@color/red"
+                app:shape_strokeWidth="1dp" />
+
 
             <com.hjq.widget.layout.WrapRecyclerView
                 android:id="@+id/rv_video_list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_below="@+id/stv"
                 tools:listCount="10"
                 tools:listitem="@layout/picker_item" />
-<!--        </com.scwang.smart.refresh.layout.SmartRefreshLayout>-->
+
+
+        </RelativeLayout>
+
+
+        <!--        </com.scwang.smart.refresh.layout.SmartRefreshLayout>-->
 
     </com.company.iendo.widget.StatusLayout>
 </LinearLayout>

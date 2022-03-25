@@ -415,7 +415,7 @@ public class ReceiveSocketService extends AbsWorkService {
                         }
 
                     } catch (Exception e) {
-                        LogUtils.e("保活服务开启=====退出线程");
+                        LogUtils.e("保活服务开启=====退出线程==Exception=="+e);
                         e.printStackTrace();
 
                         break;//捕获到异常之后，执行break跳出循环

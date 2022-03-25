@@ -13,15 +13,23 @@
         app:leftIcon="@null"
         app:title="病例列表" />
 
-    <com.donkingliang.groupedadapter.widget.StickyHeaderLayout
-        android:id="@+id/sticky_layout"
+    <com.company.iendo.widget.StatusLayout
+        android:id="@+id/status_hint"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_below="@+id/titlebar">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_list"
+        <com.donkingliang.groupedadapter.widget.StickyHeaderLayout
+            android:id="@+id/sticky_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </com.donkingliang.groupedadapter.widget.StickyHeaderLayout>
+            android:layout_height="match_parent">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </com.donkingliang.groupedadapter.widget.StickyHeaderLayout>
+    </com.company.iendo.widget.StatusLayout>
+
 
 </LinearLayout>

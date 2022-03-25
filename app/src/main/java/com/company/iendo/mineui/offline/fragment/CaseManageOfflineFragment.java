@@ -6,6 +6,7 @@ import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.company.iendo.R;
+import com.company.iendo.action.StatusAction;
 import com.company.iendo.app.TitleBarFragment;
 import com.company.iendo.bean.event.RefreshOfflineCaseListEvent;
 import com.company.iendo.bean.event.SocketRefreshEvent;
@@ -16,6 +17,7 @@ import com.company.iendo.mineui.offline.activity.DetailCaseOfflineActivity;
 import com.company.iendo.mineui.offline.entitydb.GroupEntity;
 import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.SharePreferenceUtil;
+import com.company.iendo.widget.StatusLayout;
 import com.donkingliang.groupedadapter.adapter.GroupedRecyclerViewAdapter;
 import com.donkingliang.groupedadapter.holder.BaseViewHolder;
 import com.donkingliang.groupedadapter.layoutmanger.GroupedGridLayoutManager;
@@ -38,8 +40,8 @@ import java.util.stream.Stream;
  * time：2021/10/29 13:55
  * desc：tab01 病例管理,离线界面
  */
-public class CaseManageOfflineFragment extends TitleBarFragment<MainActivity> {
-
+public class CaseManageOfflineFragment extends TitleBarFragment<MainActivity> implements StatusAction {
+    private StatusLayout mStatusLayout;
     private RecyclerView mRecyclerView;
     private StickyHeaderLayout mStickyLayout;
     private CaseOfflineAdapter mAdapter;
@@ -61,6 +63,8 @@ public class CaseManageOfflineFragment extends TitleBarFragment<MainActivity> {
     @Override
     protected void initView() {
         EventBus.getDefault().register(this);
+        mStatusLayout = findViewById(R.id.status_hint);
+
         mRecyclerView = (RecyclerView) findViewById(R.id.rv_list);
         mStickyLayout = (StickyHeaderLayout) findViewById(R.id.sticky_layout);
 
@@ -155,19 +159,27 @@ public class CaseManageOfflineFragment extends TitleBarFragment<MainActivity> {
 
 
         }
+
+
+        if (mGroupList.size() == 0) {
+            showEmpty();
+        } else {
+            showComplete();
+        }
     }
 
     @Override
     protected void initData() {
 
     }
+
     /**
      * eventbus 刷新socket数据
      */
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void RefreshOfflineCaseListEvent(RefreshOfflineCaseListEvent event) {
-        if (event.isRefresh()){
+        if (event.isRefresh()) {
             getAdapterData();
             mAdapter.setGroups(mGroupList);
         }
@@ -185,5 +197,10 @@ public class CaseManageOfflineFragment extends TitleBarFragment<MainActivity> {
     public boolean isStatusBarEnabled() {
         // 使用沉浸式状态栏
         return !super.isStatusBarEnabled();
+    }
+
+    @Override
+    public StatusLayout getStatusLayout() {
+        return mStatusLayout;
     }
 }
