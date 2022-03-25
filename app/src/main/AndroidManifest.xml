@@ -108,18 +108,18 @@
             android:name=".ui.activity.CopyActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
-        <!-- 方案选择界面 -->
+        <!-- 方案选择界面 未使用-->
         <activity
             android:name=".mineui.activity.choice.ChoiceProgramActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
-        <!-- 设备选择界面 -->
+        <!-- 设备选择界面 未使用-->
         <activity
             android:name=".mineui.activity.login.DeviceChoiceActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
 
-        <!-- 设备添加界面 -->
+        <!-- 设备添加界面 未使用-->
         <activity
             android:name=".mineui.activity.login.device.DeviceActivity"
             android:launchMode="singleTop"

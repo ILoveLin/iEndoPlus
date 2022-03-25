@@ -673,23 +673,6 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                  * 登入成功的时候切换成监听 当前设备授权登入的socket端口--->Constants.KEY_RECEIVE_PORT
                  * 退出登入的时候切换成监听 当前广播发送端口(或者设置设备搜索界面设置成功赋值)----->Constants.KEY_RECEIVE_PORT_BY_SEARCH
                  */
-                ReceiveSocketService receiveSocketService = new ReceiveSocketService();
-                WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-                if (wifiManager.isWifiEnabled()) {
-                    WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-                    mAppIP = getIpString(wifiInfo.getIpAddress());
-                }
-                MMKV kv = MMKV.defaultMMKV();
-                int mCastSendPort = kv.decodeInt(Constants.KEY_BROADCAST_PORT);
-                if ("".equals(mSocketPort)) {
-                    toast("本地广播发送端口不能为空");
-                    return;
-                } else {
-                    LogUtils.e("AppActivity=login==port====" + mSocketPort);
-                    receiveSocketService.initSettingReceiveThread(mAppIP, Integer.parseInt(mSocketPort), LoginActivity.this);
-
-                }
-
                 MainActivity.start(getContext(), CaseManageOfflineFragment.class);
                 finish();
             } else {

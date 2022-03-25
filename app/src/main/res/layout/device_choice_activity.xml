@@ -30,6 +30,7 @@
         app:shape_shadowColor="@color/black10"
         app:shape_shadowSize="@dimen/dp_10"
         app:shape_solidColor="@color/white" />
+
     <com.hjq.shape.view.ShapeTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

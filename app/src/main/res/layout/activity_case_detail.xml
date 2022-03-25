@@ -37,6 +37,17 @@
                     android:orientation="vertical">
 
 
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rv_detail_tab"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/white"
+                        android:orientation="vertical"
+                        tools:itemCount="3"
+                        tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                        tools:listitem="@layout/tab_item_detail_design"
+                        tools:spanCount="3" />
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/dp_70"
@@ -167,17 +178,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="0.5dp"
                         android:background="@color/common_line_color" />
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/rv_detail_tab"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@color/white"
-                        android:orientation="vertical"
-                        tools:itemCount="3"
-                        tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                        tools:listitem="@layout/tab_item_detail_design"
-                        tools:spanCount="3" />
 
                     <com.hjq.widget.layout.NestedViewPager
                         android:id="@+id/vp_detail_pager"
