@@ -89,7 +89,7 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
     private int mPhoneViewWidth;
     private WaitDialog.Builder mWaitDialog;
     private List<UserListBean.DataDTO> mUserListData = new ArrayList<UserListBean.DataDTO>();
-//    private List<UserListBean.DataDTO> mUserOflineListData = new ArrayList<UserListBean.DataDTO>();
+    //    private List<UserListBean.DataDTO> mUserOflineListData = new ArrayList<UserListBean.DataDTO>();
     private TextView mSettingView;
     private TextView mDeviceType;
     private String mBaseUrl;
@@ -127,14 +127,15 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
         }
     };
 
+    //历史列表点击之后刷新UI
     private void refreshUI(String userName) {
         Boolean loginType = (Boolean) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.OnLine_Flag, true);
         if (loginType) {//在线登录
-            List<UserDBBean> userDBBeans = UserDBUtils.getQueryByDeviceID(getApplicationContext(), deviceID);
+            List<UserDBBean> userDBBeans = UserDBUtils.getQueryBeanByTow(getApplicationContext(), deviceID,userName);
             //数据库没有
             if (userDBBeans.size() != 0) {
                 for (int i = 0; i < userDBBeans.size(); i++) {
-                    UserDBBean userDBBean = userDBBeans.get(i);
+                    UserDBBean userDBBean = userDBBeans.get(0);
                     String currentName = userDBBean.getUserName();
                     if (currentName.equals(userName)) {
                         mPhoneView.setText("" + userDBBean.getUserName());
