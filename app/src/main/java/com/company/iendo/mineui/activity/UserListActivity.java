@@ -121,7 +121,7 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
     private void showAddUserDialog() {
 
         InputAddUserDialog.Builder addUserBuilder = new InputAddUserDialog.Builder(this);
-        addUserBuilder.setTitle("请添加新用户")
+        addUserBuilder.setTitle("添加用户")
                 .setCancel("取消")
                 .setConfirm("确定")
                 .setListener(new InputAddUserDialog.OnListener() {
@@ -152,7 +152,7 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
             public void onClick(View v) {
                 // 角色 0-超级管理员 1-管理员 2-操作员 3-查询员 4-自定义
                 new SelectUserDialog.Builder(UserListActivity.this)
-                        .setTitle("请选择用户权限")
+                        .setTitle("请选择用户角色")
                         .setList("管理员", "操作员", "查询员")
                         .setBackgroundDimEnabled(false)
                         .setSingleSelect()
@@ -213,9 +213,9 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
                         showComplete();
                         if ("" != response) {
                             UserDeletedBean mBean = mGson.fromJson(response, UserDeletedBean.class);
-//                            toast(mBean.getMsg() + "");
+                            toast( "添加成功");
                             if (mBean.getCode().equals("0")) {
-                                toast(mBean.getMsg() + "");
+//                                toast(mBean.getMsg() + "");
                                 sendRequest();
 
                             }
@@ -353,7 +353,7 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
      * @param substring
      */
     private void sendChangeReloRequest(UserListBean.DataDTO item, String substring) {
-        int i = Integer.parseInt(substring) + 1;
+        int i = Integer.parseInt(substring) ;
         showLoading();
         String userID = item.getUserID();
         LogUtils.e("修改权限====userID==" + userID + "");
@@ -383,7 +383,7 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
                         if ("" != response) {
                             UserDeletedBean mBean = mGson.fromJson(response, UserDeletedBean.class);
                             LogUtils.e("修改权限====Relo==" + i);
-                            toast(mBean.getMsg() + "");
+                            toast( "修改成功");
                             LogUtils.e("修改权限====item.getUserID()==" + item.getUserID() + "");
                             if (mBean.getCode().equals("0")) {
                                 sendRequest();
@@ -455,10 +455,9 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
                         showComplete();
                         if ("" != response) {
                             UserDeletedBean mBean = mGson.fromJson(response, UserDeletedBean.class);
-                            LogUtils.e("修改其他人密码====");
+                            LogUtils.e("修改其他人密码===="+response);
                             if (mBean.getCode().equals("0")) {
-                                toast(mBean.getMsg() + "");
-
+                                toast( "修改成功");
                                 mAdapter.notifyDataSetChanged();
                             }
                         } else {
@@ -526,10 +525,15 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
                             UserDeletedBean mBean = mGson.fromJson(response, UserDeletedBean.class);
                             LogUtils.e("删除用户====");
                             if (mBean.getCode().equals("0")) {
-                                toast(mBean.getMsg() + "");
+                                toast( "删除成功");
 
                                 mAdapter.removeItem(item);
                                 mAdapter.notifyDataSetChanged();
+                            }
+
+                            if (item.getUserName().equals("Admin")&&"0".equals(mLoginRole)){
+                                toast( "超级管理员不能被删除");
+
                             }
 //                            if (0 == ) {  //成功
 //                                if (mBean.getData().size() != 0) {

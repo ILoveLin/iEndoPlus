@@ -35,8 +35,8 @@ public class UserListAdapter extends AppAdapter<UserListBean.DataDTO> {
 
     private final class ViewHolder extends AppAdapter<?>.ViewHolder {
 
-        private final TextView mName, mCurrentFlag,mRelo;
-//        private final Button mChangeRelo, mDelete, mPassword;
+        private final TextView mName, mCurrentFlag, mRelo;
+        //        private final Button mChangeRelo, mDelete, mPassword;
         private final RelativeLayout mItemView;
 
         private ViewHolder() {
@@ -53,7 +53,7 @@ public class UserListAdapter extends AppAdapter<UserListBean.DataDTO> {
         @Override
         public void onBindView(int position) {
             UserListBean.DataDTO item = getItem(position);
-            //    // 角色 0-超级管理员 1-管理员 2-操作员 3-查询员 4-自定义
+            //角色权限:0-管理员 1-操作员 2-查询员
             String userName = item.getUserName();
             if (mLoginUserName.equals(userName)) {
                 mItemView.setBackgroundResource(R.drawable.shape_item_user_pre);
@@ -63,21 +63,20 @@ public class UserListAdapter extends AppAdapter<UserListBean.DataDTO> {
                 mCurrentFlag.setVisibility(View.INVISIBLE);
             }
             mName.setText("" + item.getUserName());
+            //角色权限:0-管理员 1-操作员 2-查询员
             switch (item.getRole()) {
                 case 0:
-                    mRelo.setText("超级管理员");
+                    if ("Admin".equals(item.getUserName())) {
+                        mRelo.setText("超级管理员");
+                    } else {
+                        mRelo.setText("管理员");
+                    }
                     break;
                 case 1:
-                    mRelo.setText("管理员");
-                    break;
-                case 2:
                     mRelo.setText("操作员");
                     break;
-                case 3:
+                case 2:
                     mRelo.setText("查询员");
-                    break;
-                case 4:
-                    mRelo.setText("自定义");
                     break;
             }
         }

@@ -768,7 +768,7 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
                 .setTitle("提示!")
                 // 内容可以不用填写
                 // 提示可以不用填写
-                .setHint("请输入接入密码")
+                .setHint("提示、请输入授权码")
                 // 确定按钮文本
                 .setConfirm(getString(R.string.common_confirm))
                 // 设置 null 表示不显示取消按钮

@@ -1,9 +1,11 @@
 package com.company.iendo.mineui.fragment.casemanage;
 
+import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -85,6 +87,7 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
     private TextView mTitle;
     private String currentChoseDate;
     private String endoType;
+    private ImageView mAnim;
 
     public static CaseManageFragment newInstance() {
         return new CaseManageFragment();
@@ -102,17 +105,28 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
         mRefreshLayout = findViewById(R.id.rl_b_refresh);
         mRecyclerView = findViewById(R.id.rv_b_recyclerview);
         mTitle = findViewById(R.id.tv_title);
+        mAnim = findViewById(R.id.iv_tag_anim);
         mStatusLayout = findViewById(R.id.b_hint);
         mTitle.setText(DateUtil.getSystemDate());
         currentChoseDate = mTitle.getText().toString().trim();
-        setOnClickListener(R.id.ib_right, R.id.ib_left, R.id.tv_title);
+        setOnClickListener(R.id.ib_right, R.id.ib_left, R.id.tv_title, R.id.iv_tag_anim);
+        ObjectAnimator animator = ObjectAnimator.ofFloat(mAnim, "rotation", 0f, 180f);
+        animator.setDuration(100);
+        animator.start();
+
 
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
+//            case R.id.iv_tag_anim:
+//                //选择事件请求列表
+//                showDateDialog();
+//                break;
             case R.id.tv_title:
+                mTitle.setTag("close");
+                startRotationAnim("open");   //打开dialog
                 //选择事件请求列表
                 showDateDialog();
                 break;
@@ -128,6 +142,18 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
         }
     }
 
+    public void startRotationAnim(String type) {
+        if ("close".equals(type)) {
+            ObjectAnimator animator = ObjectAnimator.ofFloat(mAnim, "rotation", 0f, 180f);
+            animator.setDuration(500);
+            animator.start();
+
+        } else {
+            ObjectAnimator animator = ObjectAnimator.ofFloat(mAnim, "rotation", 180f, 360f);
+            animator.setDuration(500);
+            animator.start();
+        }
+    }
 
     @Override
     protected void initData() {
@@ -154,6 +180,13 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
         mDateDialog.setTitle("请选择日期")
                 .setConfirm(getString(R.string.common_confirm))
                 .setCancel(getString(R.string.common_cancel))
+                .addOnDismissListener(new BaseDialog.OnDismissListener() {
+                    @Override
+                    public void onDismiss(BaseDialog dialog) {
+                        startRotationAnim("close");
+
+                    }
+                })
                 .setListener(new DateDialog.OnListener() {
                     @Override
                     public void onSelected(BaseDialog dialog, int year, int month, int day) {
@@ -170,11 +203,14 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
 //                        toast("时间：" + mChoiceDate);
                         mTitle.setText(mChoiceDate + "");
                         sendRequest(mChoiceDate);
+                        startRotationAnim("close");
+
 
                     }
 
                     @Override
                     public void onCancel(BaseDialog dialog) {
+                        startRotationAnim("close");
 
                     }
                 }).show();

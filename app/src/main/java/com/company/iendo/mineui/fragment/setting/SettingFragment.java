@@ -76,7 +76,7 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
         mUserName = findViewById(R.id.tv_current_name);
         mRelo = findViewById(R.id.tv_current_relo);
         mBaseUrl = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_BaseUrl, "192.168.312.102");
-        setOnClickListener(R.id.memory_bar, R.id.params_bar, R.id.hospital_bar, R.id.user_bar, R.id.about_bar, R.id.memory_bar, R.id.password_bar, R.id.linear_exit);
+        setOnClickListener(R.id.memory_bar,  R.id.hospital_bar, R.id.user_bar, R.id.about_bar, R.id.memory_bar, R.id.password_bar, R.id.linear_exit);
 
     }
 
@@ -176,9 +176,6 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
                 LogUtils.e("======GetPictureActivity==回调===>发送冷光源参数==" + sendByteData);
                 //Type01{brightess='60', zoom='null', sharpenss='null', saturation='null', reversal='null', bloodenhance='null'}
 
-                break;
-            case R.id.params_bar:
-                startActivity(DeviceParamsActivity.class);
                 break;
             case R.id.hospital_bar:
                 startActivity(HospitalActivity.class);
@@ -282,7 +279,7 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
     private void showChangePasswordDialog() {
         new Input2Dialog.Builder(getActivity())
                 .setTitle("提示")
-                .setHint("请输入旧密码")
+                .setHint("请输入原密码")
                 .set2Hint("请输入新密码")
                 .setCancel("取消")
                 .setConfirm("确定")

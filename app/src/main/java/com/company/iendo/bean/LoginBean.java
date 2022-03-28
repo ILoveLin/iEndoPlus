@@ -7,6 +7,34 @@ import com.google.gson.annotations.SerializedName;
  * author： LoveLin
  * time：2021/11/17 15:09
  * desc：
+ UserMan 			-- 用户管理
+ CanPsw 			-- 设置口令
+ SnapVideoRecord	 -- 拍照录像
+ CanNew 			-- 登记病人
+ CanEdit 			-- 修改病历
+ CanDelete 			-- 删除病历
+ CanPrint 			-- 打印病历
+ UnPrinted 			-- 未打印病历
+ OnlySelf 			-- 本人病历
+ HospitalInfo 		-- 医院信息
+
+ 已下App未使用到的权限
+ ReportStyle 		-- 报告样式
+ DictsMan 			-- 词典管理
+ GlossaryMan 		-- 术语管理
+ TempletMan 		-- 模板管理
+ CanBackup 			-- 备份数据
+ ViewBackup 		-- 查看备份
+ VideoSet 			-- 视频设置
+ FtpSet            	-- FTP设置
+ ChangeDepartment  	-- 切换科室
+ ExportRecord  	 	-- 导出病历
+ ExportImage      	-- 导出图片
+ ExportVideo      	-- 导出视频
+ DeviceSet		 	-- 设备设置
+ SeatAdjust		 	-- 座椅调节
+ LiveStream		 	-- 直播
+ Role				-- 角色
  */
 public class LoginBean {
 

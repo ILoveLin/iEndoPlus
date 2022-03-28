@@ -132,7 +132,7 @@ public class HospitalActivity extends AppActivity implements StatusAction {
             public void onRightClick(View view) {
                 if (mTitlebar.getRightTitle().equals("编辑")) {
                     setEditStatus(true);
-                    mTitlebar.setRightTitle("编辑中...");
+                    mTitlebar.setRightTitle("保存");
                     mTitlebar.setRightTitleColor(getResources().getColor(R.color.red));
                 } else {
                     mTitlebar.setRightTitle("编辑");
@@ -151,8 +151,10 @@ public class HospitalActivity extends AppActivity implements StatusAction {
             showLoading();
             OkHttpUtils.post()
                     .url(mBaseUrl+HttpConstant.CaseManager_CaseUpdateHospitalInfo)
-                    .addParams("ID", mID)
-                    .addParams("UserID", mUserID)
+                    .addParams("ID", mID)//内部ID
+                    .addParams("UserName", mLoginUserName)//操作员用户名
+                    .addParams("EndoType", endoType)//EndoType
+                    .addParams("UserID", mUserID)//UserID
                     .addParams("szHospital", mTitle_01.getText().toString().trim())
                     .addParams("szSlave", mTitle_02.getText().toString().trim())
                     .addParams("szAddress", mAddress.getText().toString().trim())

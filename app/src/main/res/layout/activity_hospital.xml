@@ -112,6 +112,7 @@
                                 android:orientation="horizontal">
 
                                 <ImageView
+                                    android:visibility="gone"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:src="@drawable/ic_icon_maintitle" />
@@ -160,6 +161,7 @@
                                 android:orientation="horizontal">
 
                                 <ImageView
+                                    android:visibility="gone"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:src="@drawable/ic_icon_subtitle" />
@@ -206,6 +208,7 @@
                                 android:orientation="horizontal">
 
                                 <ImageView
+                                    android:visibility="gone"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:src="@drawable/ic_icon_address" />
@@ -253,6 +256,7 @@
                                 android:orientation="horizontal">
 
                                 <ImageView
+                                    android:visibility="gone"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:src="@drawable/ic_icon_phone" />
@@ -300,11 +304,13 @@
                                 android:orientation="horizontal">
 
                                 <ImageView
+                                    android:visibility="gone"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:src="@drawable/ic_icon_zipcode" />
 
                                 <com.hjq.widget.view.ClearEditText
+
                                     android:id="@+id/number"
                                     android:layout_width="match_parent"
                                     android:layout_height="@dimen/dp_25"
