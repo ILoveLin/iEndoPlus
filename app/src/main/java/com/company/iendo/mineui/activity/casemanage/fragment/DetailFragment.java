@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -84,22 +85,24 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
     private DetailCaseActivity mActivity;
     private CaseDetailBean mBean;
     private String mBaseUrl;
-    private LinesEditView et_01_i_tell_you, et_01_bad_tell;
     private TextView tv_01_age_type;
     private boolean mFragClickable = false;  //dialog数据请求错误,相对于dialog不允许弹窗,不然会闪退
     private HashMap<String, String> mParamsMap;
     private HashMap mDialogItemMap;
     private ClearEditText et_01_check_num, et_01_name, et_01_sex_type, et_01_age, et_01_jop, et_01_fee, et_01_get_check_doctor;
     //            et_01_i_tell_you, et_01_bad_tell;
+    private LinesEditView lines_01_i_tell_you, lines_01_bad_tell;
+    private LinesEditView lines_03_case_history, lines_03_family_case_history;
     private LinesEditView etlines_02_mirror_see, etlines_02_mirror_result, etlines_02_live_check, etlines_02_cytology, etlines_02_test,
             etlines_02_pathology, etlines_02_advice;
     private ClearEditText et_02_mirror_see, et_02_mirror_result, et_02_live_check, et_02_cytology, et_02_test, et_02_pathology,
             et_02_advice, et_02_check_doctor;
     private ClearEditText et_03_door_num, et_03_protection_num, et_03_section, et_03_device, et_03_case_num, et_03_in_hospital_num,
             et_03_case_area_num, et_03_case_bed_num, et_03_native_place, et_03_ming_zu, et_03_is_married, et_03_tel, et_03_address,
-            et_03_my_id_num, et_03_case_history, et_03_family_case_history;
+            et_03_my_id_num, edit_03_case_history, edit_03_family_case_history;
+
     private ArrayList<ClearEditText> mEditList;
-    private ArrayList<ClearEditText> mNotFocusableEditList;   //解决编辑状态点击两次弹窗Bug
+    private ArrayList<LinesEditView> mLineEditList;
     private String mDeviceCode;  //当前设备id-code
     private String mUserID;    //当前用户id
     private String currentItemCaseID;
@@ -107,9 +110,8 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
     private ArrayList<String> mNameList;
     private HashMap<String, String> mPathMap;     //例如imageName=001.jpg  url=http://192.168.64.56:7001/1_3/001.jpg
     private ArrayList<String> mVideoPathList = new ArrayList<>();     //视频的标题
-    private ArrayList<LinesEditView> linesEditViewList;
-    private ClearEditText lines_edit_01_i_tell_you;
-    private ClearEditText lines_edit_01_i_bad_tell;
+    private ClearEditText edit_01_i_tell_you;
+    private ClearEditText edit_01_i_bad_tell;
     private CaseDetailBean.DataDTO mDataBean;
     private String mUserName;
     private static final int UDP_Hand = 126;   //握手
@@ -118,6 +120,26 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
     private String itemID;
     private String mCaseID;
     private String mCurrentDonwTime;
+    private ImageView iv_01_age_type;
+    private ImageView iv_01_jop;
+    private ImageView tv_01_get_check_doctor;
+    private ImageView iv_01_i_tell_you;
+    private ImageView iv_01_bad_tell;
+    private ImageView iv_02_mirror_see;
+    private ImageView iv_02_mirror_result;
+    private ImageView iv_02_live_check;
+    private ImageView iv_02_cytology;
+    private ImageView iv_02_test;
+    private ImageView iv_02_pathology;
+    private ImageView iv_02_advice;
+    private ImageView iv_02_check_doctor;
+    private ImageView iv_03_section;
+    private ImageView iv_03_device;
+    private ImageView iv_03_ming_zu;
+    private ImageView iv_03_is_married;
+    private ArrayList<ImageView> mImageViewList;
+    private ImageView iv_01_sex_type;
+
 
     public static DetailFragment newInstance() {
         return new DetailFragment();
@@ -147,84 +169,6 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         sendRequest(currentItemCaseID);
     }
 
-    private void responseListener() {
-
-
-        //年纪类别的List数据本地写:岁,月,天,
-        setOnClickListener(R.id.et_01_sex_type, R.id.tv_01_age_type, R.id.et_01_jop, R.id.et_01_get_check_doctor,
-                R.id.et_02_mirror_see, R.id.et_02_mirror_result, R.id.et_02_live_check, R.id.et_02_cytology, R.id.et_02_test, R.id.et_02_pathology,
-                R.id.et_02_advice, R.id.et_02_check_doctor, R.id.et_03_section, R.id.et_03_device, R.id.et_03_ming_zu, R.id.et_03_is_married);
-
-
-        lines_edit_01_i_tell_you.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showITellyouMenuDialog(et_01_i_tell_you, "11");
-
-            }
-        });
-        lines_edit_01_i_bad_tell.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showITellyouMenuDialog(et_01_bad_tell, "12");
-
-            }
-        });
-
-        //02-layout
-
-        et_02_mirror_see.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showITellyouMenuDialog(etlines_02_mirror_see, "13");
-
-            }
-        });
-        et_02_mirror_result.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showITellyouMenuDialog(etlines_02_mirror_result, "14");
-
-            }
-        });
-        et_02_live_check.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showITellyouMenuDialog(etlines_02_live_check, "15");
-
-            }
-        });
-        et_02_cytology.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showITellyouMenuDialog(etlines_02_cytology, "16");
-
-            }
-        });
-        et_02_test.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showITellyouMenuDialog(etlines_02_test, "17");
-
-            }
-        });
-        et_02_pathology.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showITellyouMenuDialog(etlines_02_pathology, "18");
-
-            }
-        });
-        et_02_advice.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showITellyouMenuDialog(etlines_02_advice, "19");
-
-            }
-        });
-
-
-    }
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -348,8 +292,8 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         et_03_address.setText("" + mDataBean.getAddress());
         //        String PatientNo = et_01_check_num.getText().toString().trim();       //病人编号---检查号???
         et_03_my_id_num.setText("" + mDataBean.getCardID());
-        et_03_case_history.setText("" + mDataBean.getMedHistory());
-        et_03_family_case_history.setText("" + mDataBean.getFamilyHistory());
+        lines_03_case_history.setContentText("" + mDataBean.getMedHistory());
+        lines_03_family_case_history.setContentText("" + mDataBean.getFamilyHistory());
         et_03_ming_zu.setText("" + mDataBean.getRace());
         et_01_jop.setText("" + mDataBean.getOccupatior());
         et_03_protection_num.setText("" + mDataBean.getInsuranceID());
@@ -378,7 +322,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         etlines_02_cytology.setContentText("" + mDataBean.getCtology());
         etlines_02_pathology.setContentText("" + mDataBean.getPathology());
         etlines_02_live_check.setContentText("" + mDataBean.getExaminingPhysician());
-        et_01_bad_tell.setContentText("" + mDataBean.getClinicalDiagnosis());
+        lines_01_bad_tell.setContentText("" + mDataBean.getClinicalDiagnosis());
         etlines_02_mirror_see.setContentText("" + mDataBean.getCheckContent());
         etlines_02_mirror_result.setContentText("" + mDataBean.getCheckDiagnosis());
 
@@ -408,6 +352,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                     mEditList.get(i).setFocusableInTouchMode(true);
                     mEditList.get(i).setFocusable(true);
                     mEditList.get(i).requestFocus();
+
                     //android:focusable="false"
                     //谈对话框的不能获取焦点
                 } else {
@@ -416,16 +361,37 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                     mEditList.get(i).setFocusableInTouchMode(false);
 
                 }
+
+            }
+            for (int i1 = 0; i1 < mLineEditList.size(); i1++) {
+                //设置可编辑状态
+                if (mEditStatus) {
+                    mLineEditList.get(i1).setFocusableInTouchMode(true);
+                    mLineEditList.get(i1).setFocusable(true);
+                    mLineEditList.get(i1).requestFocus();
+                } else {
+                    //设置不可编辑状态
+                    mLineEditList.get(i1).setFocusable(false);
+                    mLineEditList.get(i1).setFocusableInTouchMode(false);
+                }
+
             }
 
+        }
 
-            if (mEditStatus) {
-                for (int i = 0; i < mNotFocusableEditList.size(); i++) {
-                    mNotFocusableEditList.get(i).setFocusableInTouchMode(false);
-                    mNotFocusableEditList.get(i).setFocusable(false);
-                }
+        //可编辑状态下,需要显示iamgeview
+        if (mEditStatus) {
+            for (int i = 0; i < mImageViewList.size(); i++) {
+                ImageView imageView = mImageViewList.get(i);
+                imageView.setVisibility(View.VISIBLE);
+            }
+        } else {
+            for (int i = 0; i < mImageViewList.size(); i++) {
+                ImageView imageView = mImageViewList.get(i);
+                imageView.setVisibility(View.GONE);
             }
         }
+
 //        //编辑状态为true,不可编辑状态为flase,默认false不可编辑
         if (!mEditStatus) {//切换到了不可编辑模式,发送请求
             if (mFirstIn) {  //解决  首次进来 tosat 提示
@@ -482,7 +448,6 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 
                     @Override
                     public void onCancel(BaseDialog dialog) {
-                        toast("取消了");
                     }
                 })
                 .show();
@@ -839,6 +804,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         String userLoginPassword = (String) SharePreferenceUtil.get(getAttachActivity(), SharePreferenceUtil.Current_Login_Password, "");
         String mLoginReol = (String) SharePreferenceUtil.get(getAttachActivity(), SharePreferenceUtil.Current_Login_Role, "");
         Boolean isRemember = (Boolean) SharePreferenceUtil.get(getAttachActivity(), SharePreferenceUtil.Current_Login_Remember_Password, true);
+        String mLoginUserID = (String) SharePreferenceUtil.get(getAttachActivity(), SharePreferenceUtil.Current_Login_UserID, true);
 
         /**
          * 创建需要下载的本地病例--->用户表
@@ -846,14 +812,15 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         //设备码和当前操作用户绑定
         //查询当前设备码下 绑定的所有用户
         //查询当前设备码下绑定的用户,并且是操作用户是当前登入的用户
-        List<UserDBBean> userListt = UserDBUtils.getQueryBeanByTow(getAttachActivity(), mDeviceCode, userLoginUserName);
+        List<UserDBBean> userListt = UserDBUtils.getQueryBeanByTowCodeUserID(getAttachActivity(), mDeviceCode, mLoginUserID);
+
         if (null != userListt && userListt.size() > 0) {
             UserDBBean userDBBean = userListt.get(0);
             //有数据,更新
             LogUtils.e("用户表====有数据,更新====" + userDBBean.getUserName());
             userDBBean.setId(userDBBean.getId());
             userDBBean.setDeviceID(mDeviceCode + "");
-            userDBBean.setDeviceUserID(mDeviceCode + "");
+            userDBBean.setDeviceUserID(mLoginUserID + "");  //设置用户ID
             userDBBean.setUserName(userDBBean.getUserName() + "");
             userDBBean.setPassword(userDBBean.getPassword() + "");
             userDBBean.setRelo(userDBBean.getRelo() + "");
@@ -865,7 +832,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
             //无数据,新增
             UserDBBean bean = new UserDBBean();
             bean.setDeviceID(mDeviceCode + "");
-            bean.setDeviceUserID(mDeviceCode + "");
+            bean.setDeviceUserID(mLoginUserID + "");//设置用户ID
             bean.setUserName(userLoginUserName);
             bean.setPassword(userLoginPassword);
             bean.setRelo(mLoginReol + "");
@@ -1018,20 +985,101 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 
     }
 
+    private void responseListener() {
+
+
+        //年纪类别的List数据本地写:岁,月,天,
+        setOnClickListener(R.id.iv_01_sex_type, R.id.iv_01_age_type, R.id.iv_01_jop, R.id.tv_01_get_check_doctor,
+                R.id.iv_02_mirror_see, R.id.iv_02_mirror_result, R.id.iv_02_live_check, R.id.iv_02_cytology, R.id.iv_02_test, R.id.iv_02_pathology,
+                R.id.iv_02_advice, R.id.iv_02_check_doctor, R.id.iv_03_section, R.id.iv_03_device, R.id.iv_03_ming_zu, R.id.iv_03_is_married);
+
+//        setOnClickListener(R.id.et_01_sex_type, R.id.tv_01_age_type, R.id.et_01_jop, R.id.et_01_get_check_doctor,
+//                R.id.et_02_mirror_see, R.id.et_02_mirror_result, R.id.et_02_live_check, R.id.et_02_cytology, R.id.et_02_test, R.id.et_02_pathology,
+//                R.id.et_02_advice, R.id.et_02_check_doctor, R.id.et_03_section, R.id.et_03_device, R.id.et_03_ming_zu, R.id.et_03_is_married);
+
+        iv_01_i_tell_you.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showITellyouMenuDialog(lines_01_i_tell_you, "11");
+
+            }
+        });
+        iv_01_bad_tell.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showITellyouMenuDialog(lines_01_bad_tell, "12");
+
+            }
+        });
+
+        //02-layout
+
+        iv_02_mirror_see.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showITellyouMenuDialog(etlines_02_mirror_see, "13");
+
+            }
+        });
+        iv_02_mirror_result.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showITellyouMenuDialog(etlines_02_mirror_result, "14");
+
+            }
+        });
+        iv_02_live_check.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showITellyouMenuDialog(etlines_02_live_check, "15");
+
+            }
+        });
+        iv_02_cytology.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showITellyouMenuDialog(etlines_02_cytology, "16");
+
+            }
+        });
+        iv_02_test.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showITellyouMenuDialog(etlines_02_test, "17");
+
+            }
+        });
+        iv_02_pathology.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showITellyouMenuDialog(etlines_02_pathology, "18");
+
+            }
+        });
+        iv_02_advice.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showITellyouMenuDialog(etlines_02_advice, "19");
+
+            }
+        });
+
+
+    }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.et_01_sex_type:  //性别
+            case R.id.iv_01_sex_type:  //性别
                 showMenuDialog(et_01_sex_type, "100");
                 break;
-            case R.id.tv_01_age_type:  //年龄类别  --本地写数据List
+            case R.id.iv_01_age_type:  //年龄类别  --本地写数据List
                 showMenuElseDialog();
                 break;
-            case R.id.et_01_jop:        //职业
+            case R.id.iv_01_jop:        //职业
                 showMenuDialog(et_01_jop, "5");
                 break;
-            case R.id.et_01_get_check_doctor://送检医生
+            case R.id.tv_01_get_check_doctor://送检医生
                 showMenuDialog(et_01_get_check_doctor, "8");
                 break;
             case R.id.et_01_i_tell_you:    //主诉--带字数限制的
@@ -1061,19 +1109,19 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 //            case R.id.et_02_advice://建议
 //                showMenuDialog(etlines_02_advice, "19");
 //                break;
-            case R.id.et_02_check_doctor://检查医生
+            case R.id.iv_02_check_doctor://检查医生
                 showMenuDialog(et_02_check_doctor, "20");
                 break;
-            case R.id.et_03_section: //科室
+            case R.id.iv_03_section: //科室
                 showMenuDialog(et_03_section, "9");
                 break;
-            case R.id.et_03_device://设备
+            case R.id.iv_03_device://设备
                 showMenuDialog(et_03_device, "10");
                 break;
-            case R.id.et_03_ming_zu://民族
+            case R.id.iv_03_ming_zu://民族
                 showMenuDialog(et_03_ming_zu, "23");
                 break;
-            case R.id.et_03_is_married://婚否
+            case R.id.iv_03_is_married://婚否
                 showMenuDialog(et_03_is_married, "101");
                 break;
 
@@ -1120,17 +1168,21 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                     //.setAutoDismiss(false)
                     .setList(stringList)
                     .setListener(new MenuDialog.OnListener<String>() {
-
                         @Override
                         public void onSelected(BaseDialog dialog, int position, String string) {
                             String s = stringList.get(position);
-                            mEdit.setContentText(mEdit.getContentText() + "" + s);
+                            String s1 = mEdit.getContentText() + "" + s;
+                            if (s1.length() >= 100) {
+                                toast("字数不能超过100!");
+                            } else {
+                                mEdit.setContentText(mEdit.getContentText() + "" + s);
+
+                            }
 
                         }
 
                         @Override
                         public void onCancel(BaseDialog dialog) {
-                            toast("取消了");
                         }
                     })
                     .show();
@@ -1270,14 +1322,24 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         //送检医生
         et_01_get_check_doctor = findViewById(R.id.et_01_get_check_doctor);
         //主诉
-        et_01_i_tell_you = findViewById(R.id.et_01_i_tell_you);
+        lines_01_i_tell_you = findViewById(R.id.et_01_i_tell_you);
         //临床诊断
-        et_01_bad_tell = findViewById(R.id.et_01_bad_tell);
+        lines_01_bad_tell = findViewById(R.id.et_01_bad_tell);
 
         //主诉---多行显示的edit
-        lines_edit_01_i_tell_you = et_01_i_tell_you.getContentEdit();
+        edit_01_i_tell_you = lines_01_i_tell_you.getContentEdit();
         //临床诊断---多行显示的edit
-        lines_edit_01_i_bad_tell = et_01_bad_tell.getContentEdit();
+        edit_01_i_bad_tell = lines_01_bad_tell.getContentEdit();
+
+        //获取点击图标弹出dialog
+        iv_01_sex_type = findViewById(R.id.iv_01_sex_type);
+        iv_01_age_type = findViewById(R.id.iv_01_age_type);
+        iv_01_jop = findViewById(R.id.iv_01_jop);
+        tv_01_get_check_doctor = findViewById(R.id.tv_01_get_check_doctor);
+        iv_01_i_tell_you = findViewById(R.id.iv_01_i_tell_you);
+        iv_01_bad_tell = findViewById(R.id.iv_01_bad_tell);
+
+
         /**
          *获取镜信息id
          */
@@ -1305,6 +1367,17 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         et_02_test = etlines_02_test.getContentEdit();
         et_02_pathology = etlines_02_pathology.getContentEdit();
         et_02_advice = etlines_02_advice.getContentEdit();
+
+
+        //获取点击图标弹出dialog
+        iv_02_mirror_see = findViewById(R.id.iv_02_mirror_see);
+        iv_02_mirror_result = findViewById(R.id.iv_02_mirror_result);
+        iv_02_live_check = findViewById(R.id.iv_02_live_check);
+        iv_02_cytology = findViewById(R.id.iv_02_cytology);
+        iv_02_test = findViewById(R.id.iv_02_test);
+        iv_02_pathology = findViewById(R.id.iv_02_pathology);
+        iv_02_advice = findViewById(R.id.iv_02_advice);
+        iv_02_check_doctor = findViewById(R.id.iv_02_check_doctor);
 
 
         /**
@@ -1339,12 +1412,45 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         //身份证
         et_03_my_id_num = findViewById(R.id.et_03_my_id_num);
         //病史
-        et_03_case_history = findViewById(R.id.et_03_case_history);
+        lines_03_case_history = findViewById(R.id.et_03_case_history);
         //家族病史
-        et_03_family_case_history = findViewById(R.id.et_03_family_case_history);
+        lines_03_family_case_history = findViewById(R.id.et_03_family_case_history);
+
+        edit_03_case_history = lines_03_case_history.getContentEdit();
+        edit_03_family_case_history = lines_03_family_case_history.getContentEdit();
+
+        //获取点击图标弹出dialog
+        iv_03_section = findViewById(R.id.iv_03_section);
+        iv_03_device = findViewById(R.id.iv_03_device);
+        iv_03_ming_zu = findViewById(R.id.iv_03_ming_zu);
+        iv_03_is_married = findViewById(R.id.iv_03_is_married);
+
 
         mEditList = new ArrayList<>();
-        mNotFocusableEditList = new ArrayList<>();   //不能获取焦点的edit
+        mLineEditList = new ArrayList<>();   //不能获取焦点的edit
+        mImageViewList = new ArrayList<>();         //点击弹出对话框的imageview
+        //存入01
+        mImageViewList.add(iv_01_sex_type);
+        mImageViewList.add(iv_01_age_type);
+        mImageViewList.add(iv_01_jop);
+        mImageViewList.add(tv_01_get_check_doctor);
+        mImageViewList.add(iv_01_i_tell_you);
+        mImageViewList.add(iv_01_bad_tell);
+        //存入02
+        mImageViewList.add(iv_02_mirror_see);
+        mImageViewList.add(iv_02_mirror_result);
+        mImageViewList.add(iv_02_live_check);
+        mImageViewList.add(iv_02_cytology);
+        mImageViewList.add(iv_02_test);
+        mImageViewList.add(iv_02_pathology);
+        mImageViewList.add(iv_02_advice);
+        mImageViewList.add(iv_02_check_doctor);
+        //存入03
+        mImageViewList.add(iv_03_section);
+        mImageViewList.add(iv_03_device);
+        mImageViewList.add(iv_03_ming_zu);
+        mImageViewList.add(iv_03_is_married);
+
 
         mEditList.add(et_01_sex_type);
         mEditList.add(et_01_age);//et_01_age
@@ -1352,8 +1458,8 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         mEditList.add(et_01_fee);
         mEditList.add(et_01_get_check_doctor);
 
-//        mEditList.add(et_01_i_tell_you);
-//        mEditList.add(et_01_bad_tell);
+        mEditList.add(edit_01_i_tell_you);
+        mEditList.add(edit_01_i_bad_tell);
         mEditList.add(et_02_mirror_see);
         mEditList.add(et_02_mirror_result);
         mEditList.add(et_02_live_check);
@@ -1361,11 +1467,12 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         mEditList.add(et_02_test);
         mEditList.add(et_02_pathology);
         mEditList.add(et_02_advice);
-
-
         mEditList.add(et_02_check_doctor);
         mEditList.add(et_03_door_num);
+
         mEditList.add(et_03_protection_num);
+        mEditList.add(edit_03_case_history);
+        mEditList.add(edit_03_family_case_history);
         mEditList.add(et_03_section);
         mEditList.add(et_03_device);
         mEditList.add(et_03_case_num);
@@ -1378,38 +1485,22 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         mEditList.add(et_03_tel);
         mEditList.add(et_03_address);
         mEditList.add(et_03_my_id_num);
-        mEditList.add(et_03_case_history);
-        mEditList.add(et_03_family_case_history);
         mEditList.add(et_01_check_num);
         mEditList.add(et_01_name);
 
-        mNotFocusableEditList.add(lines_edit_01_i_tell_you);
-        mNotFocusableEditList.add(lines_edit_01_i_bad_tell);
-        mNotFocusableEditList.add(et_01_sex_type);
-        mNotFocusableEditList.add(et_01_jop);
-        mNotFocusableEditList.add(et_01_get_check_doctor);
 
-        mNotFocusableEditList.add(et_02_mirror_see);
-        mNotFocusableEditList.add(et_02_mirror_result);
-        mNotFocusableEditList.add(et_02_live_check);
-        mNotFocusableEditList.add(et_02_cytology);
-        mNotFocusableEditList.add(et_02_pathology);
-        mNotFocusableEditList.add(et_02_test);
-        mNotFocusableEditList.add(et_02_advice);
-
-        mNotFocusableEditList.add(et_02_check_doctor);
-        mNotFocusableEditList.add(et_03_section);
-        mNotFocusableEditList.add(et_03_device);
-        mNotFocusableEditList.add(et_03_ming_zu);
-        mNotFocusableEditList.add(et_03_is_married);
-        mNotFocusableEditList.add(et_03_section);
-        mNotFocusableEditList.add(et_03_section);
-        mNotFocusableEditList.add(et_03_section);
-        mNotFocusableEditList.add(et_03_section);
-
-        linesEditViewList = new ArrayList<>();
-        linesEditViewList.add(et_01_i_tell_you);
-        linesEditViewList.add(et_01_bad_tell);
+        //需要先获取到lines然后再去获取edit
+        mLineEditList.add(lines_01_i_tell_you);
+        mLineEditList.add(lines_01_bad_tell);
+        mLineEditList.add(etlines_02_mirror_see);
+        mLineEditList.add(etlines_02_mirror_result);
+        mLineEditList.add(etlines_02_live_check);
+        mLineEditList.add(etlines_02_cytology);
+        mLineEditList.add(etlines_02_test);
+        mLineEditList.add(etlines_02_pathology);
+        mLineEditList.add(etlines_02_advice);
+        mLineEditList.add(lines_03_case_history);
+        mLineEditList.add(lines_03_family_case_history);
 
 
     }
@@ -1448,8 +1539,8 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         String Address = et_03_address.getText().toString().trim();       //住址
 //        String PatientNo = et_01_check_num.getText().toString().trim();       //病人编号---检查号???
         String CardID = et_03_my_id_num.getText().toString().trim();       //身份证号
-        String MedHistory = et_03_case_history.getText().toString().trim();       //医疗病史
-        String FamilyHistory = et_03_family_case_history.getText().toString().trim();       //家族病史
+        String MedHistory = lines_03_case_history.getContentText().toString().trim();       //医疗病史
+        String FamilyHistory = lines_03_family_case_history.getContentText().toString().trim();       //家族病史
         String Race = et_03_ming_zu.getText().toString().trim();       //民族种族
         if (!"民族".equals(Race)) {
             mParamsMap.put("Race", Race);
@@ -1482,7 +1573,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         }
         String Fee = et_01_fee.getText().toString().trim();       //收费
 //        String FeeType = et_03_tel.getText().toString().trim();       //收费类型         ???
-        String ChiefComplaint = et_01_i_tell_you.getContentText().toString().trim();       //主诉
+        String ChiefComplaint = lines_01_i_tell_you.getContentText().toString().trim();       //主诉
         String Test = etlines_02_test.getContentText().toString().trim();       //试验
         String Advice = etlines_02_advice.getContentText().toString().trim();       //建议
         String InpatientID = et_03_in_hospital_num.getText().toString().trim();       //住院号
@@ -1491,7 +1582,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         String Ctology = etlines_02_cytology.getContentText().toString().trim();       //细胞学
         String Pathology = etlines_02_pathology.getContentText().toString().trim();       //病理学
         String ExaminingPhysician = etlines_02_live_check.getContentText().toString().trim();       //检查医生
-        String ClinicalDiagnosis = et_01_bad_tell.getContentText().toString().trim();       //临床诊断
+        String ClinicalDiagnosis = lines_01_bad_tell.getContentText().toString().trim();       //临床诊断
         String CheckContent = etlines_02_mirror_see.getContentText().toString().trim();       //检查内容（镜检所见）
         String CheckDiagnosis = etlines_02_mirror_result.getContentText().toString().trim();       //镜检诊断
 

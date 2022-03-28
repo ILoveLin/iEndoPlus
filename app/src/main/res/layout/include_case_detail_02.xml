@@ -25,14 +25,35 @@
         android:background="@drawable/shape_bg_writh"
         android:orientation="vertical">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/dp_35"
-            android:gravity="center_vertical"
-            android:paddingLeft="@dimen/dp_10"
-            android:text="镜检所见"
-            android:textColor="@color/black"
-            android:textSize="@dimen/sp_14" />
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_35">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/dp_35"
+                android:gravity="center_vertical"
+                android:paddingLeft="@dimen/dp_10"
+                android:text="镜检所见"
+                android:textColor="@color/black"
+                android:textSize="@dimen/sp_14" />
+            
+            <Space
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"/>
+            <ImageView
+                android:id="@+id/iv_02_mirror_see"
+                android:layout_gravity="center"
+                android:layout_marginRight="@dimen/dp_10"
+
+                android:layout_width="wrap_content"
+                android:src="@drawable/selector_detail_dialog"
+                android:layout_height="wrap_content"/>
+            
+        </LinearLayout>
+      
 
         <View
             android:layout_width="match_parent"
@@ -60,15 +81,34 @@
         android:layout_marginBottom="@dimen/dp_10"
         android:background="@drawable/shape_bg_writh"
         android:orientation="vertical">
-
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="@dimen/dp_35"
-            android:gravity="center_vertical"
-            android:paddingLeft="@dimen/dp_10"
-            android:text="镜检诊断"
-            android:textColor="@color/black"
-            android:textSize="@dimen/sp_14" />
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/dp_35"
+                android:gravity="center_vertical"
+                android:paddingLeft="@dimen/dp_10"
+                android:text="镜检诊断"
+                android:textColor="@color/black"
+                android:textSize="@dimen/sp_14" />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <ImageView
+                android:id="@+id/iv_02_mirror_result"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginRight="@dimen/dp_10"
+                android:src="@drawable/selector_detail_dialog" />
+
+        </LinearLayout>
+
 
         <View
             android:layout_width="match_parent"
@@ -97,15 +137,35 @@
         android:layout_marginBottom="@dimen/dp_10"
         android:background="@drawable/shape_bg_writh"
         android:orientation="vertical">
-
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="@dimen/dp_35"
-            android:gravity="center_vertical"
-            android:paddingLeft="@dimen/dp_10"
-            android:text="活检"
-            android:textColor="@color/black"
-            android:textSize="@dimen/sp_14" />
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/dp_35"
+                android:gravity="center_vertical"
+                android:paddingLeft="@dimen/dp_10"
+                android:text="活检"
+                android:textColor="@color/black"
+                android:textSize="@dimen/sp_14" />
+
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <ImageView
+                android:id="@+id/iv_02_live_check"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginRight="@dimen/dp_10"
+                android:src="@drawable/selector_detail_dialog" />
+
+        </LinearLayout>
+
 
         <View
             android:layout_width="match_parent"
@@ -133,15 +193,34 @@
         android:layout_marginBottom="@dimen/dp_10"
         android:background="@drawable/shape_bg_writh"
         android:orientation="vertical">
-
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="@dimen/dp_35"
-            android:gravity="center_vertical"
-            android:paddingLeft="@dimen/dp_10"
-            android:text="细胞学"
-            android:textColor="@color/black"
-            android:textSize="@dimen/sp_14" />
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/dp_35"
+                android:gravity="center_vertical"
+                android:paddingLeft="@dimen/dp_10"
+                android:text="细胞学"
+                android:textColor="@color/black"
+                android:textSize="@dimen/sp_14" />
+
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <ImageView
+                android:id="@+id/iv_02_cytology"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginRight="@dimen/dp_10"
+                android:src="@drawable/selector_detail_dialog" />
+
+        </LinearLayout>
 
         <View
             android:layout_width="match_parent"
@@ -169,15 +248,34 @@
         android:layout_marginBottom="@dimen/dp_10"
         android:background="@drawable/shape_bg_writh"
         android:orientation="vertical">
-
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="@dimen/dp_35"
-            android:gravity="center_vertical"
-            android:paddingLeft="@dimen/dp_10"
-            android:text="试验"
-            android:textColor="@color/black"
-            android:textSize="@dimen/sp_14" />
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/dp_35"
+                android:gravity="center_vertical"
+                android:paddingLeft="@dimen/dp_10"
+                android:text="试验"
+                android:textColor="@color/black"
+                android:textSize="@dimen/sp_14" />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <ImageView
+                android:id="@+id/iv_02_test"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginRight="@dimen/dp_10"
+                android:src="@drawable/selector_detail_dialog" />
+
+        </LinearLayout>
+
 
         <View
             android:layout_width="match_parent"
@@ -205,15 +303,34 @@
         android:layout_marginBottom="@dimen/dp_10"
         android:background="@drawable/shape_bg_writh"
         android:orientation="vertical">
-
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="@dimen/dp_35"
-            android:gravity="center_vertical"
-            android:paddingLeft="@dimen/dp_10"
-            android:text="病理学"
-            android:textColor="@color/black"
-            android:textSize="@dimen/sp_14" />
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/dp_35"
+                android:gravity="center_vertical"
+                android:paddingLeft="@dimen/dp_10"
+                android:text="病理学"
+                android:textColor="@color/black"
+                android:textSize="@dimen/sp_14" />
+
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <ImageView
+                android:id="@+id/iv_02_pathology"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginRight="@dimen/dp_10"
+                android:src="@drawable/selector_detail_dialog" />
+
+        </LinearLayout>
 
         <View
             android:layout_width="match_parent"
@@ -241,15 +358,35 @@
         android:layout_marginBottom="@dimen/dp_10"
         android:background="@drawable/shape_bg_writh"
         android:orientation="vertical">
-
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="@dimen/dp_35"
-            android:gravity="center_vertical"
-            android:paddingLeft="@dimen/dp_10"
-            android:text="建议"
-            android:textColor="@color/black"
-            android:textSize="@dimen/sp_14" />
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/dp_35"
+                android:gravity="center_vertical"
+                android:paddingLeft="@dimen/dp_10"
+                android:text="建议"
+                android:textColor="@color/black"
+                android:textSize="@dimen/sp_14" />
+
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <ImageView
+                android:id="@+id/iv_02_advice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginRight="@dimen/dp_10"
+                android:src="@drawable/selector_detail_dialog" />
+
+        </LinearLayout>
+
 
         <View
             android:layout_width="match_parent"
@@ -277,34 +414,51 @@
         android:layout_marginRight="@dimen/dp_10"
         android:background="@drawable/shape_bg_writh"
         android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/dp_35"
-            android:gravity="center_vertical"
-            android:paddingLeft="@dimen/dp_10"
-            android:text="检查医生"
-            android:textColor="@color/black"
-            android:textSize="@dimen/sp_14" />
-
-
-        <com.hjq.widget.view.ClearEditText
-            android:id="@+id/et_02_check_doctor"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="@dimen/dp_35"
-            android:background="@null"
-            android:focusable="false"
-            android:gravity="right"
-            android:hint=""
-            android:lines="1"
-            android:paddingLeft="@dimen/dp_10"
-            android:paddingTop="@dimen/dp_10"
-            android:paddingRight="@dimen/dp_10"
-            android:singleLine="true"
-            android:text=""
-            android:textColor="@color/black80"
-            android:textColorHint="@color/black20"
-            android:textSize="@dimen/sp_14" />
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/dp_35"
+                android:gravity="center_vertical"
+                android:paddingLeft="@dimen/dp_10"
+                android:text="检查医生"
+                android:textColor="@color/black"
+                android:textSize="@dimen/sp_14" />
+
+            <com.hjq.widget.view.ClearEditText
+                android:id="@+id/et_02_check_doctor"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="@dimen/dp_35"
+                android:background="@null"
+                android:focusable="false"
+                android:gravity="right"
+                android:hint=""
+                android:lines="1"
+                android:paddingLeft="@dimen/dp_10"
+                android:paddingTop="@dimen/dp_10"
+                android:paddingRight="@dimen/dp_10"
+                android:singleLine="true"
+                android:text=""
+                android:textColor="@color/black80"
+                android:textColorHint="@color/black20"
+                android:textSize="@dimen/sp_14" />
+
+
+
+            <ImageView
+                android:id="@+id/iv_02_check_doctor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginRight="@dimen/dp_10"
+                android:src="@drawable/selector_detail_dialog" />
+
+        </LinearLayout>
+
+
 
     </LinearLayout>
 

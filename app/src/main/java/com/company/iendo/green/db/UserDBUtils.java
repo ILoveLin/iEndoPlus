@@ -85,6 +85,15 @@ public class UserDBUtils {
 
 
     }
+    public static List<UserDBBean> getQueryBeanByTowCodeUserID(Context context, String code, String UserID) {
+        UserDBBeanDao userDBBeanDao = DBManager.getDaoSession(context).getUserDBBeanDao();
+
+        List<UserDBBean> beanList = userDBBeanDao.queryBuilder().where(UserDBBeanDao.Properties.DeviceUserID.eq(code),UserDBBeanDao.Properties.DeviceUserID.eq(UserID)).list();
+
+        return beanList;
+
+
+    }
 
     /**
      * @param context

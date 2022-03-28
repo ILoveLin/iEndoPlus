@@ -1,12 +1,12 @@
 package com.company.iendo.mineui.activity.casemanage;
 
 import android.annotation.SuppressLint;
-import android.os.Handler;
-import android.os.Message;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.widget.NestedScrollView;
 
 import com.company.iendo.R;
 import com.company.iendo.action.StatusAction;
@@ -17,12 +17,11 @@ import com.company.iendo.bean.ListDialogDateBean;
 import com.company.iendo.bean.event.SocketRefreshEvent;
 import com.company.iendo.bean.socket.HandBean;
 import com.company.iendo.manager.ActivityManager;
-import com.company.iendo.mineui.activity.vlc.GetPictureActivity;
-import com.company.iendo.mineui.socket.SocketManage;
 import com.company.iendo.other.Constants;
 import com.company.iendo.other.HttpConstant;
 import com.company.iendo.ui.dialog.MenuDialog;
 import com.company.iendo.utils.CalculateUtils;
+import com.company.iendo.utils.CommonUtil;
 import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.SharePreferenceUtil;
 import com.company.iendo.utils.SocketUtils;
@@ -40,10 +39,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -62,17 +57,41 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
     private boolean mFragClickable = false;  //dialog数据请求错误,相对于dialog不允许弹窗,不然会闪退
     private HashMap mDialogItemMap;
     private TextView tv_01_age_type;
-    private LinesEditView et_01_i_tell_you, et_01_bad_tell;
-    private ClearEditText  et_01_name, et_01_sex_type, et_01_age, et_01_jop, et_01_fee, et_01_get_check_doctor;
+    private LinesEditView lines_01_i_tell_you, lines_01_bad_tell, lines_03_case_history, lines_03_family_case_history;
+    private ClearEditText et_01_name, et_01_sex_type, et_01_age, et_01_jop, et_01_fee, et_01_get_check_doctor, edit_01_i_tell_you, edit_01_i_bad_tell;
 
     private LinesEditView etlines_02_mirror_see, etlines_02_mirror_result, etlines_02_live_check, etlines_02_cytology,
             etlines_02_test, etlines_02_pathology, etlines_02_advice;
-    private ClearEditText et_02_mirror_see, et_02_mirror_result, et_02_live_check, et_02_cytology, et_02_test, et_02_pathology, et_02_advice, et_02_check_doctor;
-    private ClearEditText et_03_door_num, et_03_protection_num, et_03_section, et_03_device, et_03_case_num, et_03_in_hospital_num, et_03_case_area_num, et_03_case_bed_num, et_03_native_place, et_03_ming_zu, et_03_is_married, et_03_tel, et_03_address, et_03_my_id_num, et_03_case_history, et_03_family_case_history;
+    private ClearEditText et_02_mirror_see, et_02_mirror_result, et_02_live_check, et_02_cytology, et_02_test, et_02_pathology, et_02_advice,
+            et_02_check_doctor;
+    private ClearEditText et_03_door_num, et_03_protection_num, et_03_section, et_03_device, et_03_case_num, et_03_in_hospital_num, et_03_case_area_num, et_03_case_bed_num,
+            et_03_native_place, et_03_ming_zu, et_03_is_married, et_03_tel, et_03_address, et_03_my_id_num, edit_03_case_history, edit_03_family_case_history;
+
     private HashMap<String, String> mParamsMap;
     private ArrayList ageList;
+    private ImageView iv_01_age_type;
+    private ImageView iv_01_jop;
+    private ImageView tv_01_get_check_doctor;
+    private ImageView iv_01_i_tell_you;
+    private ImageView iv_01_bad_tell;
+    private ImageView iv_02_mirror_see;
+    private ImageView iv_02_mirror_result;
+    private ImageView iv_02_live_check;
+    private ImageView iv_02_cytology;
+    private ImageView iv_02_test;
+    private ImageView iv_02_pathology;
+    private ImageView iv_02_advice;
+    private ImageView iv_02_check_doctor;
+    private ImageView iv_03_section;
+    private ImageView iv_03_device;
+    private ImageView iv_03_ming_zu;
+    private ImageView iv_03_is_married;
+    private ArrayList<ImageView> mImageViewList;
+    private ImageView iv_01_sex_type;
     private static boolean UDP_HAND_TAG = false; //握手成功表示  true 成功
+    private NestedScrollView mScrollView;
 
+    private ArrayList<ClearEditText> mEditList =new ArrayList<>();
 
     @Override
     protected int getLayoutId() {
@@ -84,6 +103,7 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
         EventBus.getDefault().register(this);
         mStatusLayout = findViewById(R.id.status_hint);
         mTitleBar = findViewById(R.id.titlebar);
+        mScrollView = findViewById(R.id.add_nestedsv);
         initLayoutViewDate();
         responseListener();
 
@@ -92,73 +112,73 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
 
 
     private void responseListener() {
-        ClearEditText lines_edit_01_i_tell_you = et_01_i_tell_you.getContentEdit();
-        ClearEditText lines_edit_01_i_bad_tell = et_01_bad_tell.getContentEdit();
-        //年纪类别的List数据本地写:岁,月,天,  //R.id.et_01_i_tell_you, R.id.et_01_bad_tell,
-        setOnClickListener(R.id.et_01_sex_type, R.id.tv_01_age_type, R.id.et_01_jop, R.id.et_01_get_check_doctor,
-                R.id.et_02_mirror_see, R.id.et_02_mirror_result, R.id.et_02_live_check, R.id.et_02_cytology, R.id.et_02_test, R.id.et_02_pathology,
-                R.id.et_02_advice, R.id.et_02_check_doctor, R.id.et_03_section, R.id.et_03_device, R.id.et_03_ming_zu, R.id.et_03_is_married);
+
+
+        //年纪类别的List数据本地写:岁,月,天,
+        setOnClickListener(R.id.iv_01_sex_type, R.id.iv_01_age_type, R.id.iv_01_jop, R.id.tv_01_get_check_doctor,
+                R.id.iv_02_mirror_see, R.id.iv_02_mirror_result, R.id.iv_02_live_check, R.id.iv_02_cytology, R.id.iv_02_test, R.id.iv_02_pathology,
+                R.id.iv_02_advice, R.id.iv_02_check_doctor, R.id.iv_03_section, R.id.iv_03_device, R.id.iv_03_ming_zu, R.id.iv_03_is_married);
 
         //01--layout
-        lines_edit_01_i_tell_you.setOnClickListener(new View.OnClickListener() {
+        iv_01_i_tell_you.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showITellyouMenuDialog(et_01_i_tell_you, "11");
+                showITellyouMenuDialog(lines_01_i_tell_you, "11");
 
             }
         });
-        lines_edit_01_i_bad_tell.setOnClickListener(new View.OnClickListener() {
+        iv_01_bad_tell.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showITellyouMenuDialog(et_01_bad_tell, "12");
+                showITellyouMenuDialog(lines_01_bad_tell, "12");
 
             }
         });
         //02-layout
 
-        et_02_mirror_see.setOnClickListener(new View.OnClickListener() {
+        iv_02_mirror_see.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showITellyouMenuDialog(etlines_02_mirror_see, "13");
 
             }
         });
-        et_02_mirror_result.setOnClickListener(new View.OnClickListener() {
+        iv_02_mirror_result.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showITellyouMenuDialog(etlines_02_mirror_result, "14");
 
             }
         });
-        et_02_live_check.setOnClickListener(new View.OnClickListener() {
+        iv_02_live_check.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showITellyouMenuDialog(etlines_02_live_check, "15");
 
             }
         });
-        et_02_cytology.setOnClickListener(new View.OnClickListener() {
+        iv_02_cytology.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showITellyouMenuDialog(etlines_02_cytology, "16");
 
             }
         });
-        et_02_test.setOnClickListener(new View.OnClickListener() {
+        iv_02_test.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showITellyouMenuDialog(etlines_02_test, "17");
 
             }
         });
-        et_02_pathology.setOnClickListener(new View.OnClickListener() {
+        iv_02_pathology.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showITellyouMenuDialog(etlines_02_pathology, "18");
 
             }
         });
-        et_02_advice.setOnClickListener(new View.OnClickListener() {
+        iv_02_advice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showITellyouMenuDialog(etlines_02_advice, "19");
@@ -219,8 +239,8 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
         String Tel = et_03_tel.getText().toString().trim();       //电话
         String Address = et_03_address.getText().toString().trim();       //住址
         String CardID = et_03_my_id_num.getText().toString().trim();       //身份证号
-        String MedHistory = et_03_case_history.getText().toString().trim();       //医疗病史
-        String FamilyHistory = et_03_family_case_history.getText().toString().trim();       //家族病史
+        String MedHistory = lines_03_case_history.getContentText().toString().trim();       //医疗病史
+        String FamilyHistory = lines_03_family_case_history.getContentText().toString().trim();       //家族病史
         String Race = et_03_ming_zu.getText().toString().trim();       //民族种族
         if (!"民族".equals(Race)) {
             mParamsMap.put("Race", Race);
@@ -253,7 +273,7 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
         }
         String Fee = et_01_fee.getText().toString().trim();       //收费
 //        String FeeType = et_03_tel.getText().toString().trim();       //收费类型         ???
-        String ChiefComplaint = et_01_i_tell_you.getContentText().trim();       //主诉
+        String ChiefComplaint = lines_01_i_tell_you.getContentText().trim();       //主诉
 //        String ChiefComplaint = et_01_i_tell_you.getText().toString().trim();       //主诉
         String Test = etlines_02_test.getContentText().toString().trim();       //试验
         String Advice = etlines_02_advice.getContentText().toString().trim();       //建议
@@ -263,7 +283,7 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
         String Ctology = etlines_02_cytology.getContentText().toString().trim();       //细胞学
         String Pathology = etlines_02_pathology.getContentText().toString().trim();       //病理学
         String ExaminingPhysician = etlines_02_live_check.getContentText().toString().trim();       //检查医生
-        String ClinicalDiagnosis = et_01_bad_tell.getContentText().trim();       //临床诊断
+        String ClinicalDiagnosis = lines_01_bad_tell.getContentText().trim();       //临床诊断
 //        String ClinicalDiagnosis = et_01_bad_tell.getText().toString().trim();       //临床诊断
         String CheckContent = etlines_02_mirror_see.getContentText().toString().trim();       //检查内容（镜检所见）
         String CheckDiagnosis = etlines_02_mirror_result.getContentText().toString().trim();       //镜检诊断
@@ -368,7 +388,7 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
         handBean.setComeFrom("Android");
         byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(handBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
                 Constants.UDP_HAND);
-        if (("".equals(mSocketPort))){
+        if (("".equals(mSocketPort))) {
             toast("通讯端口不能为空!");
             return;
         }
@@ -388,11 +408,11 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
             handBean.setComeFrom("Android");
             byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(handBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
                     CMDCode);
-            if (("".equals(mSocketPort))){
+            if (("".equals(mSocketPort))) {
                 toast("通讯端口不能为空!");
                 return;
             }
-            SocketUtils.startSendPointMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort),AddCaseActivity.this);
+            SocketUtils.startSendPointMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), AddCaseActivity.this);
 
         } else {
             sendHandLinkMessage();
@@ -400,6 +420,7 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
         }
 
     }
+
     /**
      * eventbus 刷新socket数据
      */
@@ -424,6 +445,7 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
         }
 
     }
+
     /**
      * ***************************************************************************通讯模块**************************************************************************
      */
@@ -432,7 +454,6 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
 
 
     }
-
 
 
     /**
@@ -506,27 +527,28 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
 
     }
 
+
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.et_01_sex_type:  //性别
+            case R.id.iv_01_sex_type:  //性别
                 showMenuDialog(et_01_sex_type, "100");
                 break;
-            case R.id.tv_01_age_type:  //年龄类别  --本地写数据List
+            case R.id.iv_01_age_type:  //年龄类别  --本地写数据List
                 showMenuElseDialog();
                 break;
-            case R.id.et_01_jop:        //职业
+            case R.id.iv_01_jop:        //职业
                 showMenuDialog(et_01_jop, "5");
                 break;
-            case R.id.et_01_get_check_doctor://送检医生
+            case R.id.tv_01_get_check_doctor://送检医生
                 showMenuDialog(et_01_get_check_doctor, "8");
                 break;
-//            case R.id.et_01_i_tell_you:    //主诉---带字数限制edit
+            case R.id.et_01_i_tell_you:    //主诉--带字数限制的
 //                showITellyouMenuDialog(et_01_i_tell_you, "11");
-//                break;
-//            case R.id.et_01_bad_tell:     //临床诊断---带字数限制edit
+                break;
+            case R.id.et_01_bad_tell:     //临床诊断--带字数限制的
 //                showITellyouMenuDialog(et_01_bad_tell, "12");
-//                break;
+                break;
 //            case R.id.et_02_mirror_see:   //镜检所见
 //                showMenuDialog(etlines_02_mirror_see, "13");
 //                break;
@@ -548,19 +570,19 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
 //            case R.id.et_02_advice://建议
 //                showMenuDialog(etlines_02_advice, "19");
 //                break;
-            case R.id.et_02_check_doctor://检查医生
+            case R.id.iv_02_check_doctor://检查医生
                 showMenuDialog(et_02_check_doctor, "20");
                 break;
-            case R.id.et_03_section: //科室
+            case R.id.iv_03_section: //科室
                 showMenuDialog(et_03_section, "9");
                 break;
-            case R.id.et_03_device://设备
+            case R.id.iv_03_device://设备
                 showMenuDialog(et_03_device, "10");
                 break;
-            case R.id.et_03_ming_zu://民族
+            case R.id.iv_03_ming_zu://民族
                 showMenuDialog(et_03_ming_zu, "23");
                 break;
-            case R.id.et_03_is_married://婚否
+            case R.id.iv_03_is_married://婚否
                 showMenuDialog(et_03_is_married, "101");
                 break;
 
@@ -587,9 +609,13 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
                         @Override
                         public void onSelected(BaseDialog dialog, int position, String data) {
                             String s = stringList.get(position);
-                            LogUtils.e("MenuDialog====位置：" + position + "，文本：" + data);
-                            LogUtils.e("MenuDialog===s==" + s); //{0=HD3}
-                            mEdit.setContentText(mEdit.getContentText() + "" + s);
+                            String s1 = mEdit.getContentText() + "" + s;
+                            if (s1.length() >= 100) {
+                                toast("字数不能超过100!");
+                            } else {
+                                mEdit.setContentText(mEdit.getContentText() + "" + s);
+
+                            }
 
                         }
 
@@ -693,9 +719,16 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
         //送检医生
         et_01_get_check_doctor = findViewById(R.id.et_01_get_check_doctor);
         //主诉
-        et_01_i_tell_you = findViewById(R.id.et_01_i_tell_you);
+        lines_01_i_tell_you = findViewById(R.id.et_01_i_tell_you);
         //临床诊断
-        et_01_bad_tell = findViewById(R.id.et_01_bad_tell);
+        lines_01_bad_tell = findViewById(R.id.et_01_bad_tell);
+
+        //主诉---多行显示的edit
+        edit_01_i_tell_you = lines_01_i_tell_you.getContentEdit();
+        //临床诊断---多行显示的edit
+        edit_01_i_bad_tell = lines_01_bad_tell.getContentEdit();
+
+
         /**
          *获取镜信息id
          */
@@ -756,9 +789,69 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
         //身份证
         et_03_my_id_num = findViewById(R.id.et_03_my_id_num);
         //病史
-        et_03_case_history = findViewById(R.id.et_03_case_history);
+        lines_03_case_history = findViewById(R.id.et_03_case_history);
         //家族病史
-        et_03_family_case_history = findViewById(R.id.et_03_family_case_history);
+        lines_03_family_case_history = findViewById(R.id.et_03_family_case_history);
+
+
+        edit_03_case_history = lines_03_case_history.getContentEdit();
+        edit_03_family_case_history = lines_03_family_case_history.getContentEdit();
+
+        //获取点击图标弹出dialog
+        iv_01_sex_type = findViewById(R.id.iv_01_sex_type);
+        iv_01_age_type = findViewById(R.id.iv_01_age_type);
+        iv_01_jop = findViewById(R.id.iv_01_jop);
+        tv_01_get_check_doctor = findViewById(R.id.tv_01_get_check_doctor);
+        iv_01_i_tell_you = findViewById(R.id.iv_01_i_tell_you);
+        iv_01_bad_tell = findViewById(R.id.iv_01_bad_tell);
+
+
+        //获取点击图标弹出dialog
+        iv_02_mirror_see = findViewById(R.id.iv_02_mirror_see);
+        iv_02_mirror_result = findViewById(R.id.iv_02_mirror_result);
+        iv_02_live_check = findViewById(R.id.iv_02_live_check);
+        iv_02_cytology = findViewById(R.id.iv_02_cytology);
+        iv_02_test = findViewById(R.id.iv_02_test);
+        iv_02_pathology = findViewById(R.id.iv_02_pathology);
+        iv_02_advice = findViewById(R.id.iv_02_advice);
+        iv_02_check_doctor = findViewById(R.id.iv_02_check_doctor);
+
+
+        //获取点击图标弹出dialog
+        iv_03_section = findViewById(R.id.iv_03_section);
+        iv_03_device = findViewById(R.id.iv_03_device);
+        iv_03_ming_zu = findViewById(R.id.iv_03_ming_zu);
+        iv_03_is_married = findViewById(R.id.iv_03_is_married);
+
+
+
+        mEditList.add(edit_01_i_tell_you);
+        mEditList.add(edit_01_i_bad_tell);
+        mEditList.add(et_02_mirror_see);
+        mEditList.add(et_02_mirror_result);
+        mEditList.add(et_02_live_check);
+        mEditList.add(et_02_cytology);
+        mEditList.add(et_02_test);
+        mEditList.add(et_02_pathology);
+        mEditList.add(et_02_advice);
+        mEditList.add(et_02_check_doctor);
+        mEditList.add(et_03_section);
+        mEditList.add(et_03_device);
+        mEditList.add(et_03_ming_zu);
+        mEditList.add(et_03_is_married);
+        mEditList.add(edit_03_case_history);
+        mEditList.add(edit_03_family_case_history);
+
+
+        for (int i = 0; i < mEditList.size(); i++) {
+            mEditList.get(i).setFocusableInTouchMode(true);
+            mEditList.get(i).setFocusable(true);
+            mEditList.get(i).requestFocus();
+
+        }
+
+
+
 
 
     }

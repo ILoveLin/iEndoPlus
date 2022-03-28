@@ -23,6 +23,8 @@
         android:layout_marginBottom="@dimen/dp_10"
         android:background="@drawable/shape_bg_writh"
         android:orientation="vertical">
+
+
         <!--02=姓名-->
         <LinearLayout
             android:layout_width="match_parent"
@@ -67,26 +69,47 @@
             android:orientation="horizontal"
             android:paddingLeft="@dimen/dp_10">
 
-            <TextView
-                style="@style/CaseTextViewStyle"
-                android:text="性别" />
 
-            <com.hjq.widget.view.ClearEditText
-                android:id="@+id/et_01_sex_type"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dp_35"
-                android:background="@null"
-                android:focusable="false"
-                android:gravity="right|center_vertical"
-                android:hint=""
-                android:lines="1"
-                android:paddingLeft="@dimen/dp_10"
-                android:paddingRight="@dimen/dp_10"
-                android:singleLine="true"
-                android:text=""
-                android:textColor="@color/black80"
-                android:textColorHint="@color/black20"
-                android:textSize="@dimen/sp_14" />
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/CaseTextViewStyle"
+                    android:layout_gravity="center"
+                    android:text="性别" />
+                <com.hjq.widget.view.ClearEditText
+                    android:id="@+id/et_01_sex_type"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="@dimen/dp_35"
+                    android:background="@null"
+                    android:focusable="false"
+                    android:gravity="right|center_vertical"
+                    android:hint=""
+                    android:lines="1"
+                    android:paddingLeft="@dimen/dp_10"
+                    android:paddingRight="@dimen/dp_10"
+                    android:singleLine="true"
+                    android:text=""
+                    android:textColor="@color/black80"
+                    android:textColorHint="@color/black20"
+                    android:textSize="@dimen/sp_14" />
+
+                <ImageView
+
+                    android:id="@+id/iv_01_sex_type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginRight="@dimen/dp_10"
+                    android:src="@drawable/selector_detail_dialog"
+                    />
+
+            </LinearLayout>
+
+
 
 
         </LinearLayout>
@@ -147,6 +170,15 @@
                     android:textColor="@color/black"
                     android:textSize="@dimen/sp_14" />
 
+                <ImageView
+                    android:id="@+id/iv_01_age_type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="@dimen/dp_10"
+                    android:layout_marginRight="@dimen/dp_10"
+                    android:src="@drawable/selector_detail_dialog" />
+
             </LinearLayout>
 
 
@@ -173,8 +205,9 @@
 
             <com.hjq.widget.view.ClearEditText
                 android:id="@+id/et_01_jop"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="@dimen/dp_35"
+                android:layout_weight="1"
                 android:background="@null"
                 android:focusable="false"
                 android:gravity="right|center_vertical"
@@ -187,6 +220,15 @@
                 android:textColor="@color/black80"
                 android:textColorHint="@color/black20"
                 android:textSize="@dimen/sp_14" />
+
+            <ImageView
+                android:id="@+id/iv_01_jop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="@dimen/dp_10"
+                android:layout_marginRight="@dimen/dp_10"
+                android:src="@drawable/selector_detail_dialog" />
 
 
         </LinearLayout>
@@ -250,8 +292,9 @@
 
             <com.hjq.widget.view.ClearEditText
                 android:id="@+id/et_01_get_check_doctor"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="@dimen/dp_35"
+                android:layout_weight="1"
                 android:background="@null"
                 android:focusable="false"
                 android:gravity="right|center_vertical"
@@ -264,6 +307,16 @@
                 android:textColor="@color/black80"
                 android:textColorHint="@color/black20"
                 android:textSize="@dimen/sp_14" />
+
+            <ImageView
+                android:id="@+id/tv_01_get_check_doctor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="@dimen/dp_10"
+                android:layout_marginRight="@dimen/dp_10"
+                android:src="@drawable/selector_detail_dialog" />
+
 
         </LinearLayout>
     </LinearLayout>
@@ -280,14 +333,35 @@
         android:background="@drawable/shape_bg_writh"
         android:orientation="vertical">
 
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="@dimen/dp_35"
-            android:gravity="center_vertical"
-            android:paddingLeft="@dimen/dp_10"
-            android:text="主诉"
-            android:textColor="@color/black"
-            android:textSize="@dimen/sp_14" />
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/dp_35"
+                android:gravity="center_vertical"
+                android:paddingLeft="@dimen/dp_10"
+                android:text="主诉"
+                android:textColor="@color/black"
+                android:textSize="@dimen/sp_14" />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <ImageView
+                android:id="@+id/iv_01_i_tell_you"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginRight="@dimen/dp_10"
+                android:src="@drawable/selector_detail_dialog" />
+
+        </LinearLayout>
+
 
         <View
             android:layout_width="match_parent"
@@ -333,15 +407,33 @@
         android:layout_marginBottom="@dimen/dp_10"
         android:background="@drawable/shape_bg_writh"
         android:orientation="vertical">
-
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="@dimen/dp_35"
-            android:gravity="center_vertical"
-            android:paddingLeft="@dimen/dp_10"
-            android:text="临床诊断"
-            android:textColor="@color/black"
-            android:textSize="@dimen/sp_14" />
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/dp_35"
+                android:gravity="center_vertical"
+                android:paddingLeft="@dimen/dp_10"
+                android:text="临床诊断"
+                android:textColor="@color/black"
+                android:textSize="@dimen/sp_14" />
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <ImageView
+                android:id="@+id/iv_01_bad_tell"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginRight="@dimen/dp_10"
+                android:src="@drawable/selector_detail_dialog" />
+
+        </LinearLayout>
+
 
         <View
             android:layout_width="match_parent"

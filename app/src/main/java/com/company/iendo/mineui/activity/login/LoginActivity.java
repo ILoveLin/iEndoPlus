@@ -36,10 +36,8 @@ import com.company.iendo.app.ReceiveSocketService;
 import com.company.iendo.bean.LoginBean;
 import com.company.iendo.bean.RefreshEvent;
 import com.company.iendo.bean.UserListBean;
-import com.company.iendo.green.db.CaseDBUtils;
 import com.company.iendo.green.db.UserDBBean;
 import com.company.iendo.green.db.UserDBUtils;
-import com.company.iendo.green.db.downcase.CaseDBBean;
 import com.company.iendo.manager.InputTextManager;
 import com.company.iendo.mineui.activity.MainActivity;
 import com.company.iendo.mineui.activity.login.device.DeviceActivity;
@@ -65,7 +63,6 @@ import com.hjq.base.action.AnimAction;
 import com.hjq.umeng.Platform;
 import com.hjq.umeng.UmengLogin;
 import com.hjq.widget.view.PasswordEditText;
-import com.tencent.bugly.proguard.B;
 import com.tencent.mmkv.MMKV;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
@@ -162,15 +159,15 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                 mCheckbox.setChecked(false);
             }
         } else {//离线登录
-            List<UserDBBean> userList = UserDBUtils.getQueryBeanByTow(getActivity(), mCurrentReceiveDeviceCode,userName);
+            List<UserDBBean> userList = UserDBUtils.getQueryBeanByTow(getActivity(), mCurrentReceiveDeviceCode, userName);
             if (null != userList && userList.size() > 0) {
-                    UserDBBean bean = userList.get(0);
+                UserDBBean bean = userList.get(0);
                 mPhoneView.setText(userName);
                 //记住密码
-                if (bean.getIsRememberPassword()){
+                if (bean.getIsRememberPassword()) {
                     mPasswordView.setText(bean.getPassword());
                     mCheckbox.setChecked(true);
-                }else {
+                } else {
                     mPasswordView.setText("");
                     mCheckbox.setChecked(false);
                 }
@@ -190,30 +187,56 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
      * @param mBean
      */
     private void saveRememberPassword(LoginBean mBean) {
-        if (mCheckbox.isChecked()) { //记住密码状态下存入数据库
-            LoginBean.DataDTO bean = mBean.getData();
-            UserDBBean userDBBean = new UserDBBean();
-            userDBBean.setUserName(mPhoneView.getText().toString().trim());
-            userDBBean.setPassword(mPasswordView.getText().toString().trim());
-            userDBBean.setDeviceUserID(bean.getUserID());
-            userDBBean.setRelo(bean.getRole() + "");
-            userDBBean.setIsRememberPassword(true);
-            //记住密码
-            SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Current_Login_Remember_Password, true);
+        //获取当前设备码
 
+        if (mCheckbox.isChecked()) { //记住密码状态下存入数据库
             /**
              * 设备ID
              * 这个用户是在哪个设备上的     用户和病例都是和设备绑定的     :用户表设置的是这个字段 deviceID ==  deviceUserID  病历表设置的是这个字段deviceCaseID
              * 当前选中设备的主键id,因为离线模式下就能通过这个主键id查找这个设备下的所有用户
              */
             String deviceID = (String) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Current_DeviceID, "1");
+            LoginBean.DataDTO bean = mBean.getData();
 
-            LogUtils.e("initRememberPassword==存入的==deviceID:" + deviceID);
-            userDBBean.setDeviceID(deviceID + "");
-            UserDBUtils.insertOrReplaceInTx(LoginActivity.this, userDBBean);
-            SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Flag_UserDBSave, true);
+            //查询当前设备,当前用户ID下的登入账户
+            List<UserDBBean> beanList = UserDBUtils.getQueryBeanByTowCodeUserID(LoginActivity.this, deviceID, bean.getUserID());
+            if (beanList.size() > 0) {//当前用户存过密码
+                for (int i = 0; i < beanList.size(); i++) {
+                    UserDBBean dbBean = beanList.get(i);
+                    //是当前用户ID
+                    if ((bean.getUserID()).equals(dbBean.getDeviceUserID())) {
+                        UserDBBean newBean = new UserDBBean();
+                        newBean.setId(dbBean.getId());
+                        newBean.setUserName(mPhoneView.getText().toString().trim());
+                        newBean.setPassword(mPasswordView.getText().toString().trim());
+                        newBean.setDeviceUserID(bean.getUserID());
+                        newBean.setRelo(bean.getRole() + "");
+                        newBean.setDeviceID(deviceID + "");
+                        newBean.setIsRememberPassword(true);
+                        UserDBUtils.insertOrReplaceInTx(LoginActivity.this, newBean);
+                        SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Current_Login_Remember_Password, true);
+                        SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Flag_UserDBSave, true);
+                    }
+                }
 
-        }else {
+            } else {
+                UserDBBean newBean = new UserDBBean();
+                newBean.setUserName(mPhoneView.getText().toString().trim());
+                newBean.setPassword(mPasswordView.getText().toString().trim());
+                newBean.setDeviceUserID(bean.getUserID());
+                newBean.setDeviceID(deviceID + "");
+                newBean.setRelo(bean.getRole() + "");
+                newBean.setIsRememberPassword(true);
+                //记住密码
+                SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Current_Login_Remember_Password, true);
+                SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Flag_UserDBSave, true);
+
+                LogUtils.e("initRememberPassword==存入的==deviceID:" + deviceID);
+                UserDBUtils.insertOrReplaceInTx(LoginActivity.this, newBean);
+            }
+
+
+        } else {
             //没有记住密码
             SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Current_Login_Remember_Password, false);
         }
@@ -222,7 +245,6 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
 
     private void initRememberPassword() {
 
-        Boolean isSave = (Boolean) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Flag_UserDBSave, false);
         String deviceid = (String) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Current_DeviceID, "1");
 //        LogUtils.e("initRememberPassword====isSave:" + isSave);
         String userName = mPhoneView.getText().toString().trim();
@@ -356,6 +378,7 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                             if (0 == mBean.getCode()) {  //成功
                                 showComplete();
                                 mUserListData = mBean.getData();
+                                setOnLineFirstName(mUserListData);
                                 LogUtils.e("用户列表===" + response);
 
                             } else {
@@ -365,10 +388,45 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                             showError();
                         }
                     }
+
+
                 });
 
     }
 
+    /**
+     * 请求成功如果用户列表有用户就写入界面
+     *
+     * @param mUserListData 网络请求过来的用户列表
+     */
+    private void setOnLineFirstName(List<UserListBean.DataDTO> mUserListData) {
+        if (mUserListData.size() > 0) {
+            UserListBean.DataDTO bean = mUserListData.get(0);
+            //查询数据库是否有存入过该用户
+            List<UserDBBean> dbList = UserDBUtils.getQueryBeanByTowCodeUserID(LoginActivity.this, deviceID, bean.getUserID());
+            //存入过
+            if (dbList.size() > 0) {
+                UserDBBean userDBBean = dbList.get(0);
+                //再次校验一下用户名是否相等
+                if (userDBBean.getUserName().equals(bean.getUserName())) {
+                    mPhoneView.setText(bean.getUserName());
+                    mPasswordView.setText(userDBBean.getPassword());
+                    if (userDBBean.getIsRememberPassword()) {
+                        mCheckbox.setChecked(true);
+                    } else {
+                        mCheckbox.setChecked(false);
+                    }
+                }
+            } else {
+                //未存入过
+                mPhoneView.setText(bean.getUserName());
+                mPasswordView.setText("");
+            }
+
+
+        }
+
+    }
 
     @Override
     protected void initData() {
@@ -517,6 +575,7 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                     LoginByOnline();
                 } else if (text.equals("离线登录")) {//离线登录
                     SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.OnLine_Flag, false);
+                    setOfflineFirstName();
                     LoginByOffline();
                 }
 
@@ -540,6 +599,7 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
 
     }
 
+
     /**
      * 在线登录
      */
@@ -556,6 +616,8 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
         LogUtils.e("登录==url==02=" + mBaseUrl + HttpConstant.UserManager_Login);
 //                登录按钮动画
         showLoading();
+        //请求列表,设置默认第一个用户
+        sendRequest(mBaseUrl);
         OkHttpUtils.post()
                 .url(mUrl + HttpConstant.UserManager_Login)
                 .addParams("UserName", mPhoneView.getText().toString())
@@ -588,6 +650,7 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                                 SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Current_Login_Password, mPasswordView.getText().toString());
                                 SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Flag_UserDBSave, true);
                                 SharePreferenceUtil.put(LoginActivity.this, Constants.Is_Logined, true);
+                                //存入用户表
                                 saveRememberPassword(mBean);
 
                                 /**
@@ -612,18 +675,8 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                                 }
                                 MainActivity.start(getContext(), CaseManageFragment.class);
                                 finish();
-
-//                                        postDelayed(() -> {
-////                                            mCommitView.showSucceed();
-//                                            postDelayed(() -> {
-//                                                MainActivity.start(getContext(), AFragment.class);
-//                                                finish();
-//                                            }, 1000);
-//                                        }, 2000);
                             } else {
-//                                        postDelayed(() -> {
-//                                            mCommitView.showError(1500);
-//                                        }, 1000);
+//
                                 toast("密码错误!!");
                             }
 
@@ -636,6 +689,30 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                 });
     }
 
+
+
+
+    //初始化设置离线模式第一个用户UI显示
+    private void setOfflineFirstName() {
+
+        List<UserDBBean> userList = UserDBUtils.getQueryBeanByCode(getActivity(), deviceID);
+        //有数据
+        if (userList.size()>0){
+            UserDBBean userDBBean = userList.get(0);
+            //第一条数据记住了密码
+            if (userDBBean.getIsRememberPassword()) {
+                mPhoneView.setText(userDBBean.getUserName()+"");
+                mPasswordView.setText(userDBBean.getPassword()+"");
+                mCheckbox.setChecked(true);
+            }else {
+                mPhoneView.setText(userDBBean.getUserName()+"");
+            }
+        }else {
+            mPhoneView.setText("");
+            mPasswordView.setText("");
+        }
+
+    }
     /**
      * 离线登录
      */
@@ -663,11 +740,10 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                 if (mCheckbox.isChecked()) {
                     //记住密码
                     SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Current_Login_Remember_Password, true);
-                }else {
+                } else {
                     //没有记住密码
                     SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Current_Login_Remember_Password, false);
                 }
-                Boolean isSave = (Boolean) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Flag_UserDBSave, false);
 
                 /**
                  * 登入成功的时候切换成监听 当前设备授权登入的socket端口--->Constants.KEY_RECEIVE_PORT

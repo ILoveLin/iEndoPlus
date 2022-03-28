@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="@dimen/dp_10"
@@ -110,27 +111,43 @@
             android:orientation="horizontal"
             android:paddingLeft="@dimen/dp_10">
 
-
-            <TextView
-                style="@style/CaseTextViewStyle"
-                android:text="科室" />
-
-            <com.hjq.widget.view.ClearEditText
-                android:id="@+id/et_03_section"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dp_35"
-                android:background="@null"
-                android:focusable="false"
-                android:gravity="right|center_vertical"
-                android:hint=""
-                android:lines="1"
-                android:paddingLeft="@dimen/dp_10"
-                android:paddingRight="@dimen/dp_10"
-                android:singleLine="true"
-                android:text=""
-                android:textColor="@color/black80"
-                android:textColorHint="@color/black20"
-                android:textSize="@dimen/sp_14" />
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/CaseTextViewStyle"
+                    android:layout_gravity="center"
+                    android:text="科室" />
+
+                <com.hjq.widget.view.ClearEditText
+                    android:id="@+id/et_03_section"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="@dimen/dp_35"
+                    android:background="@null"
+                    android:focusable="false"
+                    android:gravity="right|center_vertical"
+                    android:hint=""
+                    android:lines="1"
+                    android:paddingLeft="@dimen/dp_10"
+                    android:paddingRight="@dimen/dp_10"
+                    android:singleLine="true"
+                    android:textColor="@color/black80"
+                    android:textColorHint="@color/black20"
+                    android:textSize="@dimen/sp_14" />
+
+                <ImageView
+                    android:id="@+id/iv_03_section"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginRight="@dimen/dp_10"
+                    android:src="@drawable/selector_detail_dialog" />
+
+            </LinearLayout>
+
 
         </LinearLayout>
 
@@ -149,27 +166,46 @@
             android:orientation="horizontal"
             android:paddingLeft="@dimen/dp_10">
 
-
-            <TextView
-                style="@style/CaseTextViewStyle"
-                android:text="设备" />
-
-            <com.hjq.widget.view.ClearEditText
-                android:id="@+id/et_03_device"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dp_35"
-                android:background="@null"
-                android:focusable="false"
-                android:gravity="right|center_vertical"
-                android:hint=""
-                android:lines="1"
-                android:paddingLeft="@dimen/dp_10"
-                android:paddingRight="@dimen/dp_10"
-                android:singleLine="true"
-                android:text=""
-                android:textColor="@color/black80"
-                android:textColorHint="@color/black20"
-                android:textSize="@dimen/sp_14" />
+                android:orientation="horizontal">
+
+
+                <TextView
+                    style="@style/CaseTextViewStyle"
+                    android:layout_gravity="center"
+                    android:text="设备" />
+
+                <com.hjq.widget.view.ClearEditText
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:id="@+id/et_03_device"
+                    android:layout_height="@dimen/dp_35"
+                    android:background="@null"
+                    android:focusable="false"
+                    android:gravity="right|center_vertical"
+                    android:hint=""
+                    android:lines="1"
+                    android:paddingLeft="@dimen/dp_10"
+                    android:paddingRight="@dimen/dp_10"
+                    android:singleLine="true"
+                    android:text=""
+                    android:textColor="@color/black80"
+                    android:textColorHint="@color/black20"
+                    android:textSize="@dimen/sp_14" />
+                <ImageView
+                    android:id="@+id/iv_03_device"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginRight="@dimen/dp_10"
+                    android:src="@drawable/selector_detail_dialog" />
+
+            </LinearLayout>
+
+
+
 
         </LinearLayout>
 
@@ -372,27 +408,46 @@
             android:orientation="horizontal"
             android:paddingLeft="@dimen/dp_10">
 
-
-            <TextView
-                style="@style/CaseTextViewStyle"
-                android:text="民族" />
-
-            <com.hjq.widget.view.ClearEditText
-                android:id="@+id/et_03_ming_zu"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dp_35"
-                android:background="@null"
-                android:focusable="false"
-                android:gravity="right|center_vertical"
-                android:hint=""
-                android:lines="1"
-                android:paddingLeft="@dimen/dp_10"
-                android:paddingRight="@dimen/dp_10"
-                android:singleLine="true"
-                android:text=""
-                android:textColor="@color/black80"
-                android:textColorHint="@color/black20"
-                android:textSize="@dimen/sp_14" />
+                android:orientation="horizontal">
+
+
+                <TextView
+                    style="@style/CaseTextViewStyle"
+                    android:layout_gravity="center"
+                    android:text="民族" />
+
+
+                <com.hjq.widget.view.ClearEditText
+                    android:id="@+id/et_03_ming_zu"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="@dimen/dp_35"
+                    android:background="@null"
+                    android:focusable="false"
+                    android:gravity="right|center_vertical"
+                    android:hint=""
+                    android:lines="1"
+                    android:paddingLeft="@dimen/dp_10"
+                    android:paddingRight="@dimen/dp_10"
+                    android:singleLine="true"
+                    android:text=""
+                    android:textColor="@color/black80"
+                    android:textColorHint="@color/black20"
+                    android:textSize="@dimen/sp_14" />
+                <ImageView
+                    android:id="@+id/iv_03_ming_zu"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginRight="@dimen/dp_10"
+                    android:src="@drawable/selector_detail_dialog" />
+
+            </LinearLayout>
+
+
 
         </LinearLayout>
 
@@ -410,27 +465,47 @@
             android:orientation="horizontal"
             android:paddingLeft="@dimen/dp_10">
 
-
-            <TextView
-                style="@style/CaseTextViewStyle"
-                android:text="婚否" />
-
-            <com.hjq.widget.view.ClearEditText
-                android:id="@+id/et_03_is_married"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dp_35"
-                android:background="@null"
-                android:focusable="false"
-                android:gravity="right|center_vertical"
-                android:hint=""
-                android:lines="1"
-                android:paddingLeft="@dimen/dp_10"
-                android:paddingRight="@dimen/dp_10"
-                android:singleLine="true"
-                android:text=""
-                android:textColor="@color/black80"
-                android:textColorHint="@color/black20"
-                android:textSize="@dimen/sp_14" />
+                android:orientation="horizontal">
+
+
+                <TextView
+                    style="@style/CaseTextViewStyle"
+                    android:layout_gravity="center"
+                    android:text="婚否" />
+
+
+                <com.hjq.widget.view.ClearEditText
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:id="@+id/et_03_is_married"
+                    android:layout_height="@dimen/dp_35"
+                    android:background="@null"
+                    android:focusable="false"
+                    android:gravity="right|center_vertical"
+                    android:hint=""
+                    android:lines="1"
+                    android:paddingLeft="@dimen/dp_10"
+                    android:paddingRight="@dimen/dp_10"
+                    android:singleLine="true"
+                    android:text=""
+                    android:textColor="@color/black80"
+                    android:textColorHint="@color/black20"
+                    android:textSize="@dimen/sp_14" />
+
+                <ImageView
+                    android:id="@+id/iv_03_is_married"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginRight="@dimen/dp_10"
+                    android:src="@drawable/selector_detail_dialog" />
+
+            </LinearLayout>
+
+
 
         </LinearLayout>
 
@@ -552,33 +627,67 @@
             android:layout_marginRight="@dimen/dp_10"
             android:background="@color/common_line_color" />
 
+
         <!--15=病史-->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingLeft="@dimen/dp_10">
+            android:background="@drawable/shape_bg_writh"
+            android:orientation="vertical">
 
-
-            <TextView
-                style="@style/CaseTextViewStyle"
-                android:text="病史" />
-
-            <com.hjq.widget.view.ClearEditText
-                android:id="@+id/et_03_case_history"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dp_35"
-                android:background="@null"
-                android:gravity="right|center_vertical"
-                android:hint=""
-                android:lines="1"
-                android:paddingLeft="@dimen/dp_10"
-                android:paddingRight="@dimen/dp_10"
-                android:singleLine="true"
-                android:text=""
-                android:textColor="@color/black80"
-                android:textColorHint="@color/black20"
-                android:textSize="@dimen/sp_14" />
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/dp_35"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="@dimen/dp_10"
+                    android:text="病史"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/sp_14" />
+
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+            </LinearLayout>
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:layout_marginLeft="@dimen/dp_10"
+                android:layout_marginRight="@dimen/dp_10"
+                android:background="@color/common_line_color" />
+
+            <!--       ClearEditText  转换成   LinesEditView  -->
+            <com.company.iendo.widget.LinesEditView
+                android:id="@+id/et_03_case_history"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/dp_10"
+                app:classic_showPositive="false" />
+
+            <!--            <com.hjq.widget.view.ClearEditText-->
+            <!--                android:id="@+id/et_03_case_history"-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="@dimen/dp_35"-->
+            <!--                android:background="@null"-->
+            <!--                android:gravity="right|center_vertical"-->
+            <!--                android:hint=""-->
+            <!--                android:lines="1"-->
+            <!--                android:paddingLeft="@dimen/dp_10"-->
+            <!--                android:paddingRight="@dimen/dp_10"-->
+            <!--                android:singleLine="true"-->
+            <!--                android:text=""-->
+            <!--                android:textColor="@color/black80"-->
+            <!--                android:textColorHint="@color/black20"-->
+            <!--                android:textSize="@dimen/sp_14" />-->
+
 
         </LinearLayout>
 
@@ -593,31 +702,67 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingLeft="@dimen/dp_10">
+            android:background="@drawable/shape_bg_writh"
+            android:orientation="vertical">
 
-
-            <TextView
-                style="@style/CaseTextViewStyle"
-                android:text="家族病史" />
-
-            <com.hjq.widget.view.ClearEditText
-                android:id="@+id/et_03_family_case_history"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dp_35"
-                android:background="@null"
-                android:gravity="right|center_vertical"
-                android:hint=""
-                android:lines="1"
-                android:paddingLeft="@dimen/dp_10"
-                android:paddingRight="@dimen/dp_10"
-                android:singleLine="true"
-                android:text=""
-                android:textColor="@color/black80"
-                android:textColorHint="@color/black20"
-                android:textSize="@dimen/sp_14" />
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/dp_35"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="@dimen/dp_10"
+                    android:text="家族病史"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/sp_14" />
+
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+
+            </LinearLayout>
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:layout_marginLeft="@dimen/dp_10"
+                android:layout_marginRight="@dimen/dp_10"
+                android:background="@color/common_line_color" />
+
+            <!--       ClearEditText  转换成   LinesEditView  -->
+            <com.company.iendo.widget.LinesEditView
+                android:id="@+id/et_03_family_case_history"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/dp_10"
+                app:classic_showPositive="false" />
+
+            <!--            <com.hjq.widget.view.ClearEditText-->
+            <!--                android:id="@+id/et_03_family_case_history"-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="@dimen/dp_35"-->
+            <!--                android:background="@null"-->
+            <!--                android:gravity="right|center_vertical"-->
+            <!--                android:hint=""-->
+            <!--                android:lines="1"-->
+            <!--                android:paddingLeft="@dimen/dp_10"-->
+            <!--                android:paddingRight="@dimen/dp_10"-->
+            <!--                android:singleLine="true"-->
+            <!--                android:text=""-->
+            <!--                android:textColor="@color/black80"-->
+            <!--                android:textColorHint="@color/black20"-->
+            <!--                android:textSize="@dimen/sp_14" />-->
+
 
         </LinearLayout>
+
+
 
         <View
             android:layout_width="match_parent"

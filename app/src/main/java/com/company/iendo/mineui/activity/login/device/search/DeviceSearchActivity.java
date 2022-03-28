@@ -712,7 +712,6 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
             LogUtils.e("DeviceSearchActivity回调==模拟数据==DeviceDBBean.bean.getIp()===" + bean.getIp());//192.168.64.13
             LogUtils.e("DeviceSearchActivity回调==模拟数据==DeviceDBBean.currentClickItem.getIp()===" + currentClickItem.getIp());//192.168.132.102
             LogUtils.e("DeviceSearchActivity回调==模拟数据==DeviceDBBean.toString==新增===" + deviceDBBean.toString());
-            toast("新增=");
 
             //此处修改界面adapter数据bean(BroadCastReceiveBean)状态,是否检验接入过isCheckAccess->true;是否存入数据库inDB->true
             currentClickItem.setInDB(true);

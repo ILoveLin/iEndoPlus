@@ -130,7 +130,8 @@ public class CaseDBBean  {
     // 社保卡号
     private String InsuranceID;
     // 其他
-    //  此处上位机返回来的病例ID  病例详情界面数据====DataDTO   里面的这个字段ID=1158,用来在下载的时候来判断当前病例是否下载过,如果设备码和ID  都一样,有数据返回则更新不然新增病例
+    //  此处上位机返回来的病例ID  病例详情界面数据====DataDTO   里面的这个字段ID=1158,
+    //  用来在下载的时候来判断当前病例是否下载过,如果设备码和ID  都一样,有数据返回则更新不然新增病例
     private String Others;   //设置是否下载过的标识 ==上位机返回的ID
     // 其他01
     private String Others01;

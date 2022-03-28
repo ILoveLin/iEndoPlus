@@ -21,6 +21,7 @@
         android:layout_height="match_parent">
 
         <androidx.core.widget.NestedScrollView
+            android:id="@+id/add_nestedsv"
             style="@style/nestedscrollview_vertical_style"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
