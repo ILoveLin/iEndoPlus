@@ -50,7 +50,6 @@ import com.company.iendo.ui.dialog.SelectDialog;
 import com.company.iendo.ui.dialog.TipsDialog;
 import com.company.iendo.ui.dialog.WaitDialog;
 import com.company.iendo.ui.popup.ListPopup;
-import com.company.iendo.utils.CalculateUtils;
 import com.company.iendo.utils.CommonUtil;
 import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.MD5ChangeUtil;
@@ -203,7 +202,7 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
             if (beanList.size() > 0) {//当前用户存过密码
                 for (int i = 0; i < beanList.size(); i++) {
                     UserDBBean dbBean = beanList.get(i);
-                    //是当前用户ID
+                    //是当前用户ID,更新数据
                     if ((bean.getUserID()).equals(dbBean.getDeviceUserID())) {
                         UserDBBean newBean = new UserDBBean();
                         newBean.setId(dbBean.getId());
@@ -342,8 +341,59 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
 
             }
         });
+
+
+        initRememberPassword();
+
     }
 
+    /**
+     * 获取列表数据,登录的时候使用
+     *
+     * @param mBaseUrl
+     */
+
+    private void sendRequestLoginData(String mBaseUrl) {
+        showLoading();
+        String mUrl = (String) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Current_BaseUrl, "http://192.168.1.200:3000");
+        LogUtils.e("登录==url==0001=" + mBaseUrl);
+        LogUtils.e("登录==url==0001=" + mUrl + HttpConstant.UserManager_List);
+        OkHttpUtils.get()
+                .url(mUrl + HttpConstant.UserManager_List)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        showError();
+                        showComplete();
+                        mPasswordView.setText("");
+                        mPhoneView.setText("");
+                        LogUtils.e("用户列表==onError=" + e);
+
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        mUserListData.clear();
+                        if ("" != response) {
+                            UserListBean mBean = mGson.fromJson(response, UserListBean.class);
+                            if (0 == mBean.getCode()) {  //成功
+                                showComplete();
+                                mUserListData = mBean.getData();
+                                LogUtils.e("用户列表===" + response);
+
+                            } else {
+                                showError();
+                            }
+                        } else {
+                            showError();
+                        }
+                    }
+
+
+                });
+
+    }
 
     /**
      * 获取列表数据
@@ -616,8 +666,7 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
         LogUtils.e("登录==url==02=" + mBaseUrl + HttpConstant.UserManager_Login);
 //                登录按钮动画
         showLoading();
-        //请求列表,设置默认第一个用户
-        sendRequest(mBaseUrl);
+
         OkHttpUtils.post()
                 .url(mUrl + HttpConstant.UserManager_Login)
                 .addParams("UserName", mPhoneView.getText().toString())
@@ -690,29 +739,28 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
     }
 
 
-
-
     //初始化设置离线模式第一个用户UI显示
     private void setOfflineFirstName() {
 
         List<UserDBBean> userList = UserDBUtils.getQueryBeanByCode(getActivity(), deviceID);
         //有数据
-        if (userList.size()>0){
+        if (userList.size() > 0) {
             UserDBBean userDBBean = userList.get(0);
             //第一条数据记住了密码
             if (userDBBean.getIsRememberPassword()) {
-                mPhoneView.setText(userDBBean.getUserName()+"");
-                mPasswordView.setText(userDBBean.getPassword()+"");
+                mPhoneView.setText(userDBBean.getUserName() + "");
+                mPasswordView.setText(userDBBean.getPassword() + "");
                 mCheckbox.setChecked(true);
-            }else {
-                mPhoneView.setText(userDBBean.getUserName()+"");
+            } else {
+                mPhoneView.setText(userDBBean.getUserName() + "");
             }
-        }else {
+        } else {
             mPhoneView.setText("");
             mPasswordView.setText("");
         }
 
     }
+
     /**
      * 离线登录
      */
@@ -897,17 +945,16 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
          *
          */
         //选择设备之后,回到此界面默认会写记住密码的第一个用户
-        initRememberPassword();
 
-        String str = "EE0700000000000000005618B1F96D92837CA1F9432B11B93E8BB4AE34539B7472C20EFD7B227469746C65223A2241494F2D454E54222C2272656D61726B223A2231E58FB7E58685E9959CE5AEA4222C22656E646F74797065223A2233222C22616363657074223A2231227D";
-        String strr = "AAC5 01 006A 22 EE 07 00000000000000005618B1F96D92837Ca1 f9432b11b93e8bb4ae34539b7472c20e FD 7b227469746c65223a2241494f2d454e54222c2272656d61726b223a226f6e65686f6d65222c22656e646f74797065223a2233222c22616363657074223a2230227db4DD";
-
-        int fd = str.indexOf("FD");
-        String substring = str.substring(fd);
-        LogUtils.e("========当前设备的备注信息~~~~====LoginActivity==fd===" + fd);
-        LogUtils.e("========当前设备的备注信息~~~~====LoginActivity==fd=substring==" + substring);
-        String currentCMD = CalculateUtils.getCMD(strr);
-        LogUtils.e("SocketManage回调==currentCMD===" + currentCMD);
+//        String str = "EE0700000000000000005618B1F96D92837CA1F9432B11B93E8BB4AE34539B7472C20EFD7B227469746C65223A2241494F2D454E54222C2272656D61726B223A2231E58FB7E58685E9959CE5AEA4222C22656E646F74797065223A2233222C22616363657074223A2231227D";
+//        String strr = "AAC5 01 006A 22 EE 07 00000000000000005618B1F96D92837Ca1 f9432b11b93e8bb4ae34539b7472c20e FD 7b227469746c65223a2241494f2d454e54222c2272656d61726b223a226f6e65686f6d65222c22656e646f74797065223a2233222c22616363657074223a2230227db4DD";
+//
+//        int fd = str.indexOf("FD");
+//        String substring = str.substring(fd);
+//        LogUtils.e("========当前设备的备注信息~~~~====LoginActivity==fd===" + fd);
+//        LogUtils.e("========当前设备的备注信息~~~~====LoginActivity==fd=substring==" + substring);
+//        String currentCMD = CalculateUtils.getCMD(strr);
+//        LogUtils.e("SocketManage回调==currentCMD===" + currentCMD);
 
     }
 

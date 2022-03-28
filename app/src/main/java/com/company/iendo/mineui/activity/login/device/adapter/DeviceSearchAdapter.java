@@ -104,9 +104,12 @@ public class DeviceSearchAdapter extends AppAdapter<BroadCastReceiveBean> {
 
             if (null != codeBean) {  //数据库表存在更新数据即可
                 if (tag.equals(codeBean.getAcceptAndInsertDB())) {
-                    mInDB.setVisibility(View.VISIBLE);
+                    mInDB.setText("已添加");
+                    mInDB.setBackgroundResource(R.drawable.shape_search_device_insert);
                 } else {
-                    mInDB.setVisibility(View.INVISIBLE);
+                    mInDB.setText("未添加");
+                    mInDB.setBackgroundResource(R.drawable.shape_search_device_insert_no);
+
                 }
 
             }
@@ -114,33 +117,18 @@ public class DeviceSearchAdapter extends AppAdapter<BroadCastReceiveBean> {
             Boolean inDB = mItemBean.getInDB();
             if (null != inDB)
                 if (inDB) {
-                    mInDB.setVisibility(View.VISIBLE);
+                    mInDB.setText("已添加");
+                    mInDB.setBackgroundResource(R.drawable.shape_search_device_insert);
                     //数据库存在,说明授权接入过
                     mItemBean.setCheckAccess(true);
                 } else {
-
-                    mInDB.setVisibility(View.INVISIBLE);
+                    mInDB.setText("未添加");
+                    mInDB.setBackgroundResource(R.drawable.shape_search_device_insert_no);
                     //数据不库存在,说明授没有权接入过
                     mItemBean.setCheckAccess(false);
 
 
                 }
-//            switch (mDBBean.getType()) {
-//                case "一代一体机":
-//                    mImageChose.setImageResource(R.drawable.icon_yitiji);
-//                    break;
-//                case "耳鼻喉治疗台":
-//                    mImageChose.setImageResource(R.drawable.icon_erbihou);
-//
-//                    break;
-//                case "妇科治疗台":
-//                    mImageChose.setImageResource(R.drawable.icon_shenzhou4k);
-//
-//                    break;
-//                case "泌尿治疗台":
-//                    mImageChose.setImageResource(R.drawable.icon_shenzhou4k);
-//                    break;
-//            }
 
             switch (mItemBean.getDeviceType()) {
                 case "一代一体机":
@@ -156,17 +144,6 @@ public class DeviceSearchAdapter extends AppAdapter<BroadCastReceiveBean> {
                     mImageChose.setImageResource(R.drawable.icon_erbihou);
                     break;
             }
-//            http://192.168.64.28:7001/ID/FilePath
-//            Log.e("adapter", "" + "Path:" + bean.getFilePath());
-//            mTextView.setText("Path:" + mDBBean.getMsg());
-//            mTitle.setText(mDBBean.getDeviceName()); //设备名字
-//            mMake.setText(mDBBean.getMsg()); //备注信息
-////            mType.setText(mDBBean.getType());
-//            LogUtils.e(mDBBean.getMsg() + "========当前设备的备注信息~~~~======");
-//            LogUtils.e(mDBBean.getType() + "========当前设备的类型~~~~======");
-//
-//            mSelect.setSelected(mDBBean.getMSelected());
-
 
         }
     }

@@ -47,6 +47,14 @@ public class LoginBean {
         @SerializedName("Role")
         private int Role;
 
+        @Override
+        public String toString() {
+            return "DataDTO{" +
+                    "userID='" + userID + '\'' +
+                    ", Role=" + Role +
+                    '}';
+        }
+
         public String getUserID() {
             return userID;
         }

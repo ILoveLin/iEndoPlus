@@ -804,7 +804,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         String userLoginPassword = (String) SharePreferenceUtil.get(getAttachActivity(), SharePreferenceUtil.Current_Login_Password, "");
         String mLoginReol = (String) SharePreferenceUtil.get(getAttachActivity(), SharePreferenceUtil.Current_Login_Role, "");
         Boolean isRemember = (Boolean) SharePreferenceUtil.get(getAttachActivity(), SharePreferenceUtil.Current_Login_Remember_Password, true);
-        String mLoginUserID = (String) SharePreferenceUtil.get(getAttachActivity(), SharePreferenceUtil.Current_Login_UserID, true);
+        String mLoginUserID = (String) SharePreferenceUtil.get(getAttachActivity(), SharePreferenceUtil.Current_Login_UserID, "1");
 
         /**
          * 创建需要下载的本地病例--->用户表

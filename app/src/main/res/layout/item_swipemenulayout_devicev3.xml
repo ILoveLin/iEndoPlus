@@ -24,11 +24,10 @@
             android:paddingBottom="@dimen/dp_3"
             android:paddingLeft="@dimen/dp_4"
             android:paddingRight="@dimen/dp_4"
-            android:text="已添加"
+            android:text="未添加"
             android:textColor="@color/white"
             android:textSize="@dimen/sp_10"
-            android:visibility="invisible"
-            android:background="@drawable/shape_search_device_insert"
+            android:background="@drawable/shape_search_device_insert_no"
            />
 
         <ImageView

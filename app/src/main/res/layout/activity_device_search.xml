@@ -35,6 +35,8 @@
             android:textColor="@color/black" />
 
         <ImageView
+            android:padding="1dp"
+
             android:id="@+id/iv_right_search"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -46,6 +48,8 @@
 
 
         <ImageView
+            android:padding="1dp"
+
             android:src="@drawable/ic_player_icon_setting"
             android:id="@+id/iv_right_setting"
             android:layout_width="wrap_content"

@@ -591,7 +591,6 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
 
     @Override
     public void onItemClick(RecyclerView recyclerView, View itemView, int position) {
-        toast(mAdapter.getItem(position).getDeviceName() + "~~~");
         LogUtils.e("选中设备的String" + mAdapter.getItem(position).toString());
     }
 

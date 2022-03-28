@@ -43,12 +43,12 @@ public class DetailOfflineFragment extends TitleBarFragment<MainActivity> implem
     private ClearEditText et_01_check_num, et_01_name, et_01_sex_type, et_01_age, et_01_jop, et_01_fee, et_01_get_check_doctor;
     //            et_01_i_tell_you, et_01_bad_tell;
     private LinesEditView etlines_02_mirror_see, etlines_02_mirror_result, etlines_02_live_check, etlines_02_cytology, etlines_02_test,
-            etlines_02_pathology, etlines_02_advice;
+            etlines_02_pathology, etlines_02_advice,et_03_case_history, et_03_family_case_history;
     private ClearEditText et_02_mirror_see, et_02_mirror_result, et_02_live_check, et_02_cytology, et_02_test, et_02_pathology,
             et_02_advice, et_02_check_doctor;
     private ClearEditText et_03_door_num, et_03_protection_num, et_03_section, et_03_device, et_03_case_num, et_03_in_hospital_num,
             et_03_case_area_num, et_03_case_bed_num, et_03_native_place, et_03_ming_zu, et_03_is_married, et_03_tel, et_03_address,
-            et_03_my_id_num, et_03_case_history, et_03_family_case_history;
+            et_03_my_id_num;
     private String currentItemCaseID;
     private HashMap<String, String> mPathMap;     //例如imageName=001.jpg  url=http://192.168.64.56:7001/1_3/001.jpg
     private ArrayList<LinesEditView> linesEditViewList;
@@ -96,8 +96,8 @@ public class DetailOfflineFragment extends TitleBarFragment<MainActivity> implem
         et_03_address.setText("" + mDataBean.getAddress());
         //        String PatientNo = et_01_check_num.getText().toString().trim();       //病人编号---检查号???
         et_03_my_id_num.setText("" + mDataBean.getCardID());
-        et_03_case_history.setText("" + mDataBean.getMedHistory());
-        et_03_family_case_history.setText("" + mDataBean.getFamilyHistory());
+        et_03_case_history.setContentText("" + mDataBean.getMedHistory());
+        et_03_family_case_history.setContentText("" + mDataBean.getFamilyHistory());
         et_03_ming_zu.setText("" + mDataBean.getRace());
         et_01_jop.setText("" + mDataBean.getOccupatior());
         et_03_protection_num.setText("" + mDataBean.getInsuranceID());

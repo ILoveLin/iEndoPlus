@@ -20,7 +20,7 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
-                <include layout="@layout/include_case_detail" />
+                <include layout="@layout/include_case_detail_offline" />
             </RelativeLayout>
         </androidx.core.widget.NestedScrollView>
     </com.company.iendo.widget.StatusLayout>

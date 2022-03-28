@@ -110,6 +110,44 @@ public class UserListBean {
         @SerializedName("Role")
         private int Role;
 
+        @Override
+        public String toString() {
+            return "DataDTO{" +
+                    "UserName='" + UserName + '\'' +
+                    ", Des='" + Des + '\'' +
+                    ", CreatedAt='" + CreatedAt + '\'' +
+                    ", LastLoginAt='" + LastLoginAt + '\'' +
+                    ", LoginTimes=" + LoginTimes +
+                    ", UserID='" + UserID + '\'' +
+                    ", UserMan=" + UserMan +
+                    ", CanPsw=" + CanPsw +
+                    ", CanNew=" + CanNew +
+                    ", CanEdit=" + CanEdit +
+                    ", CanDelete=" + CanDelete +
+                    ", CanPrint=" + CanPrint +
+                    ", ReportStyle=" + ReportStyle +
+                    ", DictsMan=" + DictsMan +
+                    ", GlossaryMan=" + GlossaryMan +
+                    ", TempletMan=" + TempletMan +
+                    ", HospitalInfo=" + HospitalInfo +
+                    ", CanBackup=" + CanBackup +
+                    ", ViewBackup=" + ViewBackup +
+                    ", VideoSet=" + VideoSet +
+                    ", OnlySelf=" + OnlySelf +
+                    ", UnPrinted=" + UnPrinted +
+                    ", FtpSet=" + FtpSet +
+                    ", ChangeDepartment=" + ChangeDepartment +
+                    ", ExportRecord=" + ExportRecord +
+                    ", ExportImage=" + ExportImage +
+                    ", ExportVideo=" + ExportVideo +
+                    ", DeviceSet=" + DeviceSet +
+                    ", SeatAdjust=" + SeatAdjust +
+                    ", SnapVideoRecord=" + SnapVideoRecord +
+                    ", LiveStream=" + LiveStream +
+                    ", Role=" + Role +
+                    '}';
+        }
+
         public String getUserName() {
             return UserName;
         }

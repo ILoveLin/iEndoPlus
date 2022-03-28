@@ -70,7 +70,7 @@ public class UserDBUtils {
     //精确查询  获取到bean
     public static List<UserDBBean>  getQueryBeanByCode(Context context,String Code) {
         UserDBBeanDao userDBBeanDao = DBManager.getDaoSession(context).getUserDBBeanDao();
-        List<UserDBBean> list = userDBBeanDao.queryBuilder().where(UserDBBeanDao.Properties.DeviceUserID.eq(Code)).list();
+        List<UserDBBean> list = userDBBeanDao.queryBuilder().where(UserDBBeanDao.Properties.DeviceID.eq(Code)).list();
 
         return list;
 
@@ -79,7 +79,7 @@ public class UserDBUtils {
     public static List<UserDBBean> getQueryBeanByTow(Context context, String code, String Name) {
         UserDBBeanDao userDBBeanDao = DBManager.getDaoSession(context).getUserDBBeanDao();
 
-        List<UserDBBean> beanList = userDBBeanDao.queryBuilder().where(UserDBBeanDao.Properties.DeviceUserID.eq(code),UserDBBeanDao.Properties.UserName.eq(Name)).list();
+        List<UserDBBean> beanList = userDBBeanDao.queryBuilder().where(UserDBBeanDao.Properties.DeviceID.eq(code),UserDBBeanDao.Properties.UserName.eq(Name)).list();
 
         return beanList;
 
@@ -88,7 +88,7 @@ public class UserDBUtils {
     public static List<UserDBBean> getQueryBeanByTowCodeUserID(Context context, String code, String UserID) {
         UserDBBeanDao userDBBeanDao = DBManager.getDaoSession(context).getUserDBBeanDao();
 
-        List<UserDBBean> beanList = userDBBeanDao.queryBuilder().where(UserDBBeanDao.Properties.DeviceUserID.eq(code),UserDBBeanDao.Properties.DeviceUserID.eq(UserID)).list();
+        List<UserDBBean> beanList = userDBBeanDao.queryBuilder().where(UserDBBeanDao.Properties.DeviceID.eq(code),UserDBBeanDao.Properties.DeviceUserID.eq(UserID)).list();
 
         return beanList;
 
