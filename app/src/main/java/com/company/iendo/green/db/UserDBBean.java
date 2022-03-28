@@ -34,7 +34,7 @@ public class UserDBBean {
     //用户密码
     private String Password;
 
-    //角色权限:0-超级管理员 1-管理员 2-操作员 3-查询员 4-自定义
+    //角色权限:0-管理员 1-操作员 2-查询员
     private String relo;
 
     //备用01字段--->是否被下载过  true 表示下载过, false 表示没有被下载(在线登入的时候在记住密码的时候会存入false)

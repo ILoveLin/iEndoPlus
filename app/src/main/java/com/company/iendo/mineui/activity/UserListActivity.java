@@ -59,8 +59,8 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
     private String mLoginUserID;
     private String mLoginUserName;
     private TitleBar mTitleBar;
-
-    private int mAddCurrentCode = 1;//管理员
+    //  //角色权限:0-管理员 1-操作员 2-查询员
+    private int mAddCurrentCode = 0;//管理员
     private String mAddCurrentString = "管理员";//管理员
 
     @Override
@@ -137,6 +137,7 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
                         }else if ("".equals(mAddCurrentCode)){
                             toast("用户名不能为空");
                         }else {
+                            //  //角色权限:0-管理员 1-操作员 2-查询员
                             sendAddUserRequest(userName, passwrod, mAddCurrentCode);
 
                         }
@@ -163,7 +164,7 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
                                 String string = data.toString();
                                 int i = string.indexOf("=");
                                 String substringName = string.substring(i + 1, data.toString().length() - 1);
-                                mAddCurrentCode = Integer.parseInt(string.substring(1, 2)) + 1;
+                                mAddCurrentCode = Integer.parseInt(string.substring(1, 2));
                                 mAddCurrentString = substringName;
                                 LogUtils.e("mAddCurrentCode==" + mAddCurrentCode);
                                 LogUtils.e("mAddCurrentString==" + mAddCurrentString);

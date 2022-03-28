@@ -21,6 +21,9 @@ public class Constants {
     public static final int SEND_PORT = 8005;                    //发送端口--->默认值
     public static final int RECEIVE_PORT = 8005;                 //本地监听端口--->默认值
 
+    /**
+     * MMKV  存储的Key
+     */
 
     /**
      * 手动设置本地广播端口的port之后,服务器发送消息到app也是这个port,
@@ -35,6 +38,40 @@ public class Constants {
     public static final String KEY_RECEIVE_PORT_BY_SEARCH = "KEY_RECEIVE_PORT_BY_SEARCH";
     //第一次开启接收线程 避免初始化的时候开启多次线程                                                    MMKV的Key
     public static final String KEY_SOCKET_RECEIVE_FIRST_IN = "KEY_SOCKET_RECEIVE_FIRST_IN";
+
+
+
+
+//    public static final String KEY_SOCKET_RECEIVE_FIRST_IN = "KEY_SOCKET_RECEIVE_FIRST_IN";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     /**
