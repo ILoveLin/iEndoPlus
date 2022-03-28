@@ -812,7 +812,8 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         //设备码和当前操作用户绑定
         //查询当前设备码下 绑定的所有用户
         //查询当前设备码下绑定的用户,并且是操作用户是当前登入的用户
-        List<UserDBBean> userListt = UserDBUtils.getQueryBeanByTowCodeUserID(getAttachActivity(), mDeviceCode, mLoginUserID);
+        List<UserDBBean> userListt = UserDBUtils.getQueryBeanByThree(getAttachActivity(), mDeviceCode, mLoginUserID,"true");
+//        List<UserDBBean> userListt = UserDBUtils.getQueryBeanByTowCodeUserID(getAttachActivity(), mDeviceCode, mLoginUserID,"true");
 
         if (null != userListt && userListt.size() > 0) {
             UserDBBean userDBBean = userListt.get(0);
@@ -824,6 +825,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
             userDBBean.setUserName(userDBBean.getUserName() + "");
             userDBBean.setPassword(userDBBean.getPassword() + "");
             userDBBean.setRelo(userDBBean.getRelo() + "");
+            userDBBean.setMake01(userDBBean.getMake01() + "");
             userDBBean.setIsRememberPassword(userDBBean.getIsRememberPassword());
             UserDBUtils.insertOrReplaceInTx(getAttachActivity(), userDBBean);
 
@@ -836,6 +838,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
             bean.setUserName(userLoginUserName);
             bean.setPassword(userLoginPassword);
             bean.setRelo(mLoginReol + "");
+            bean.setMake01("true");  //设置为被下载状态
             bean.setIsRememberPassword(isRemember);
             UserDBUtils.insertOrReplaceInTx(getAttachActivity(), bean);
         }

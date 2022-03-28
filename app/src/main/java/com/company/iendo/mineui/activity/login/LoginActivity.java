@@ -89,7 +89,7 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
     private int mPhoneViewWidth;
     private WaitDialog.Builder mWaitDialog;
     private List<UserListBean.DataDTO> mUserListData = new ArrayList<UserListBean.DataDTO>();
-    private List<UserListBean.DataDTO> mUserOflineListData = new ArrayList<UserListBean.DataDTO>();
+//    private List<UserListBean.DataDTO> mUserOflineListData = new ArrayList<UserListBean.DataDTO>();
     private TextView mSettingView;
     private TextView mDeviceType;
     private String mBaseUrl;
@@ -211,6 +211,7 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                         newBean.setDeviceUserID(bean.getUserID());
                         newBean.setRelo(bean.getRole() + "");
                         newBean.setDeviceID(deviceID + "");
+                        newBean.setMake01(dbBean.getMake01());
                         newBean.setIsRememberPassword(true);
                         UserDBUtils.insertOrReplaceInTx(LoginActivity.this, newBean);
                         SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Current_Login_Remember_Password, true);
@@ -225,6 +226,7 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                 newBean.setDeviceUserID(bean.getUserID());
                 newBean.setDeviceID(deviceID + "");
                 newBean.setRelo(bean.getRole() + "");
+                newBean.setMake01("false");
                 newBean.setIsRememberPassword(true);
                 //记住密码
                 SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Current_Login_Remember_Password, true);
@@ -572,20 +574,36 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
         List<UserDBBean> userList = UserDBUtils.getQueryBeanByCode(getActivity(), mCurrentReceiveDeviceCode);
 
         //动态清零用户列表
-        mUserOflineListData.clear();
-        UserListBean.DataDTO mOfflineHistoryBean = new UserListBean.DataDTO();
+//        mUserOflineListData.clear();
         if (null != userList && userList.size() > 0) {
             for (int i = 0; i < userList.size(); i++) {
                 UserDBBean bean = userList.get(i);
                 LogUtils.e("用户表====登录====" + bean.getUserName());
+                //此时,当前设备下用户表有两种状态一种是下载过的,一种是记住密码的,所以要赛选
 
-//                mOfflineHistoryBean.setUserName(caseDBBean.getName());//caseDBBean.getName()   是病例的名字
-                mOfflineHistoryBean.setUserName(bean.getUserName());//caseDBBean.getUserName()   操作这个病例的操作员的名字  用户名字
-                mUserOflineListData.add(mOfflineHistoryBean);
-                mUserOflineListData.size();
+                if ("true".equals(bean.getMake01())) {  //存在下载过该用户的数据,获取当前数据设置到UI上
+                    mPhoneView.setText("" + bean.getUserName());
+                    mPasswordView.setText("" + bean.getPassword());
+
+                    UserListBean.DataDTO mOfflineHistoryBean = new UserListBean.DataDTO();
+                    mOfflineHistoryBean.setUserName(bean.getUserName());//caseDBBean.getUserName()   操作这个病例的操作员的名字  用户名字
+                    return;
+//                    mUserOflineListData.add(mOfflineHistoryBean);
+//                    mUserOflineListData.size();
+
+                } else {
+                    mPhoneView.setText("");
+                    mPasswordView.setText("");
+                }
+
 
             }
+        } else {
+            mPhoneView.setText("");
+            mPasswordView.setText("");
         }
+
+
     }
 
     private ArrayList<String> getListData() {
@@ -602,12 +620,14 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
         } else {  //离线登录
 
             List<UserDBBean> userList = UserDBUtils.getQueryBeanByCode(getActivity(), mCurrentReceiveDeviceCode);
+
             if (null != userList && userList.size() > 0) {
                 for (int i = 0; i < userList.size(); i++) {
                     UserDBBean bean = userList.get(i);
-                    LogUtils.e("用户表===mUserOflineListData=用户名:" + bean.getUserName());
-                    mList.add(bean.getUserName());
-
+                    if ("true".equals(bean.getMake01())) {  //存在下载过该用户的数据,获取当前数据设置到UI上
+                        LogUtils.e("用户表===mUserOflineListData=用户名:" + bean.getUserName());
+                        mList.add(bean.getUserName());
+                    }
                 }
             }
         }
@@ -773,8 +793,6 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
         String password = mPasswordView.getText().toString();
 
         List<UserDBBean> userList = UserDBUtils.getQueryBeanByUserName(getActivity(), username);
-
-
         if (null != userList && userList.size() > 0) {
             UserDBBean bean = userList.get(0);
             String password1 = bean.getPassword();

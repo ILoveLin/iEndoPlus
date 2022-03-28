@@ -95,6 +95,17 @@ public class UserDBUtils {
 
     }
 
+    public static List<UserDBBean> getQueryBeanByThree(Context context, String code, String UserID,String down) {
+        UserDBBeanDao userDBBeanDao = DBManager.getDaoSession(context).getUserDBBeanDao();
+
+        List<UserDBBean> beanList = userDBBeanDao.queryBuilder().where(UserDBBeanDao.Properties.DeviceID.eq(code),
+                UserDBBeanDao.Properties.DeviceUserID.eq(UserID),UserDBBeanDao.Properties.Make01.eq(down)).list();
+
+        return beanList;
+
+
+    }
+
     /**
      * @param context
      * @param id
