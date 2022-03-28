@@ -218,19 +218,19 @@ public final class AppApplication extends Application {
         MMKV.initialize(application);
         MMKV kv = MMKV.defaultMMKV();
         //设置第一次启动App的时候,是否第一次初始化过接收线程
-        kv.encode(Constants.KEY_SOCKET_RECEIVE_FIRST_IN,false);
+        kv.encode(Constants.KEY_SOCKET_RECEIVE_FIRST_IN, false);
         int i = kv.decodeInt(Constants.KEY_RECEIVE_PORT);
         int i2 = kv.decodeInt(Constants.KEY_BROADCAST_PORT);
         int i3 = kv.decodeInt(Constants.KEY_RECEIVE_PORT_BY_SEARCH);
 //
-        if ("".equals(i+"")){
-            kv.encode(Constants.KEY_RECEIVE_PORT,Constants.RECEIVE_PORT);
+        if ("".equals(i + "") || i == 0) {
+            kv.encode(Constants.KEY_RECEIVE_PORT, Constants.RECEIVE_PORT);
         }
-        if ("".equals(i2+"")){
-            kv.encode(Constants.KEY_BROADCAST_PORT,Constants.BROADCAST_PORT);
+        if ("".equals(i2 + "") || i2 == 0) {
+            kv.encode(Constants.KEY_BROADCAST_PORT, Constants.BROADCAST_PORT);
         }
-        if ("".equals(i3+"")){
-            kv.encode(Constants.KEY_RECEIVE_PORT_BY_SEARCH,Constants.RECEIVE_PORT);
+        if ("".equals(i3 + "") || i3 == 0) {
+            kv.encode(Constants.KEY_RECEIVE_PORT_BY_SEARCH, Constants.RECEIVE_PORT);
         }
 
 
