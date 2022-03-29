@@ -162,4 +162,10 @@ public class HttpConstant {
     public static final String UserManager_AddUser = "/users/createUser";
 
 
+    /**
+     * 获取用户权限
+     */
+    public static final String UserManager_getCurrentRelo = "/users/purview";
+
+
 }

@@ -9,7 +9,6 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -23,23 +22,28 @@ import com.bumptech.glide.signature.ObjectKey;
 import com.company.iendo.R;
 import com.company.iendo.app.AppActivity;
 import com.company.iendo.app.ReceiveSocketService;
+import com.company.iendo.bean.CaseDetailBean;
+import com.company.iendo.bean.LoginBean;
 import com.company.iendo.bean.ReportExistBean;
+import com.company.iendo.bean.UserReloBean;
 import com.company.iendo.bean.event.SocketRefreshEvent;
 import com.company.iendo.bean.socket.HandBean;
 import com.company.iendo.bean.socket.getpicture.ShotPictureBean;
 import com.company.iendo.manager.ActivityManager;
+import com.company.iendo.mineui.activity.MainActivity;
 import com.company.iendo.mineui.activity.casemanage.fragment.DetailFragment;
 import com.company.iendo.mineui.activity.casemanage.fragment.PictureFragment;
 import com.company.iendo.mineui.activity.casemanage.fragment.VideoFragment;
 import com.company.iendo.mineui.activity.login.LoginActivity;
 import com.company.iendo.mineui.activity.vlc.GetPictureActivity;
+import com.company.iendo.mineui.fragment.casemanage.CaseManageFragment;
 import com.company.iendo.other.Constants;
 import com.company.iendo.other.HttpConstant;
 import com.company.iendo.ui.adapter.TabAdapter;
-import com.company.iendo.ui.dialog.MessageDialog;
 import com.company.iendo.ui.dialog.SelectDialog;
 import com.company.iendo.utils.CalculateUtils;
 import com.company.iendo.utils.LogUtils;
+import com.company.iendo.utils.MD5ChangeUtil;
 import com.company.iendo.utils.SharePreferenceUtil;
 import com.company.iendo.utils.SocketUtils;
 import com.gyf.immersionbar.ImmersionBar;
@@ -83,6 +87,8 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
     private AppCompatImageView mReportImageView;
     private static boolean UDP_HAND_TAG = false; //握手成功表示  true 成功
     private static boolean UDP_EQUALS_ID = false; //获取当前操作id,和进入该界面的id 是否相等,相等才可以进行各种操作,默认不相等,
+    private boolean isPrinted;   //true,    是否已经打印过,true表示打印过了,不能编辑
+    private String mCreatedByWho;
 
     @Override
     protected int getLayoutId() {
@@ -118,17 +124,23 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
     }
 
     private void responseListener() {
+        sendGetEditStatueRequest();
         setOnClickListener(R.id.linear_get_picture, R.id.linear_get_report, R.id.linear_delete, R.id.linear_down);
         mTitlebar.setOnTitleBarListener(new OnTitleBarListener() {
             @Override
             public void onLeftClick(View view) {
-                //退出界面的时候必须保存数据
-                if (null != mOnEditStatusListener) {
-                    mOnEditStatusListener.onEditStatus(true, true);
+                if (mMMKVInstace.decodeBool(Constants.KEY_CanEdit)) {
+                    //退出界面的时候必须保存数据
+                    if (null != mOnEditStatusListener) {
+                        mOnEditStatusListener.onEditStatus(true, true);
+                    }
+                    postDelayed(() -> {
+                        finish();
+                    }, 100);
+                } else {
                 }
-                postDelayed(() -> {
-                    finish();
-                }, 300);
+
+
             }
 
             @Override
@@ -138,18 +150,49 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
 
             @Override
             public void onRightClick(View view) {
-                if (mTitlebar.getRightTitle().equals("编辑")) {
-                    if (null != mOnEditStatusListener) {
-                        mOnEditStatusListener.onEditStatus(true, false);
+                //勾选了几个判断几个
+                //未打印病历,权限
+                boolean KEY_UnPrinted = mMMKVInstace.decodeBool(Constants.KEY_UnPrinted);
+                //本人病历,权限
+                boolean KEY_OnlySelf = mMMKVInstace.decodeBool(Constants.KEY_OnlySelf);
+                //修改病历 权限
+                boolean KEY_CanEdit = mMMKVInstace.decodeBool(Constants.KEY_CanEdit);
+                //有修改病例的权限
+                if (KEY_CanEdit) {
+                    //两者都勾选了
+                    if (KEY_UnPrinted && KEY_OnlySelf) {
+                        //需要判断两个值
+                        if (isPrinted) {//打印过
+                            //不能被编辑
+                        } else if (!isPrinted) {
+                            if (mLoginUserName.equals(mCreatedByWho)) {
+                                //能被编辑
+                                clickEidtListener();
+                            } else {
+                                //不能被编辑
+                            }
+                        }
+
+                        //勾选了,本人病历
+                    } else if (!KEY_UnPrinted && KEY_OnlySelf) {
+                        if (mLoginUserName.equals(mCreatedByWho)) {
+                            //能被编辑
+                            clickEidtListener();
+                        } else {
+                            //不能被编辑
+                        }
+                        //勾选了,未打印病历
+                    } else if (KEY_UnPrinted && !KEY_OnlySelf) {
+                        if (isPrinted) {//打印过
+                            //不能被编辑
+                        } else {
+                            //能被编辑
+                            clickEidtListener();
+                        }
                     }
-                    mTitlebar.setRightTitle("保存");
-                    mTitlebar.setRightTitleColor(getResources().getColor(R.color.red));
+
                 } else {
-                    mTitlebar.setRightTitle("编辑");
-                    mTitlebar.setRightTitleColor(getResources().getColor(R.color.black));
-                    if (null != mOnEditStatusListener) {
-                        mOnEditStatusListener.onEditStatus(false, false);
-                    }
+                    toast(Constants.HAVE_NO_PERMISSION);
                 }
             }
         });
@@ -178,6 +221,54 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
                 }
             }
         });
+    }
+
+    private void clickEidtListener() {
+        if (mTitlebar.getRightTitle().equals("编辑")) {
+            if (null != mOnEditStatusListener) {
+                mOnEditStatusListener.onEditStatus(true, false);
+            }
+            mTitlebar.setRightTitle("保存");
+            mTitlebar.setRightTitleColor(getResources().getColor(R.color.red));
+        } else {
+            mTitlebar.setRightTitle("编辑");
+            mTitlebar.setRightTitleColor(getResources().getColor(R.color.black));
+            if (null != mOnEditStatusListener) {
+                mOnEditStatusListener.onEditStatus(false, false);
+            }
+        }
+    }
+
+    /**
+     * 获取病例详情,
+     * 获取,未打印病历(是否已经打印过)  Printed字段
+     * 获取,本人病历(表示谁创建的病例)  UserName字段
+     */
+    private void sendGetEditStatueRequest() {
+
+        OkHttpUtils.get()
+                .url(mBaseUrl + HttpConstant.CaseManager_CaseInfo)
+                .addParams("ID", currentItemID)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        if ("" != response) {
+                            LogUtils.e("详情界面---8病例详情response===" + response);
+                            CaseDetailBean mBean = mGson.fromJson(response, CaseDetailBean.class);
+                            mCreatedByWho = mBean.getData().getUserName();
+                            isPrinted = mBean.getData().isPrinted();
+                        } else {
+
+                        }
+                    }
+                });
+
     }
 
     /**
@@ -349,8 +440,53 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
                     toast("报告打印失败!");
                 }
                 break;
+            case Constants.UDP_F7://权限通知变动,在病例列表,病例详情,和图像采集三个界面相互监听,发现了请求后台更新本地权限
+                if (event.getTga()) {
+                    requestCurrentPermission();
+                }
+                break;
         }
 
+    }
+
+    /**
+     * 上位机权限变动通知,更新本地权限
+     */
+    private void requestCurrentPermission() {
+        OkHttpUtils.get()
+                .url(mBaseUrl + HttpConstant.UserManager_getCurrentRelo)
+                .addParams("UserID", mUserID)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+
+
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+//
+                        LogUtils.e("登录===" + response);
+                        if (!"".equals(response)) {
+                            UserReloBean mBean = mGson.fromJson(response, UserReloBean.class);
+                            if (0 == mBean.getCode()) {
+                                UserReloBean.DataDTO bean = mBean.getData();
+                                mMMKVInstace.encode(Constants.KEY_UserMan, bean.isUserMan());//用户管理(用户管理界面能不能进)
+                                mMMKVInstace.encode(Constants.KEY_CanPsw, bean.isCanPsw());//设置口令(修改别人密码)
+                                mMMKVInstace.encode(Constants.KEY_SnapVideoRecord, bean.isSnapVideoRecord());//拍照录像
+                                mMMKVInstace.encode(Constants.KEY_CanNew, bean.isCanNew());  //登记病人(新增病人)
+                                mMMKVInstace.encode(Constants.KEY_CanEdit, bean.isCanEdit());//修改病历
+                                mMMKVInstace.encode(Constants.KEY_CanDelete, bean.isCanDelete());//删除病历
+                                mMMKVInstace.encode(Constants.KEY_CanPrint, bean.isCanPrint()); //打印病历
+                                mMMKVInstace.encode(Constants.KEY_UnPrinted, bean.isUnPrinted()); //未打印病历
+                                mMMKVInstace.encode(Constants.KEY_OnlySelf, bean.isOnlySelf());//本人病历
+                                mMMKVInstace.encode(Constants.KEY_HospitalInfo, bean.isHospitalInfo());//医院信息(不能进入医院信息界面)
+                            }
+                        }
+
+                    }
+                });
     }
 
     /**

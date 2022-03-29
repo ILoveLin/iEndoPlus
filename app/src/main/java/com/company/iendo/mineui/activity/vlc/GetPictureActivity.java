@@ -25,6 +25,7 @@ import com.company.iendo.R;
 import com.company.iendo.action.StatusAction;
 import com.company.iendo.app.AppActivity;
 import com.company.iendo.bean.CaseDetailBean;
+import com.company.iendo.bean.UserReloBean;
 import com.company.iendo.bean.event.SocketRefreshEvent;
 import com.company.iendo.bean.socket.HandBean;
 import com.company.iendo.bean.socket.RecodeBean;
@@ -286,9 +287,55 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                 setTypeTabData(deviceParamsBean);
 
                 break;
+            case Constants.UDP_F7://权限通知变动,在病例列表,病例详情,和图像采集三个界面相互监听,发现了请求后台更新本地权限
+                if (event.getTga()) {
+                    requestCurrentPermission();
+                }
+                break;
         }
 
     }
+
+    /**
+     * 上位机权限变动通知,更新本地权限
+     */
+    private void requestCurrentPermission() {
+        OkHttpUtils.get()
+                .url(mBaseUrl + HttpConstant.UserManager_getCurrentRelo)
+                .addParams("UserID", mUserID)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+
+
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+//
+                        LogUtils.e("登录===" + response);
+                        if (!"".equals(response)) {
+                            UserReloBean mBean = mGson.fromJson(response, UserReloBean.class);
+                            if (0 == mBean.getCode()) {
+                                UserReloBean.DataDTO bean = mBean.getData();
+                                mMMKVInstace.encode(Constants.KEY_UserMan, bean.isUserMan());//用户管理(用户管理界面能不能进)
+                                mMMKVInstace.encode(Constants.KEY_CanPsw, bean.isCanPsw());//设置口令(修改别人密码)
+                                mMMKVInstace.encode(Constants.KEY_SnapVideoRecord, bean.isSnapVideoRecord());//拍照录像
+                                mMMKVInstace.encode(Constants.KEY_CanNew, bean.isCanNew());  //登记病人(新增病人)
+                                mMMKVInstace.encode(Constants.KEY_CanEdit, bean.isCanEdit());//修改病历
+                                mMMKVInstace.encode(Constants.KEY_CanDelete, bean.isCanDelete());//删除病历
+                                mMMKVInstace.encode(Constants.KEY_CanPrint, bean.isCanPrint()); //打印病历
+                                mMMKVInstace.encode(Constants.KEY_UnPrinted, bean.isUnPrinted()); //未打印病历
+                                mMMKVInstace.encode(Constants.KEY_OnlySelf, bean.isOnlySelf());//本人病历
+                                mMMKVInstace.encode(Constants.KEY_HospitalInfo, bean.isHospitalInfo());//医院信息(不能进入医院信息界面)
+                            }
+                        }
+
+                    }
+                });
+    }
+
 
     private void setTypeTabData(DeviceParamsBean deviceParamsBean) {
         DeviceParamsBean.Type01 type01 = deviceParamsBean.getType01(); //摄像机
@@ -360,7 +407,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                 break;
             case R.id.video_back:               //全屏的时候退出界面
                 //此处应该是缩小播放界面
-                isFullscreen=false;
+                isFullscreen = false;
                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);//竖屏动态转换
                 setVideoViewFull(R.drawable.nur_ic_fangda, "竖屏");
@@ -372,12 +419,19 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                 startLive(path);
                 break;
             case R.id.linear_record:            //录像,本地不做,socket通讯机子做操作
-                sendSocketPointRecodeStatusMessage(Constants.UDP_18, "0");
-                if (UDP_EQUALS_ID) {
-                    mHandler.sendEmptyMessageDelayed(Record_Request, 200);
+                //有权限才去做录像操作
+                if (mMMKVInstace.decodeBool(Constants.KEY_SnapVideoRecord)) {
+                    sendSocketPointRecodeStatusMessage(Constants.UDP_18, "0");
+                    if (UDP_EQUALS_ID) {
+                        mHandler.sendEmptyMessageDelayed(Record_Request, 200);
+                    } else {
+                        toast(Constants.UDP_CASE_ID_DIFFERENT);
+                    }
                 } else {
-                    toast(Constants.UDP_CASE_ID_DIFFERENT);
+                    toast(Constants.HAVE_NO_PERMISSION);
                 }
+
+
 //                if (isPlayering) {
 //                    if (mVLCView.isPrepare()) {
 //                        if ("录像".equals(mRecordMsg.getText())) {
@@ -399,7 +453,11 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             case R.id.linear_picture:           //截图,本地不做,socket通讯机子做操作
                 if (UDP_HAND_TAG) {
                     if (UDP_EQUALS_ID) {
-                        sendSocketPointShotMessage(Constants.UDP_15);
+                        if (mMMKVInstace.decodeBool(Constants.KEY_SnapVideoRecord)) {
+                            sendSocketPointShotMessage(Constants.UDP_15);
+                        } else {
+                            toast(Constants.HAVE_NO_PERMISSION);
+                        }
                     } else {
                         toast(Constants.UDP_CASE_ID_DIFFERENT);
                     }
@@ -1326,41 +1384,64 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         switch (v.getId()) {
             case R.id.edit_01_light: //冷光源,亮度
                 sendSocketPointLight(Constants.UDP_F5, "" + Integer.parseInt(mEdit01Light.getText().toString().trim()));
-                mRangeBar01Light.setProgress(Integer.parseInt(mEdit01Light.getText().toString().trim()));
-                mEdit01Light.clearFocus();
+                if (!("".equals(mEdit01Light.getText().toString().trim()))) {
+                    mRangeBar01Light.setProgress(Integer.parseInt(mEdit01Light.getText().toString().trim()));
+                    mEdit01Light.clearFocus();
+                } else {
+                    toast("输入值不能为空");
+                }
                 break;
             case R.id.edit_02_light://摄像机,亮度
-                typeBean.setBrightness(mEdit02Light.getText().toString().trim());
-                bean.setType01(typeBean);
-                sendSocketPointVideoDevice(Constants.UDP_F6, bean);
-                mRangeBar02Light.setProgress(Integer.parseInt(mEdit02Light.getText().toString().trim()));
-                mEdit02Light.clearFocus();
+                if (!("".equals(mEdit02Light.getText().toString().trim()))) {
+                    typeBean.setBrightness(mEdit02Light.getText().toString().trim());
+                    bean.setType01(typeBean);
+                    sendSocketPointVideoDevice(Constants.UDP_F6, bean);
+                    mRangeBar02Light.setProgress(Integer.parseInt(mEdit02Light.getText().toString().trim()));
+                    mEdit02Light.clearFocus();
+                } else {
+                    toast("输入值不能为空");
+                }
+
                 break;
             case R.id.edit_02_saturation://摄像机,饱和度
-                typeBean.setSaturation(mEdit02Light.getText().toString().trim());
-                bean.setType01(typeBean);
-                sendSocketPointVideoDevice(Constants.UDP_F6, bean);
-                mRangeBar02Saturation.setProgress(Integer.parseInt(mEdit02Saturation.getText().toString().trim()));
-                mEdit02Saturation.clearFocus();
+                if (!("".equals(mEdit02Light.getText().toString().trim()))) {
+                    typeBean.setSaturation(mEdit02Light.getText().toString().trim());
+                    bean.setType01(typeBean);
+                    sendSocketPointVideoDevice(Constants.UDP_F6, bean);
+                    mRangeBar02Saturation.setProgress(Integer.parseInt(mEdit02Saturation.getText().toString().trim()));
+                    mEdit02Saturation.clearFocus();
+                } else {
+                    toast("输入值不能为空");
+                }
+
                 break;
             case R.id.edit_02_definition://摄像机,清晰度
-                typeBean.setBrightness(mEdit02Light.getText().toString().trim());
-                bean.setType01(typeBean);
-                sendSocketPointVideoDevice(Constants.UDP_F6, bean);
-                mRangeBar02Definition.setProgress(Integer.parseInt(mEdit02Definition.getText().toString().trim()));
-                mEdit02Definition.clearFocus();
+                if (!("".equals(mEdit02Light.getText().toString().trim()))) {
+                    typeBean.setBrightness(mEdit02Light.getText().toString().trim());
+                    bean.setType01(typeBean);
+                    sendSocketPointVideoDevice(Constants.UDP_F6, bean);
+                    mRangeBar02Definition.setProgress(Integer.parseInt(mEdit02Definition.getText().toString().trim()));
+                    mEdit02Definition.clearFocus();
+                } else {
+                    toast("输入值不能为空");
+                }
+
                 break;
             case R.id.edit_02_zoom://摄像机,放大倍数
-                //放大倍数           //显示是1到2.5倍,传值是0--15
-                //获取需要发送的数值
-                int rangeBarNeedSetData = CommonUtil.getEditDataToSend(mEdit02Zoom.getText() + "");
-                //获取需要设置到rangebar上的数值
-                LogUtils.e("progress==倍数=rangeBarNeedSetData发送==" + rangeBarNeedSetData);
-                typeBean.setZoomrate(rangeBarNeedSetData + "");
-                bean.setType01(typeBean);
-                sendSocketPointVideoDevice(Constants.UDP_F6, bean);
-                mRangeBar02Zoom.setProgress(Float.parseFloat(mEdit02Zoom.getText().toString()));
-                mEdit02Zoom.clearFocus();
+                if (!("".equals(mEdit02Zoom.getText().toString().trim()))) {
+                    //放大倍数           //显示是1到2.5倍,传值是0--15
+                    //获取需要发送的数值
+                    int rangeBarNeedSetData = CommonUtil.getEditDataToSend(mEdit02Zoom.getText() + "");
+                    //获取需要设置到rangebar上的数值
+                    LogUtils.e("progress==倍数=rangeBarNeedSetData发送==" + rangeBarNeedSetData);
+                    typeBean.setZoomrate(rangeBarNeedSetData + "");
+                    bean.setType01(typeBean);
+                    sendSocketPointVideoDevice(Constants.UDP_F6, bean);
+                    mRangeBar02Zoom.setProgress(Float.parseFloat(mEdit02Zoom.getText().toString()));
+                    mEdit02Zoom.clearFocus();
+                } else {
+                    toast("输入值不能为空");
+                }
 
 
                 break;

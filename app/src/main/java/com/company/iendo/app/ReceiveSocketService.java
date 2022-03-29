@@ -7,6 +7,7 @@ import android.net.wifi.WifiManager;
 import android.os.IBinder;
 import android.widget.Toast;
 
+import com.company.iendo.bean.UserReloChanged;
 import com.company.iendo.bean.event.SocketRefreshEvent;
 import com.company.iendo.bean.socket.DeleteUserBean;
 import com.company.iendo.bean.socket.RecodeBean;
@@ -405,6 +406,20 @@ public class ReceiveSocketService extends AbsWorkService {
                                             event.setUdpCmd(Constants.UDP_F5);
                                             EventBus.getDefault().post(event);
                                             break;
+                                        case Constants.UDP_F7://通知权限变动
+                                            LogUtils.e("======LiveServiceImpl==回调===通知权限变动==");
+                                            String mLoginUserName = (String) SharePreferenceUtil.get(getApplicationContext(), SharePreferenceUtil.Current_Login_UserName, "3");
+                                            UserReloChanged reloBean = mGson.fromJson(str, UserReloChanged.class);
+                                            if (mLoginUserName.equals(reloBean.getUsername())) {
+                                                event.setTga(true);
+                                            } else {
+                                                event.setTga(false);
+                                            }
+                                            event.setData(str);//此处直接把数据bean的string回传到GetPictureActivity界面
+                                            event.setIp(hostAddressIP);
+                                            event.setUdpCmd(Constants.UDP_F7);
+                                            EventBus.getDefault().post(event);
+                                            break;
 
                                     }
                                 }
@@ -415,7 +430,7 @@ public class ReceiveSocketService extends AbsWorkService {
                         }
 
                     } catch (Exception e) {
-                        LogUtils.e("保活服务开启=====退出线程==Exception=="+e);
+                        LogUtils.e("保活服务开启=====退出线程==Exception==" + e);
                         e.printStackTrace();
 
                         break;//捕获到异常之后，执行break跳出循环

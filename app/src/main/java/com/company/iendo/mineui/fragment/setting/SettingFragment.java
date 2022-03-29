@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.company.iendo.R;
 import com.company.iendo.app.ReceiveSocketService;
 import com.company.iendo.app.TitleBarFragment;
+import com.company.iendo.bean.LoginBean;
 import com.company.iendo.bean.UserDeletedBean;
 import com.company.iendo.bean.socket.HandBean;
 import com.company.iendo.bean.socket.params.DeviceParamsBean;
@@ -33,6 +34,7 @@ import com.company.iendo.utils.FileUtil;
 import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.MD5ChangeUtil;
 import com.company.iendo.utils.SharePreferenceUtil;
+import com.company.iendo.utils.SocketUtils;
 import com.hjq.base.BaseDialog;
 import com.hjq.widget.layout.SettingBar;
 import com.tencent.mmkv.MMKV;
@@ -76,7 +78,7 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
         mUserName = findViewById(R.id.tv_current_name);
         mRelo = findViewById(R.id.tv_current_relo);
         mBaseUrl = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_BaseUrl, "192.168.312.102");
-        setOnClickListener(R.id.memory_bar,  R.id.hospital_bar, R.id.user_bar, R.id.about_bar, R.id.memory_bar, R.id.password_bar, R.id.linear_exit);
+        setOnClickListener(R.id.memory_bar, R.id.hospital_bar, R.id.user_bar, R.id.about_bar, R.id.memory_bar, R.id.password_bar, R.id.linear_exit);
 
     }
 
@@ -111,77 +113,15 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.memory_bar:
-                MMKV kv = MMKV.defaultMMKV();
-                int port = kv.decodeInt(Constants.KEY_BROADCAST_PORT);
-                int port1 = kv.decodeInt(Constants.KEY_RECEIVE_PORT);
-                int portt = kv.decodeInt(Constants.KEY_RECEIVE_PORT_BY_SEARCH);
-                LogUtils.e("AppActivity=fragment==port====" + port);
-                LogUtils.e("AppActivity=fragment==port1====" + port1);
-                LogUtils.e("AppActivity=fragment==接收portt====" + portt);
-
-                DeviceParamsBean deviceParamsBean = new DeviceParamsBean();
-                String str = "{\n" +
-                        "    \"01\":{\n" +
-                        "        \"brightess\":\"30\",\n" +
-                        "        \"zoom\":\"1\",\n" +
-                        "        \"sharpenss\":\"10\",\n" +
-                        "        \"saturation\":\"30\"\n" +
-                        "    },\n" +
-                        "    \"02\":{\n" +
-                        "        \"brightess\":\"30\"\n" +
-                        "    }\n" +
-                        "}";
-                String str2 = "{\n" +
-                        "    \"01\":{\n" +
-                        "        \"brightess\":\"30\",\n" +
-                        "        \"zoom\":\"1\",\n" +
-                        "        \"sharpenss\":\"10\",\n" +
-                        "        \"saturation\":\"30\"\n" +
-                        "    }\n" +
-                        " \n" +
-                        "}";
-
-
-                DeviceParamsBean deviceParamsBean1 = mGson.fromJson(str, DeviceParamsBean.class);
-                DeviceParamsBean deviceParamsBean2 = mGson.fromJson(str2, DeviceParamsBean.class);
-                LogUtils.e("SettingFragment====deviceParamsBean1====" + deviceParamsBean1.toString());
-                LogUtils.e("SettingFragment====deviceParamsBean2====" + deviceParamsBean2.toString());
-                HandBean handBean = new HandBean();
-                handBean.setHelloPc("HelloPc");
-                handBean.setComeFrom("Android");
-
-
-                LogUtils.e("SettingFragment====handBean====" + handBean.toString());
-                LogUtils.e("SettingFragment====handBeantoJson====" + mGson.toJson(handBean));
-
-
-                Type01Bean videoDeviceBean = new Type01Bean();
-                Type01Bean.Type01 dto = new Type01Bean.Type01();
-                dto.setBrightness("60");
-                videoDeviceBean.setType01(dto);
-
-                String string = videoDeviceBean.toString();
-                LogUtils.e("SettingFragment====bean====" + string);
-                LogUtils.e("SettingFragment====bean====" + mGson.toJson(videoDeviceBean));
-
-                Type02Bean bean = new Type02Bean();
-                LogUtils.e("======GetPictureActivity==回调===获取当前病例00==" + mGson.toJson(bean));
-
-                Type02Bean.Type02 type02 = new Type02Bean.Type02();
-                bean.setType02(type02);
-                LogUtils.e("======GetPictureActivity==回调===获取当前病例00==" + mGson.toJson(bean));
-                byte[] sendByteData = CalculateUtils.getSendByteData(getApplication(), mGson.toJson(bean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
-                        Constants.UDP_F6);
-                LogUtils.e("======GetPictureActivity==回调===>发送冷光源参数==" + sendByteData);
-                //Type01{brightess='60', zoom='null', sharpenss='null', saturation='null', reversal='null', bloodenhance='null'}
-
-                break;
             case R.id.hospital_bar:
                 startActivity(HospitalActivity.class);
                 break;
             case R.id.user_bar:
-                startActivity(UserListActivity.class);
+                if (mMMKVInstace.decodeBool(Constants.KEY_UserMan)) {
+                    startActivity(UserListActivity.class);
+                } else {
+                    toast(Constants.HAVE_NO_PERMISSION);
+                }
                 break;
             case R.id.about_bar:
                 showAboutDialog();
@@ -241,12 +181,11 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
                 .setListener(new MessageDialog.OnListener() {
                     @Override
                     public void onConfirm(BaseDialog dialog) {
+                        //程序退出命令
+                        sendProgramExitMessage();
                         SharePreferenceUtil.put(getActivity(), Constants.Is_Logined, false);
                         startActivity(LoginActivity.class);
-                        // 进行内存优化，销毁除登录页之外的所有界面  --传入相对于的activity
-                        // 进行内存优化，销毁掉所有的界面
-
-
+                        //开启默认监听端口
                         ReceiveSocketService receiveSocketService = new ReceiveSocketService();
                         WifiManager wifiManager = (WifiManager) getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
                         if (wifiManager.isWifiEnabled()) {
@@ -258,7 +197,6 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
                         int searchPort = kv.decodeInt(Constants.KEY_RECEIVE_PORT_BY_SEARCH);
                         LogUtils.e("AppActivity=fragment==port====" + port);
                         LogUtils.e("AppActivity=fragment==接收searchPort====" + searchPort);
-
                         if ("".equals(searchPort)) {
                             toast("本地广播发送端口不能为空");
                             return;
@@ -266,11 +204,42 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
                             receiveSocketService.initSettingReceiveThread(mAppIP, searchPort, getAttachActivity());
 
                         }
-
+                        //退出的时候,重置所有用户权限
+                        kv.encode(Constants.KEY_UserMan, false);//用户管理(用户管理界面能不能进)
+                        kv.encode(Constants.KEY_CanPsw, false);//设置口令(修改别人密码)
+                        kv.encode(Constants.KEY_SnapVideoRecord, false);//拍照录像
+                        kv.encode(Constants.KEY_CanNew, false);  //登记病人(新增病人)
+                        kv.encode(Constants.KEY_CanEdit, false);//修改病历
+                        kv.encode(Constants.KEY_CanDelete, false);//删除病历
+                        kv.encode(Constants.KEY_CanPrint, false); //打印病历
+                        kv.encode(Constants.KEY_UnPrinted, false); //未打印病历
+                        kv.encode(Constants.KEY_OnlySelf, false);//本人病历
+                        kv.encode(Constants.KEY_HospitalInfo, false);//医院信息(不能进入医院信息界面)
 
                         finish();
                     }
                 }).show();
+    }
+
+    /**
+     * 发送握手消息
+     */
+    public void sendProgramExitMessage() {
+        HandBean handBean = new HandBean();
+        handBean.setHelloPc("HelloPc");
+        handBean.setComeFrom("Android");
+        byte[] sendByteData = CalculateUtils.getSendByteData(getAttachActivity(), mGson.toJson(handBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
+                Constants.UDP_FE);
+
+        if (("".equals(mSocketPort))) {
+            toast("通讯端口不能为空!");
+            return;
+        }
+        LogUtils.e("SocketUtils===发送消息==点对点==detailCaseActivity==sendByteData==" + sendByteData);
+        LogUtils.e("SocketUtils===发送消息==点对点==detailCaseActivity==mSocketPort==" + mSocketPort);
+
+        SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), getAttachActivity());
+//        SocketManage.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort));
     }
 
     /**

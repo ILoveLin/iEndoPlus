@@ -17,6 +17,7 @@ import com.company.iendo.R;
 import com.company.iendo.action.StatusAction;
 import com.company.iendo.app.TitleBarFragment;
 import com.company.iendo.bean.CaseManageListBean;
+import com.company.iendo.bean.UserReloBean;
 import com.company.iendo.bean.ZXBean;
 import com.company.iendo.bean.event.SocketRefreshEvent;
 import com.company.iendo.http.glide.GlideRequest;
@@ -51,6 +52,7 @@ import com.scwang.smart.refresh.layout.SmartRefreshLayout;
 import com.scwang.smart.refresh.layout.api.RefreshLayout;
 import com.scwang.smart.refresh.layout.listener.OnRefreshLoadMoreListener;
 import com.tencent.bugly.crashreport.CrashReport;
+import com.umeng.commonsdk.debug.E;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -132,7 +134,11 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
                 break;
             case R.id.ib_left:
                 //跳转病例添加界面
-                startActivity(AddCaseActivity.class);
+                if (mMMKVInstace.decodeBool(Constants.KEY_CanNew)) {
+                    startActivity(AddCaseActivity.class);
+                }else {
+                    toast(Constants.HAVE_NO_PERMISSION);
+                }
                 break;
             case R.id.ib_right:
 
@@ -369,40 +375,55 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
                     sendRequest(currentChoseDate);
                 }
                 break;
+
+            case Constants.UDP_F7://权限通知变动,在病例列表,病例详情,和图像采集三个界面相互监听,发现了请求后台更新本地权限
+                if (event.getTga()){
+                    requestCurrentPermission();
+                }
+                break;
         }
 
     }
 
-//    /**
-//     * {@link OnRefreshLoadMoreListener}
-//     */
-//
-//    @Override
-//    public void onRefresh(@NonNull RefreshLayout refreshLayout) {
-//        postDelayed(() -> {
-//            mAdapter.clearData();
-//            mAdapter.setData(mDataLest);
-//            mRefreshLayout.finishRefresh();
-////            mAdapter.clearData();
-////            mAdapter.setData(analogData());
-////            mRefreshLayout.finishRefresh();
-//        }, 1000);
-//    }
+    /**
+     * 上位机权限变动通知,更新本地权限
+     */
+    private void requestCurrentPermission() {
+        OkHttpUtils.get()
+                .url(mBaseUrl + HttpConstant.UserManager_getCurrentRelo)
+                .addParams("UserID", mUserID)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
 
-//    @Override
-//    public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
-//        postDelayed(() -> {
-////            mAdapter.addData(mRequestListData);
-//            mRefreshLayout.finishLoadMore();
-//            mAdapter.setLastPage(true);
-//            mRefreshLayout.setNoMoreData(mAdapter.isLastPage());
-////
-////            mAdapter.addData(analogData());
-////            mRefreshLayout.finishLoadMore();
-////
-////            mAdapter.setLastPage(mAdapter.getCount() >= 100);
-////            mRefreshLayout.setNoMoreData(mAdapter.isLastPage());
-//        }, 1000);
-//    }
+
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+//
+                        LogUtils.e("登录===" + response);
+                        if (!"".equals(response)) {
+                            UserReloBean mBean = mGson.fromJson(response, UserReloBean.class);
+                            if (0 == mBean.getCode()) {
+                                UserReloBean.DataDTO bean = mBean.getData();
+                                mMMKVInstace.encode(Constants.KEY_UserMan, bean.isUserMan());//用户管理(用户管理界面能不能进)
+                                mMMKVInstace.encode(Constants.KEY_CanPsw, bean.isCanPsw());//设置口令(修改别人密码)
+                                mMMKVInstace.encode(Constants.KEY_SnapVideoRecord, bean.isSnapVideoRecord());//拍照录像
+                                mMMKVInstace.encode(Constants.KEY_CanNew, bean.isCanNew());  //登记病人(新增病人)
+                                mMMKVInstace.encode(Constants.KEY_CanEdit, bean.isCanEdit());//修改病历
+                                mMMKVInstace.encode(Constants.KEY_CanDelete, bean.isCanDelete());//删除病历
+                                mMMKVInstace.encode(Constants.KEY_CanPrint, bean.isCanPrint()); //打印病历
+                                mMMKVInstace.encode(Constants.KEY_UnPrinted, bean.isUnPrinted()); //未打印病历
+                                mMMKVInstace.encode(Constants.KEY_OnlySelf, bean.isOnlySelf());//本人病历
+                                mMMKVInstace.encode(Constants.KEY_HospitalInfo, bean.isHospitalInfo());//医院信息(不能进入医院信息界面)
+                            }
+                        }
+
+                    }
+                });
+    }
+
 
 }

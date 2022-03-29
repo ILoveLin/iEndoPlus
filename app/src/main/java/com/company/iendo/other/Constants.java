@@ -40,24 +40,41 @@ public class Constants {
     public static final String KEY_SOCKET_RECEIVE_FIRST_IN = "KEY_SOCKET_RECEIVE_FIRST_IN";
 
 
+    /**
+     * 登录成功之后,存储用户权限说明
+     * UserMan 			    -- 用户管理
+     * CanPsw 			    -- 设置口令
+     * SnapVideoRecord	    -- 拍照录像
+     * CanNew 			    -- 登记病人
+     * CanEdit 			    -- 修改病历
+     * CanDelete 			-- 删除病历
+     * CanPrint 			-- 打印病历
+     * UnPrinted 			-- 未打印病历,病例详情返回过来的时候是状态值,和这里的不同,这里表示是否具有该权限,true表示打印过了不能编辑
+     * OnlySelf 			-- 本人病历,病例详情返回过来的时候是状态值,和这里的不同,这里表示是否具有该权限,
+     * HospitalInfo 		-- 医院信息
+     */
 
 
-//    public static final String KEY_SOCKET_RECEIVE_FIRST_IN = "KEY_SOCKET_RECEIVE_FIRST_IN";
+    public static final String KEY_UserMan = "KEY_UserMan";             //用户管理(用户管理界面能不能进)
+    public static final String KEY_CanPsw = "KEY_CanPsw";             //设置口令(修改别人密码)
+    public static final String KEY_SnapVideoRecord = "KEY_SnapVideoRecord";      //拍照录像
+    public static final String KEY_CanNew = "KEY_CanNew";              //登记病人(新增病人)
+    public static final String KEY_CanEdit = "KEY_CanEdit";            //修改病历
+    public static final String KEY_CanDelete = "KEY_CanDelete";        //删除病历
+    //这三个权限都是和是否能修改病例挂钩
+    public static final String KEY_CanPrint = "KEY_CanPrint";          //打印病历
+    public static final String KEY_UnPrinted = "KEY_UnPrinted";        //未打印病历    是否具有该权限 true的时候就需要去判断编辑病例返回的Printed
+    public static final String KEY_OnlySelf = "KEY_OnlySelf";           //本人病历     是否具有该权限 true的时候就需要去判断编辑病例返回的UserName
+
+    public static final String KEY_HospitalInfo = "KEY_HospitalInfo";      //医院信息(不能进入医院信息界面)
 
 
-/**
- * toast 提示语
- */
+    /**
+     * toast 提示语
+     */
 
-public static final String UDP_CASE_ID_DIFFERENT = "两设备之间选择病历不一致，请重新确认";                 //当前病例ID和操作病例ID不相等,不能操作!
-
-
-
-
-
-
-
-
+    public static final String UDP_CASE_ID_DIFFERENT = "两设备之间选择病历不一致，请重新确认";                 //当前病例ID和操作病例ID不相等,不能操作!
+    public static final String HAVE_NO_PERMISSION = "暂无权限";
 
 
     /**
@@ -79,6 +96,9 @@ public static final String UDP_CASE_ID_DIFFERENT = "两设备之间选择病历�
     public static final String UDP_18 = "18";                 //录像    //录像--->0：查询录像状态 1：开始录像，，(我的命令)2：停止录像，(我的命令)3：正在录像，(后台返回操作)  4：未录像(后台返回操作)
     public static final String UDP_F5 = "F5";                 //查询 设备参数
     public static final String UDP_F6 = "F6";                 //设置 设备参数
+    public static final String UDP_F4 = "F4";                 //语音接入
+    public static final String UDP_F7 = "F7";                 //通知权限变动    //相同用户名的时候 重新刷新权限
+    public static final String UDP_FE = "FE";                 //程序退出命令  -->退出登录的时候发消息
 
 
     /**
@@ -92,7 +112,7 @@ public static final String UDP_CASE_ID_DIFFERENT = "两设备之间选择病历�
 
     /**
      * 协议里面设备类型,文档里面和传输都用16进制表示
-     *  int用十六进制表示
+     * int用十六进制表示
      * 统一用十六进制表示 协议返回的也是16进制
      */
 

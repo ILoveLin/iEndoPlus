@@ -23,6 +23,7 @@ import com.company.iendo.http.api.UpdateImageApi;
 import com.company.iendo.http.glide.GlideApp;
 import com.company.iendo.http.model.HttpData;
 import com.company.iendo.mineui.activity.MainActivity;
+import com.company.iendo.other.Constants;
 import com.company.iendo.other.HttpConstant;
 import com.company.iendo.ui.activity.ImageCropActivity;
 import com.company.iendo.ui.activity.ImagePreviewActivity;
@@ -109,9 +110,11 @@ public class HospitalActivity extends AppActivity implements StatusAction {
 
     @Override
     protected void initData() {
+
         setEditStatus(false);
 
         responseListener();
+
     }
 
     private void responseListener() {
@@ -130,16 +133,22 @@ public class HospitalActivity extends AppActivity implements StatusAction {
 
             @Override
             public void onRightClick(View view) {
-                if (mTitlebar.getRightTitle().equals("编辑")) {
-                    setEditStatus(true);
-                    mTitlebar.setRightTitle("保存");
-                    mTitlebar.setRightTitleColor(getResources().getColor(R.color.red));
+
+                if (mMMKVInstace.decodeBool(Constants.KEY_HospitalInfo)) {
+                    if (mTitlebar.getRightTitle().equals("编辑")) {
+                        setEditStatus(true);
+                        mTitlebar.setRightTitle("保存");
+                        mTitlebar.setRightTitleColor(getResources().getColor(R.color.red));
+                    } else {
+                        mTitlebar.setRightTitle("编辑");
+                        mTitlebar.setRightTitleColor(getResources().getColor(R.color.black));
+                        setEditStatus(false);
+                        sendUpdateRequest();
+                    }
                 } else {
-                    mTitlebar.setRightTitle("编辑");
-                    mTitlebar.setRightTitleColor(getResources().getColor(R.color.black));
-                    setEditStatus(false);
-                    sendUpdateRequest();
+                    toast(Constants.HAVE_NO_PERMISSION);
                 }
+
             }
         });
     }
@@ -150,7 +159,7 @@ public class HospitalActivity extends AppActivity implements StatusAction {
         if (postCode) {
             showLoading();
             OkHttpUtils.post()
-                    .url(mBaseUrl+HttpConstant.CaseManager_CaseUpdateHospitalInfo)
+                    .url(mBaseUrl + HttpConstant.CaseManager_CaseUpdateHospitalInfo)
                     .addParams("ID", mID)//内部ID
                     .addParams("UserName", mLoginUserName)//操作员用户名
                     .addParams("EndoType", endoType)//EndoType
@@ -192,7 +201,7 @@ public class HospitalActivity extends AppActivity implements StatusAction {
     private void sendRequest() {
         showLoading();
         OkHttpUtils.get()
-                .url(mBaseUrl+HttpConstant.CaseManager_CaseHospitalInfo)
+                .url(mBaseUrl + HttpConstant.CaseManager_CaseHospitalInfo)
                 .build()
                 .execute(new StringCallback() {
                     @Override
@@ -206,7 +215,7 @@ public class HospitalActivity extends AppActivity implements StatusAction {
                     public void onResponse(String response, int id) {
                         showComplete();
                         HospitalBean mBean = mGson.fromJson(response, HospitalBean.class);
-                        LogUtils.e("医院信息===="+response);
+                        LogUtils.e("医院信息====" + response);
                         if ("" != response && 0 == mBean.getCode()) {  //成功
                             mID = mBean.getData().getID();
                             refreshData(mBean.getData());
@@ -341,7 +350,7 @@ public class HospitalActivity extends AppActivity implements StatusAction {
         String realPathFromURI = PictureFileUtil.getRealPathFromURI(this, mAvatarUrl);
         File file1 = new File(realPathFromURI);
         OkHttpUtils.post()
-                .url(mBaseUrl+HttpConstant.CaseManager_CaseUpdateHospitalLogo)
+                .url(mBaseUrl + HttpConstant.CaseManager_CaseUpdateHospitalLogo)
                 .addFile("logo", file1.getName(), file1)
                 .build()
                 .execute(new StringCallback() {

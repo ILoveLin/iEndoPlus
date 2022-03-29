@@ -17,6 +17,7 @@ import com.hjq.bar.TitleBar;
 import com.company.iendo.R;
 import com.company.iendo.action.TitleBarAction;
 import com.hjq.gson.factory.GsonFactory;
+import com.tencent.mmkv.MMKV;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -44,6 +45,8 @@ public abstract class TitleBarFragment<A extends AppActivity> extends AppFragmen
     public String mCurrentReceiveDeviceCode; //当前选择设备的==唯一设备码
     public String mSocketOrLiveIP;       //socket或者直播通讯的ip
     public String mSocketPort;           //socket通讯端口
+    public MMKV mMMKVInstace;
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -63,7 +66,7 @@ public abstract class TitleBarFragment<A extends AppActivity> extends AppFragmen
                 ImmersionBar.setTitleBar(this, getTitleBar());
             }
         }
-
+        mMMKVInstace = MMKV.defaultMMKV();
         endoType = (String) SharePreferenceUtil.get(getAttachActivity(), SharePreferenceUtil.Current_EndoType, "3");
 
         mBaseUrl = (String) SharePreferenceUtil.get(getAttachActivity(), SharePreferenceUtil.Current_BaseUrl, "192.167.132.102");

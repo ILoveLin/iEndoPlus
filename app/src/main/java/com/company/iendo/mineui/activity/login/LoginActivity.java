@@ -131,7 +131,7 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
     private void refreshUI(String userName) {
         Boolean loginType = (Boolean) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.OnLine_Flag, true);
         if (loginType) {//在线登录
-            List<UserDBBean> userDBBeans = UserDBUtils.getQueryBeanByTow(getApplicationContext(), deviceID,userName);
+            List<UserDBBean> userDBBeans = UserDBUtils.getQueryBeanByTow(getApplicationContext(), deviceID, userName);
             //数据库没有
             if (userDBBeans.size() != 0) {
                 for (int i = 0; i < userDBBeans.size(); i++) {
@@ -689,7 +689,7 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
         showLoading();
 
         OkHttpUtils.post()
-                .url(mUrl + HttpConstant.UserManager_Login)
+                .url(mUrl + HttpConstant.UserManager_getCurrentRelo)
                 .addParams("UserName", mPhoneView.getText().toString())
                 .addParams("Password", MD5ChangeUtil.Md5_32(mPasswordView.getText().toString()))
                 .build()
@@ -711,6 +711,7 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                         LogUtils.e("登录===" + response);
                         if (!"".equals(response)) {
                             LoginBean mBean = mGson.fromJson(response, LoginBean.class);
+
                             if (0 == mBean.getCode()) {
                                 LogUtils.e("登录==role==" + mBean.getData().getRole());
                                 LogUtils.e("登录==userid==" + mBean.getData().getUserID());
@@ -720,6 +721,22 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                                 SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Current_Login_Password, mPasswordView.getText().toString());
                                 SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Flag_UserDBSave, true);
                                 SharePreferenceUtil.put(LoginActivity.this, Constants.Is_Logined, true);
+                                //此次需要存入当前登入用户具有的操作权限
+                                MMKV kv = MMKV.defaultMMKV();
+                                LoginBean.DataDTO.PurviewDTO purviewBean = mBean.getData().getPurview();
+
+                                kv.encode(Constants.KEY_UserMan, purviewBean.isUserMan());//用户管理(用户管理界面能不能进)
+                                kv.encode(Constants.KEY_CanPsw, purviewBean.isCanPsw());//设置口令(修改别人密码)
+                                kv.encode(Constants.KEY_SnapVideoRecord, purviewBean.isSnapVideoRecord());//拍照录像
+                                kv.encode(Constants.KEY_CanNew, purviewBean.isCanNew());  //登记病人(新增病人)
+                                kv.encode(Constants.KEY_CanEdit, purviewBean.isCanEdit());//修改病历
+                                kv.encode(Constants.KEY_CanDelete, purviewBean.isCanDelete());//删除病历
+                                kv.encode(Constants.KEY_CanPrint, purviewBean.isCanPrint()); //打印病历
+                                kv.encode(Constants.KEY_UnPrinted, purviewBean.isUnPrinted()); //未打印病历
+                                kv.encode(Constants.KEY_OnlySelf, purviewBean.isOnlySelf());//本人病历
+                                kv.encode(Constants.KEY_HospitalInfo, purviewBean.isHospitalInfo());//医院信息(不能进入医院信息界面)
+
+
                                 //存入用户表
                                 saveRememberPassword(mBean);
 
@@ -733,7 +750,6 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                                     WifiInfo wifiInfo = wifiManager.getConnectionInfo();
                                     mAppIP = getIpString(wifiInfo.getIpAddress());
                                 }
-                                MMKV kv = MMKV.defaultMMKV();
                                 int mCastSendPort = kv.decodeInt(Constants.KEY_BROADCAST_PORT);
                                 if ("".equals(mSocketPort)) {
                                     toast("本地广播发送端口不能为空");

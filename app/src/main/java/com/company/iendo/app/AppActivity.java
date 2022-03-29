@@ -25,6 +25,7 @@ import com.company.iendo.http.model.HttpData;
 import com.company.iendo.ui.dialog.WaitDialog;
 import com.hjq.gson.factory.GsonFactory;
 import com.hjq.http.listener.OnHttpListener;
+import com.tencent.mmkv.MMKV;
 
 import okhttp3.Call;
 
@@ -57,7 +58,6 @@ public abstract class AppActivity extends BaseActivity
     public Gson mGson;
     public String mBaseUrl;  //当前用户的头部url
     public String endoType;
-    public String mUserID;
     public static String mAppIP;
     public String mCurrentTypeDes;    //当前选择设备的==比如:一代一体机==07,此处mCurrentTypeDes==一代一体机
     public String mCurrentTypeNum;    //当前选择设备的==比如:一代一体机==07,此处mCurrentTypeNum==07
@@ -67,8 +67,10 @@ public abstract class AppActivity extends BaseActivity
     public String mUsername;            //直播账号
     public String mPassword;            //直播密码
     public String mLivePort;            //直播端口
+    public String mUserID;              //用户ID
     public String mBaseUrlPort;
     public String mLoginUserName;
+    public MMKV mMMKVInstace;
 
     /**
      * 当前加载对话框是否在显示中
@@ -130,7 +132,7 @@ public abstract class AppActivity extends BaseActivity
         if (getTitleBar() != null) {
             getTitleBar().setOnTitleBarListener(this);
         }
-
+        mMMKVInstace = MMKV.defaultMMKV();
 
         mBaseUrl = (String) SharePreferenceUtil.get(AppActivity.this, SharePreferenceUtil.Current_BaseUrl, "192.167.132.102");
         mBaseUrlPort = (String) SharePreferenceUtil.get(AppActivity.this, SharePreferenceUtil.Current_HttpPort, "7001");

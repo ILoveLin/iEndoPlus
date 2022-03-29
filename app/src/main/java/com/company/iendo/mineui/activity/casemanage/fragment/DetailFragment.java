@@ -286,7 +286,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         LogUtils.e("病例详情界面数据====" + mDataBean);
         et_01_check_num.setText(mDataBean.getCaseNo());     //检查号也叫病例编号
         et_01_name.setText(mDataBean.getName());
-        edit_01_i_tell_you.setText(mDataBean.getChiefComplaint()+"");
+        edit_01_i_tell_you.setText(mDataBean.getChiefComplaint() + "");
         et_03_is_married.setText("" + mDataBean.getMarried());
         et_01_sex_type.setText("" + mDataBean.getSex());
         et_03_tel.setText("" + mDataBean.getTel());
@@ -813,7 +813,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         //设备码和当前操作用户绑定
         //查询当前设备码下 绑定的所有用户
         //查询当前设备码下绑定的用户,并且是操作用户是当前登入的用户
-        List<UserDBBean> userListt = UserDBUtils.getQueryBeanByThree(getAttachActivity(), mDeviceCode, mLoginUserID,"true");
+        List<UserDBBean> userListt = UserDBUtils.getQueryBeanByThree(getAttachActivity(), mDeviceCode, mLoginUserID, "true");
 //        List<UserDBBean> userListt = UserDBUtils.getQueryBeanByTowCodeUserID(getAttachActivity(), mDeviceCode, mLoginUserID,"true");
 
         if (null != userListt && userListt.size() > 0) {
@@ -916,17 +916,21 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 
     @Override
     public void onDelete() {
-        new MessageDialog.Builder(getActivity())
-                .setTitle("提示")
-                .setMessage("确认删除该用户吗?")
-                .setConfirm("确定")
-                .setCancel("取消")
-                .setListener(new MessageDialog.OnListener() {
-                    @Override
-                    public void onConfirm(BaseDialog dialog) {
-                        sendDeleteRequest();
-                    }
-                }).show();
+        if (mMMKVInstace.decodeBool(Constants.KEY_CanDelete)) {
+            new MessageDialog.Builder(getActivity())
+                    .setTitle("提示")
+                    .setMessage("确认删除该用户吗?")
+                    .setConfirm("确定")
+                    .setCancel("取消")
+                    .setListener(new MessageDialog.OnListener() {
+                        @Override
+                        public void onConfirm(BaseDialog dialog) {
+                            sendDeleteRequest();
+                        }
+                    }).show();
+        } else {
+            toast(Constants.HAVE_NO_PERMISSION);
+        }
     }
 
 
@@ -1493,9 +1497,6 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         mEditList.add(et_01_sex_type);
 
 
-
-
-
         //需要先获取到lines然后再去获取edit
         mLineEditList.add(lines_01_bad_tell);
         mLineEditList.add(etlines_02_mirror_see);
@@ -1508,7 +1509,6 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         mLineEditList.add(lines_03_case_history);
         mLineEditList.add(lines_03_family_case_history);
         mLineEditList.add(lines_01_i_tell_you);
-
 
 
     }
