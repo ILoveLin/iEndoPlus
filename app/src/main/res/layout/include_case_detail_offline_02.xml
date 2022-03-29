@@ -26,9 +26,9 @@
         android:orientation="vertical">
 
         <LinearLayout
-            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/dp_35">
+            android:layout_height="@dimen/dp_35"
+            android:orientation="horizontal">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -38,22 +38,23 @@
                 android:text="镜检所见"
                 android:textColor="@color/black"
                 android:textSize="@dimen/sp_14" />
-            
+
             <Space
                 android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
             <ImageView
                 android:id="@+id/iv_02_mirror_see"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginRight="@dimen/dp_10"
-                android:visibility="gone"
-                android:layout_width="wrap_content"
                 android:src="@drawable/selector_detail_dialog"
-                android:layout_height="wrap_content"/>
-            
+                android:visibility="gone" />
+
         </LinearLayout>
-      
+
 
         <View
             android:layout_width="match_parent"
@@ -67,7 +68,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/dp_10"
-            app:classic_showPositive="false" />
+            app:classic_maxCount="800"
+            app:classic_showPositive="true" />
 
 
     </LinearLayout>
@@ -81,10 +83,12 @@
         android:layout_marginBottom="@dimen/dp_10"
         android:background="@drawable/shape_bg_writh"
         android:orientation="vertical">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="@dimen/dp_35"
             android:orientation="horizontal">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/dp_35"
@@ -100,13 +104,13 @@
                 android:layout_weight="1" />
 
             <ImageView
-                android:visibility="gone"
                 android:id="@+id/iv_02_mirror_result"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginRight="@dimen/dp_10"
-                android:src="@drawable/selector_detail_dialog" />
+                android:src="@drawable/selector_detail_dialog"
+                android:visibility="gone" />
 
         </LinearLayout>
 
@@ -123,7 +127,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/dp_10"
-            app:classic_showPositive="false" />
+            app:classic_maxCount="800"
+            app:classic_showPositive="true" />
 
 
     </LinearLayout>
@@ -138,10 +143,12 @@
         android:layout_marginBottom="@dimen/dp_10"
         android:background="@drawable/shape_bg_writh"
         android:orientation="vertical">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="@dimen/dp_35"
             android:orientation="horizontal">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/dp_35"
@@ -158,13 +165,13 @@
                 android:layout_weight="1" />
 
             <ImageView
-                android:visibility="gone"
                 android:id="@+id/iv_02_live_check"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginRight="@dimen/dp_10"
-                android:src="@drawable/selector_detail_dialog" />
+                android:src="@drawable/selector_detail_dialog"
+                android:visibility="gone" />
 
         </LinearLayout>
 
@@ -181,7 +188,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/dp_10"
-            app:classic_showPositive="false" />
+            app:classic_maxCount="800"
+            app:classic_showPositive="true" />
 
 
     </LinearLayout>
@@ -195,10 +203,12 @@
         android:layout_marginBottom="@dimen/dp_10"
         android:background="@drawable/shape_bg_writh"
         android:orientation="vertical">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="@dimen/dp_35"
             android:orientation="horizontal">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/dp_35"
@@ -220,8 +230,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginRight="@dimen/dp_10"
-                android:visibility="gone"
-                android:src="@drawable/selector_detail_dialog" />
+                android:src="@drawable/selector_detail_dialog"
+                android:visibility="gone" />
 
         </LinearLayout>
 
@@ -237,7 +247,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/dp_10"
-            app:classic_showPositive="false" />
+            app:classic_maxCount="800"
+            app:classic_showPositive="true" />
 
 
     </LinearLayout>
@@ -251,10 +262,12 @@
         android:layout_marginBottom="@dimen/dp_10"
         android:background="@drawable/shape_bg_writh"
         android:orientation="vertical">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="@dimen/dp_35"
             android:orientation="horizontal">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/dp_35"
@@ -275,8 +288,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginRight="@dimen/dp_10"
-                android:visibility="gone"
-                android:src="@drawable/selector_detail_dialog" />
+                android:src="@drawable/selector_detail_dialog"
+                android:visibility="gone" />
 
         </LinearLayout>
 
@@ -293,7 +306,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/dp_10"
-            app:classic_showPositive="false" />
+            app:classic_maxCount="800"
+            app:classic_showPositive="true" />
 
 
     </LinearLayout>
@@ -307,10 +321,12 @@
         android:layout_marginBottom="@dimen/dp_10"
         android:background="@drawable/shape_bg_writh"
         android:orientation="vertical">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="@dimen/dp_35"
             android:orientation="horizontal">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/dp_35"
@@ -332,8 +348,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginRight="@dimen/dp_10"
-                android:visibility="gone"
-                android:src="@drawable/selector_detail_dialog" />
+                android:src="@drawable/selector_detail_dialog"
+                android:visibility="gone" />
 
         </LinearLayout>
 
@@ -349,7 +365,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/dp_10"
-            app:classic_showPositive="false" />
+            app:classic_maxCount="800"
+            app:classic_showPositive="true" />
 
 
     </LinearLayout>
@@ -363,10 +380,12 @@
         android:layout_marginBottom="@dimen/dp_10"
         android:background="@drawable/shape_bg_writh"
         android:orientation="vertical">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="@dimen/dp_35"
             android:orientation="horizontal">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/dp_35"
@@ -388,8 +407,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginRight="@dimen/dp_10"
-                android:visibility="gone"
-                android:src="@drawable/selector_detail_dialog" />
+                android:src="@drawable/selector_detail_dialog"
+                android:visibility="gone" />
 
         </LinearLayout>
 
@@ -406,7 +425,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/dp_10"
-            app:classic_showPositive="false" />
+            app:classic_maxCount="800"
+            app:classic_showPositive="true" />
 
 
     </LinearLayout>
@@ -420,10 +440,12 @@
         android:layout_marginRight="@dimen/dp_10"
         android:background="@drawable/shape_bg_writh"
         android:orientation="horizontal">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="@dimen/dp_35"
             android:orientation="horizontal">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/dp_35"
@@ -436,8 +458,8 @@
             <com.hjq.widget.view.ClearEditText
                 android:id="@+id/et_02_check_doctor"
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="@dimen/dp_35"
+                android:layout_weight="1"
                 android:background="@null"
                 android:focusable="false"
                 android:gravity="right"
@@ -453,18 +475,16 @@
                 android:textSize="@dimen/sp_14" />
 
 
-
             <ImageView
                 android:id="@+id/iv_02_check_doctor"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginRight="@dimen/dp_10"
-                android:visibility="gone"
-                android:src="@drawable/selector_detail_dialog" />
+                android:src="@drawable/selector_detail_dialog"
+                android:visibility="gone" />
 
         </LinearLayout>
-
 
 
     </LinearLayout>

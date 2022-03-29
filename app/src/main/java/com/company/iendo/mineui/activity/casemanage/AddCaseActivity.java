@@ -273,7 +273,7 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
         }
         String Fee = et_01_fee.getText().toString().trim();       //收费
 //        String FeeType = et_03_tel.getText().toString().trim();       //收费类型         ???
-        String ChiefComplaint = lines_01_i_tell_you.getContentText().trim();       //主诉
+        String ChiefComplaint = lines_01_i_tell_you.getContentEdit().getText().toString().trim();       //主诉
 //        String ChiefComplaint = et_01_i_tell_you.getText().toString().trim();       //主诉
         String Test = etlines_02_test.getContentText().toString().trim();       //试验
         String Advice = etlines_02_advice.getContentText().toString().trim();       //建议
@@ -610,8 +610,8 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
                         public void onSelected(BaseDialog dialog, int position, String data) {
                             String s = stringList.get(position);
                             String s1 = mEdit.getContentText() + "" + s;
-                            if (s1.length() >= 100) {
-                                toast("字数不能超过100!");
+                            if (s1.length() >= 800) {
+                                toast("字数不能超过800!");
                             } else {
                                 mEdit.setContentText(mEdit.getContentText() + "" + s);
 
@@ -825,7 +825,6 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
 
 
 
-        mEditList.add(edit_01_i_tell_you);
         mEditList.add(edit_01_i_bad_tell);
         mEditList.add(et_02_mirror_see);
         mEditList.add(et_02_mirror_result);
@@ -841,6 +840,8 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
         mEditList.add(et_03_is_married);
         mEditList.add(edit_03_case_history);
         mEditList.add(edit_03_family_case_history);
+        mEditList.add(edit_01_i_tell_you);
+        mEditList.add(et_01_name);
 
 
         for (int i = 0; i < mEditList.size(); i++) {

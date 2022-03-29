@@ -45,25 +45,11 @@ public class Constants {
 //    public static final String KEY_SOCKET_RECEIVE_FIRST_IN = "KEY_SOCKET_RECEIVE_FIRST_IN";
 
 
+/**
+ * toast 提示语
+ */
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+public static final String UDP_CASE_ID_DIFFERENT = "两设备之间选择病历不一致，请重新确认";                 //当前病例ID和操作病例ID不相等,不能操作!
 
 
 

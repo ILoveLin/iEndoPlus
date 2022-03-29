@@ -79,11 +79,12 @@
                     style="@style/CaseTextViewStyle"
                     android:layout_gravity="center"
                     android:text="性别" />
+
                 <com.hjq.widget.view.ClearEditText
                     android:id="@+id/et_01_sex_type"
                     android:layout_width="0dp"
-                    android:layout_weight="1"
                     android:layout_height="@dimen/dp_35"
+                    android:layout_weight="1"
                     android:background="@null"
                     android:focusable="false"
                     android:gravity="right|center_vertical"
@@ -104,12 +105,9 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginRight="@dimen/dp_10"
-                    android:src="@drawable/selector_detail_dialog"
-                    />
+                    android:src="@drawable/selector_detail_dialog" />
 
             </LinearLayout>
-
-
 
 
         </LinearLayout>
@@ -375,7 +373,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/dp_10"
-            app:classic_showPositive="false" />
+            app:classic_maxCount="800"
+            app:classic_showPositive="true" />
 
         <!--        <com.hjq.widget.view.ClearEditText-->
         <!--            android:id="@+id/et_01_i_tell_you"-->
@@ -407,10 +406,12 @@
         android:layout_marginBottom="@dimen/dp_10"
         android:background="@drawable/shape_bg_writh"
         android:orientation="vertical">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="@dimen/dp_35"
             android:orientation="horizontal">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/dp_35"
@@ -419,6 +420,7 @@
                 android:text="临床诊断"
                 android:textColor="@color/black"
                 android:textSize="@dimen/sp_14" />
+
             <Space
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -448,7 +450,8 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/dp_10"
             android:focusable="false"
-            app:classic_showPositive="false" />
+            app:classic_maxCount="800"
+            app:classic_showPositive="true" />
 
 
         <!--        <com.hjq.widget.view.ClearEditText-->

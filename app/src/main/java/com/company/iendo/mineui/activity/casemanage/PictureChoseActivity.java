@@ -73,6 +73,7 @@ public final class PictureChoseActivity extends AppActivity implements StatusAct
     private static boolean UDP_HAND_TAG = false; //握手成功表示  true 成功
     private String oldIDS = "";
     private RelativeLayout mRelativeAll;
+    private TextView mImageEmpty;
 
     @Override
     protected int getLayoutId() {
@@ -90,6 +91,7 @@ public final class PictureChoseActivity extends AppActivity implements StatusAct
         mRelativeAll = findViewById(R.id.relative_all);
         mAnimTitlebar = findViewById(R.id.anim_titlebar);
         mAnimReport = findViewById(R.id.iv_anim_report);
+        mImageEmpty = findViewById(R.id.tv_image_empty);
 
     }
 
@@ -250,6 +252,7 @@ public final class PictureChoseActivity extends AppActivity implements StatusAct
                         oldIDS="";
                         mPathList = new ArrayList<>();
                         showComplete();
+                        mImageEmpty.setVisibility(View.INVISIBLE);
                         if ("" != response) {
                             DetailPictureBean mBean = mGson.fromJson(response, DetailPictureBean.class);
                             List<DetailPictureBean.DataDTO> data = mBean.getData();
@@ -292,7 +295,8 @@ public final class PictureChoseActivity extends AppActivity implements StatusAct
                                     mAdapter.setData(mDataLest);
 
                                 } else {
-                                    showEmpty();
+                                    mImageEmpty.setVisibility(View.VISIBLE);
+
                                 }
 
                             } else {

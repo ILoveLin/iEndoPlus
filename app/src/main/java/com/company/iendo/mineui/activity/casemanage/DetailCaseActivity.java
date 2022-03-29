@@ -504,12 +504,14 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
                 case R.id.linear_get_picture://图像采集
                     mOnEditStatusListener.onGetPicture();
 //                    currentUrl01 = "rtsp://" + username + ":" + password + "@" + ip + ":" + port + "/session0.mpg";  //高清
-                    String currentUrl = "rtsp://" + mUsername + ":" + mPassword + "@" + mSocketOrLiveIP + ":" + mLivePort + "/session0.mpg";  //高清
+                    String currentUrl0 = "rtsp://" + mUsername + ":" + mPassword + "@" + mSocketOrLiveIP + ":" + mLivePort + "/session0.mpg";  //高清
+                    String currentUrl1 = "rtsp://" + mUsername + ":" + mPassword + "@" + mSocketOrLiveIP + ":" + mLivePort + "/session1.mpg";  //标清
                     Intent intent1 = new Intent(this, GetPictureActivity.class);
-                    LogUtils.e("======GetPictureActivity=====currentUrl====currentUrl==" + currentUrl);
+                    LogUtils.e("======GetPictureActivity=====currentUrl====currentUrl==" + currentUrl0);
                     Bundle bundle1 = new Bundle();
                     bundle1.putString("ItemID", currentItemID);
-                    bundle1.putString("currentUrl", currentUrl);
+                    bundle1.putString("currentUrl0", currentUrl0);
+                    bundle1.putString("currentUrl1", currentUrl1);
                     intent1.putExtras(bundle1);
                     startActivity(intent1);
                     break;

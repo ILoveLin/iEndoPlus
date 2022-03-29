@@ -286,6 +286,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         LogUtils.e("病例详情界面数据====" + mDataBean);
         et_01_check_num.setText(mDataBean.getCaseNo());     //检查号也叫病例编号
         et_01_name.setText(mDataBean.getName());
+        edit_01_i_tell_you.setText(mDataBean.getChiefComplaint()+"");
         et_03_is_married.setText("" + mDataBean.getMarried());
         et_01_sex_type.setText("" + mDataBean.getSex());
         et_03_tel.setText("" + mDataBean.getTel());
@@ -1175,8 +1176,8 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                         public void onSelected(BaseDialog dialog, int position, String string) {
                             String s = stringList.get(position);
                             String s1 = mEdit.getContentText() + "" + s;
-                            if (s1.length() >= 100) {
-                                toast("字数不能超过100!");
+                            if (s1.length() >= 800) {
+                                toast("字数不能超过800!");
                             } else {
                                 mEdit.setContentText(mEdit.getContentText() + "" + s);
 
@@ -1432,13 +1433,6 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         mEditList = new ArrayList<>();
         mLineEditList = new ArrayList<>();   //不能获取焦点的edit
         mImageViewList = new ArrayList<>();         //点击弹出对话框的imageview
-        //存入01
-        mImageViewList.add(iv_01_sex_type);
-        mImageViewList.add(iv_01_age_type);
-        mImageViewList.add(iv_01_jop);
-        mImageViewList.add(tv_01_get_check_doctor);
-        mImageViewList.add(iv_01_i_tell_you);
-        mImageViewList.add(iv_01_bad_tell);
         //存入02
         mImageViewList.add(iv_02_mirror_see);
         mImageViewList.add(iv_02_mirror_result);
@@ -1453,13 +1447,13 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         mImageViewList.add(iv_03_device);
         mImageViewList.add(iv_03_ming_zu);
         mImageViewList.add(iv_03_is_married);
-
-
-        mEditList.add(et_01_sex_type);
-        mEditList.add(et_01_age);//et_01_age
-        mEditList.add(et_01_jop);
-        mEditList.add(et_01_fee);
-        mEditList.add(et_01_get_check_doctor);
+        //存入01
+        mImageViewList.add(iv_01_age_type);
+        mImageViewList.add(iv_01_jop);
+        mImageViewList.add(tv_01_get_check_doctor);
+        mImageViewList.add(iv_01_i_tell_you);
+        mImageViewList.add(iv_01_bad_tell);
+        mImageViewList.add(iv_01_sex_type);
 
         mEditList.add(edit_01_i_tell_you);
         mEditList.add(edit_01_i_bad_tell);
@@ -1492,8 +1486,17 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         mEditList.add(et_01_name);
 
 
+        mEditList.add(et_01_age);//et_01_age
+        mEditList.add(et_01_jop);
+        mEditList.add(et_01_fee);
+        mEditList.add(et_01_get_check_doctor);
+        mEditList.add(et_01_sex_type);
+
+
+
+
+
         //需要先获取到lines然后再去获取edit
-        mLineEditList.add(lines_01_i_tell_you);
         mLineEditList.add(lines_01_bad_tell);
         mLineEditList.add(etlines_02_mirror_see);
         mLineEditList.add(etlines_02_mirror_result);
@@ -1504,6 +1507,8 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         mLineEditList.add(etlines_02_advice);
         mLineEditList.add(lines_03_case_history);
         mLineEditList.add(lines_03_family_case_history);
+        mLineEditList.add(lines_01_i_tell_you);
+
 
 
     }

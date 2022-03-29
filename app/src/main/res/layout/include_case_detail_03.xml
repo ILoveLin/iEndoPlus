@@ -670,7 +670,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/dp_10"
-                app:classic_showPositive="false" />
+                app:classic_maxCount="800"
+                app:classic_showPositive="true"/>
 
             <!--            <com.hjq.widget.view.ClearEditText-->
             <!--                android:id="@+id/et_03_case_history"-->
@@ -741,7 +742,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/dp_10"
-                app:classic_showPositive="false" />
+                app:classic_maxCount="800"
+                app:classic_showPositive="true" />
 
             <!--            <com.hjq.widget.view.ClearEditText-->
             <!--                android:id="@+id/et_03_family_case_history"-->

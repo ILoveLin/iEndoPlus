@@ -100,9 +100,9 @@
                                         app:shape_strokeColor="@color/color_9A9A9A" />
 
                                     <ImageView
-                                        android:layout_width="@dimen/dp_12"
-                                        android:layout_height="@dimen/dp_7"
-                                        android:src="@drawable/ic_icon_an" />
+                                        android:layout_width="@dimen/dp_14"
+                                        android:layout_height="@dimen/dp_14"
+                                        android:src="@drawable/selector_detail_dialog" />
 
                                 </LinearLayout>
 
@@ -139,8 +139,8 @@
                                         app:shape_strokeColor="@color/color_9A9A9A" />
 
                                     <ImageView
-                                        android:layout_width="@dimen/dp_12"
-                                        android:layout_height="@dimen/dp_7"
+                                        android:layout_width="@dimen/dp_14"
+                                        android:layout_height="@dimen/dp_14"
                                         android:src="@drawable/ic_icon_an" />
 
                                 </LinearLayout>
@@ -183,13 +183,13 @@
                                         android:textSize="@dimen/sp_15" />
 
                                     <TextView
-                                        android:id="@+id/tv_name"
+                                        android:id="@+id/tv_yibaohao"
                                         android:layout_width="0dp"
                                         android:layout_height="wrap_content"
                                         android:layout_centerVertical="true"
                                         android:layout_toRightOf="@+id/text_01"
                                         android:layout_weight="1"
-                                        android:text="姓名"
+                                        android:text="医保号"
                                         android:textColor="@color/black_000000"
                                         android:textSize="@dimen/sp_15" />
                                 </LinearLayout>
@@ -211,6 +211,7 @@
 
 
                                 <EditText
+                                    android:paddingLeft="@dimen/dp_5"
                                     android:id="@+id/edit_check_num"
                                     android:layout_width="0dp"
                                     android:layout_height="@dimen/dp_35"
@@ -224,15 +225,79 @@
                                     android:textColorHint="@color/color_9A9A9A"
                                     android:textSize="@dimen/sp_13" />
 
-                                <ImageView
 
+                                <ImageView
                                     android:layout_width="@dimen/dp_14"
-                                    android:layout_height="@dimen/dp_17"
+                                    android:layout_height="@dimen/dp_9"
                                     android:layout_gravity="center"
                                     android:layout_marginRight="@dimen/dp_1"
-                                    android:src="@drawable/ic_icon_name" />
+                                    android:src="@drawable/ic_icon_checkno_" />
+
 
                                 <EditText
+                                    android:paddingLeft="@dimen/dp_5"
+                                    android:id="@+id/edit_yibaohao"
+                                    android:layout_width="0dp"
+                                    android:layout_height="@dimen/dp_35"
+                                    android:layout_centerVertical="true"
+                                    android:layout_weight="1"
+                                    android:background="@null"
+                                    android:hint="请输入医保号"
+                                    android:singleLine="true"
+                                    android:textColor="@color/color_9A9A9A"
+                                    android:textColorHint="@color/color_9A9A9A"
+                                    android:textSize="@dimen/sp_13" />
+                            </LinearLayout>
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1px"
+                                android:background="@color/common_line_color" />
+
+                            <!--年龄,性别-->
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/dp_40"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/tv_age"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerVertical="true"
+                                    android:layout_weight="1"
+                                    android:text="姓名"
+                                    android:textColor="@color/black_000000"
+                                    android:textSize="@dimen/sp_14" />
+
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="性别"
+                                    android:textColor="@color/black_000000"
+                                    android:textSize="@dimen/sp_14" />
+
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/dp_40"
+                                android:gravity="center"
+                                android:orientation="horizontal">
+
+                                <ImageView
+                                    android:layout_width="@dimen/dp_14"
+                                    android:layout_height="@dimen/dp_11"
+                                    android:layout_gravity="center"
+                                    android:layout_marginRight="@dimen/dp_1"
+                                    android:src="@drawable/ic_icon_age" />
+
+                                <EditText
+                                    android:paddingLeft="@dimen/dp_5"
                                     android:id="@+id/edit_check_name"
                                     android:layout_width="0dp"
                                     android:layout_height="@dimen/dp_35"
@@ -244,6 +309,27 @@
                                     android:textColor="@color/color_9A9A9A"
                                     android:textColorHint="@color/color_9A9A9A"
                                     android:textSize="@dimen/sp_13" />
+
+                                <ImageView
+                                    android:layout_width="@dimen/dp_14"
+                                    android:layout_height="@dimen/dp_13"
+                                    android:layout_gravity="center"
+                                    android:layout_marginRight="@dimen/dp_1"
+                                    android:src="@drawable/ic_icon_gender" />
+
+                                <TextView
+                                    android:paddingLeft="@dimen/dp_5"
+                                    android:id="@+id/tv_sex_type"
+                                    android:layout_width="0dp"
+                                    android:layout_height="@dimen/dp_35"
+                                    android:layout_weight="1"
+                                    android:drawableRight="@drawable/selector_detail_dialog_search"
+                                    android:gravity="center_vertical"
+                                    android:text="请选择性别"
+                                    android:textColor="@color/color_9A9A9A"
+                                    android:textSize="@dimen/sp_13" />
+
+
                             </LinearLayout>
 
                             <View
@@ -273,7 +359,7 @@
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
-                                    android:text="性别"
+                                    android:text=""
                                     android:textColor="@color/black_000000"
                                     android:textSize="@dimen/sp_14" />
 
@@ -282,47 +368,95 @@
 
                             <LinearLayout
                                 android:layout_width="match_parent"
-
                                 android:layout_height="@dimen/dp_40"
                                 android:gravity="center"
-                                android:orientation="horizontal">
+                                android:orientation="horizontal"
+                                android:weightSum="5">
 
-                                <ImageView
-                                    android:layout_width="@dimen/dp_14"
-                                    android:layout_height="@dimen/dp_11"
-                                    android:layout_gravity="center"
-                                    android:layout_marginRight="@dimen/dp_1"
-                                    android:src="@drawable/ic_icon_age" />
-
-                                <EditText
-                                    android:id="@+id/edit_end_age"
+                                <RelativeLayout
                                     android:layout_width="0dp"
-                                    android:layout_height="@dimen/dp_35"
-                                    android:layout_weight="1"
-                                    android:background="@null"
-                                    android:hint="请输入年龄"
-                                    android:inputType="phone"
-                                    android:textColor="@color/color_9A9A9A"
-                                    android:textColorHint="@color/color_9A9A9A"
-                                    android:textSize="@dimen/sp_13" />
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="3"
+                                    android:gravity="center_vertical">
 
-                                <ImageView
-                                    android:layout_width="@dimen/dp_14"
-                                    android:layout_height="@dimen/dp_13"
-                                    android:layout_gravity="center"
-                                    android:layout_marginRight="@dimen/dp_1"
-                                    android:src="@drawable/ic_icon_gender" />
+                                    <TextView
+                                        android:id="@+id/tv_mid"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_centerInParent="true"
+                                        android:text="至"
+                                        android:textColor="@color/color_9A9A9A"
+                                        android:textSize="@dimen/sp_13" />
 
-                                <TextView
-                                    android:id="@+id/tv_sex_type"
+                                    <EditText
+                                        android:id="@+id/edit_age_start"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="@dimen/dp_35"
+                                        android:layout_centerVertical="true"
+                                        android:layout_toLeftOf="@+id/tv_mid"
+                                        android:layout_weight="1"
+                                        android:background="@null"
+                                        android:hint="请输入姓名"
+                                        android:singleLine="true"
+                                        android:textColor="@color/color_9A9A9A"
+                                        android:textColorHint="@color/color_9A9A9A"
+                                        android:textSize="@dimen/sp_13" />
+
+                                    <EditText
+                                        android:id="@+id/edit_age_end"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="@dimen/dp_35"
+                                        android:layout_centerVertical="true"
+                                        android:layout_toRightOf="@+id/tv_mid"
+                                        android:layout_weight="1"
+                                        android:background="@null"
+                                        android:hint="请输入姓名"
+                                        android:paddingLeft="@dimen/dp_10"
+                                        android:singleLine="true"
+                                        android:textColor="@color/color_9A9A9A"
+                                        android:textColorHint="@color/color_9A9A9A"
+                                        android:textSize="@dimen/sp_13" />
+
+
+                                </RelativeLayout>
+
+                                <LinearLayout
                                     android:layout_width="0dp"
-                                    android:layout_height="@dimen/dp_35"
-                                    android:layout_weight="1"
-                                    android:gravity="center_vertical"
-                                    android:text="请选择性别"
-                                    android:textColor="@color/color_9A9A9A"
-                                    android:textSize="@dimen/sp_13" />
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="2"
+                                    android:orientation="horizontal">
 
+                                    <View
+                                        android:layout_marginLeft="10dp"
+                                        android:layout_width="1dp"
+                                        android:layout_height="match_parent"
+                                        android:background="@color/common_line_color" />
+
+                                    <TextView
+                                        android:id="@+id/tv_age_type"
+                                        android:layout_width="0dp"
+                                        android:layout_height="match_parent"
+                                        android:layout_weight="1"
+                                        android:gravity="center"
+                                        android:text="岁"
+                                        android:textColor="@color/color_9A9A9A"
+                                        android:textSize="@dimen/sp_13" />
+
+                                    <View
+                                        android:layout_width="1dp"
+                                        android:layout_height="match_parent"
+                                        android:layout_marginRight="@dimen/dp_10"
+                                        android:background="@color/common_line_color" />
+
+                                    <ImageView
+                                        android:id="@+id/iv_age"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center"
+                                        android:src="@drawable/selector_detail_dialog_search" />
+
+
+                                </LinearLayout>
 
                             </LinearLayout>
 
@@ -374,13 +508,13 @@
                                     android:src="@drawable/ic_icon_professional" />
 
                                 <EditText
+                                    android:paddingLeft="@dimen/dp_5"
                                     android:id="@+id/edit_worker"
                                     android:layout_width="0dp"
                                     android:layout_height="@dimen/dp_35"
                                     android:layout_weight="1"
                                     android:background="@null"
                                     android:hint="请选择职业"
-                                    android:focusable="false"
                                     android:inputType="phone"
                                     android:textColor="@color/color_9A9A9A"
                                     android:textColorHint="@color/color_9A9A9A"
@@ -394,10 +528,12 @@
                                     android:src="@drawable/ic_icon_maritalstatus" />
 
                                 <TextView
+                                    android:paddingLeft="@dimen/dp_5"
                                     android:id="@+id/tv_married_type"
                                     android:layout_width="0dp"
                                     android:layout_height="@dimen/dp_35"
                                     android:layout_weight="1"
+                                    android:drawableRight="@drawable/selector_detail_dialog_search"
                                     android:gravity="center_vertical"
                                     android:text="请选择婚否"
                                     android:textColor="@color/color_9A9A9A"
@@ -457,14 +593,15 @@
 
 
                                 <EditText
+                                    android:paddingLeft="@dimen/dp_5"
                                     android:id="@+id/edit_section"
                                     android:layout_width="0dp"
                                     android:layout_height="@dimen/dp_35"
                                     android:layout_weight="1"
                                     android:background="@null"
+                                    
                                     android:hint="请选择科室"
                                     android:inputType="phone"
-                                    android:focusable="false"
                                     android:textColor="@color/color_9A9A9A"
                                     android:textColorHint="@color/color_9A9A9A"
                                     android:textSize="@dimen/sp_13" />
@@ -477,14 +614,15 @@
                                     android:src="@drawable/ic_icon_equipment" />
 
                                 <EditText
+                                    android:paddingLeft="@dimen/dp_5"
                                     android:id="@+id/edit_device"
                                     android:layout_width="0dp"
                                     android:layout_height="@dimen/dp_35"
                                     android:layout_weight="1"
                                     android:background="@null"
+                                    
                                     android:gravity="center_vertical"
                                     android:hint="请选择设备"
-                                    android:focusable="false"
                                     android:inputType="phone"
                                     android:textColor="@color/color_9A9A9A"
                                     android:textColorHint="@color/color_9A9A9A"
@@ -546,13 +684,14 @@
 
 
                                 <EditText
+                                    android:paddingLeft="@dimen/dp_5"
                                     android:id="@+id/edit_check_doctor"
                                     android:layout_width="0dp"
                                     android:layout_height="@dimen/dp_35"
                                     android:layout_weight="1"
                                     android:background="@null"
+                                    
                                     android:hint="请选择检查医生"
-                                    android:focusable="false"
                                     android:inputType="phone"
                                     android:textColor="@color/color_9A9A9A"
                                     android:textColorHint="@color/color_9A9A9A"
@@ -566,16 +705,17 @@
                                     android:src="@drawable/ic_icon_reviewthedoctor" />
 
                                 <EditText
+                                    android:paddingLeft="@dimen/dp_5"
                                     android:id="@+id/edit_get_doctor"
                                     android:layout_width="0dp"
                                     android:layout_height="@dimen/dp_35"
                                     android:layout_weight="1"
                                     android:background="@null"
+                                    
                                     android:gravity="center_vertical"
                                     android:hint="请选择送检医生"
                                     android:inputType="phone"
                                     android:text=""
-                                    android:focusable="false"
                                     android:textColor="@color/color_9A9A9A"
                                     android:textColorHint="@color/color_9A9A9A"
                                     android:textSize="@dimen/sp_13" />

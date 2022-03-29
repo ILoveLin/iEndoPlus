@@ -4,21 +4,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-    <!--Tab选择光源摄像机-->
+    <!--光源摄像机两个的TAB-->
     <LinearLayout
-        android:layout_marginLeft="@dimen/dp_10"
-        android:layout_marginRight="@dimen/dp_10"
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_30"
+        android:layout_marginLeft="@dimen/dp_10"
         android:layout_marginTop="@dimen/dp_10"
+        android:layout_marginRight="@dimen/dp_10"
         android:orientation="horizontal">
 
         <LinearLayout
             android:id="@+id/linear_light_tab"
-            android:background="@drawable/selector_bg_getpicture_light"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:background="@drawable/selector_bg_getpicture_light"
             android:gravity="center_vertical"
             android:orientation="vertical">
 
@@ -31,19 +31,19 @@
 
             <TextView
                 android:id="@+id/view_light"
-                android:layout_marginTop="@dimen/dp_1"
                 android:layout_width="@dimen/dp_20"
                 android:layout_height="@dimen/dp_1"
                 android:layout_gravity="center"
+                android:layout_marginTop="@dimen/dp_1"
                 android:background="@color/color_25A5FF" />
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/linear_device_tab"
-            android:background="@drawable/selector_bg_getpicture_device"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:background="@drawable/selector_bg_getpicture_device"
             android:gravity="center_vertical"
             android:orientation="vertical">
 
@@ -56,149 +56,31 @@
 
             <TextView
                 android:id="@+id/view_device"
-                android:layout_marginTop="@dimen/dp_1"
                 android:layout_width="@dimen/dp_30"
                 android:layout_height="@dimen/dp_1"
                 android:layout_gravity="center"
+                android:layout_marginTop="@dimen/dp_1"
                 android:background="@color/color_25A5FF" />
         </LinearLayout>
 
     </LinearLayout>
 
     <!--TAB对应的布局-->
-    <RelativeLayout
+
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <!--光源:对应的tab亮度-->
-        <LinearLayout
-            android:layout_marginLeft="@dimen/dp_10"
-            android:layout_marginRight="@dimen/dp_10"
-            android:id="@+id/linear_light_part"
+
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/shape_bg_getpicture_only_light"
-            android:orientation="vertical">
-
-
+            android:layout_height="wrap_content">
+            <!--光源参数-->
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/dp_40"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/dp_10"
-                    android:src="@drawable/ic_icon_brightness" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/dp_10"
-                    android:text="亮度"
-                    android:textColor="@color/color_0C0C0C"
-                    android:textSize="@dimen/sp_12" />
-
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="1px"
-                    android:layout_weight="1" />
-
-                <com.hjq.widget.view.ClearEditText
-                    android:id="@+id/edit_01_light"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:background="@null"
-                    android:gravity="right|center_vertical"
-                    android:hint="可手动输入数值"
-                    android:imeOptions="actionSend"
-                    android:inputType="number"
-                    android:lines="1"
-                    android:maxLength="3"
-                    android:paddingLeft="@dimen/dp_10"
-                    android:paddingRight="@dimen/dp_10"
-                    android:singleLine="true"
-                    android:text=""
-                    android:textColor="@color/color_0C0C0C"
-                    android:textColorHint="@color/color_9A9A9A"
-                    android:textSize="@dimen/sp_12" />
-
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1px"
-                android:layout_marginLeft="@dimen/dp_15"
-                android:layout_marginRight="@dimen/dp_15"
-                android:background="@color/colorLine" />
-
-            <LinearLayout
+                android:id="@+id/linear_light_part"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/dp_10"
-                android:layout_marginTop="@dimen/dp_5"
                 android:layout_marginRight="@dimen/dp_10"
-                android:gravity="center"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="1"
-                    android:textColor="@color/color_9A9A9A"
-                    android:textSize="@dimen/sp_11" />
-
-                <com.jaygoo.widget.RangeSeekBar
-                    android:id="@+id/sb_01_range_light"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    app:rsb_gravity="center"
-                    app:rsb_indicator_background_color="@color/color_25A5FF"
-                    app:rsb_indicator_height="wrap_content"
-                    app:rsb_indicator_padding_bottom="@dimen/dp_5"
-                    app:rsb_indicator_padding_left="@dimen/dp_7"
-                    app:rsb_indicator_padding_right="@dimen/dp_7"
-                    app:rsb_indicator_padding_top="@dimen/dp_5"
-                    app:rsb_indicator_radius="5dp"
-                    app:rsb_indicator_show_mode="alwaysShow"
-                    app:rsb_indicator_text_size="@dimen/sp_10"
-                    app:rsb_mode="single"
-                    app:rsb_max="63"
-                    app:rsb_min="1"
-                    app:rsb_progress_color="@color/color_25A5FF"
-                    app:rsb_progress_default_color="@color/rsbColorSeekBarDefault"
-                    app:rsb_thumb_drawable="@drawable/thumb_activated"
-                    app:rsb_thumb_inactivated_drawable="@drawable/thumb_inactivated"
-                    app:rsb_tick_mark_mode="number" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="100"
-                    android:textColor="@color/color_9A9A9A"
-                    android:textSize="@dimen/sp_11" />
-            </LinearLayout>
-
-
-        </LinearLayout>
-
-        <!--光源 血管增强 白平衡-->
-        <LinearLayout
-            android:id="@+id/linear_device_part"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/dp_10"
-            android:layout_marginRight="@dimen/dp_10"
-            android:orientation="vertical">
-
-            <!--亮度-->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:background="@drawable/shape_bg_getpicture_only_light"
                 android:orientation="vertical">
 
@@ -231,121 +113,7 @@
                         android:layout_weight="1" />
 
                     <com.hjq.widget.view.ClearEditText
-                        android:id="@+id/edit_02_light"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:background="@null"
-                        android:gravity="right|center_vertical"
-                        android:hint="可手动输入数值"
-                        android:imeOptions="actionSend"
-                        android:inputType="number"
-                        android:lines="1"
-                        android:maxLength="3"
-                        android:paddingLeft="@dimen/dp_10"
-                        android:paddingRight="@dimen/dp_10"
-                        android:singleLine="true"
-                        android:text=""
-                        android:textColor="@color/color_0C0C0C"
-                        android:textColorHint="@color/color_9A9A9A"
-                        android:textSize="@dimen/sp_12" />
-
-
-                </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1px"
-                    android:layout_marginLeft="@dimen/dp_15"
-                    android:layout_marginRight="@dimen/dp_15"
-                    android:background="@color/colorLine" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/dp_10"
-                    android:layout_marginTop="@dimen/dp_5"
-                    android:layout_marginRight="@dimen/dp_10"
-                    android:gravity="center"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="0"
-                        android:textColor="@color/color_9A9A9A"
-                        android:textSize="@dimen/sp_11" />
-
-                    <com.jaygoo.widget.RangeSeekBar
-                        android:id="@+id/sb_02_range_light"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        app:rsb_gravity="center"
-                        app:rsb_indicator_background_color="@color/color_25A5FF"
-                        app:rsb_indicator_height="wrap_content"
-                        app:rsb_indicator_padding_bottom="@dimen/dp_5"
-                        app:rsb_indicator_padding_left="@dimen/dp_7"
-                        app:rsb_indicator_padding_right="@dimen/dp_7"
-                        app:rsb_indicator_padding_top="@dimen/dp_5"
-                        app:rsb_indicator_radius="5dp"
-                        app:rsb_indicator_show_mode="alwaysShow"
-                        app:rsb_indicator_text_size="@dimen/sp_10"
-                        app:rsb_mode="single"
-                        app:rsb_max="63"
-                        app:rsb_progress_color="@color/color_25A5FF"
-                        app:rsb_progress_default_color="@color/rsbColorSeekBarDefault"
-                        app:rsb_thumb_drawable="@drawable/thumb_activated"
-                        app:rsb_thumb_inactivated_drawable="@drawable/thumb_inactivated"
-                        app:rsb_tick_mark_mode="number" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="63"
-                        android:textColor="@color/color_9A9A9A"
-                        android:textSize="@dimen/sp_11" />
-                </LinearLayout>
-
-
-            </LinearLayout>
-            <!--饱和度-->
-            <LinearLayout
-                android:layout_marginTop="@dimen/dp_5"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/shape_bg_device_params"
-                android:orientation="vertical">
-
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/dp_40"
-                    android:focusable="true"
-                    android:focusableInTouchMode="true"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/dp_10"
-                        android:src="@drawable/ic_icon_saturation" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/dp_10"
-                        android:text="饱和度"
-                        android:textColor="@color/color_0C0C0C"
-                        android:textSize="@dimen/sp_12" />
-
-                    <View
-                        android:layout_width="0dp"
-                        android:layout_height="1px"
-                        android:layout_weight="1" />
-
-                    <com.hjq.widget.view.ClearEditText
-                        android:id="@+id/edit_02_saturation"
+                        android:id="@+id/edit_01_light"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:background="@null"
@@ -388,23 +156,39 @@
                         android:textColor="@color/color_9A9A9A"
                         android:textSize="@dimen/sp_11" />
 
+                    <!--                <com.jaygoo.widget.RangeSeekBar-->
+                    <!--                    android:id="@+id/sb_01_range_light"-->
+                    <!--                    android:layout_width="0dp"-->
+                    <!--                    android:layout_height="wrap_content"-->
+                    <!--                    android:layout_weight="1"-->
+                    <!--                    app:rsb_gravity="center"-->
+                    <!--                    app:rsb_indicator_background_color="@color/color_25A5FF"-->
+                    <!--                    app:rsb_indicator_radius="5dp"-->
+                    <!--                    app:rsb_indicator_text_size="@dimen/sp_10"-->
+                    <!--                    app:rsb_mode="single"-->
+                    <!--                    app:rsb_max="100"-->
+                    <!--                    app:rsb_indicator_height="@dimen/dp_2"-->
+                    <!--                    app:rsb_min="0"-->
+                    <!--                    app:rsb_progress_color="@color/color_25A5FF"-->
+                    <!--                    app:rsb_progress_default_color="@color/rsbColorSeekBarDefault"-->
+                    <!--                    app:rsb_thumb_drawable="@drawable/thumb_activated"-->
+                    <!--                    app:rsb_thumb_inactivated_drawable="@drawable/thumb_inactivated"-->
+                    <!--                    app:rsb_tick_mark_mode="number" />-->
                     <com.jaygoo.widget.RangeSeekBar
-                        android:id="@+id/sb_02_range_saturation"
+                        android:id="@+id/sb_01_range_light"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         app:rsb_gravity="center"
                         app:rsb_indicator_background_color="@color/color_25A5FF"
-                        app:rsb_indicator_height="wrap_content"
-                        app:rsb_indicator_padding_bottom="@dimen/dp_5"
-                        app:rsb_indicator_padding_left="@dimen/dp_7"
-                        app:rsb_indicator_padding_right="@dimen/dp_7"
-                        app:rsb_indicator_padding_top="@dimen/dp_5"
+                        app:rsb_indicator_height="2dp"
                         app:rsb_indicator_radius="5dp"
-                        app:rsb_indicator_show_mode="alwaysShow"
+                        app:rsb_indicator_show_mode="alwaysHide"
                         app:rsb_indicator_text_size="@dimen/sp_10"
+                        app:rsb_max="100"
+                        app:rsb_min="0"
+
                         app:rsb_mode="single"
-                        app:rsb_max="64"
                         app:rsb_progress_color="@color/color_25A5FF"
                         app:rsb_progress_default_color="@color/rsbColorSeekBarDefault"
                         app:rsb_thumb_drawable="@drawable/thumb_activated"
@@ -414,28 +198,487 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="64"
+                        android:text="100"
                         android:textColor="@color/color_9A9A9A"
                         android:textSize="@dimen/sp_11" />
                 </LinearLayout>
 
 
             </LinearLayout>
-            <!--清晰度-->
-            <LinearLayout
-                android:layout_marginTop="@dimen/dp_5"
 
+            <!--摄像机参数-->
+            <LinearLayout
+                android:id="@+id/linear_device_part"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/shape_bg_device_params"
-                android:orientation="vertical">
+                android:layout_marginLeft="@dimen/dp_10"
+                android:layout_marginRight="@dimen/dp_10"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <!--亮度-->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/shape_bg_getpicture_only_light"
+                    android:orientation="vertical">
 
 
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/dp_40"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/dp_10"
+                            android:src="@drawable/ic_icon_brightness" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/dp_10"
+                            android:text="亮度"
+                            android:textColor="@color/color_0C0C0C"
+                            android:textSize="@dimen/sp_12" />
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="1px"
+                            android:layout_weight="1" />
+
+                        <com.hjq.widget.view.ClearEditText
+                            android:id="@+id/edit_02_light"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:background="@null"
+                            android:gravity="right|center_vertical"
+                            android:hint="可手动输入数值"
+                            android:imeOptions="actionSend"
+                            android:inputType="number"
+                            android:lines="1"
+                            android:maxLength="3"
+                            android:paddingLeft="@dimen/dp_10"
+                            android:paddingRight="@dimen/dp_10"
+                            android:singleLine="true"
+                            android:text=""
+                            android:textColor="@color/color_0C0C0C"
+                            android:textColorHint="@color/color_9A9A9A"
+                            android:textSize="@dimen/sp_12" />
+
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1px"
+                        android:layout_marginLeft="@dimen/dp_15"
+                        android:layout_marginRight="@dimen/dp_15"
+                        android:background="@color/colorLine" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/dp_10"
+                        android:layout_marginTop="@dimen/dp_5"
+                        android:layout_marginRight="@dimen/dp_10"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textColor="@color/color_9A9A9A"
+                            android:textSize="@dimen/sp_11" />
+
+                        <com.jaygoo.widget.RangeSeekBar
+                            android:id="@+id/sb_02_range_light"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            app:rsb_gravity="center"
+                            app:rsb_indicator_background_color="@color/color_25A5FF"
+                            app:rsb_indicator_height="2dp"
+                            app:rsb_indicator_padding_bottom="@dimen/dp_5"
+                            app:rsb_indicator_padding_left="@dimen/dp_7"
+                            app:rsb_indicator_padding_right="@dimen/dp_7"
+                            app:rsb_indicator_padding_top="@dimen/dp_5"
+                            app:rsb_indicator_radius="5dp"
+                            app:rsb_indicator_show_mode="alwaysHide"
+                            app:rsb_indicator_text_size="@dimen/sp_10"
+                            app:rsb_max="63"
+                            app:rsb_mode="single"
+                            app:rsb_progress_color="@color/color_25A5FF"
+                            app:rsb_progress_default_color="@color/rsbColorSeekBarDefault"
+                            app:rsb_thumb_drawable="@drawable/thumb_activated"
+                            app:rsb_thumb_inactivated_drawable="@drawable/thumb_inactivated"
+                            app:rsb_tick_mark_mode="number" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="63"
+                            android:textColor="@color/color_9A9A9A"
+                            android:textSize="@dimen/sp_11" />
+                    </LinearLayout>
+
+
+                </LinearLayout>
+                <!--饱和度-->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_5"
+                    android:background="@drawable/shape_bg_device_params"
+                    android:orientation="vertical">
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/dp_40"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/dp_10"
+                            android:src="@drawable/ic_icon_saturation" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/dp_10"
+                            android:text="饱和度"
+                            android:textColor="@color/color_0C0C0C"
+                            android:textSize="@dimen/sp_12" />
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="1px"
+                            android:layout_weight="1" />
+
+                        <com.hjq.widget.view.ClearEditText
+                            android:id="@+id/edit_02_saturation"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:background="@null"
+                            android:gravity="right|center_vertical"
+                            android:hint="可手动输入数值"
+                            android:imeOptions="actionSend"
+                            android:inputType="number"
+                            android:lines="1"
+                            android:maxLength="3"
+                            android:paddingLeft="@dimen/dp_10"
+                            android:paddingRight="@dimen/dp_10"
+                            android:singleLine="true"
+                            android:text=""
+                            android:textColor="@color/color_0C0C0C"
+                            android:textColorHint="@color/color_9A9A9A"
+                            android:textSize="@dimen/sp_12" />
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1px"
+                        android:layout_marginLeft="@dimen/dp_15"
+                        android:layout_marginRight="@dimen/dp_15"
+                        android:background="@color/colorLine" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/dp_10"
+                        android:layout_marginTop="@dimen/dp_5"
+                        android:layout_marginRight="@dimen/dp_10"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textColor="@color/color_9A9A9A"
+                            android:textSize="@dimen/sp_11" />
+
+                        <com.jaygoo.widget.RangeSeekBar
+                            android:id="@+id/sb_02_range_saturation"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            app:rsb_gravity="center"
+                            app:rsb_indicator_background_color="@color/color_25A5FF"
+                            app:rsb_indicator_height="2dp"
+                            app:rsb_indicator_padding_bottom="@dimen/dp_5"
+                            app:rsb_indicator_padding_left="@dimen/dp_7"
+                            app:rsb_indicator_padding_right="@dimen/dp_7"
+                            app:rsb_indicator_padding_top="@dimen/dp_5"
+                            app:rsb_indicator_radius="5dp"
+                            app:rsb_indicator_show_mode="alwaysHide"
+                            app:rsb_indicator_text_size="@dimen/sp_10"
+                            app:rsb_max="64"
+                            app:rsb_mode="single"
+                            app:rsb_progress_color="@color/color_25A5FF"
+                            app:rsb_progress_default_color="@color/rsbColorSeekBarDefault"
+                            app:rsb_thumb_drawable="@drawable/thumb_activated"
+                            app:rsb_thumb_inactivated_drawable="@drawable/thumb_inactivated"
+                            app:rsb_tick_mark_mode="number" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="64"
+                            android:textColor="@color/color_9A9A9A"
+                            android:textSize="@dimen/sp_11" />
+                    </LinearLayout>
+
+
+                </LinearLayout>
+                <!--清晰度-->
+                <LinearLayout
+                    android:layout_width="match_parent"
+
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_5"
+                    android:background="@drawable/shape_bg_device_params"
+                    android:orientation="vertical">
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/dp_40"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/dp_10"
+                            android:src="@drawable/ic_icon_clarity" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/dp_10"
+                            android:text="清晰度"
+                            android:textColor="@color/color_0C0C0C"
+                            android:textSize="@dimen/sp_12" />
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="1px"
+                            android:layout_weight="1" />
+
+                        <com.hjq.widget.view.ClearEditText
+                            android:id="@+id/edit_02_definition"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:background="@null"
+                            android:gravity="right|center_vertical"
+                            android:hint="可手动输入数值"
+                            android:imeOptions="actionSend"
+                            android:inputType="number"
+                            android:lines="1"
+                            android:maxLength="3"
+                            android:paddingLeft="@dimen/dp_10"
+                            android:paddingRight="@dimen/dp_10"
+                            android:singleLine="true"
+                            android:text=""
+                            android:textColor="@color/color_0C0C0C"
+                            android:textColorHint="@color/color_9A9A9A"
+                            android:textSize="@dimen/sp_12" />
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1px"
+                        android:layout_marginLeft="@dimen/dp_15"
+                        android:layout_marginRight="@dimen/dp_15"
+                        android:background="@color/colorLine" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/dp_10"
+                        android:layout_marginTop="@dimen/dp_5"
+                        android:layout_marginRight="@dimen/dp_10"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textColor="@color/color_9A9A9A"
+                            android:textSize="@dimen/sp_11" />
+
+                        <com.jaygoo.widget.RangeSeekBar
+                            android:id="@+id/sb_02_range_definition"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            app:rsb_gravity="center"
+                            app:rsb_indicator_background_color="@color/color_25A5FF"
+                            app:rsb_indicator_height="2dp"
+                            app:rsb_indicator_padding_bottom="@dimen/dp_5"
+                            app:rsb_indicator_padding_left="@dimen/dp_7"
+                            app:rsb_indicator_padding_right="@dimen/dp_7"
+                            app:rsb_indicator_padding_top="@dimen/dp_5"
+                            app:rsb_indicator_radius="5dp"
+                            app:rsb_indicator_show_mode="alwaysHide"
+                            app:rsb_indicator_text_size="@dimen/sp_10"
+                            app:rsb_max="31"
+                            app:rsb_mode="single"
+                            app:rsb_progress_color="@color/color_25A5FF"
+                            app:rsb_progress_default_color="@color/rsbColorSeekBarDefault"
+                            app:rsb_thumb_drawable="@drawable/thumb_activated"
+                            app:rsb_thumb_inactivated_drawable="@drawable/thumb_inactivated"
+                            app:rsb_tick_mark_mode="number" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="31"
+                            android:textColor="@color/color_9A9A9A"
+                            android:textSize="@dimen/sp_11" />
+                    </LinearLayout>
+
+
+                </LinearLayout>
+                <!--放大倍数-->
+                <LinearLayout
+                    android:layout_width="match_parent"
+
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_5"
+                    android:background="@drawable/shape_bg_device_params"
+                    android:orientation="vertical">
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/dp_40"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/dp_10"
+                            android:src="@drawable/ic_icon_magnification" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/dp_10"
+                            android:text="放大倍数"
+                            android:textColor="@color/color_0C0C0C"
+                            android:textSize="@dimen/sp_12" />
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="1px"
+                            android:layout_weight="1" />
+
+                        <com.hjq.widget.view.ClearEditText
+                            android:id="@+id/edit_02_zoom"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:background="@null"
+                            android:gravity="right|center_vertical"
+                            android:hint="可手动输入数值"
+                            android:imeOptions="actionSend"
+                            android:inputType="numberDecimal"
+                            android:lines="1"
+                            android:maxLength="3"
+                            android:paddingLeft="@dimen/dp_10"
+                            android:paddingRight="@dimen/dp_10"
+                            android:singleLine="true"
+                            android:text=""
+                            android:textColor="@color/color_0C0C0C"
+                            android:textColorHint="@color/color_9A9A9A"
+                            android:textSize="@dimen/sp_12" />
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1px"
+                        android:layout_marginLeft="@dimen/dp_15"
+                        android:layout_marginRight="@dimen/dp_15"
+                        android:background="@color/colorLine" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/dp_10"
+                        android:layout_marginTop="@dimen/dp_5"
+                        android:layout_marginRight="@dimen/dp_10"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="1"
+                            android:textColor="@color/color_9A9A9A"
+                            android:textSize="@dimen/sp_11" />
+
+                        <com.jaygoo.widget.RangeSeekBar
+                            android:id="@+id/sb_02_range_zoom"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            app:rsb_gravity="center"
+                            app:rsb_indicator_background_color="@color/color_25A5FF"
+                            app:rsb_indicator_height="2dp"
+                            app:rsb_indicator_padding_bottom="@dimen/dp_5"
+                            app:rsb_indicator_padding_left="@dimen/dp_7"
+                            app:rsb_indicator_padding_right="@dimen/dp_7"
+                            app:rsb_indicator_padding_top="@dimen/dp_5"
+                            app:rsb_indicator_radius="5dp"
+                            app:rsb_indicator_show_mode="alwaysHide"
+                            app:rsb_indicator_text_size="@dimen/sp_10"
+                            app:rsb_max="2.5"
+                            app:rsb_min="1"
+                            app:rsb_mode="single"
+                            app:rsb_progress_color="@color/color_25A5FF"
+                            app:rsb_progress_default_color="@color/rsbColorSeekBarDefault"
+                            app:rsb_thumb_drawable="@drawable/thumb_activated"
+                            app:rsb_thumb_inactivated_drawable="@drawable/thumb_inactivated"
+                            app:rsb_tick_mark_mode="number" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="2.5"
+                            android:textColor="@color/color_9A9A9A"
+                            android:textSize="@dimen/sp_11" />
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
+
+                <!--水平翻转-->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/dp_40"
-                    android:focusable="true"
-                    android:focusableInTouchMode="true"
+                    android:layout_marginTop="@dimen/dp_5"
+                    android:background="@drawable/shape_bg_device_params"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 
@@ -443,13 +686,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/dp_10"
-                        android:src="@drawable/ic_icon_clarity" />
+                        android:src="@drawable/ic_icon_fliphorizontal" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/dp_10"
-                        android:text="清晰度"
+                        android:text="水平翻转"
                         android:textColor="@color/color_0C0C0C"
                         android:textSize="@dimen/sp_12" />
 
@@ -458,98 +701,20 @@
                         android:layout_height="1px"
                         android:layout_weight="1" />
 
-                    <com.hjq.widget.view.ClearEditText
-                        android:id="@+id/edit_02_definition"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:background="@null"
-                        android:gravity="right|center_vertical"
-                        android:hint="可手动输入数值"
-                        android:imeOptions="actionSend"
-                        android:inputType="number"
-                        android:lines="1"
-                        android:maxLength="3"
-                        android:paddingLeft="@dimen/dp_10"
-                        android:paddingRight="@dimen/dp_10"
-                        android:singleLine="true"
-                        android:text=""
-                        android:textColor="@color/color_0C0C0C"
-                        android:textColorHint="@color/color_9A9A9A"
-                        android:textSize="@dimen/sp_12" />
+                    <com.hjq.widget.view.SwitchButton
+                        android:id="@+id/sb_find_switch_horizontal"
+                        android:layout_width="@dimen/dp_35"
+                        android:layout_height="@dimen/dp_22"
+                        android:layout_marginRight="@dimen/dp_10"
+                        android:checked="true" />
 
                 </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1px"
-                    android:layout_marginLeft="@dimen/dp_15"
-                    android:layout_marginRight="@dimen/dp_15"
-                    android:background="@color/colorLine" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/dp_10"
-                    android:layout_marginTop="@dimen/dp_5"
-                    android:layout_marginRight="@dimen/dp_10"
-                    android:gravity="center"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="0"
-                        android:textColor="@color/color_9A9A9A"
-                        android:textSize="@dimen/sp_11" />
-
-                    <com.jaygoo.widget.RangeSeekBar
-                        android:id="@+id/sb_02_range_definition"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        app:rsb_gravity="center"
-                        app:rsb_indicator_background_color="@color/color_25A5FF"
-                        app:rsb_indicator_height="wrap_content"
-                        app:rsb_indicator_padding_bottom="@dimen/dp_5"
-                        app:rsb_indicator_padding_left="@dimen/dp_7"
-                        app:rsb_indicator_padding_right="@dimen/dp_7"
-                        app:rsb_indicator_padding_top="@dimen/dp_5"
-                        app:rsb_indicator_radius="5dp"
-                        app:rsb_indicator_show_mode="alwaysShow"
-                        app:rsb_indicator_text_size="@dimen/sp_10"
-                        app:rsb_mode="single"
-                        app:rsb_max="31"
-                        app:rsb_progress_color="@color/color_25A5FF"
-                        app:rsb_progress_default_color="@color/rsbColorSeekBarDefault"
-                        app:rsb_thumb_drawable="@drawable/thumb_activated"
-                        app:rsb_thumb_inactivated_drawable="@drawable/thumb_inactivated"
-                        app:rsb_tick_mark_mode="number" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="31"
-                        android:textColor="@color/color_9A9A9A"
-                        android:textSize="@dimen/sp_11" />
-                </LinearLayout>
-
-
-            </LinearLayout>
-            <!--放大倍数-->
-            <LinearLayout
-                android:layout_marginTop="@dimen/dp_5"
-
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/shape_bg_device_params"
-                android:orientation="vertical">
-
-
+                <!--垂直翻转-->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/dp_40"
-                    android:focusable="true"
-                    android:focusableInTouchMode="true"
+                    android:layout_marginTop="@dimen/dp_5"
+                    android:background="@drawable/shape_bg_device_params"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 
@@ -557,13 +722,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/dp_10"
-                        android:src="@drawable/ic_icon_magnification" />
+                        android:src="@drawable/ic_icon_flipvertical" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/dp_10"
-                        android:text="放大倍数"
+                        android:text="垂直翻转"
                         android:textColor="@color/color_0C0C0C"
                         android:textSize="@dimen/sp_12" />
 
@@ -572,197 +737,54 @@
                         android:layout_height="1px"
                         android:layout_weight="1" />
 
-                    <com.hjq.widget.view.ClearEditText
-                        android:id="@+id/edit_02_zoom"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:background="@null"
-                        android:gravity="right|center_vertical"
-                        android:hint="可手动输入数值"
-                        android:imeOptions="actionSend"
-                        android:inputType="numberDecimal"
-                        android:lines="1"
-                        android:maxLength="3"
-                        android:paddingLeft="@dimen/dp_10"
-                        android:paddingRight="@dimen/dp_10"
-                        android:singleLine="true"
-                        android:text=""
-                        android:textColor="@color/color_0C0C0C"
-                        android:textColorHint="@color/color_9A9A9A"
-                        android:textSize="@dimen/sp_12" />
+                    <com.hjq.widget.view.SwitchButton
+                        android:id="@+id/sb_find_switch_vertical"
+                        android:layout_width="@dimen/dp_35"
+                        android:layout_height="@dimen/dp_22"
+                        android:layout_marginRight="@dimen/dp_10"
+                        android:checked="true" />
 
                 </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1px"
-                    android:layout_marginLeft="@dimen/dp_15"
-                    android:layout_marginRight="@dimen/dp_15"
-                    android:background="@color/colorLine" />
-
+                <!--血管增强-->
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/dp_10"
+                    android:layout_height="@dimen/dp_40"
                     android:layout_marginTop="@dimen/dp_5"
-                    android:layout_marginRight="@dimen/dp_10"
-                    android:gravity="center"
+                    android:layout_marginBottom="@dimen/dp_10"
+                    android:background="@drawable/shape_bg_device_params"
+                    android:gravity="center_vertical"
                     android:orientation="horizontal">
 
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/dp_10"
+                        android:src="@drawable/ic_icon_vascularenhancement" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="1"
-                        android:textColor="@color/color_9A9A9A"
-                        android:textSize="@dimen/sp_11" />
+                        android:layout_marginLeft="@dimen/dp_10"
+                        android:text="血管增强"
+                        android:textColor="@color/color_0C0C0C"
+                        android:textSize="@dimen/sp_12" />
 
-                    <com.jaygoo.widget.RangeSeekBar
-                        android:id="@+id/sb_02_range_zoom"
+                    <View
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        app:rsb_gravity="center"
-                        app:rsb_indicator_background_color="@color/color_25A5FF"
-                        app:rsb_indicator_height="wrap_content"
-                        app:rsb_indicator_padding_bottom="@dimen/dp_5"
-                        app:rsb_indicator_padding_left="@dimen/dp_7"
-                        app:rsb_indicator_padding_right="@dimen/dp_7"
-                        app:rsb_indicator_padding_top="@dimen/dp_5"
-                        app:rsb_indicator_radius="5dp"
-                        app:rsb_indicator_show_mode="alwaysShow"
-                        app:rsb_indicator_text_size="@dimen/sp_10"
-                        app:rsb_max="2.5"
-                        app:rsb_min="1"
-                        app:rsb_mode="single"
-                        app:rsb_progress_color="@color/color_25A5FF"
-                        app:rsb_progress_default_color="@color/rsbColorSeekBarDefault"
-                        app:rsb_thumb_drawable="@drawable/thumb_activated"
-                        app:rsb_thumb_inactivated_drawable="@drawable/thumb_inactivated"
-                        app:rsb_tick_mark_mode="number" />
+                        android:layout_height="1px"
+                        android:layout_weight="1" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="2.5"
-                        android:textColor="@color/color_9A9A9A"
-                        android:textSize="@dimen/sp_11" />
+                    <com.hjq.widget.view.SwitchButton
+                        android:id="@+id/sb_find_switch_blood"
+                        android:layout_width="@dimen/dp_35"
+                        android:layout_height="@dimen/dp_22"
+                        android:layout_marginRight="@dimen/dp_10"
+                        android:checked="true" />
+
                 </LinearLayout>
-
-
             </LinearLayout>
 
 
-            <!--水平翻转-->
-            <LinearLayout
-                android:layout_marginTop="@dimen/dp_5"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/dp_40"
-                android:background="@drawable/shape_bg_device_params"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/dp_10"
-                    android:src="@drawable/ic_icon_fliphorizontal" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/dp_10"
-                    android:text="水平翻转"
-                    android:textColor="@color/color_0C0C0C"
-                    android:textSize="@dimen/sp_12" />
-
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="1px"
-                    android:layout_weight="1" />
-
-                <com.hjq.widget.view.SwitchButton
-                    android:id="@+id/sb_find_switch_horizontal"
-                    android:layout_width="@dimen/dp_35"
-                    android:layout_height="@dimen/dp_22"
-                    android:layout_marginRight="@dimen/dp_10"
-                    android:checked="true" />
-
-            </LinearLayout>
-            <!--垂直翻转-->
-            <LinearLayout
-                android:layout_marginTop="@dimen/dp_5"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/dp_40"
-                android:background="@drawable/shape_bg_device_params"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/dp_10"
-                    android:src="@drawable/ic_icon_flipvertical" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/dp_10"
-                    android:text="垂直翻转"
-                    android:textColor="@color/color_0C0C0C"
-                    android:textSize="@dimen/sp_12" />
-
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="1px"
-                    android:layout_weight="1" />
-
-                <com.hjq.widget.view.SwitchButton
-                    android:id="@+id/sb_find_switch_vertical"
-                    android:layout_width="@dimen/dp_35"
-                    android:layout_height="@dimen/dp_22"
-                    android:layout_marginRight="@dimen/dp_10"
-                    android:checked="true" />
-
-            </LinearLayout>
-            <!--血管增强-->
-            <LinearLayout
-                android:layout_marginBottom="@dimen/dp_10"
-                android:layout_marginTop="@dimen/dp_5"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/dp_40"
-                android:background="@drawable/shape_bg_device_params"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/dp_10"
-                    android:src="@drawable/ic_icon_vascularenhancement" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/dp_10"
-                    android:text="血管增强"
-                    android:textColor="@color/color_0C0C0C"
-                    android:textSize="@dimen/sp_12" />
-
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="1px"
-                    android:layout_weight="1" />
-
-                <com.hjq.widget.view.SwitchButton
-                    android:id="@+id/sb_find_switch_blood"
-                    android:layout_width="@dimen/dp_35"
-                    android:layout_height="@dimen/dp_22"
-                    android:layout_marginRight="@dimen/dp_10"
-                    android:checked="true" />
-
-            </LinearLayout>
-        </LinearLayout>
-
-
-    </RelativeLayout>
+        </RelativeLayout>
+    </androidx.core.widget.NestedScrollView>
 </LinearLayout>

@@ -20,7 +20,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.FileProvider;
 
 import com.company.iendo.R;
 import com.company.iendo.action.StatusAction;
@@ -36,6 +35,7 @@ import com.company.iendo.bean.socket.params.Type01Bean;
 import com.company.iendo.other.Constants;
 
 import com.company.iendo.other.HttpConstant;
+import com.company.iendo.ui.dialog.SelectDialog;
 import com.company.iendo.utils.CalculateUtils;
 import com.company.iendo.utils.CommonUtil;
 import com.company.iendo.utils.LogUtils;
@@ -67,6 +67,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -86,7 +87,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
     private StatusLayout mStatusLayout;
     private TextView mChangeFull;
     private LinearLayout mLinearBottom;
-    private TitleBar mTitle;
+    private TitleBar mTitleBar;
     private RelativeLayout mRelativePlayerAll;
     private MyVlcVideoView mPlayer;
     private VlcVideoView mVLCView;
@@ -112,7 +113,9 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
     private TextView mRecordMsg;
     private RtmpOnlyAudio rtmpOnlyAudio;
     private String itemID;
-    private String currentUrl;
+    private String mTypeText = "高清HD";
+
+    private String currentUrl0, currentUrl1;  //0是高清,1是标清
     private RelativeLayout mTopControl;
     private RelativeLayout mBottomControl;
     private ImageView mImageBack;
@@ -152,6 +155,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                     rootView.setOnTouchListener(null);
                     rootView.setLongClickable(false);  //手势不需要需要--不能触摸
                     mTopControl.setVisibility(View.INVISIBLE);
+                    mRightLiveTypeControl.setVisibility(View.INVISIBLE);
                     mBottomControl.setVisibility(View.INVISIBLE);
                     break;
                 case Unlock: //解锁
@@ -159,6 +163,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                     rootView.setLongClickable(true);  //手势需要--能触摸
                     rootView.setOnTouchListener(onTouchVideoListener);
                     mTopControl.setVisibility(View.VISIBLE);
+                    mRightLiveTypeControl.setVisibility(View.VISIBLE);
                     mBottomControl.setVisibility(View.VISIBLE);
                     break;
 //                case Record:
@@ -208,6 +213,9 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
     private SwitchButton mSwitchBlood, mSwitchVertical, mSwitchHorizontal;
     private TextView mLightLine, mDeviceLine;
     private LinearLayout mLightTab, mDeviceTab, mLightPart, mDevicePart;
+    private TextView mRightLiveTypeControl;
+    private HashMap<String, String> mUrlMap;
+    private TextView mTitle;
 
     /**
      * eventbus 刷新socket数据
@@ -272,6 +280,8 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             case Constants.UDP_F5://获取当前设备参数
                 LogUtils.e("======LiveServiceImpl==回调=event==获取当前设备参数==" + event.getData());
                 DeviceParamsBean deviceParamsBean = mGson.fromJson(event.getData(), DeviceParamsBean.class);
+                LogUtils.e("======LiveServiceImpl==回调=event==获取当前设备参数deviceParamsBean==" + deviceParamsBean.toString());
+
                 //设置Tab
                 setTypeTabData(deviceParamsBean);
 
@@ -293,8 +303,8 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             mRangeBar02Light.setProgress(Integer.parseInt(type01.getBrightness()));
 
             //饱和度
-            mEdit02Saturation.setText(type01.getBrightness());
-            mRangeBar02Saturation.setProgress(Integer.parseInt(type01.getBrightness()));
+            mEdit02Saturation.setText(type01.getSaturation());
+            mRangeBar02Saturation.setProgress(Integer.parseInt(type01.getSaturation()));
 
             //清晰度
             mEdit02Saturation.setText(type01.getSharpness());
@@ -349,7 +359,11 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                 setDeviceTab();
                 break;
             case R.id.video_back:               //全屏的时候退出界面
-                finishThisActivity();
+                //此处应该是缩小播放界面
+                isFullscreen=false;
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);//竖屏动态转换
+                setVideoViewFull(R.drawable.nur_ic_fangda, "竖屏");
                 break;
             case R.id.root_layout_vlc:          //点击控制播放界面
                 changeControlStatus();
@@ -362,7 +376,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                 if (UDP_EQUALS_ID) {
                     mHandler.sendEmptyMessageDelayed(Record_Request, 200);
                 } else {
-                    toast("当前病例ID和操作病例ID不相等,不能操作!");
+                    toast(Constants.UDP_CASE_ID_DIFFERENT);
                 }
 //                if (isPlayering) {
 //                    if (mVLCView.isPrepare()) {
@@ -387,7 +401,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                     if (UDP_EQUALS_ID) {
                         sendSocketPointShotMessage(Constants.UDP_15);
                     } else {
-                        toast("当前病例ID和操作病例ID不相等,不能操作!");
+                        toast(Constants.UDP_CASE_ID_DIFFERENT);
                     }
                 } else {
                     toast("握手失败,正在尝试连接设备!");
@@ -501,14 +515,18 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         rtmpOnlyAudio = new RtmpOnlyAudio(this);
         LogUtils.e("pusherStart====111===" + rtmpOnlyAudio.isStreaming());    //true   断开的时候
         LogUtils.e("pusherStart====222===" + rtmpOnlyAudio.prepareAudio());   //true
+        //设置标题
+        mTitle.setText(mCurrentTypeDes + "(" + mSocketOrLiveIP + ")");
 
-        //获取当前病例ID
+        //获取当前病例ID,和播放地址
         Bundle bundle = getIntent().getExtras();
-        currentUrl = bundle.getString("currentUrl");
+        currentUrl0 = bundle.getString("currentUrl0");
+        currentUrl1 = bundle.getString("currentUrl1");
         mCaseID = bundle.getString("ItemID");
-        LogUtils.e("pusherStart====彩图界面直播地址:currentUrl===" + currentUrl);
+        LogUtils.e("pusherStart====彩图界面直播地址:currentUrl=高清==" + currentUrl0);
+        LogUtils.e("pusherStart====彩图界面直播地址:currentUrl=标清==" + currentUrl1);
 
-        path = currentUrl;
+        path = currentUrl0;
         startLive(path);
 //        推流音频代码
 //        if (!rtmpOnlyAudio.isStreaming()) {
@@ -532,6 +550,11 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
 //                pusherStop("Common");
 //            }
 //        }
+
+        //存储url地址
+        mUrlMap = new HashMap<>();
+        mUrlMap.put("高清HD", currentUrl0);
+        mUrlMap.put("标清SD", currentUrl1);
         responseListener();
 
 
@@ -823,8 +846,71 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
 
 
         });
+
+
+        mRightLiveTypeControl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showSelectedUrlTypeDialog();
+            }
+
+
+        });
+
+
     }
 
+    /**
+     * 切换清晰度
+     */
+    private void showSelectedUrlTypeDialog() {
+        if (mUrlMap.size() > 0) {
+            new SelectDialog.Builder(this)
+                    .setTitle("请选择清晰度")
+                    .setList("高清HD", "标清SD")
+                    // 设置单选模式
+                    .setSingleSelect()
+                    // 设置默认选中
+                    .setSelect(0)
+                    .setListener(new SelectDialog.OnListener<String>() {
+
+                        @Override
+                        public void onSelected(BaseDialog dialog, HashMap<Integer, String> data) {
+                            String string = data.toString();
+                            int size = data.size();
+                            int i = string.indexOf("=");
+                            String value = string.substring(i + 1, string.length() - 1);
+//                            toast("确定了：" + value);
+
+                            String url = mUrlMap.get(value);
+                            LogUtils.e("啊啊啊啊啊===value" + value);
+                            LogUtils.e("啊啊啊啊啊===url" + url);
+
+                            Drawable urlTypeSD = getResources().getDrawable(R.mipmap.icon_url_type_sd);
+                            Drawable urlTypeHD = getResources().getDrawable(R.mipmap.icon_url_type_hd);
+                            if ("高清HD".equals(value)) {
+                                mRightLiveTypeControl.setCompoundDrawablesWithIntrinsicBounds(null, urlTypeHD, null, null);
+                            } else if ("标清SD".equals(value)) {
+                                mRightLiveTypeControl.setCompoundDrawablesWithIntrinsicBounds(null, urlTypeSD, null, null);
+                            }
+
+                            startLive(url);
+                            mRightLiveTypeControl.setText(value + "");
+//                            mTypeText=value;
+
+                        }
+
+                        @Override
+                        public void onCancel(BaseDialog dialog) {
+                        }
+                    })
+                    .show();
+
+
+        }
+
+
+    }
 
     private void finishThisActivity() {
 //        if (mFlagRecord) {
@@ -852,10 +938,12 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             if (lockType) {
                 lockType = false;
                 mTopControl.setVisibility(View.INVISIBLE);
+                mRightLiveTypeControl.setVisibility(View.INVISIBLE);
                 mBottomControl.setVisibility(View.INVISIBLE);
                 mLockScreen.setVisibility(View.INVISIBLE);
             } else {
                 lockType = true;
+                mRightLiveTypeControl.setVisibility(View.VISIBLE);
                 mLockScreen.setVisibility(View.VISIBLE);
                 mTopControl.setVisibility(View.VISIBLE);
                 mBottomControl.setVisibility(View.VISIBLE);
@@ -878,7 +966,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             LogUtils.e("全屏设置==开始==" + "横---屏");
             Drawable record_end = getResources().getDrawable(mID);
             mChangeFull.setCompoundDrawablesWithIntrinsicBounds(record_end, null, null, null);
-            mTitle.setVisibility(View.GONE);
+            mTitleBar.setVisibility(View.GONE);
             mLinearBottom.setVisibility(View.GONE);
             RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT);//工具类哦
@@ -889,7 +977,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             LogUtils.e("全屏设置==开始==" + "竖---屏");
             Drawable record_end = getResources().getDrawable(mID);
             mChangeFull.setCompoundDrawablesWithIntrinsicBounds(record_end, null, null, null);
-            mTitle.setVisibility(View.VISIBLE);
+            mTitleBar.setVisibility(View.VISIBLE);
             mLinearBottom.setVisibility(View.VISIBLE);
             RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                     ScreenSizeUtil.dp2px(GetPictureActivity.this, getResources().getDimension(R.dimen.dp_80)));//工具类哦
@@ -914,9 +1002,11 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         mRelativePlayerAll = findViewById(R.id.ff_player_all);
         mPlayer = findViewById(R.id.player);
         mLockScreen = findViewById(R.id.lock_screen);
+        mTitle = findViewById(R.id.tv_title);
         mLoadingView = findViewById(R.id.control_load_view);
         mStartView = findViewById(R.id.control_start_view);
         mImageBack = findViewById(R.id.video_back);
+        mRightLiveTypeControl = findViewById(R.id.change_live_type);
 //        LinearLayout mRecord = findViewById(R.id.linear_record);
 //        LinearLayout mShot = findViewById(R.id.linear_picture);
 //        LinearLayout mCold = findViewById(R.id.linear_cold);
@@ -925,6 +1015,8 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         //亮度
         mEdit01Light = findViewById(R.id.edit_01_light);
         mRangeBar01Light = findViewById(R.id.sb_01_range_light);
+
+        mRangeBar01Light.setStepsAutoBonding(false);
         //亮度
         mEdit02Light = findViewById(R.id.edit_02_light);
         mRangeBar02Light = findViewById(R.id.sb_02_range_light);
@@ -955,7 +1047,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         rootView = mPlayer.getRootView();                         //点击控制锁显示和隐藏的
         onTouchVideoListener = mPlayer.getOnTouchVideoListener();
         mVLCView = mPlayer.findViewById(R.id.vlc_video_view);
-        mTitle = findViewById(R.id.titlebar);
+        mTitleBar = findViewById(R.id.titlebar);
 
     }
 
@@ -1149,7 +1241,6 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                 }
                 bean.setType01(typeBean);
                 sendSocketPointVideoDevice(Constants.UDP_F6, bean);
-                toast("Blood==" + checked);
                 break;
 
         }
@@ -1185,13 +1276,11 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         switch (view.getId()) {
             case R.id.sb_01_range_light:  //冷光源,亮度
                 LogUtils.e("progress==balance==" + round);
-                toast("亮度=01==" + round);
                 mEdit01Light.setText("" + round);
                 sendSocketPointLight(Constants.UDP_F6, "" + round);
                 break;
             case R.id.sb_02_range_light://摄像机,亮度
                 LogUtils.e("progress==balance==" + round);
-                toast("亮度=02==" + round);
                 mEdit02Light.setText("" + round);
                 typeBean.setBrightness(round);
                 bean.setType01(typeBean);
@@ -1200,7 +1289,6 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                 break;
             case R.id.sb_02_range_saturation://摄像机,饱和度
                 LogUtils.e("progress==balance==" + round);
-                toast("饱和度===" + round);
                 mEdit02Saturation.setText("" + round);
                 typeBean.setSaturation(round);
                 bean.setType01(typeBean);
@@ -1208,7 +1296,6 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                 break;
             case R.id.sb_02_range_definition://摄像机,清晰度
                 LogUtils.e("progress==balance==" + round);
-                toast("清晰度===" + round);
                 mEdit02Definition.setText("" + round);
                 typeBean.setSharpness(round);
                 bean.setType01(typeBean);
@@ -1222,7 +1309,6 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                 LogUtils.e("progress==倍数=progress1=" + progress1 + "");
                 LogUtils.e("progress==倍数=round2=" + round2);
                 LogUtils.e("progress==倍数=progress1111=" + s.substring(0, 3));
-                toast("放大倍数===" + round);
                 mEdit02Zoom.setText("" + s.substring(0, 3));
                 typeBean.setZoomrate(round2 + "");
                 bean.setType01(typeBean);

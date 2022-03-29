@@ -124,8 +124,8 @@
                 <com.hjq.widget.view.ClearEditText
                     android:id="@+id/et_03_section"
                     android:layout_width="0dp"
-                    android:layout_weight="1"
                     android:layout_height="@dimen/dp_35"
+                    android:layout_weight="1"
                     android:background="@null"
                     android:focusable="false"
                     android:gravity="right|center_vertical"
@@ -139,13 +139,13 @@
                     android:textSize="@dimen/sp_14" />
 
                 <ImageView
-                    android:visibility="gone"
                     android:id="@+id/iv_03_section"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginRight="@dimen/dp_10"
-                    android:src="@drawable/selector_detail_dialog" />
+                    android:src="@drawable/selector_detail_dialog"
+                    android:visibility="gone" />
 
             </LinearLayout>
 
@@ -179,10 +179,10 @@
                     android:text="设备" />
 
                 <com.hjq.widget.view.ClearEditText
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
                     android:id="@+id/et_03_device"
+                    android:layout_width="0dp"
                     android:layout_height="@dimen/dp_35"
+                    android:layout_weight="1"
                     android:background="@null"
                     android:focusable="false"
                     android:gravity="right|center_vertical"
@@ -195,18 +195,17 @@
                     android:textColor="@color/black80"
                     android:textColorHint="@color/black20"
                     android:textSize="@dimen/sp_14" />
+
                 <ImageView
                     android:id="@+id/iv_03_device"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginRight="@dimen/dp_10"
-                    android:visibility="gone"
-                    android:src="@drawable/selector_detail_dialog" />
+                    android:src="@drawable/selector_detail_dialog"
+                    android:visibility="gone" />
 
             </LinearLayout>
-
-
 
 
         </LinearLayout>
@@ -425,8 +424,8 @@
                 <com.hjq.widget.view.ClearEditText
                     android:id="@+id/et_03_ming_zu"
                     android:layout_width="0dp"
-                    android:layout_weight="1"
                     android:layout_height="@dimen/dp_35"
+                    android:layout_weight="1"
                     android:background="@null"
                     android:focusable="false"
                     android:gravity="right|center_vertical"
@@ -439,17 +438,17 @@
                     android:textColor="@color/black80"
                     android:textColorHint="@color/black20"
                     android:textSize="@dimen/sp_14" />
+
                 <ImageView
                     android:id="@+id/iv_03_ming_zu"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginRight="@dimen/dp_10"
-                    android:visibility="gone"
-                    android:src="@drawable/selector_detail_dialog" />
+                    android:src="@drawable/selector_detail_dialog"
+                    android:visibility="gone" />
 
             </LinearLayout>
-
 
 
         </LinearLayout>
@@ -481,10 +480,10 @@
 
 
                 <com.hjq.widget.view.ClearEditText
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
                     android:id="@+id/et_03_is_married"
+                    android:layout_width="0dp"
                     android:layout_height="@dimen/dp_35"
+                    android:layout_weight="1"
                     android:background="@null"
                     android:focusable="false"
                     android:gravity="right|center_vertical"
@@ -504,11 +503,10 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginRight="@dimen/dp_10"
-                    android:visibility="gone"
-                    android:src="@drawable/selector_detail_dialog" />
+                    android:src="@drawable/selector_detail_dialog"
+                    android:visibility="gone" />
 
             </LinearLayout>
-
 
 
         </LinearLayout>
@@ -674,7 +672,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/dp_10"
-                app:classic_showPositive="false" />
+                app:classic_maxCount="800"
+                app:classic_showPositive="true" />
 
             <!--            <com.hjq.widget.view.ClearEditText-->
             <!--                android:id="@+id/et_03_case_history"-->
@@ -745,7 +744,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/dp_10"
-                app:classic_showPositive="false" />
+                app:classic_maxCount="800"
+                app:classic_showPositive="true" />
 
             <!--            <com.hjq.widget.view.ClearEditText-->
             <!--                android:id="@+id/et_03_family_case_history"-->
@@ -765,7 +765,6 @@
 
 
         </LinearLayout>
-
 
 
         <View

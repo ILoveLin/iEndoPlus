@@ -145,12 +145,12 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
     public void startRotationAnim(String type) {
         if ("close".equals(type)) {
             ObjectAnimator animator = ObjectAnimator.ofFloat(mAnim, "rotation", 0f, 180f);
-            animator.setDuration(500);
+            animator.setDuration(300);
             animator.start();
 
         } else {
             ObjectAnimator animator = ObjectAnimator.ofFloat(mAnim, "rotation", 180f, 360f);
-            animator.setDuration(500);
+            animator.setDuration(300);
             animator.start();
         }
     }

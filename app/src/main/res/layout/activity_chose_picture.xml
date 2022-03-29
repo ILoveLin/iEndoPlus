@@ -37,6 +37,16 @@
                 tools:listitem="@layout/picker_item" />
 
 
+            <TextView
+                android:id="@+id/tv_image_empty"
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="图片列表为空!"
+                android:textColor="@color/common_icon_color"
+                android:textSize="@dimen/sp_15" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dp_50"

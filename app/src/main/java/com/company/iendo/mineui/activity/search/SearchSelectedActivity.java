@@ -4,12 +4,14 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.company.iendo.R;
 import com.company.iendo.app.AppActivity;
 import com.company.iendo.bean.DialogItemBean;
 import com.company.iendo.bean.ListDialogDateBean;
+import com.company.iendo.mineui.activity.MainActivity;
 import com.company.iendo.other.HttpConstant;
 import com.company.iendo.ui.dialog.DateDialog;
 import com.company.iendo.ui.dialog.MenuDialog;
@@ -52,7 +54,6 @@ public class SearchSelectedActivity extends AppActivity {
     private EditText mEtCheckName;
     //    private EditText mEtStartAge;
     private EditText mEtEndAge;
-    private TextView mAgeType;
     private TextView mSexType;
     private EditText mEtWorker;
     private TextView mMarriedType;
@@ -67,6 +68,12 @@ public class SearchSelectedActivity extends AppActivity {
     private ArrayList<String> mSexList = new ArrayList<String>();
     private ArrayList<String> mMarriedList = new ArrayList<String>();
     private TitleBar mTitleBar;
+    private String todayTime;
+    private EditText mEtYibaohao;
+    private ImageView mIvAgeType;
+    private TextView mAgeType;
+    private EditText mEtAgeTimeStart;
+    private EditText mEtAgeTimeEnd;
 
     @Override
     protected int getLayoutId() {
@@ -78,10 +85,14 @@ public class SearchSelectedActivity extends AppActivity {
         mStartDate = findViewById(R.id.sp_start_date);
         mEndDate = findViewById(R.id.sp_end_date);
         mEtCheckNum = findViewById(R.id.edit_check_num);
+        mEtAgeTimeStart = findViewById(R.id.edit_age_start);
+        mEtAgeTimeEnd = findViewById(R.id.edit_age_end);
         mEtCheckName = findViewById(R.id.edit_check_name);
 //        mEtStartAge = findViewById(R.id.edit_start_age);
-        mEtEndAge = findViewById(R.id.edit_end_age);
-//        mAgeType = findViewById(R.id.tv_age_type);
+        mEtYibaohao = findViewById(R.id.edit_yibaohao);
+        mIvAgeType = findViewById(R.id.iv_age);
+//        mEtEndAge = findViewById(R.id.edit_end_age);
+        mAgeType = findViewById(R.id.tv_age_type);
         mSexType = findViewById(R.id.tv_sex_type);
         mEtWorker = findViewById(R.id.edit_worker);
         mMarriedType = findViewById(R.id.tv_married_type);
@@ -92,7 +103,11 @@ public class SearchSelectedActivity extends AppActivity {
         mSearch = findViewById(R.id.sp_search);
         mTitleBar = findViewById(R.id.titlebar);
         setOnClickListener(R.id.tv_sex_type, R.id.edit_worker, R.id.edit_section, R.id.edit_device, R.id.edit_check_doctor,
-                R.id.edit_get_doctor, R.id.sp_search, R.id.sp_start_date, R.id.sp_end_date, R.id.tv_married_type);
+                R.id.edit_get_doctor, R.id.sp_search, R.id.sp_start_date, R.id.sp_end_date, R.id.tv_married_type, R.id.iv_age);
+
+        getCurrentDataTime();
+        mStartDate.setText(todayTime + "");
+        mEndDate.setText(todayTime + "");
 
         mTitleBar.setOnTitleBarListener(new OnTitleBarListener() {
             @Override
@@ -113,6 +128,16 @@ public class SearchSelectedActivity extends AppActivity {
         });
 
         sendListDictsRequest();
+    }
+
+    private void getCurrentDataTime() {
+
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        System.out.println(formatter.format(calendar.getTime()));
+        todayTime = formatter.format(calendar.getTime());
+//        todayTime = year+"-"+month+"-"+day;
+
     }
 
     /**
@@ -263,38 +288,52 @@ public class SearchSelectedActivity extends AppActivity {
                 showDateDialog("结束");
                 break;
             case R.id.edit_worker:  //职业
-                showMenuDialog(mEtWorker, "5");
+//                showMenuDialog(mEtWorker, "5");
                 break;
             case R.id.edit_section:  //科室
-                showMenuDialog(mEtSection, "9");
+//                showMenuDialog(mEtSection, "9");
                 break;
             case R.id.edit_device:  //设备
-                showMenuDialog(mEtDevice, "10");
+//                showMenuDialog(mEtDevice, "10");
                 break;
             case R.id.edit_check_doctor:  //检查医生
-                showMenuDialog(mEtCheckDoctor, "20");
+//                showMenuDialog(mEtCheckDoctor, "20");
                 break;
             case R.id.edit_get_doctor:  //送检医生
-                showMenuDialog(mEtGetDoctor, "8");
+//                showMenuDialog(mEtGetDoctor, "8");
+                break;
+            case R.id.iv_age:  //性别类别  type=1 岁 月 天
+                mAgeList.clear();
+                mAgeList.add("岁");
+                mAgeList.add("月");
+                mAgeList.add("天");
+                showSelectTypeDialog(mAgeList, "1", mAgeType);
                 break;
             case R.id.tv_sex_type:  //性别类别  type=2
                 mSexList.clear();
-                mSexList.add("全部");
                 mSexList.add("男");
                 mSexList.add("女");
                 showSelectTypeDialog(mSexList, "2", mSexType);
                 break;
             case R.id.tv_married_type: //结婚类别  type=3
                 mMarriedList.clear();
-                mMarriedList.add("未婚");
                 mMarriedList.add("已婚");
-                mMarriedList.add("其他");
+                mMarriedList.add("未婚");
+
                 showSelectTypeDialog(mMarriedList, "3", mMarriedType);
                 break;
             case R.id.sp_search:
                 //                break;
                 String CheckDateStart = mStartDate.getText().toString().trim();
                 String CheckDateEnd = mEndDate.getText().toString().trim();
+
+                String replaceStart = CheckDateStart.replace("-", "");
+                String replaceEnd = CheckDateEnd.replace("-", "");
+                if (Integer.parseInt(replaceEnd) < Integer.parseInt(replaceStart)) {
+                    toast("开始时间不能大于结束时间");
+                    return;
+                }
+
                 String CaseNo = mEtCheckNum.getText().toString().trim();
                 String Name = mEtCheckName.getText().toString().trim();
 //                String PatientAgeStart = mEtStartAge.getText().toString().trim();
@@ -311,6 +350,8 @@ public class SearchSelectedActivity extends AppActivity {
                 HashMap<String, String> parmasMap = new HashMap<>();
                 parmasMap.put("CheckDateStart", CheckDateStart);
                 parmasMap.put("CheckDateEnd", CheckDateEnd);
+                parmasMap.put("PatientAgeStart", mEtAgeTimeStart.getText().toString().trim());
+                parmasMap.put("PatientAgeEnd", mEtAgeTimeEnd.getText().toString().trim());
                 parmasMap.put("CaseNo", CaseNo);
                 parmasMap.put("Name", Name);
 //                if ("".equals(PatientAgeStart)) {
@@ -323,7 +364,7 @@ public class SearchSelectedActivity extends AppActivity {
                 } else {
                     parmasMap.put("PatientAgeEnd", PatientAgeEnd);
                 }
-                parmasMap.put("AgeUnit", "岁");
+                parmasMap.put("AgeUnit", mAgeType.getText().toString());
                 parmasMap.put("Sex", Sex);
                 parmasMap.put("Occupatior", Occupatior);
                 parmasMap.put("Married", Married);
@@ -331,7 +372,7 @@ public class SearchSelectedActivity extends AppActivity {
                 parmasMap.put("Device", Device);
                 parmasMap.put("ExaminingPhysician", ExaminingPhysician);
                 parmasMap.put("SubmitDoctor", SubmitDoctor);
-                parmasMap.put("EndoType", "3");
+                parmasMap.put("EndoType", endoType);
 
 
                 Intent intent = new Intent(SearchSelectedActivity.this, SearchActivity.class);
