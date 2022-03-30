@@ -689,7 +689,7 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
         showLoading();
 
         OkHttpUtils.post()
-                .url(mUrl + HttpConstant.UserManager_getCurrentRelo)
+                .url(mUrl + HttpConstant.UserManager_Login)
                 .addParams("UserName", mPhoneView.getText().toString())
                 .addParams("Password", MD5ChangeUtil.Md5_32(mPasswordView.getText().toString()))
                 .build()
@@ -697,8 +697,6 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                     @Override
                     public void onError(Call call, Exception e, int id) {
                         LogUtils.e("登录===" + e);
-                        showError();
-                        showComplete();
                         mPasswordView.setText("");
                         mPhoneView.setText("");
 
@@ -750,7 +748,6 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                                     WifiInfo wifiInfo = wifiManager.getConnectionInfo();
                                     mAppIP = getIpString(wifiInfo.getIpAddress());
                                 }
-                                int mCastSendPort = kv.decodeInt(Constants.KEY_BROADCAST_PORT);
                                 if ("".equals(mSocketPort)) {
                                     toast("本地广播发送端口不能为空");
                                     return;

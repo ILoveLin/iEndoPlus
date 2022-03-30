@@ -5,6 +5,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -35,6 +36,7 @@ import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.MD5ChangeUtil;
 import com.company.iendo.utils.SharePreferenceUtil;
 import com.company.iendo.utils.SocketUtils;
+import com.company.iendo.utils.SystemUtil;
 import com.hjq.base.BaseDialog;
 import com.hjq.widget.layout.SettingBar;
 import com.tencent.mmkv.MMKV;
@@ -79,6 +81,13 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
         mRelo = findViewById(R.id.tv_current_relo);
         mBaseUrl = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_BaseUrl, "192.168.312.102");
         setOnClickListener(R.id.memory_bar, R.id.hospital_bar, R.id.user_bar, R.id.about_bar, R.id.memory_bar, R.id.password_bar, R.id.linear_exit);
+
+
+        Log.e("TAG", "手机厂商：" + SystemUtil.getDeviceBrand());  //OPPO        HUAWEI
+        Log.e("TAG", "手机型号：" + SystemUtil.getSystemModel()); //OPPO A83t   SCMR-W09
+        Log.e("TAG", "手机当前系统语言：" + SystemUtil.getSystemLanguage());
+        Log.e("TAG", "Android系统版本号：" + SystemUtil.getSystemVersion());
+
 
     }
 
@@ -222,7 +231,7 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
     }
 
     /**
-     * 发送握手消息
+     * 程序退出命令
      */
     public void sendProgramExitMessage() {
         HandBean handBean = new HandBean();

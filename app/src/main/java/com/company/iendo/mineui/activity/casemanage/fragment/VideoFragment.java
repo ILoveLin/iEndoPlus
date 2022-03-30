@@ -83,8 +83,6 @@ public class VideoFragment extends TitleBarFragment<MainActivity> implements Sta
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void SocketRefreshEvent(SocketRefreshEvent event) {
-        LogUtils.e("Socket回调==VideoFragment===回调===视频界面====" + event.getData());
-        LogUtils.e("Socket回调==VideoFragment===回调===视频界面==event.getIp()==" +event.getIp());
         switch (event.getUdpCmd()) {
             case Constants.UDP_18://录像--->0：查询录像状态 1：开始录像，，(我的命令)2：停止录像，(我的命令)3：正在录像，(后台返回操作)  4：未录像(后台返回操作)
                 String mUpCaseID = event.getIp();

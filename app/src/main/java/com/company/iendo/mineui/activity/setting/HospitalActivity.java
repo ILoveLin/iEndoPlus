@@ -19,6 +19,7 @@ import com.company.iendo.app.AppActivity;
 import com.company.iendo.bean.DetailPictureBean;
 import com.company.iendo.bean.HospitalBean;
 import com.company.iendo.bean.HospitalUpdateBean;
+import com.company.iendo.bean.event.SocketRefreshEvent;
 import com.company.iendo.http.api.UpdateImageApi;
 import com.company.iendo.http.glide.GlideApp;
 import com.company.iendo.http.model.HttpData;
@@ -43,6 +44,10 @@ import com.makeramen.roundedimageview.RoundedImageView;
 import com.umeng.commonsdk.debug.D;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.io.IOException;
@@ -90,6 +95,7 @@ public class HospitalActivity extends AppActivity implements StatusAction {
 
     @Override
     protected void initView() {
+        EventBus.getDefault().register(this);
         mTitlebar = findViewById(R.id.hospital_bar);
         mStatusLayout = findViewById(R.id.status_hint);
         mAvatarView = findViewById(R.id.avatar_view);
@@ -114,6 +120,16 @@ public class HospitalActivity extends AppActivity implements StatusAction {
         setEditStatus(false);
 
         responseListener();
+
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void SocketRefreshEvent(SocketRefreshEvent event) {
+        switch (event.getUdpCmd()) {
+            case Constants.UDP_40://刷新医院信息
+                sendRequest();
+                break;
+        }
 
     }
 
@@ -378,5 +394,12 @@ public class HospitalActivity extends AppActivity implements StatusAction {
         return super.createStatusBarConfig()
                 // 指定导航栏背景颜色
                 .navigationBarColor(R.color.white);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+
     }
 }

@@ -37,14 +37,14 @@
             <RelativeLayout
                 android:id="@+id/ff_player_all"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/dp_210"
+                android:layout_height="@dimen/dp_200"
                 android:background="@color/black">
 
                 <!--视频界面-->
                 <com.company.iendo.widget.vlc.MyVlcVideoView
                     android:id="@+id/player"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/dp_210"
+                    android:layout_height="@dimen/dp_200"
                     android:background="@color/black"
                     android:clickable="true" />
 
@@ -53,14 +53,14 @@
                 <RelativeLayout
                     android:id="@+id/relative_top_control"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/dp_40"
+                    android:layout_height="@dimen/dp_38"
                     android:layout_alignParentTop="true"
                     android:visibility="visible">
 
                     <ImageView
                         android:id="@+id/video_back"
-                        android:layout_width="@dimen/dp_40"
-                        android:layout_height="@dimen/dp_40"
+                        android:layout_width="@dimen/dp_38"
+                        android:layout_height="@dimen/dp_38"
                         android:paddingLeft="@dimen/dp_10"
                         android:scaleType="centerInside"
                         android:src="@drawable/video_back"
@@ -105,8 +105,8 @@
                     android:clickable="true"
                     android:drawableTop="@drawable/selector_url_type"
                     android:gravity="center"
-                    android:paddingRight="@dimen/dp_10"
                     android:paddingLeft="@dimen/dp_10"
+                    android:paddingRight="@dimen/dp_5"
                     android:text="高清"
                     android:textColor="@android:color/white"
                     android:textSize="13sp" />
@@ -132,7 +132,7 @@
                 <RelativeLayout
                     android:id="@+id/relative_bottom_control"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/dp_40"
+                    android:layout_height="@dimen/dp_38"
                     android:layout_alignParentBottom="true">
 
                     <TextView
@@ -162,173 +162,201 @@
             </RelativeLayout>
 
 
-
-                <LinearLayout
-                    android:layout_below="@+id/ff_player_all"
-                    android:id="@+id/linear_bottom"
+            <LinearLayout
+                android:id="@+id/linear_bottom"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/ff_player_all"
+                android:layout_marginTop="@dimen/dp_10"
+                android:orientation="vertical">
+                <!--录像 采图 冻结 语音-->
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dp_10"
-                    android:orientation="vertical">
-                    <!--录像 截图 冻结 语音-->
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                    android:layout_height="wrap_content">
+
+                    <!--采图 -->
+                    <LinearLayout
+                        android:id="@+id/linear_picture"
+                        android:layout_width="@dimen/dp_72"
+                        android:layout_height="@dimen/dp_72"
+                        android:layout_centerInParent="true"
+                        android:background="@drawable/selector_item_shot"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:layout_width="@dimen/dp_24"
+                            android:layout_height="@dimen/dp_24"
+                            android:layout_marginTop="@dimen/dp_16"
+                            android:src="@drawable/ic_icon_get_the_picture" />
 
                         <View
-                            android:id="@+id/view_tag"
                             android:layout_width="1dp"
-                            android:layout_height="@dimen/dp_1"
-                            android:layout_centerInParent="true" />
+                            android:layout_height="0dp"
+                            android:layout_weight="1" />
+
+                        <TextView
+                            android:id="@+id/case_picture"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/dp_6"
+                            android:layout_marginBottom="@dimen/dp_6"
+                            android:text="采图"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/sp_15" />
 
 
-                        <LinearLayout
-                            android:id="@+id/linear_record"
-                            android:layout_width="@dimen/dp_75"
-                            android:layout_height="@dimen/dp_75"
-                            android:layout_marginRight="@dimen/dp_23"
-                            android:layout_toLeftOf="@+id/view_tag"
-                            android:background="@drawable/selector_item_recode"
+                    </LinearLayout>
+
+                    <!--录像 -->
+                    <LinearLayout
+                        android:layout_marginRight="@dimen/dp_25"
+                        android:id="@+id/linear_record"
+                        android:layout_width="@dimen/dp_72"
+                        android:layout_height="@dimen/dp_72"
+                        android:layout_toLeftOf="@+id/linear_picture"
+                        android:background="@drawable/selector_item_recode"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:layout_width="@dimen/dp_22"
+                            android:layout_height="@dimen/dp_12"
+                            android:layout_marginTop="@dimen/dp_23"
+                            android:src="@drawable/ic_icon_record" />
+
+                        <View
+                            android:layout_width="1dp"
+                            android:layout_height="0dp"
+                            android:layout_weight="1" />
+
+                        <TextView
+                            android:id="@+id/case_record"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/dp_6"
+                            android:layout_marginBottom="@dimen/dp_6"
+                            android:tag="录像中"
+                            android:text="录像"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/sp_15" />
+
+
+                    </LinearLayout>
+                    <!--语音 -->
+
+                    <LinearLayout
+                        android:id="@+id/linear_mic"
+                        android:layout_width="@dimen/dp_72"
+                        android:layout_height="@dimen/dp_72"
+                        android:layout_marginLeft="@dimen/dp_25"
+                        android:layout_toRightOf="@+id/linear_picture"
+                        android:background="@drawable/selector_item_mic"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:layout_width="@dimen/dp_17"
+                            android:layout_height="@dimen/dp_27"
+                            android:layout_marginTop="@dimen/dp_16"
+                            android:src="@drawable/ic_icon_voice_calls" />
+
+                        <View
+                            android:layout_width="1dp"
+                            android:layout_height="0dp"
+                            android:layout_weight="1" />
+
+                        <TextView
+                            android:id="@+id/tv_mic_status"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/dp_6"
+                            android:layout_marginBottom="@dimen/dp_6"
                             android:gravity="center"
-                            android:orientation="vertical">
+                            android:text="语音通话"
+                            android:tag="stopStream"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/sp_15" />
+                    </LinearLayout>
 
-                            <ImageView
-                                android:layout_width="@dimen/dp_22"
-                                android:layout_height="@dimen/dp_12"
-                                android:layout_marginTop="@dimen/dp_23"
-                                android:src="@drawable/ic_icon_record" />
+                    <!--                        <LinearLayout-->
+                    <!--                            android:visibility="gone"-->
+                    <!--                            android:id="@+id/linear_cold"-->
+                    <!--                            android:layout_width="0dp"-->
+                    <!--                            android:layout_height="match_parent"-->
+                    <!--                            android:layout_marginLeft="@dimen/dp_8"-->
+                    <!--                            android:layout_marginRight="@dimen/dp_8"-->
+                    <!--                            android:layout_weight="1"-->
+                    <!--                            android:background="@drawable/selector_item_code"-->
+                    <!--                            android:gravity="center"-->
+                    <!--                            android:orientation="vertical">-->
 
-                            <View
-                                android:layout_width="1dp"
-                                android:layout_height="0dp"
-                                android:layout_weight="1" />
+                    <!--                            <ImageView-->
+                    <!--                                android:layout_width="@dimen/dp_26"-->
+                    <!--                                android:layout_height="@dimen/dp_26"-->
+                    <!--                                android:layout_marginTop="@dimen/dp_16"-->
+                    <!--                                android:src="@drawable/ic_icon_cold" />-->
 
-                            <TextView
-                                android:id="@+id/case_record"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="@dimen/dp_6"
-                                android:layout_marginBottom="@dimen/dp_6"
-                                android:tag="录像中"
-                                android:text="录像"
-                                android:textColor="@color/white"
-                                android:textSize="@dimen/sp_15" />
+                    <!--                            <View-->
+                    <!--                                android:layout_width="1dp"-->
+                    <!--                                android:layout_height="0dp"-->
+                    <!--                                android:layout_weight="1" />-->
 
-
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:id="@+id/linear_picture"
-                            android:layout_width="@dimen/dp_75"
-                            android:layout_height="@dimen/dp_75"
-                            android:layout_marginLeft="@dimen/dp_23"
-                            android:layout_toRightOf="@+id/view_tag"
-                            android:background="@drawable/selector_item_shot"
-                            android:gravity="center"
-                            android:orientation="vertical">
-
-                            <ImageView
-                                android:layout_width="@dimen/dp_24"
-                                android:layout_height="@dimen/dp_24"
-                                android:layout_marginTop="@dimen/dp_16"
-                                android:src="@drawable/ic_icon_get_the_picture" />
-
-                            <View
-                                android:layout_width="1dp"
-                                android:layout_height="0dp"
-                                android:layout_weight="1" />
-
-                            <TextView
-                                android:id="@+id/case_picture"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="@dimen/dp_6"
-                                android:layout_marginBottom="@dimen/dp_6"
-                                android:text="采图"
-                                android:textColor="@color/white"
-                                android:textSize="@dimen/sp_15" />
+                    <!--                            <TextView-->
+                    <!--                                android:id="@+id/case_report"-->
+                    <!--                                android:layout_width="wrap_content"-->
+                    <!--                                android:layout_height="wrap_content"-->
+                    <!--                                android:layout_marginTop="@dimen/dp_6"-->
+                    <!--                                android:layout_marginBottom="@dimen/dp_6"-->
+                    <!--                                android:gravity="center"-->
+                    <!--                                android:text="冻结"-->
+                    <!--                                android:textColor="@color/white"-->
+                    <!--                                android:textSize="@dimen/sp_15" />-->
+                    <!--                        </LinearLayout>-->
 
 
-                        </LinearLayout>
+                    <!--                        <LinearLayout-->
+                    <!--                            android:id="@+id/linear_mic"-->
+                    <!--                            android:layout_width="0dp"-->
+                    <!--                            android:layout_height="match_parent"-->
+                    <!--                            android:layout_marginLeft="@dimen/dp_8"-->
+                    <!--                            android:layout_marginRight="@dimen/dp_16"-->
+                    <!--                            android:layout_weight="1"-->
+                    <!--                            android:background="@drawable/selector_item_mic"-->
+                    <!--                            android:gravity="center"-->
+                    <!--                            android:orientation="vertical"-->
+                    <!--                            android:visibility="gone">-->
 
-                        <!--                        <LinearLayout-->
-                        <!--                            android:visibility="gone"-->
-                        <!--                            android:id="@+id/linear_cold"-->
-                        <!--                            android:layout_width="0dp"-->
-                        <!--                            android:layout_height="match_parent"-->
-                        <!--                            android:layout_marginLeft="@dimen/dp_8"-->
-                        <!--                            android:layout_marginRight="@dimen/dp_8"-->
-                        <!--                            android:layout_weight="1"-->
-                        <!--                            android:background="@drawable/selector_item_code"-->
-                        <!--                            android:gravity="center"-->
-                        <!--                            android:orientation="vertical">-->
+                    <!--                            <ImageView-->
+                    <!--                                android:layout_width="@dimen/dp_17"-->
+                    <!--                                android:layout_height="@dimen/dp_27"-->
+                    <!--                                android:layout_marginTop="@dimen/dp_16"-->
+                    <!--                                android:src="@drawable/ic_icon_voice_calls" />-->
 
-                        <!--                            <ImageView-->
-                        <!--                                android:layout_width="@dimen/dp_26"-->
-                        <!--                                android:layout_height="@dimen/dp_26"-->
-                        <!--                                android:layout_marginTop="@dimen/dp_16"-->
-                        <!--                                android:src="@drawable/ic_icon_cold" />-->
+                    <!--                            <View-->
+                    <!--                                android:layout_width="1dp"-->
+                    <!--                                android:layout_height="0dp"-->
+                    <!--                                android:layout_weight="1" />-->
 
-                        <!--                            <View-->
-                        <!--                                android:layout_width="1dp"-->
-                        <!--                                android:layout_height="0dp"-->
-                        <!--                                android:layout_weight="1" />-->
+                    <!--                            <TextView-->
+                    <!--                                android:id="@+id/case_down"-->
+                    <!--                                android:layout_width="wrap_content"-->
+                    <!--                                android:layout_height="wrap_content"-->
+                    <!--                                android:layout_marginTop="@dimen/dp_6"-->
+                    <!--                                android:layout_marginBottom="@dimen/dp_6"-->
+                    <!--                                android:gravity="center"-->
+                    <!--                                android:text="语音通话"-->
+                    <!--                                android:textColor="@color/white"-->
+                    <!--                                android:textSize="@dimen/sp_15" />-->
+                    <!--                        </LinearLayout>-->
 
-                        <!--                            <TextView-->
-                        <!--                                android:id="@+id/case_report"-->
-                        <!--                                android:layout_width="wrap_content"-->
-                        <!--                                android:layout_height="wrap_content"-->
-                        <!--                                android:layout_marginTop="@dimen/dp_6"-->
-                        <!--                                android:layout_marginBottom="@dimen/dp_6"-->
-                        <!--                                android:gravity="center"-->
-                        <!--                                android:text="冻结"-->
-                        <!--                                android:textColor="@color/white"-->
-                        <!--                                android:textSize="@dimen/sp_15" />-->
-                        <!--                        </LinearLayout>-->
-
-
-                        <!--                        <LinearLayout-->
-                        <!--                            android:id="@+id/linear_mic"-->
-                        <!--                            android:layout_width="0dp"-->
-                        <!--                            android:layout_height="match_parent"-->
-                        <!--                            android:layout_marginLeft="@dimen/dp_8"-->
-                        <!--                            android:layout_marginRight="@dimen/dp_16"-->
-                        <!--                            android:layout_weight="1"-->
-                        <!--                            android:background="@drawable/selector_item_mic"-->
-                        <!--                            android:gravity="center"-->
-                        <!--                            android:orientation="vertical"-->
-                        <!--                            android:visibility="gone">-->
-
-                        <!--                            <ImageView-->
-                        <!--                                android:layout_width="@dimen/dp_17"-->
-                        <!--                                android:layout_height="@dimen/dp_27"-->
-                        <!--                                android:layout_marginTop="@dimen/dp_16"-->
-                        <!--                                android:src="@drawable/ic_icon_voice_calls" />-->
-
-                        <!--                            <View-->
-                        <!--                                android:layout_width="1dp"-->
-                        <!--                                android:layout_height="0dp"-->
-                        <!--                                android:layout_weight="1" />-->
-
-                        <!--                            <TextView-->
-                        <!--                                android:id="@+id/case_down"-->
-                        <!--                                android:layout_width="wrap_content"-->
-                        <!--                                android:layout_height="wrap_content"-->
-                        <!--                                android:layout_marginTop="@dimen/dp_6"-->
-                        <!--                                android:layout_marginBottom="@dimen/dp_6"-->
-                        <!--                                android:gravity="center"-->
-                        <!--                                android:text="语音通话"-->
-                        <!--                                android:textColor="@color/white"-->
-                        <!--                                android:textSize="@dimen/sp_15" />-->
-                        <!--                        </LinearLayout>-->
-
-                    </RelativeLayout>
+                </RelativeLayout>
 
 
-                    <!--TAB 选择布局 光源和摄像机-->
-                    <include layout="@layout/include_get_pictrue_light_device" />
+                <!--TAB 选择布局 光源和摄像机-->
+                <include layout="@layout/include_get_pictrue_light_device" />
 
-                </LinearLayout>
+            </LinearLayout>
 
             <!--纯滚动模式-->
             <!--app:srlEnablePureScrollMode="true"-->

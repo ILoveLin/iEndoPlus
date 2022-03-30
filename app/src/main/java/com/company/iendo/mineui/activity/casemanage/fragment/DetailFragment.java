@@ -1690,7 +1690,6 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void SocketRefreshEvent(SocketRefreshEvent event) {
-        LogUtils.e("Socket回调==DetailFragment==event.getData()==" + event.getData());
 //        String mRun2End4 = CalculateUtils.getReceiveRun2End4String(event.getData());//随机数之后到data结尾的String
 //        String deviceType = CalculateUtils.getSendDeviceType(event.getData());
 //        String deviceOnlyCode = CalculateUtils.getSendDeviceOnlyCode(event.getData());

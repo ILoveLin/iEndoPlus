@@ -95,7 +95,6 @@ public class PictureFragment extends TitleBarFragment<MainActivity> implements S
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void SocketRefreshEvent(SocketRefreshEvent event) {
-        LogUtils.e("Socket回调==PictureFragment===回调===编辑图片====" + event.getData());
         String data = event.getData();
         switch (event.getUdpCmd()) {
             case Constants.UDP_17://编辑图片

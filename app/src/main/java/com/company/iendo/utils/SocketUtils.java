@@ -118,11 +118,6 @@ public class SocketUtils {
                     LogUtils.e("SocketUtils===发送消息==点对点==hand==receivePort==" + receivePort);
                     LogUtils.e("SocketUtils===发送消息==点对点==hand==data==" + data);
 
-//                    byte[] sendData = data.getBytes();
-                    MMKV kv = MMKV.defaultMMKV();
-                    int mReceivePort = kv.decodeInt(Constants.KEY_RECEIVE_PORT);
-                    LogUtils.e("SocketUtils===发送消息==点对点==hand==key==" + mReceivePort);
-
                     DatagramPacket mSendPacket = new DatagramPacket(data, data.length, finalMAddress, receivePort);
 //                    for (int i = 0; i < 5; i++) {
                     //随机端口
@@ -135,13 +130,12 @@ public class SocketUtils {
                     mSendSocket.bind(new InetSocketAddress(receivePort));
                     mSendSocket.send(mSendPacket);
                     mSendSocket.close();
-                    LogUtils.e("SocketUtils===发送消息==点对点==hand==" + mReceivePort);
-                    LogUtils.e("SocketUtils===发送消息==点对点==hand==ip==" + ip);
+
                     //释放资源
 //                    lock.release();
 //                    }
                 } catch (Exception e) {
-                    LogUtils.e("SocketUtils===发送消息==点对点==hand==Exception==" + e);
+                    LogUtils.e("SocketUtils===发送消息==握手消息==hand==Exception==" + e);
 
                 }
             }

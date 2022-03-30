@@ -6,11 +6,15 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_PRIVILEGED_PHONE_STATE" />
-    <uses-permission android:name="android.permission.READ_PRIVILEGED_PHONE_STATE" />
+    <uses-permission
+        android:name="android.permission.READ_PRIVILEGED_PHONE_STATE"
+        tools:ignore="ProtectedPermissions" />
+    <uses-permission
+        android:name="android.permission.READ_PRIVILEGED_PHONE_STATE"
+        tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-<!--Rom关闭了手机接收UDP报功能需要添加的权限-->
+    <!--Rom关闭了手机接收UDP报功能需要添加的权限-->
     <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
     <!--8.0安装未知来源权限-->
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
@@ -67,12 +71,10 @@
         tools:targetApi="n">
 
 
-
         <!-- 表示当前已经适配了分区存储 -->
         <meta-data
             android:name="ScopedStorage"
             android:value="true" />
-
 
 
         <!--Bugly,App版本升级-->
@@ -97,7 +99,7 @@
         <!-- iEndoPlus界面 -->
 
         <!-- 永久保活Socket服务 -->
-        <service android:name=".app.ReceiveSocketService"/>
+        <service android:name=".app.ReceiveSocketService" />
 
         <!-- 方案界面 -->
         <activity
@@ -226,6 +228,7 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
+
         <!--视频界面-->
         <activity
             android:name=".mineui.activity.vlc.VideoActivity"

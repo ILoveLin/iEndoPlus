@@ -10,6 +10,7 @@ import android.widget.Toast;
 import com.company.iendo.bean.UserReloChanged;
 import com.company.iendo.bean.event.SocketRefreshEvent;
 import com.company.iendo.bean.socket.DeleteUserBean;
+import com.company.iendo.bean.socket.MicResponseBean;
 import com.company.iendo.bean.socket.RecodeBean;
 import com.company.iendo.bean.socket.UpdateCaseBean;
 import com.company.iendo.bean.socket.getpicture.ColdPictureBean;
@@ -75,13 +76,6 @@ public class ReceiveSocketService extends AbsWorkService {
         //取消 Job / Alarm / Subscription
         cancelJobAlarmSub();
 
-//        if (mReceiveSocket != null && !mReceiveSocket.isClosed()) {
-//            //先关闭在断开连接不然anr
-//
-//            mReceiveSocket.close();
-//            mReceiveSocket.disconnect();
-//
-//        }
         LogUtils.e("保活服务开启stopService------ + stopService... stopService = ");
 
 
@@ -118,18 +112,18 @@ public class ReceiveSocketService extends AbsWorkService {
             mAppIP = getIpString(wifiInfo.getIpAddress());
         }
         LogUtils.e("保活服务开启----AAA--" + Thread.currentThread().getName());
-        sDisposable = Observable
-                .interval(3, TimeUnit.SECONDS)//定时器操作符，这里三秒打印一个log
-                //取消任务时取消定时唤醒
-                .doOnDispose(() -> {
-                    LogUtils.e("保活服务开启------===doOnDispose");
-                    cancelJobAlarmSub();
-                })
-                .subscribe(count -> {
-                    LogUtils.e("保活服务开启------每 3 秒采集一次数据... count = " + count);
-                    if (count > 0 && count % 18 == 0)
-                        LogUtils.e("保活服务开启------保存数据到磁盘。 saveCount = " + (count / 18 - 1));
-                });
+//        sDisposable = Observable
+//                .interval(3, TimeUnit.SECONDS)//定时器操作符，这里三秒打印一个log
+//                //取消任务时取消定时唤醒
+//                .doOnDispose(() -> {
+//                    LogUtils.e("保活服务开启------===doOnDispose");
+//                    cancelJobAlarmSub();
+//                })
+//                .subscribe(count -> {
+//                    LogUtils.e("保活服务开启------每 3 秒采集一次数据... count = " + count);
+//                    if (count > 0 && count % 18 == 0)
+//                        LogUtils.e("保活服务开启------保存数据到磁盘。 saveCount = " + (count / 18 - 1));
+//                });
 
         /**
          * App启动的时候初始化第一次默认端口线程
@@ -179,7 +173,8 @@ public class ReceiveSocketService extends AbsWorkService {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                LogUtils.e("保活服务开启======LiveServiceImpl==回调==1==Exception==退出线程");
+                LogUtils.e("保活服务开启=====退出线程==Exception==new DatagramPacket的时候异常" + e);
+
 
             }
             while (true) {
@@ -398,8 +393,17 @@ public class ReceiveSocketService extends AbsWorkService {
                                             event.setUdpCmd(Constants.UDP_12);
                                             EventBus.getDefault().post(event);
                                             break;
+                                        case Constants.UDP_F4://语音接入
+                                            LogUtils.e("======LiveServiceImpl==回调===语音接入==");
+                                            MicResponseBean micResponseBean = mGson.fromJson(str, MicResponseBean.class);
+                                            event.setTga(true);
+                                            event.setData(micResponseBean.getUrl());//传递url
+                                            event.setIp(micResponseBean.getOnline());//传递是否在线(0：离线 1:上线)
+                                            event.setUdpCmd(Constants.UDP_F4);
+                                            EventBus.getDefault().post(event);
+                                            break;
                                         case Constants.UDP_F5://查询设备参数
-                                            LogUtils.e("======LiveServiceImpl==回调===设备参数下发==");
+                                            LogUtils.e("======LiveServiceImpl==回调===设备参数下发==" + str);
                                             event.setTga(true);
                                             event.setData(str);//此处直接把数据bean的string回传到GetPictureActivity界面
                                             event.setIp(hostAddressIP);
@@ -420,6 +424,14 @@ public class ReceiveSocketService extends AbsWorkService {
                                             event.setUdpCmd(Constants.UDP_F7);
                                             EventBus.getDefault().post(event);
                                             break;
+                                        case Constants.UDP_40://刷新医院信息
+                                            LogUtils.e("======LiveServiceImpl==回调===刷新医院信息==");
+                                            event.setTga(true);
+                                            event.setData(str);//此处直接把数据bean的string回传到GetPictureActivity界面
+                                            event.setIp(hostAddressIP);
+                                            event.setUdpCmd(Constants.UDP_40);
+                                            EventBus.getDefault().post(event);
+                                            break;
 
                                     }
                                 }
@@ -430,7 +442,8 @@ public class ReceiveSocketService extends AbsWorkService {
                         }
 
                     } catch (Exception e) {
-                        LogUtils.e("保活服务开启=====退出线程==Exception==" + e);
+                        LogUtils.e("保活服务开启=====退出线程==Exception==while循环处理消息的时候异常" + e);
+
                         e.printStackTrace();
 
                         break;//捕获到异常之后，执行break跳出循环

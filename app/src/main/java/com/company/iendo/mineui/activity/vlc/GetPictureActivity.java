@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,11 +24,13 @@ import androidx.annotation.NonNull;
 
 import com.company.iendo.R;
 import com.company.iendo.action.StatusAction;
+import com.company.iendo.aop.SingleClick;
 import com.company.iendo.app.AppActivity;
 import com.company.iendo.bean.CaseDetailBean;
 import com.company.iendo.bean.UserReloBean;
 import com.company.iendo.bean.event.SocketRefreshEvent;
 import com.company.iendo.bean.socket.HandBean;
+import com.company.iendo.bean.socket.MicRequestBean;
 import com.company.iendo.bean.socket.RecodeBean;
 import com.company.iendo.bean.socket.getpicture.ShotPictureBean;
 import com.company.iendo.bean.socket.params.DeviceParamsBean;
@@ -43,13 +46,18 @@ import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.ScreenSizeUtil;
 import com.company.iendo.utils.SharePreferenceUtil;
 import com.company.iendo.utils.SocketUtils;
+import com.company.iendo.utils.SystemUtil;
 import com.company.iendo.widget.vlc.ENDownloadView;
 import com.company.iendo.widget.vlc.ENPlayView;
 import com.company.iendo.widget.vlc.MyVlcVideoView;
 import com.company.iendo.widget.StatusLayout;
 import com.gyf.immersionbar.ImmersionBar;
+import com.hjq.bar.OnTitleBarListener;
 import com.hjq.bar.TitleBar;
 import com.hjq.base.BaseDialog;
+import com.hjq.permissions.OnPermissionCallback;
+import com.hjq.permissions.Permission;
+import com.hjq.permissions.XXPermissions;
 import com.hjq.widget.view.ClearEditText;
 import com.hjq.widget.view.SwitchButton;
 import com.jaygoo.widget.OnRangeChangedListener;
@@ -69,6 +77,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -217,6 +226,9 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
     private TextView mRightLiveTypeControl;
     private HashMap<String, String> mUrlMap;
     private TextView mTitle;
+    private LinearLayout mMic;
+    private String micUrl;
+    private TextView mTvMicStatus;
 
     /**
      * eventbus 刷新socket数据
@@ -228,6 +240,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         String data = event.getData();
         switch (event.getUdpCmd()) {
             case Constants.UDP_HAND://握手
+                LogUtils.e("======LiveServiceImpl==回调=event==握手成功的回调==" + event.getUdpCmd());
                 UDP_HAND_TAG = true;
                 //获取当前设备参数
                 getSocketLightData(Constants.UDP_F5);
@@ -292,8 +305,35 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                     requestCurrentPermission();
                 }
                 break;
+            case Constants.UDP_F4://语音接入
+                //url
+                micUrl = event.getData();
+                String onLine = event.getIp();//(0：离线 1:上线)
+                if ("1".equals(onLine)) {
+                    if (!"".equals(micUrl) && rtmpOnlyAudio.prepareAudio()) {
+                        //获取当前UI tag
+                        String tag = (String) mTvMicStatus.getTag();
+                        //此时是关闭状态,请求推流的回调
+                        if ("stopStream".equals(tag)) {
+                            rtmpOnlyAudio.startStream(micUrl);
+                            setMicStatus("startStream", "通话中..");
+                            //此时是开启状态,请求关闭推流的回调
+                        } else if ("startStream".equals(tag)) {
+                            rtmpOnlyAudio.stopStream();
+                            setMicStatus("stopStream", "语音通话");
+                        }
+                    }
+                } else {
+                    toast("设备语音服务器未在线，连接失败");
+                }
+                break;
         }
 
+    }
+
+    private void setMicStatus(String tag, String des) {
+        mTvMicStatus.setTag(tag);
+        mTvMicStatus.setText(des);
     }
 
     /**
@@ -396,6 +436,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
 
     }
 
+    @SingleClick
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -494,9 +535,9 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
 //            case R.id.linear_cold:              //冻结
 //                sendSocketPointMessage(Constants.UDP_F3);
 //                break;
-//            case R.id.linear_mic:               //麦克风
-//
-//                break;
+            case R.id.linear_mic:               //麦克风
+                getMicPermission();
+                break;
             case R.id.lock_screen:  //锁屏
                 if (mLockScreen.getTag().equals("lock")) {   //解锁
                     mHandler.sendEmptyMessage(Unlock);
@@ -571,8 +612,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         //rootView.setOnTouchListener(null);
         //rootView.setLongClickable(false);  //手势不需要需要--不能触摸
         rtmpOnlyAudio = new RtmpOnlyAudio(this);
-        LogUtils.e("pusherStart====111===" + rtmpOnlyAudio.isStreaming());    //true   断开的时候
-        LogUtils.e("pusherStart====222===" + rtmpOnlyAudio.prepareAudio());   //true
+
         //设置标题
         mTitle.setText(mCurrentTypeDes + "(" + mSocketOrLiveIP + ")");
 
@@ -586,29 +626,6 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
 
         path = currentUrl0;
         startLive(path);
-//        推流音频代码
-//        if (!rtmpOnlyAudio.isStreaming()) {
-//            if (rtmpOnlyAudio.prepareAudio()) {
-//                if (CommonUtil.isFastClick()) {
-//                    if ("一体机".equals(mTitleData.substring(0, 3))) {
-//                        if (isPlayering) {
-//                            pusherStart();
-//                        } else {
-//                            startSendToast("只有在直播开启的时候,才能使用语音功能!");
-//                        }
-//                    } else {
-//                        startSendToast("当前直播没有语音功能!");
-//                    }
-//                }
-//            } else {
-//                startSendToast("Error preparing stream, This device cant do it");
-//            }
-//        } else {
-//            if (CommonUtil.isFastClick()) {
-//                pusherStop("Common");
-//            }
-//        }
-
         //存储url地址
         mUrlMap = new HashMap<>();
         mUrlMap.put("高清HD", currentUrl0);
@@ -618,6 +635,66 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
 
     }
 
+    /**
+     * 获取麦克风权限
+     */
+    private void getMicPermission() {
+        XXPermissions.with(this)
+                .permission(Permission.RECORD_AUDIO)
+                .request(new OnPermissionCallback() {
+                    @Override
+                    public void onGranted(List<String> permissions, boolean all) {
+                        if (all) {
+
+                            LogUtils.e("pusherStart====Permission==isStreaming==" + rtmpOnlyAudio.isStreaming());    //true   断开的时候
+                            LogUtils.e("pusherStart====Permission==prepareAudio==" + rtmpOnlyAudio.prepareAudio());   //true
+                            //flase 表示未开启推流
+                            if (!rtmpOnlyAudio.isStreaming()) {
+                                if (rtmpOnlyAudio.prepareAudio()) {
+                                    //握手成功,
+                                    if (UDP_HAND_TAG) {
+                                        //tag为关闭状态(默认是关闭状态)点击的时候如果关闭状态就开启推流
+                                        if ("stopStream".equals(mTvMicStatus.getTag())) {
+                                            sendSocketPointMicMessage("1");
+
+                                        }
+                                    } else {
+                                        toast("握手失败,请尝试再次链接");
+                                        sendHandLinkMessage();
+                                    }
+
+
+                                } else {
+
+                                }
+                            } else {
+                                if (UDP_HAND_TAG) {
+                                    //tag为开启状态,此时需要关闭推流
+                                    if ("startStream".equals(mTvMicStatus.getTag())) {
+                                        sendSocketPointMicMessage("0");
+                                    }
+                                } else {
+                                    sendHandLinkMessage();
+                                    toast("握手失败,请尝试再次链接");
+                                }
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onDenied(List<String> permissions, boolean never) {
+                        if (never) {
+                            toast("被永久拒绝授权，请手动授予存储权限");
+                            // 如果是被永久拒绝就跳转到应用权限系统设置页面
+                            XXPermissions.startPermissionActivity(getApplicationContext(), permissions);
+                        } else {
+                            toast("获取麦克风权限失败");
+                        }
+                    }
+                });
+
+
+    }
     /**
      * ***************************************************************************通讯模块**************************************************************************
      */
@@ -700,7 +777,32 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
     }
 
     /**
-     * 发送点对点消息,必须握手成功
+     * 发送握手消息
+     *
+     * @param onLineStatus 开关语音标识:(0：离线 1:上线)
+     */
+    public void sendSocketPointMicMessage(String onLineStatus) {
+        MicRequestBean micRequestBean = new MicRequestBean();
+        //手机厂商_手机型号_UserName     HUAWEI_SCMR-W09_Admin
+        micRequestBean.setTitle(SystemUtil.getDeviceBrand() + "_" + SystemUtil.getSystemModel() + "_" + mLoginUserName);
+        micRequestBean.setCalltype("rtmp");
+        micRequestBean.setServicemode("1");
+        micRequestBean.setOnline(onLineStatus);
+        byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(micRequestBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
+                Constants.UDP_F4);
+
+        if (("".equals(mSocketPort))) {
+            toast("通讯端口不能为空!");
+            return;
+        }
+        LogUtils.e("SocketUtils===发送消息==点对点==detailCaseActivity==sendByteData==" + sendByteData);
+        LogUtils.e("SocketUtils===发送消息==点对点==detailCaseActivity==mSocketPort==" + mSocketPort);
+
+        SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), this);
+    }
+
+    /**
+     * 采图--->发送点对点消息,必须握手成功
      *
      * @param CMDCode 命令cmd
      */
@@ -727,7 +829,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
     }
 
     /**
-     * 参数下发-->获取冷光源参数
+     * 获取参数-->获取冷光源参数
      * 02-冷光源(type02)
      *
      * @param CMDCode 命令cmd
@@ -818,7 +920,8 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
 
     private void responseListener() {
 //        R.id.linear_mic, R.id.linear_cold,
-        setOnClickListener(R.id.linear_light_tab, R.id.linear_device_tab, R.id.linear_record, R.id.linear_picture, R.id.full_change, R.id.lock_screen, R.id.root_layout_vlc, R.id.video_back, R.id.control_start_view);
+        setOnClickListener(R.id.linear_light_tab, R.id.linear_device_tab, R.id.linear_record, R.id.linear_picture,
+                R.id.full_change, R.id.lock_screen, R.id.root_layout_vlc, R.id.video_back, R.id.control_start_view, R.id.linear_mic);
         //设置拖动条监听
         mRangeBar01Light.setOnRangeChangedListener(this);
         mRangeBar02Light.setOnRangeChangedListener(this);
@@ -906,6 +1009,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         });
 
 
+        //切换清晰度的点击事件
         mRightLiveTypeControl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -913,6 +1017,28 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             }
 
 
+        });
+
+        //退出界面断开语音通话
+        mTitleBar.setOnTitleBarListener(new OnTitleBarListener() {
+            @Override
+            public void onLeftClick(View view) {
+                if (rtmpOnlyAudio.isStreaming()) {
+                    rtmpOnlyAudio.stopStream();
+                }
+                setMicStatus("stopStream", "语音通话");
+                finish();
+            }
+
+            @Override
+            public void onTitleClick(View view) {
+
+            }
+
+            @Override
+            public void onRightClick(View view) {
+
+            }
         });
 
 
@@ -1053,6 +1179,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         mStatusLayout = findViewById(R.id.picture_status_hint);
         mChangeFull = findViewById(R.id.full_change);
         mPictureDes = findViewById(R.id.case_picture); //采图
+        mTvMicStatus = findViewById(R.id.tv_mic_status); //语音
         mTime = findViewById(R.id.tv_time);
         mLinearBottom = findViewById(R.id.linear_bottom);
         mTopControl = findViewById(R.id.relative_top_control);
@@ -1068,7 +1195,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
 //        LinearLayout mRecord = findViewById(R.id.linear_record);
 //        LinearLayout mShot = findViewById(R.id.linear_picture);
 //        LinearLayout mCold = findViewById(R.id.linear_cold);
-//        LinearLayout mMic = findViewById(R.id.linear_mic);
+        mMic = findViewById(R.id.linear_mic);
         mRecordMsg = findViewById(R.id.case_record);
         //亮度
         mEdit01Light = findViewById(R.id.edit_01_light);
@@ -1485,12 +1612,28 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
      */
     @Override
     public void onConnectionSuccessRtmp() {
+        Log.e("TAG", "RtmpOnlyAudio===onConnectionSuccessRtmp==");
+        toast("链接成功");
+
+        setMicStatus("startStream", "通话中..");
+
 
     }
 
     @Override
     public void onConnectionFailedRtmp(String reason) {
+        runOnUiThread(new Runnable() {
+            @SuppressLint("NewApi")
+            @Override
+            public void run() {
+                Log.e("TAG", "RtmpOnlyAudio===onConnectionFailedRtmp==");
 
+                Log.e("TAG", "RtmpOnlyAudio=====" + reason);
+                toast("Connection failed. " + reason);
+                rtmpOnlyAudio.stopStream();
+
+            }
+        });
     }
 
     @Override
@@ -1500,16 +1643,28 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
 
     @Override
     public void onDisconnectRtmp() {
+        Log.e("TAG", "RtmpOnlyAudio===onDisconnectRtmp==");
 
+//        runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                Log.e("TAG", "RtmpOnlyAudio=====onDisconnectRtmp");
+//                if (!isOnPauseExit) {
+//                    startSendToast("断开麦克风链接");
+//                }
+//            }
+//        });
     }
 
     @Override
     public void onAuthErrorRtmp() {
+        Log.e("TAG", "RtmpOnlyAudio===onAuthErrorRtmp==");
 
     }
 
     @Override
     public void onAuthSuccessRtmp() {
+        Log.e("TAG", "RtmpOnlyAudio===onAuthSuccessRtmp==");
 
     }
 

@@ -648,6 +648,8 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
                     bundle1.putString("ItemID", currentItemID);
                     bundle1.putString("currentUrl0", currentUrl0);
                     bundle1.putString("currentUrl1", currentUrl1);
+//                    bundle1.putString("currentUrl0", "http://9890.vod.myqcloud.com/9890_4e292f9a3dd011e6b4078980237cc3d3.f20.mp4");
+//                    bundle1.putString("currentUrl1", "http://9890.vod.myqcloud.com/9890_4e292f9a3dd011e6b4078980237cc3d3.f20.mp4");
                     intent1.putExtras(bundle1);
                     startActivity(intent1);
                     break;
