@@ -12,16 +12,11 @@ import android.widget.TextView;
 import com.company.iendo.R;
 import com.company.iendo.app.ReceiveSocketService;
 import com.company.iendo.app.TitleBarFragment;
-import com.company.iendo.bean.LoginBean;
 import com.company.iendo.bean.UserDeletedBean;
 import com.company.iendo.bean.socket.HandBean;
-import com.company.iendo.bean.socket.params.DeviceParamsBean;
-import com.company.iendo.bean.socket.params.Type01Bean;
-import com.company.iendo.bean.socket.params.Type02Bean;
 import com.company.iendo.mineui.activity.MainActivity;
 import com.company.iendo.mineui.activity.UserListActivity;
 import com.company.iendo.mineui.activity.login.LoginActivity;
-import com.company.iendo.mineui.activity.setting.DeviceParamsActivity;
 import com.company.iendo.mineui.activity.setting.HospitalActivity;
 import com.company.iendo.other.Constants;
 import com.company.iendo.other.HttpConstant;
@@ -210,7 +205,7 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
                             toast("本地广播发送端口不能为空");
                             return;
                         } else {
-                            receiveSocketService.initSettingReceiveThread(mAppIP, searchPort, getAttachActivity());
+                            receiveSocketService.setSettingReceiveThread(mAppIP, searchPort, getAttachActivity());
 
                         }
                         //退出的时候,重置所有用户权限

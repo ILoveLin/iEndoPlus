@@ -1,4 +1,4 @@
-package com.company.iendo.mineui.socket;
+package com.company.iendo.bean.socket;
 
 /**
  * company：江西神州医疗设备有限公司

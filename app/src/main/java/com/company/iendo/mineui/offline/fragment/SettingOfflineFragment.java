@@ -172,7 +172,7 @@ public class SettingOfflineFragment extends TitleBarFragment<MainActivity> {
                             toast("本地广播发送端口不能为空");
                             return;
                         } else {
-                            receiveSocketService.initSettingReceiveThread(mAppIP, searchPort, getAttachActivity());
+                            receiveSocketService.setSettingReceiveThread(mAppIP, searchPort, getAttachActivity());
 
                         }
 

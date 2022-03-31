@@ -1,10 +1,7 @@
 package com.company.iendo.utils;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
-import android.net.wifi.WifiManager;
 
-import com.company.iendo.mineui.socket.ThreadManager;
 import com.company.iendo.other.Constants;
 import com.tencent.mmkv.MMKV;
 
@@ -94,7 +91,7 @@ public class SocketUtils {
      * @param ip          目标地址
      * @param receivePort 目标端口
      */
-    public static void startSendHandMessage(byte[] data, String ip, int receivePort,Context mContext) {
+    public static void startSendHandMessage(byte[] data, String ip, int receivePort, Context mContext) {
 //        WifiManager manager = (WifiManager) mContext.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 //        WifiManager.MulticastLock lock = manager.createMulticastLock("test wifi");
 //        lock.acquire();    //申请开启
@@ -149,7 +146,7 @@ public class SocketUtils {
      * @param receivePort 接收端的port
      *                    广播 授权,使用的是设置的端口,其他的点对点消息,按照协议data的port的走
      */
-    public static void startSendPointMessage(byte[] data, String ip, int receivePort,Context mContext) {
+    public static void startSendPointMessage(byte[] data, String ip, int receivePort, Context mContext) {
 //        WifiManager manager = (WifiManager) mContext.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 //        WifiManager.MulticastLock lock = manager.createMulticastLock("test wifi");
 //        申请开启
@@ -170,14 +167,14 @@ public class SocketUtils {
                 try {
 //                    byte[] sendData = data.getBytes();
                     MMKV kv = MMKV.defaultMMKV();
-                    LogUtils.e("SocketUtils===发送消息==点对点==Point===00===" );
-                    LogUtils.e("SocketUtils===发送消息==点对点==Point===ip==="+ip );
-                    LogUtils.e("SocketUtils===发送消息==点对点==Point===00==="+data );
+                    LogUtils.e("SocketUtils===发送消息==点对点==Point===00===");
+                    LogUtils.e("SocketUtils===发送消息==点对点==Point===ip===" + ip);
+                    LogUtils.e("SocketUtils===发送消息==点对点==Point===00===" + data);
 
                     int mReceivePort = kv.decodeInt(Constants.KEY_RECEIVE_PORT);
                     LogUtils.e("SocketUtils===发送消息==点对点==hand==key=01=" + mReceivePort);
 
-                    LogUtils.e("SocketUtils===发送消息==点对点==Point===00===receivePort"+receivePort);
+                    LogUtils.e("SocketUtils===发送消息==点对点==Point===00===receivePort" + receivePort);
 
                     DatagramPacket mSendPacket = new DatagramPacket(data, data.length, finalMAddress, receivePort);
 //                    for (int i = 0; i < 5; i++) {
@@ -190,16 +187,16 @@ public class SocketUtils {
                     mSendSocket.setReuseAddress(true);
                     mSendSocket.bind(new InetSocketAddress(receivePort));
                     mSendSocket.send(mSendPacket);
-                    LogUtils.e("SocketUtils===发送消息==点对点==Point===01===" );
+                    LogUtils.e("SocketUtils===发送消息==点对点==Point===01===");
                     mSendSocket.close();
-                    LogUtils.e("SocketUtils===发送消息==点对点==Point===02===" );
+                    LogUtils.e("SocketUtils===发送消息==点对点==Point===02===");
                     //释放资源
 //                    lock.release();
                     LogUtils.e("SocketUtils===发送消息==点对点==Point==" + receivePort);
 
 //                    }
                 } catch (Exception e) {
-                    LogUtils.e("SocketUtils===发送消息==点对点==Point===Exception==="+e );
+                    LogUtils.e("SocketUtils===发送消息==点对点==Point===Exception===" + e);
 
                 }
             }

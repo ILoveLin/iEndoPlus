@@ -27,7 +27,7 @@ import com.company.iendo.bean.socket.searchdevice.PutInDeviceMsgBean;
 import com.company.iendo.green.db.DeviceDBBean;
 import com.company.iendo.green.db.DeviceDBUtils;
 import com.company.iendo.mineui.activity.login.device.adapter.DeviceSearchAdapter;
-import com.company.iendo.mineui.socket.BroadCastDataBean;
+import com.company.iendo.bean.socket.BroadCastDataBean;
 import com.company.iendo.other.Constants;
 import com.company.iendo.ui.dialog.Input2SettingDialog;
 import com.company.iendo.ui.dialog.InputDialog;
@@ -86,17 +86,10 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
                 case UDP_BroadCast_Over: //广播结束
                     getAdapterBeanData();
                     //模拟获取到点对点数据回传
-//                    String str = "AAC50100CA78EE0700000000000000005618B1F96D92837Ca03399cbe9a32d4786abf24e39d3cad576FC7b226970223a223139322e3136382e36342e3133222c227a7074223a2237373838222c226964223a22726f6f74222c227077223a22726f6f74222c2266726f6d223a2241494f2d454e54222c22737470223a2238303035222c22687074223a2237303031222c2272656d61726b223a2231E58FB7E58685E9959CE5AEA4222c2274797065223a223037222c226574223a2233222c22726574636f6465223a2230227dd5DD==192.168.132.102";
-//                    String mRun2End4 = CalculateUtils.getReceiveRun2End4String(str);//随机数之后到data结尾的String
-//                    mReceivePointList.add(mRun2End4);
-//                    mHandler.sendEmptyMessage(UDP_Point_Over);
                     break;
                 case UDP_Point_Over:     //点对点授权结束
-//                    EE0700000000000000005618B1F96D92837Ca03399cbe9a32d4786abf24e39d3cad576FC
-//                    7b226970223a223139322e3136382e36342e3133222c227a7074223a2237373838222c226964223a22726f6f74222c227077223a22726f6f74222c2266726f6d223a2241494f2d454e54222c22737470223a2238303035222c22687074223a2237303031222c2272656d61726b223a2231E58FB7E58685E9959CE5AEA4222c2274797065223a223037222c226574223a2233222c22726574636f6465223a2230227d
                     toast("存入数据库,并且刷新设备搜索界面");
                     getDataInsertDB();
-
                     break;
                 case UDP_Anim:
                     showSearchDialog();
@@ -117,11 +110,7 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
         mReceiveBroadCastList.clear();//界面列表的list的中转list
         Set_Data = false;
         showEmpty();
-//        mReceiveBroadMap.clear();
-//        mReceiveBroadCastList.clear();
-//        mReceivePointList.clear();
         // 自定义搜索对话框
-
         mSearchDialog = new BaseDialog.Builder<>(this);
         mSearchDialog.setContentView(R.layout.dialog_search)
                 .setCanceledOnTouchOutside(false)
@@ -206,15 +195,15 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
                             if (mCurrentReceivePort == Integer.parseInt(settingPort)) {//相等,此时不需要开启新的线程
                                 toast("此端口已配置,请勿重复操作!");
                             } else {
-                                receiveSocketService.initSettingReceiveThread(mAppIP, Integer.parseInt(settingPort), DeviceSearchActivity.this);
                                 //存入当前广播发送的port
-                                LogUtils.e("保活服务开启-Setting--原本广播port---===i===" + settingPort);
+                                LogUtils.e("保活服务开启-Setting--设置的port---===i===" + settingPort);
                                 kv.encode(Constants.KEY_SOCKET_RECEIVE_FIRST_IN, true);
                                 kv.encode(Constants.KEY_RECEIVE_PORT, Integer.parseInt(settingPort)); //设置的,本地监听端口
                                 kv.encode(Constants.KEY_RECEIVE_PORT_BY_SEARCH, Integer.parseInt(settingPort)); //设置的,广播本地监听端口
                                 kv.encode(Constants.KEY_BROADCAST_PORT, Integer.parseInt(settingPort));
                                 int mDefaultCastSendPort = kv.decodeInt(Constants.KEY_BROADCAST_PORT);
-                                LogUtils.e("保活服务开启-Setting--原本广播port---===i===" + mDefaultCastSendPort);
+                                LogUtils.e("保活服务开启-Setting--设置的port---===i===" + mDefaultCastSendPort);
+                                receiveSocketService.setSettingReceiveThread(mAppIP, Integer.parseInt(settingPort), DeviceSearchActivity.this);
                                 //再次打开搜索动画
                                 showSearchDialog();
                             }
@@ -309,7 +298,6 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
     @Override
     protected void initView() {
         receiveSocketService = new ReceiveSocketService();
-
         EventBus.getDefault().register(this);
         mStatusLayout = findViewById(R.id.status_hint);
         mRefreshLayout = findViewById(R.id.rl_device_search_refresh);
@@ -719,9 +707,7 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
             mAdapter.notifyDataSetChanged();
             DeviceDBUtils.insertOrReplace(DeviceSearchActivity.this, deviceDBBean);
         }
-        List<DeviceDBBean> deviceDBBeanss = DeviceDBUtils.queryAll(DeviceSearchActivity.this);
-        LogUtils.e("DeviceSearchActivity回调==模拟数据==new=设备表长度==" + deviceDBBeanss.size());
-
+        EventBus.getDefault().post(new RefreshEvent("refresh"));
 
     }
 

@@ -1,16 +1,9 @@
 package com.company.iendo.utils;
 
-import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
-import android.view.ContextThemeWrapper;
 
-import com.company.iendo.mineui.socket.BroadCastDataBean;
-import com.company.iendo.mineui.socket.SocketDataBean;
 import com.company.iendo.other.Constants;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.hjq.gson.factory.GsonFactory;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;

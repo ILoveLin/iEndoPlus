@@ -11,6 +11,8 @@ import com.company.iendo.R;
 import com.company.iendo.action.StatusAction;
 import com.company.iendo.app.AppActivity;
 import com.company.iendo.bean.RefreshEvent;
+import com.company.iendo.bean.event.RefreshDeviceListEvent;
+import com.company.iendo.bean.event.SocketRefreshEvent;
 import com.company.iendo.green.db.DeviceDBBean;
 import com.company.iendo.green.db.DeviceDBUtils;
 import com.company.iendo.mineui.activity.ZXingActivity;
@@ -188,18 +190,6 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                         GoToZXingInput();
                     } else {
                         startActivity(DeviceSearchActivity.class);
-//                        startActivity(ImageReportActivity.class);
-//                        if (!mStatusLayout.isShow()){
-//                            showSearchLayout(R.raw.anim_search_loading04, R.string.status_layout_search, new StatusLayout.OnDismissListener() {
-//                                @Override
-//                                public void onDismiss(StatusLayout layout) {
-//                                    toast("取消了~~~");
-//                                    showComplete();
-//                                }
-//                            });
-//                        }else {
-//                            toast("稍安勿躁,搜索中...");
-//                        }
                     }
                 })
                 .setGravity(Gravity.CENTER_VERTICAL)
@@ -562,26 +552,6 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
 
     }
 
-    private void refreshRecycleViewData() {
-        post(new Runnable() {
-            @Override
-            public void run() {
-                List<DeviceDBBean> deviceDBBeans = DeviceDBUtils.queryAll(DeviceActivity.this);
-                showComplete();
-                mAdapter.setData(deviceDBBeans);
-                mAdapter.notifyDataSetChanged();
-                int count = mAdapter.getCount();
-                if (0 == count) {
-                    showEmpty();
-                    SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_BaseUrl, "http://192.168.1.200:3000");
-
-                } else {
-                    showComplete();
-                }
-            }
-        });
-
-    }
 
 
     @Override
@@ -945,7 +915,6 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                     break;
 
             }
-            EventBus.getDefault().post(new RefreshEvent("refresh"));
 
 
             LogUtils.e("添加病例=== mDBBean.getType()===" + mDBBean.getType());   //通过此字段判断EndoType
@@ -968,6 +937,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
             String o = (String) SharePreferenceUtil.get(DeviceActivity.this, SharePreferenceUtil.Current_DeviceID, "");
             LogUtils.e("选择的设备=== 存入的设备id是===" + o);
 
+            SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_Type_Msg, mDBBean.getMsg());
             SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_IP, mDBBean.getIp());
             SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_HttpPort, mDBBean.getHttpPort());
             SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_SocketPort, null != mDBBean.getSocketPort() ? mDBBean.getSocketPort() : "1");
@@ -984,6 +954,9 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
             SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_BaseUrl, "http://" + mDBBean.getIp() + ":" + mDBBean.getHttpPort());
             String mBaseUrl = (String) SharePreferenceUtil.get(DeviceActivity.this, SharePreferenceUtil.Current_BaseUrl, "111");
             LogUtils.e("========当前设备的备注信息~~~~====DeviceActivity==mBaseUrl===" + mBaseUrl);
+
+            EventBus.getDefault().post(new RefreshEvent("refresh"));
+
         }
 
     }
@@ -1013,6 +986,30 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
         return "07";
     }
 
+    /**
+     * 刷新列表数据
+     */
+
+    private void refreshRecycleViewData() {
+        post(new Runnable() {
+            @Override
+            public void run() {
+                List<DeviceDBBean> deviceDBBeans = DeviceDBUtils.queryAll(DeviceActivity.this);
+                showComplete();
+                mAdapter.setData(deviceDBBeans);
+                mAdapter.notifyDataSetChanged();
+                int count = mAdapter.getCount();
+                if (0 == count) {
+                    showEmpty();
+                    SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_BaseUrl, "http://192.168.1.200:3000");
+
+                } else {
+                    showComplete();
+                }
+            }
+        });
+
+    }
 
     /**
      * eventbus 刷新扫码数据
@@ -1020,11 +1017,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onRefreshEvent(RefreshEvent event) {
         List<DeviceDBBean> deviceDBBeans = DeviceDBUtils.queryAll(DeviceActivity.this);
-        LogUtils.e("========当前设备的备注信息~~~~====DeviceActivity==mDataLest===" + mDataLest.size());
-        LogUtils.e("========当前设备的备注信息~~~~====DeviceActivity==deviceDBBeans===" + deviceDBBeans.size());
         mDataLest.clear();
-        LogUtils.e("========当前设备的备注信息~~~~====DeviceActivity==mBaseUrl===" + mDataLest.size());
-        LogUtils.e("========当前设备的备注信息~~~~====DeviceActivity==deviceDBBeans===" + deviceDBBeans.size());
 
         if ("toast".equals(event.getType())) {
             toast(event.getStr()+"");

@@ -1,4 +1,4 @@
-package com.company.iendo.mineui.socket;
+package com.company.iendo.bean.socket;
 
 import com.google.gson.annotations.SerializedName;
 

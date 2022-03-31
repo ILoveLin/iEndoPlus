@@ -195,18 +195,13 @@ public final class ZXingActivity extends AppActivity implements QRCodeView.Deleg
 //
         LogUtils.e("========当前设备的备注信息~~~~====ZXingActivity==deviceDBBean===" + deviceDBBean.toString());
 
-//            DeviceDBUtils.insert(ZXingActivity.this, deviceDBBean);
+
         DeviceDBUtils.insertOrReplace(ZXingActivity.this, deviceDBBean);
-//            DeviceDBUtils.insertOrReplaceInTx(ZXingActivity.this, deviceDBBean);
+
         EventBus.getDefault().post(new RefreshEvent("refresh"));
         List<DeviceDBBean> deviceDBBeans = DeviceDBUtils.queryAll(ZXingActivity.this);
         LogUtils.e("========当前设备的备注信息~~~~====ZXingActivity==deviceDBBeans===" + deviceDBBeans.size());
-//            Toast.makeText(this, "扫码成功!", Toast.LENGTH_SHORT).show();
 
-//        } catch (Exception e) {
-//            toast("请选择有用的二维码图片");
-//
-//        }
     }
 
     /**

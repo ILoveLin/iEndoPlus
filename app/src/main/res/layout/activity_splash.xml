@@ -59,7 +59,7 @@
         android:layout_marginRight="@dimen/dp_20"
         android:layout_marginBottom="@dimen/dp_25"
         android:text="Copyright©江西神州医疗设备有限公司"
-        android:visibility="invisible" />
+        android:visibility="visible" />
     <!--    android:text="Copyright©深圳神州医疗设备有限公司 粤ICP备12038225"-->
 
     <!--        <ImageView-->

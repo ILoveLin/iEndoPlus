@@ -25,8 +25,6 @@ import com.company.iendo.bean.socket.HandBean;
 import com.company.iendo.bean.socket.getpicture.ShotPictureBean;
 import com.company.iendo.mineui.activity.MainActivity;
 import com.company.iendo.mineui.activity.casemanage.fragment.adapter.ChosePictureAdapter;
-import com.company.iendo.mineui.activity.vlc.GetPictureActivity;
-import com.company.iendo.mineui.socket.SocketManage;
 import com.company.iendo.other.Constants;
 import com.company.iendo.other.GridSpaceDecoration;
 import com.company.iendo.other.HttpConstant;
@@ -458,7 +456,6 @@ public final class PictureChoseActivity extends AppActivity implements StatusAct
             }
 
             SocketUtils.startSendPointMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), PictureChoseActivity.this);
-//            SocketManage.startSendMessageBySocket(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), false);
         } else {
             sendHandLinkMessage();
             toast("请先建立握手链接!");

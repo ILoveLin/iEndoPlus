@@ -126,6 +126,7 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
             }
         }
     };
+    private TextView mDeviceTitle;
 
     //历史列表点击之后刷新UI
     private void refreshUI(String userName) {
@@ -327,6 +328,7 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
         mCommitView = findViewById(R.id.btn_login_commit);
         mSettingView = findViewById(R.id.btn_login_setting);
         mDeviceType = findViewById(R.id.btn_device_type);
+        mDeviceTitle = findViewById(R.id.btn_device_title);
         mLoginType = findViewById(R.id.login_type);
         mTopLogoAnim = findViewById(R.id.linear_top_logo);
         mCheckbox = findViewById(R.id.checkbox_remember);
@@ -350,53 +352,6 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
 
     }
 
-    /**
-     * 获取列表数据,登录的时候使用
-     *
-     * @param mBaseUrl
-     */
-
-    private void sendRequestLoginData(String mBaseUrl) {
-        showLoading();
-        String mUrl = (String) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Current_BaseUrl, "http://192.168.1.200:3000");
-        LogUtils.e("登录==url==0001=" + mBaseUrl);
-        LogUtils.e("登录==url==0001=" + mUrl + HttpConstant.UserManager_List);
-        OkHttpUtils.get()
-                .url(mUrl + HttpConstant.UserManager_List)
-                .build()
-                .execute(new StringCallback() {
-                    @Override
-                    public void onError(Call call, Exception e, int id) {
-                        showError();
-                        showComplete();
-                        mPasswordView.setText("");
-                        mPhoneView.setText("");
-                        LogUtils.e("用户列表==onError=" + e);
-
-                    }
-
-                    @Override
-                    public void onResponse(String response, int id) {
-                        mUserListData.clear();
-                        if ("" != response) {
-                            UserListBean mBean = mGson.fromJson(response, UserListBean.class);
-                            if (0 == mBean.getCode()) {  //成功
-                                showComplete();
-                                mUserListData = mBean.getData();
-                                LogUtils.e("用户列表===" + response);
-
-                            } else {
-                                showError();
-                            }
-                        } else {
-                            showError();
-                        }
-                    }
-
-
-                });
-
-    }
 
     /**
      * 获取列表数据
@@ -405,7 +360,7 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
      */
 
     private void sendRequest(String mBaseUrl) {
-        showLoading();
+        showLoading(getString(R.string.common_loading_user_list));
         String mUrl = (String) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Current_BaseUrl, "http://192.168.1.200:3000");
         LogUtils.e("登录==url==0001=" + mBaseUrl);
         LogUtils.e("登录==url==0001=" + mUrl + HttpConstant.UserManager_List);
@@ -686,8 +641,7 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
         LogUtils.e("登录==url==02=" + mBaseUrl);
         LogUtils.e("登录==url==02=" + mBaseUrl + HttpConstant.UserManager_Login);
 //                登录按钮动画
-        showLoading();
-
+        showLoading(getString(R.string.common_loading_login));
         OkHttpUtils.post()
                 .url(mUrl + HttpConstant.UserManager_Login)
                 .addParams("UserName", mPhoneView.getText().toString())
@@ -753,7 +707,7 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                                     return;
                                 } else {
                                     LogUtils.e("AppActivity=login==port====" + mSocketPort);
-                                    receiveSocketService.initSettingReceiveThread(mAppIP, Integer.parseInt(mSocketPort), LoginActivity.this);
+                                    receiveSocketService.setSettingReceiveThread(mAppIP, Integer.parseInt(mSocketPort), LoginActivity.this);
 
                                 }
                                 MainActivity.start(getContext(), CaseManageFragment.class);
@@ -966,11 +920,9 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
         postDelayed(() -> {
             sendRequest(mBaseUrl);
         }, 500);
-
         String mType = (String) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Current_Type, "耳鼻喉治疗台");
-        mDeviceType.setText("" + mType);
         deviceID = (String) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Current_DeviceID, "1");
-
+        setDeviceTitleLogo();
 
         /**
          * 这里判断
@@ -995,16 +947,46 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onRefreshEvent(RefreshEvent event) {
+        String mType = setDeviceTitleLogo();
+        LogUtils.e("========当前设备的备注信息~~~~====eventbus==eventbus===" + mType);
+
+
+    }
+
+    /**
+     * 设置设备logo和标题
+     *
+     * @return
+     */
+    private String setDeviceTitleLogo() {
         String mType = (String) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Current_Type, "耳鼻喉治疗台");
+        String mCurrentTypeMsg = (String) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Current_Type_Msg, "1号内镜室");
+        String mCurrentTypeDes = (String) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Current_Type, "妇科治疗台");
+
+        //设备类型
         if (mDeviceType != null) {
             mDeviceType.setText("" + mType);
         } else {
             mDeviceType.setText("未选择设备!");
 
         }
-        LogUtils.e("========当前设备的备注信息~~~~====eventbus==eventbus===" + mType);
-
-
+        //设备描述
+        mDeviceTitle.setText(mCurrentTypeMsg + "");
+        //设备背景图
+        switch (mCurrentTypeDes) {
+            case Constants.Type_V1_YiTiJi:
+                mLogoView.setImageResource(R.drawable.icon_yitiji);
+                break;
+            case Constants.Type_EarNoseTable:
+                mLogoView.setImageResource(R.drawable.icon_erbihou);
+                break;
+            case Constants.Type_FuKeTable:
+                mLogoView.setImageResource(R.drawable.icon_erbihou);
+            case Constants.Type_MiNiaoTable:
+                mLogoView.setImageResource(R.drawable.icon_erbihou);
+                break;
+        }
+        return mType;
     }
 
     /**
@@ -1043,12 +1025,14 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
         }
     }
 
-    private void showLoading() {
+    private void showLoading( String string) {
         if (mWaitDialog == null) {
             mWaitDialog = new WaitDialog.Builder(this);
             // 消息文本可以不用填写
-            mWaitDialog.setMessage(getString(R.string.common_loading))
+            mWaitDialog.setMessage(string)
                     .create();
+        }else {
+            mWaitDialog.setMessage(string);
         }
         if (!mWaitDialog.isShowing()) {
             mWaitDialog.show();

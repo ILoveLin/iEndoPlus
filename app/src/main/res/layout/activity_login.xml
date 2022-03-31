@@ -51,20 +51,31 @@
     </RelativeLayout>
 
     <LinearLayout
+
+        android:layout_marginTop="@dimen/sp_30"
         android:id="@+id/linear_top_logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="vertical">
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/iv_login_logo"
-            android:layout_width="@dimen/dp_100"
+        <LinearLayout
+            android:layout_width="@dimen/dp_90"
             android:layout_height="@dimen/dp_100"
-            android:layout_marginVertical="@dimen/dp_10"
-            app:srcCompat="@drawable/ic_logo_svg" />
+            android:background="@drawable/shape_bg_device_all_nor"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_login_logo"
+                android:layout_width="@dimen/dp_50"
+                android:layout_height="@dimen/dp_75"
+                android:src="@mipmap/icon_yitiji" />
+        </LinearLayout>
+
 
         <TextView
+            android:layout_marginTop="@dimen/dp_10"
             android:id="@+id/btn_device_type"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -73,12 +84,26 @@
             android:lines="1"
             android:singleLine="true"
             android:text="耳鼻喉治疗台"
-            android:textSize="@dimen/sp_15" />
+            android:textSize="@dimen/sp_14" />
+
+        <TextView
+            android:layout_marginTop="@dimen/dp_6"
+            android:id="@+id/btn_device_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/transparent"
+            android:gravity="center_horizontal"
+            android:lines="1"
+            android:textColor="@color/color_707070"
+            android:singleLine="true"
+            android:text="1号内镜室"
+            android:textSize="@dimen/sp_13" />
 
     </LinearLayout>
 
 
     <LinearLayout
+        android:layout_marginTop="@dimen/dp_10"
         android:id="@+id/ll_login_body"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -246,12 +271,11 @@
         </LinearLayout>
 
         <Button
-
             android:id="@+id/btn_login_commit"
             android:layout_width="match_parent"
             android:layout_height="@dimen/dp_50"
             android:layout_marginLeft="@dimen/dp_30"
-            android:layout_marginTop="@dimen/dp_15"
+            android:layout_marginTop="@dimen/dp_20"
             android:layout_marginRight="@dimen/dp_30"
             android:background="@drawable/selector_item_shot"
             android:foreground="@null"
