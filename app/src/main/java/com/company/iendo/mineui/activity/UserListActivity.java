@@ -50,7 +50,7 @@ import okhttp3.Call;
  * time：2021/11/18 14:39
  * desc：
  */
-public class UserListActivity extends AppActivity implements StatusAction, BaseAdapter.OnItemClickListener, OnRefreshLoadMoreListener, BaseAdapter.OnChildClickListener {
+public class UserListActivity extends AppActivity implements StatusAction, BaseAdapter.OnItemClickListener, BaseAdapter.OnChildClickListener {
     private List<UserListBean.DataDTO> mDataLest = new ArrayList<>();
     private List<UserListBean.DataDTO> mUserListData;
     private StatusLayout mStatusLayout;
@@ -287,23 +287,23 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
 //        toast(mAdapter.getItem(position).getUserName());
     }
 
-    @Override
-    public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
-        postDelayed(() -> {
-            mAdapter.clearData();
-            mAdapter.setData(mDataLest);
-            mSmartRefreshLayout.finishRefresh();
-        }, 1000);
-    }
-
-    @Override
-    public void onRefresh(@NonNull RefreshLayout refreshLayout) {
-        postDelayed(() -> {
-            mSmartRefreshLayout.finishLoadMore();
-            mAdapter.setLastPage(true);
-            mSmartRefreshLayout.setNoMoreData(mAdapter.isLastPage());
-        }, 1000);
-    }
+//    @Override
+//    public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
+//        postDelayed(() -> {
+//            mAdapter.clearData();
+//            mAdapter.setData(mDataLest);
+//            mSmartRefreshLayout.finishRefresh();
+//        }, 1000);
+//    }
+//
+//    @Override
+//    public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+//        postDelayed(() -> {
+//            mSmartRefreshLayout.finishLoadMore();
+//            mAdapter.setLastPage(true);
+//            mSmartRefreshLayout.setNoMoreData(mAdapter.isLastPage());
+//        }, 1000);
+//    }
 
     @Override
     public void onChildClick(RecyclerView recyclerView, View childView, int position) {

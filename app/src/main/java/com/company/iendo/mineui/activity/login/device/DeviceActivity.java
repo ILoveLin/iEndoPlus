@@ -28,6 +28,7 @@ import com.company.iendo.ui.dialog.ModifyDeviceDialog;
 import com.company.iendo.ui.dialog.SelectDialog;
 import com.company.iendo.ui.dialog.SelectModifyTypeDialog;
 import com.company.iendo.ui.popup.ListPopup;
+import com.company.iendo.ui.popup.ListSearchPopup;
 import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.SharePreferenceUtil;
 import com.company.iendo.widget.StatusLayout;
@@ -183,9 +184,9 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
      */
     private void showSelectDialog(View view) {
         // 菜单弹窗
-        new ListPopup.Builder(this)
+        new ListSearchPopup.Builder(this)
                 .setList("搜一搜", "扫一扫", "填一填")
-                .setListener((ListPopup.OnListener<String>) (popupWindow, position, str) -> {
+                .setListener((ListSearchPopup.OnListener<String>) (popupWindow, position, str) -> {
                     if ("填一填".equals(str)) {
                         showComplete();
                         showMultiDialog(str);

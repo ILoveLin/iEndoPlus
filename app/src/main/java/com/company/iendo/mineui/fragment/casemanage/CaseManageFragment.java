@@ -111,7 +111,7 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
         mStatusLayout = findViewById(R.id.b_hint);
         mTitle.setText(DateUtil.getSystemDate());
         currentChoseDate = mTitle.getText().toString().trim();
-        setOnClickListener(R.id.ib_right, R.id.ib_left, R.id.tv_title, R.id.iv_tag_anim);
+        setOnClickListener(R.id.ib_right, R.id.ib_left, R.id.tv_title,R.id.iv_tag_anim, R.id.iv_tag_anim);
         ObjectAnimator animator = ObjectAnimator.ofFloat(mAnim, "rotation", 0f, 180f);
         animator.setDuration(100);
         animator.start();
@@ -126,6 +126,7 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
 //                //选择事件请求列表
 //                showDateDialog();
 //                break;
+            case R.id.iv_tag_anim:
             case R.id.tv_title:
                 mTitle.setTag("close");
                 startRotationAnim("open");   //打开dialog

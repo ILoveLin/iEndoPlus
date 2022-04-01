@@ -12,13 +12,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.company.iendo.R;
+import com.company.iendo.app.AppAdapter;
+import com.company.iendo.other.ArrowDrawable;
 import com.company.iendo.widget.MyItemDecoration;
 import com.hjq.base.BaseAdapter;
 import com.hjq.base.BasePopupWindow;
 import com.hjq.base.action.AnimAction;
-import com.company.iendo.R;
-import com.company.iendo.app.AppAdapter;
-import com.company.iendo.other.ArrowDrawable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,7 +30,7 @@ import java.util.List;
  * time   : 2019/10/18
  * desc   : 列表弹窗
  */
-public final class ListPopup {
+public final class ListSearchPopup {
 
     public static final class Builder
             extends BasePopupWindow.Builder<Builder>
@@ -150,17 +150,36 @@ public final class ListPopup {
 
             @Override
             public void onBindView(int position) {
-                mTextView.setText(getItem(position).toString());
+//                mTextView.setText(getItem(position).toString());
+//                mTextView.setPadding((int)getResources().getDimension(R.dimen.dp_6),
+//                        (int)getResources().getDimension(R.dimen.dp_6),
+//                        (int)getResources().getDimension(R.dimen.dp_6),
+//                        (int)getResources().getDimension(R.dimen.dp_6));
+////                mTextView.setPaddingRelative((int) getResources().getDimension(R.dimen.dp_12),
+////                        (position == 0 ? (int) getResources().getDimension(R.dimen.dp_12) : 0),
+////                        (int) getResources().getDimension(R.dimen.dp_12),
+////                        (int) getResources().getDimension(R.dimen.dp_10));
+////                        (int) getResources().getDimension(R.dimen.dp_10));
 
+                mTextView.setText(getItem(position).toString());
+                if (position == 0) {//搜一搜
+                    Drawable record_start = getResources().getDrawable(R.drawable.icon_bg_device_search);
+                    mTextView.setCompoundDrawablesWithIntrinsicBounds(record_start, null, null, null);
+                } else if (position == 1) {//扫一扫
+                    Drawable record_start = getResources().getDrawable(R.drawable.icon_bg_device_read);
+                    mTextView.setCompoundDrawablesWithIntrinsicBounds(record_start, null, null, null);
+                } else if (position == 2) {//填一填
+                    Drawable record_start = getResources().getDrawable(R.drawable.icon_bg_device_writh);
+                    mTextView.setCompoundDrawablesWithIntrinsicBounds(record_start, null, null, null);
+                }
                 mTextView.setPaddingRelative((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics()),
-                        (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics()),//距离上
                         (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics()),
-                        (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics()));//距离下
+                        (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics()),
+                        (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics()));
                 mTextView.setScaleX(0.9f);
                 mTextView.setScaleY(0.9f);
-//                mTextView.setCompoundDrawablePadding(22);
-//                mTextView.setTextColor(getResources().getColor(R.color.color_31bdf3));
-//                mTextView.setTextSize(getResources().getDimension(R.dimen.dp_5));
+                mTextView.setCompoundDrawablePadding(22);
+                mTextView.setTextColor(getResources().getColor(R.color.color_31bdf3));
             }
         }
     }
