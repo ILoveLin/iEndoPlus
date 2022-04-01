@@ -7,13 +7,52 @@
     android:orientation="vertical"
     tools:context="com.company.iendo.ui.activity.CopyActivity">
 
-    <com.hjq.bar.TitleBar
-        android:id="@+id/device_bar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:rightIcon="@drawable/add_ic"
-        app:title="设备" />
 
+    <TextView
+        android:background="@color/white"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_21" />
+
+    <RelativeLayout
+        android:background="@color/white"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_44">
+
+        <TextView
+            android:id="@+id/tv_left_device"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/dp_10"
+            android:background="@drawable/arrows_left_ic"
+            android:textColor="@color/black" />
+
+        <TextView
+            android:id="@+id/tv_mid_device"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="设备"
+            android:textColor="@color/black" />
+
+        <ImageView
+            android:padding="1dp"
+            android:id="@+id/iv_right_add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/dp_10"
+            android:src="@drawable/add_ic"
+            />
+
+
+    </RelativeLayout>
+
+<!--    <TextView-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:background="@color/colorLine"-->
+<!--        android:layout_height="1px" />-->
     <com.company.iendo.widget.StatusLayout
         android:id="@+id/device_hint"
         android:layout_width="match_parent"

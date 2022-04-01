@@ -1,6 +1,7 @@
 package com.company.iendo.ui.popup;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -24,10 +25,10 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- *    author : Android 轮子哥
- *    github : https://github.com/getActivity/AndroidProject
- *    time   : 2019/10/18
- *    desc   : 列表弹窗
+ * author : Android 轮子哥
+ * github : https://github.com/getActivity/AndroidProject
+ * time   : 2019/10/18
+ * desc   : 列表弹窗
  */
 public final class ListPopup {
 
@@ -55,7 +56,7 @@ public final class ListPopup {
             new ArrowDrawable.Builder(context)
                     .setArrowOrientation(Gravity.TOP)
                     .setArrowGravity(Gravity.RIGHT)
-//                    .setArrowOffsetY((int) getResources().getDimension(R.dimen.dp_10))
+                    .setArrowOffsetY(0)
                     .setShadowSize((int) getResources().getDimension(R.dimen.dp_10))
                     .setBackgroundColor(0xFFFFFFFF)
                     .apply(recyclerView);
@@ -142,23 +143,44 @@ public final class ListPopup {
                 super(new TextView(getContext()));
                 mTextView = (TextView) getItemView();
                 mTextView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-                mTextView.setGravity(Gravity.CENTER_HORIZONTAL);
+                mTextView.setGravity(Gravity.CENTER_VERTICAL);
                 mTextView.setTextColor(getColor(R.color.black50));
                 mTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.sp_15));
             }
 
             @Override
             public void onBindView(int position) {
+//                mTextView.setText(getItem(position).toString());
+//                mTextView.setPadding((int)getResources().getDimension(R.dimen.dp_6),
+//                        (int)getResources().getDimension(R.dimen.dp_6),
+//                        (int)getResources().getDimension(R.dimen.dp_6),
+//                        (int)getResources().getDimension(R.dimen.dp_6));
+////                mTextView.setPaddingRelative((int) getResources().getDimension(R.dimen.dp_12),
+////                        (position == 0 ? (int) getResources().getDimension(R.dimen.dp_12) : 0),
+////                        (int) getResources().getDimension(R.dimen.dp_12),
+////                        (int) getResources().getDimension(R.dimen.dp_10));
+////                        (int) getResources().getDimension(R.dimen.dp_10));
+
                 mTextView.setText(getItem(position).toString());
-                mTextView.setPadding((int)getResources().getDimension(R.dimen.dp_6),
-                        (int)getResources().getDimension(R.dimen.dp_6),
-                        (int)getResources().getDimension(R.dimen.dp_6),
-                        (int)getResources().getDimension(R.dimen.dp_6));
-//                mTextView.setPaddingRelative((int) getResources().getDimension(R.dimen.dp_12),
-//                        (position == 0 ? (int) getResources().getDimension(R.dimen.dp_12) : 0),
-//                        (int) getResources().getDimension(R.dimen.dp_12),
-//                        (int) getResources().getDimension(R.dimen.dp_10));
-//                        (int) getResources().getDimension(R.dimen.dp_10));
+                if (position == 0) {//搜一搜
+                    Drawable record_start = getResources().getDrawable(R.drawable.icon_bg_device_search);
+                    mTextView.setCompoundDrawablesWithIntrinsicBounds(record_start, null, null, null);
+                } else if (position == 1) {//扫一扫
+                    Drawable record_start = getResources().getDrawable(R.drawable.icon_bg_device_read);
+                    mTextView.setCompoundDrawablesWithIntrinsicBounds(record_start, null, null, null);
+                } else if (position == 2) {//填一填
+                    Drawable record_start = getResources().getDrawable(R.drawable.icon_bg_device_writh);
+                    mTextView.setCompoundDrawablesWithIntrinsicBounds(record_start, null, null, null);
+                }
+                mTextView.setPaddingRelative((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics()),
+                        (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics()),
+                        (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics()),
+                        (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics()));
+                mTextView.setScaleX(0.9f);
+                mTextView.setScaleY(0.9f);
+                mTextView.setCompoundDrawablePadding(22);
+                mTextView.setTextColor(getResources().getColor(R.color.color_31bdf3));
+                mTextView.setTextSize(20);
             }
         }
     }

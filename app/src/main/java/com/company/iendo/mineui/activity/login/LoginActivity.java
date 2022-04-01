@@ -36,6 +36,7 @@ import com.company.iendo.app.ReceiveSocketService;
 import com.company.iendo.bean.LoginBean;
 import com.company.iendo.bean.RefreshEvent;
 import com.company.iendo.bean.UserListBean;
+import com.company.iendo.bean.UserReloBean;
 import com.company.iendo.green.db.UserDBBean;
 import com.company.iendo.green.db.UserDBUtils;
 import com.company.iendo.manager.InputTextManager;
@@ -127,6 +128,7 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
         }
     };
     private TextView mDeviceTitle;
+    private UserReloBean.DataDTO mUserReloBean;
 
     //历史列表点击之后刷新UI
     private void refreshUI(String userName) {
@@ -642,6 +644,7 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
         LogUtils.e("登录==url==02=" + mBaseUrl + HttpConstant.UserManager_Login);
 //                登录按钮动画
         showLoading(getString(R.string.common_loading_login));
+//        requestReloSaveToApp();
         OkHttpUtils.post()
                 .url(mUrl + HttpConstant.UserManager_Login)
                 .addParams("UserName", mPhoneView.getText().toString())
@@ -660,10 +663,9 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                     public void onResponse(String response, int id) {
 //                                mCommitView.showProgress();
                         showComplete();
-                        LogUtils.e("登录===" + response);
+                        LogUtils.e("登录=成功==" + response);
                         if (!"".equals(response)) {
                             LoginBean mBean = mGson.fromJson(response, LoginBean.class);
-
                             if (0 == mBean.getCode()) {
                                 LogUtils.e("登录==role==" + mBean.getData().getRole());
                                 LogUtils.e("登录==userid==" + mBean.getData().getUserID());
@@ -726,6 +728,45 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                 });
     }
 
+    /**
+     * 获取权限存入当前app
+     */
+    private void requestReloSaveToApp() {
+        OkHttpUtils.get()
+                .url(mBaseUrl + HttpConstant.UserManager_getCurrentRelo)
+                .addParams("UserID", mUserID)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+
+
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+//
+                        LogUtils.e("登录===" + response);
+                        if (!"".equals(response)) {
+                            UserReloBean mBean = mGson.fromJson(response, UserReloBean.class);
+                            if (0 == mBean.getCode()) {
+                                mUserReloBean = mBean.getData();
+//                                mMMKVInstace.encode(Constants.KEY_UserMan, bean.isUserMan());//用户管理(用户管理界面能不能进)
+//                                mMMKVInstace.encode(Constants.KEY_CanPsw, bean.isCanPsw());//设置口令(修改别人密码)
+//                                mMMKVInstace.encode(Constants.KEY_SnapVideoRecord, bean.isSnapVideoRecord());//拍照录像
+//                                mMMKVInstace.encode(Constants.KEY_CanNew, bean.isCanNew());  //登记病人(新增病人)
+//                                mMMKVInstace.encode(Constants.KEY_CanEdit, bean.isCanEdit());//修改病历
+//                                mMMKVInstace.encode(Constants.KEY_CanDelete, bean.isCanDelete());//删除病历
+//                                mMMKVInstace.encode(Constants.KEY_CanPrint, bean.isCanPrint()); //打印病历
+//                                mMMKVInstace.encode(Constants.KEY_UnPrinted, bean.isUnPrinted()); //未打印病历
+//                                mMMKVInstace.encode(Constants.KEY_OnlySelf, bean.isOnlySelf());//本人病历
+//                                mMMKVInstace.encode(Constants.KEY_HospitalInfo, bean.isHospitalInfo());//医院信息(不能进入医院信息界面)
+                            }
+                        }
+
+                    }
+                });
+    }
 
     //初始化设置离线模式第一个用户UI显示
     private void setOfflineFirstName() {
@@ -1025,13 +1066,13 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
         }
     }
 
-    private void showLoading( String string) {
+    private void showLoading(String string) {
         if (mWaitDialog == null) {
             mWaitDialog = new WaitDialog.Builder(this);
             // 消息文本可以不用填写
             mWaitDialog.setMessage(string)
                     .create();
-        }else {
+        } else {
             mWaitDialog.setMessage(string);
         }
         if (!mWaitDialog.isShowing()) {

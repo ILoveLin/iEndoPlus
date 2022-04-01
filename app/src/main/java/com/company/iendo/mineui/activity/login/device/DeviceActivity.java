@@ -3,6 +3,8 @@ package com.company.iendo.mineui.activity.login.device;
 import android.content.Intent;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -63,7 +65,6 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
     private SmartRefreshLayout mRefreshLayout;
     private WrapRecyclerView mRecyclerView;
     private StatusLayout mStatusLayout;
-    private TitleBar mDeviceBar;
     private List<DeviceDBBean> mDataLest = new ArrayList<>();
     private DeviceAdapter mAdapter;
     private DeviceDBBean mDeviceDBBean;
@@ -73,6 +74,9 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
     private DeviceDBBean mDBBean;
     private String currentDeviceCode;
     private String currentChangeType;
+    private View mViewTag;
+    private TextView tvLeft;
+    private ImageView rightAdd;
 
 
     @Override
@@ -86,7 +90,8 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
         mRefreshLayout = findViewById(R.id.rl_device_refresh);
         mRecyclerView = findViewById(R.id.rv_device_recyclerview);
         mStatusLayout = findViewById(R.id.device_hint);
-        mDeviceBar = findViewById(R.id.device_bar);
+        tvLeft = findViewById(R.id.tv_left_device);
+        rightAdd = findViewById(R.id.iv_right_add);
     }
 
     @Override
@@ -108,24 +113,23 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
         mRecyclerView.setLayoutManager(gridLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
         refreshRecycleViewData();
-        mDeviceBar.setOnTitleBarListener(new OnTitleBarListener() {
+
+        tvLeft.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onLeftClick(View view) {
+            public void onClick(View v) {
                 //退出界面清除修改删除功能布局
                 dismissChangeDeleteLayout();
                 finish();
             }
-
+        });
+        rightAdd.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onTitleClick(View view) {
+            public void onClick(View view) {
+                showSelectDialog(rightAdd);
 
-            }
-
-            @Override
-            public void onRightClick(View view) {
-                showSelectDialog(view);
             }
         });
+
     }
 
     /**
@@ -195,6 +199,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                 .setGravity(Gravity.CENTER_VERTICAL)
                 .setAutoDismiss(true)
                 .setOutsideTouchable(false) //80dp
+                .setBackgroundDimAmount(0.4F)
                 .setAnimStyle(AnimAction.ANIM_SCALE)
                 .showAsDropDown(view);
     }
