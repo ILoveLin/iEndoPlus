@@ -158,6 +158,8 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
                 //修改病历 权限
                 boolean KEY_CanEdit = mMMKVInstace.decodeBool(Constants.KEY_CanEdit);
                 //有修改病例的权限
+
+
                 if (KEY_CanEdit) {
                     //两者都勾选了
                     if (KEY_UnPrinted && KEY_OnlySelf) {
@@ -170,6 +172,7 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
                                 clickEidtListener();
                             } else {
                                 //不能被编辑
+                                toast(Constants.HAVE_NO_PERMISSION);
                             }
                         }
 
@@ -179,16 +182,20 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
                             //能被编辑
                             clickEidtListener();
                         } else {
+                            toast(Constants.HAVE_NO_PERMISSION);
                             //不能被编辑
                         }
                         //勾选了,未打印病历
                     } else if (KEY_UnPrinted && !KEY_OnlySelf) {
                         if (isPrinted) {//打印过
                             //不能被编辑
+                            toast(Constants.HAVE_NO_PERMISSION);
                         } else {
                             //能被编辑
                             clickEidtListener();
                         }
+                    }else {
+                        toast(Constants.HAVE_NO_PERMISSION);
                     }
 
                 } else {

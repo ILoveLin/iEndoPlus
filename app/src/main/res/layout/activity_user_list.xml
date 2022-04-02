@@ -25,6 +25,11 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:srlEnablePureScrollMode="true">
+            <NumberPicker
+                android:layout_width="match_parent"
+                android:id="@+id/br"
+                android:layout_height="@dimen/sp_20"/>
+
 
             <com.hjq.widget.layout.WrapRecyclerView
                 android:id="@+id/rv_userlist_recyclerview"

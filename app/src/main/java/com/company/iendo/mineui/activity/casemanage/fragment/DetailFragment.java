@@ -1,5 +1,7 @@
 package com.company.iendo.mineui.activity.casemanage.fragment;
 
+import android.animation.Animator;
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -1005,69 +1007,149 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 //                R.id.et_02_mirror_see, R.id.et_02_mirror_result, R.id.et_02_live_check, R.id.et_02_cytology, R.id.et_02_test, R.id.et_02_pathology,
 //                R.id.et_02_advice, R.id.et_02_check_doctor, R.id.et_03_section, R.id.et_03_device, R.id.et_03_ming_zu, R.id.et_03_is_married);
 
+//        iv_01_i_tell_you.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                showITellyouMenuDialog(lines_01_i_tell_you, "11",iv_01_i_tell_you);
+//
+//            }
+//        });
+//        iv_01_bad_tell.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                showITellyouMenuDialog(lines_01_bad_tell, "12", iv_01_bad_tell);
+//
+//            }
+//        });
+//
+//        //02-layout
+//
+//        iv_02_mirror_see.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                showITellyouMenuDialog(etlines_02_mirror_see, "13", iv_02_mirror_see);
+//
+//            }
+//        });
+//        iv_02_mirror_result.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                showITellyouMenuDialog(etlines_02_mirror_result, "14", iv_02_mirror_result);
+//
+//            }
+//        });
+//        iv_02_live_check.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                showITellyouMenuDialog(etlines_02_live_check, "15", iv_02_live_check);
+//
+//            }
+//        });
+//        iv_02_cytology.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                showITellyouMenuDialog(etlines_02_cytology, "16", iv_02_cytology);
+//
+//            }
+//        });
+//        iv_02_test.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                showITellyouMenuDialog(etlines_02_test, "17", iv_02_test);
+//
+//            }
+//        });
+//        iv_02_pathology.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                showITellyouMenuDialog(etlines_02_pathology, "18", iv_02_pathology);
+//
+//            }
+//        });
+//        iv_02_advice.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                showITellyouMenuDialog(etlines_02_advice, "19", iv_02_advice);
+//
+//            }
+//        });
+
+
+        //01--layout
         iv_01_i_tell_you.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showITellyouMenuDialog(lines_01_i_tell_you, "11");
+                startDialogIconAnim(true, iv_01_i_tell_you);
+                showITellyouMenuDialog(lines_01_i_tell_you, "11", iv_01_i_tell_you);
 
             }
         });
         iv_01_bad_tell.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showITellyouMenuDialog(lines_01_bad_tell, "12");
+                startDialogIconAnim(true, iv_01_bad_tell);
+
+                showITellyouMenuDialog(lines_01_bad_tell, "12", iv_01_bad_tell);
 
             }
         });
-
         //02-layout
 
         iv_02_mirror_see.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showITellyouMenuDialog(etlines_02_mirror_see, "13");
+                startDialogIconAnim(true, iv_02_mirror_see);
+
+                showITellyouMenuDialog(etlines_02_mirror_see, "13", iv_02_mirror_see);
 
             }
         });
         iv_02_mirror_result.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showITellyouMenuDialog(etlines_02_mirror_result, "14");
+                startDialogIconAnim(true, iv_02_mirror_result);
+
+                showITellyouMenuDialog(etlines_02_mirror_result, "14", iv_02_mirror_result);
 
             }
         });
         iv_02_live_check.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showITellyouMenuDialog(etlines_02_live_check, "15");
+                startDialogIconAnim(true, iv_02_live_check);
+                showITellyouMenuDialog(etlines_02_live_check, "15", iv_02_live_check);
 
             }
         });
         iv_02_cytology.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showITellyouMenuDialog(etlines_02_cytology, "16");
+                startDialogIconAnim(true, iv_02_cytology);
+                showITellyouMenuDialog(etlines_02_cytology, "16", iv_02_cytology);
 
             }
         });
         iv_02_test.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showITellyouMenuDialog(etlines_02_test, "17");
+                startDialogIconAnim(true, iv_02_test);
+                showITellyouMenuDialog(etlines_02_test, "17", iv_02_test);
 
             }
         });
         iv_02_pathology.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showITellyouMenuDialog(etlines_02_pathology, "18");
+                startDialogIconAnim(true, iv_02_pathology);
+                showITellyouMenuDialog(etlines_02_pathology, "18", iv_02_pathology);
 
             }
         });
         iv_02_advice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showITellyouMenuDialog(etlines_02_advice, "19");
+                startDialogIconAnim(true, iv_02_advice);
+                showITellyouMenuDialog(etlines_02_advice, "19", iv_02_advice);
 
             }
         });
@@ -1079,16 +1161,21 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_01_sex_type:  //性别
-                showMenuDialog(et_01_sex_type, "100");
+                startDialogIconAnim(true, iv_01_sex_type);
+
+                showMenuDialog(et_01_sex_type, "100", iv_01_sex_type);
                 break;
             case R.id.iv_01_age_type:  //年龄类别  --本地写数据List
+                startDialogIconAnim(true, iv_01_age_type);
                 showMenuElseDialog();
                 break;
             case R.id.iv_01_jop:        //职业
-                showMenuDialog(et_01_jop, "5");
+                startDialogIconAnim(true, iv_01_jop);
+                showMenuDialog(et_01_jop, "5", iv_01_jop);
                 break;
             case R.id.tv_01_get_check_doctor://送检医生
-                showMenuDialog(et_01_get_check_doctor, "8");
+                startDialogIconAnim(true, tv_01_get_check_doctor);
+                showMenuDialog(et_01_get_check_doctor, "8", tv_01_get_check_doctor);
                 break;
             case R.id.et_01_i_tell_you:    //主诉--带字数限制的
 //                showITellyouMenuDialog(et_01_i_tell_you, "11");
@@ -1118,23 +1205,29 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 //                showMenuDialog(etlines_02_advice, "19");
 //                break;
             case R.id.iv_02_check_doctor://检查医生
-                showMenuDialog(et_02_check_doctor, "20");
+                startDialogIconAnim(true, iv_02_check_doctor);
+                showMenuDialog(et_02_check_doctor, "20", iv_02_check_doctor);
                 break;
             case R.id.iv_03_section: //科室
-                showMenuDialog(et_03_section, "9");
+                startDialogIconAnim(true, iv_03_section);
+                showMenuDialog(et_03_section, "9", iv_03_section);
                 break;
             case R.id.iv_03_device://设备
-                showMenuDialog(et_03_device, "10");
+                startDialogIconAnim(true, iv_03_device);
+                showMenuDialog(et_03_device, "10", iv_03_device);
                 break;
             case R.id.iv_03_ming_zu://民族
-                showMenuDialog(et_03_ming_zu, "23");
+                startDialogIconAnim(true, iv_03_ming_zu);
+                showMenuDialog(et_03_ming_zu, "23", iv_03_ming_zu);
                 break;
             case R.id.iv_03_is_married://婚否
-                showMenuDialog(et_03_is_married, "101");
+                startDialogIconAnim(true, iv_03_is_married);
+                showMenuDialog(et_03_is_married, "101", iv_03_is_married);
                 break;
 
         }
     }
+
 
     private void showMenuElseDialog() {
         // 底部选择框
@@ -1145,15 +1238,24 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                     // 设置点击按钮后不关闭对话框
                     //.setAutoDismiss(false)
                     .setList(ageList)
+                    .addOnDismissListener(new BaseDialog.OnDismissListener() {
+                        @Override
+                        public void onDismiss(BaseDialog dialog) {
+                            startDialogIconAnim(false, iv_01_age_type);
+
+                        }
+                    })
                     .setListener(new MenuDialog.OnListener<String>() {
 
                         @Override
                         public void onSelected(BaseDialog dialog, int position, String string) {
                             tv_01_age_type.setText("" + ageList.get(position));
+                            startDialogIconAnim(false, iv_01_age_type);
                         }
 
                         @Override
                         public void onCancel(BaseDialog dialog) {
+                            startDialogIconAnim(false, iv_01_age_type);
                         }
                     })
                     .show();
@@ -1161,7 +1263,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 
     }
 
-    private void showITellyouMenuDialog(LinesEditView mEdit, String key) {
+    private void showITellyouMenuDialog(LinesEditView mEdit, String key, ImageView mView) {
         if (mFragClickable && null != mDialogItemMap && mEditStatus) {//有dialog数据,集合不为空,可编辑状态
             ArrayList<DialogItemBean> mDataList = (ArrayList<DialogItemBean>) mDialogItemMap.get(key);
             ArrayList<String> stringList = new ArrayList<>();
@@ -1175,11 +1277,19 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                     // 设置点击按钮后不关闭对话框
                     //.setAutoDismiss(false)
                     .setList(stringList)
+                    .addOnDismissListener(new BaseDialog.OnDismissListener() {
+                        @Override
+                        public void onDismiss(BaseDialog dialog) {
+                            startDialogIconAnim(false, mView);
+                        }
+                    })
                     .setListener(new MenuDialog.OnListener<String>() {
                         @Override
                         public void onSelected(BaseDialog dialog, int position, String string) {
                             String s = stringList.get(position);
                             String s1 = mEdit.getContentText() + "" + s;
+                            startDialogIconAnim(false, mView);
+
                             if (s1.length() >= 800) {
                                 toast("字数不能超过800!");
                             } else {
@@ -1191,13 +1301,14 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 
                         @Override
                         public void onCancel(BaseDialog dialog) {
+                            startDialogIconAnim(false, mView);
                         }
                     })
                     .show();
         }
     }
 
-    private void showMenuDialog(ClearEditText mEdit, String key) {
+    private void showMenuDialog(ClearEditText mEdit, String key, ImageView mAnimView) {
         if (mFragClickable && null != mDialogItemMap && mEditStatus) {//有dialog数据,集合不为空,可编辑状态
             ArrayList<DialogItemBean> mDataList = (ArrayList<DialogItemBean>) mDialogItemMap.get(key);
             ArrayList<String> stringList = new ArrayList<>();
@@ -1211,6 +1322,13 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                     // 设置点击按钮后不关闭对话框
                     //.setAutoDismiss(false)
                     .setList(stringList)
+                    .addOnDismissListener(new BaseDialog.OnDismissListener() {
+                        @Override
+                        public void onDismiss(BaseDialog dialog) {
+                            startDialogIconAnim(false, mAnimView);
+
+                        }
+                    })
                     .setListener(new MenuDialog.OnListener<String>() {
 
                         @Override
@@ -1218,12 +1336,16 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                             String s = stringList.get(position);
                             LogUtils.e("MenuDialog====位置：" + position + "，文本：" + data);
                             LogUtils.e("MenuDialog===s==" + s); //{0=HD3}
+                            startDialogIconAnim(false, mAnimView);
                             mEdit.setText("" + s);
 
                         }
 
                         @Override
                         public void onCancel(BaseDialog dialog) {
+
+                            startDialogIconAnim(false, mAnimView);
+
                         }
                     })
                     .show();
@@ -1804,6 +1926,79 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
     /**
      * ***************************************************************************通讯模块**************************************************************************
      */
+    /**
+     * @param statue    开启还是关闭   true为打开
+     * @param mAnimView 播放的View
+     */
+
+    public void startDialogIconAnim(Boolean statue, View mAnimView) {
+        if (statue) {
+            ObjectAnimator animator = ObjectAnimator.ofFloat(mAnimView, "rotation", 0f, 180f);
+            animator.setDuration(150);
+            animator.start();
+            animator.addListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    if (mAnimView instanceof ImageView) {
+                        ImageView mView = (ImageView) mAnimView;
+                        mView.setImageDrawable(getDrawable(R.drawable.ic_case_select_down_pre));
+                    } else if (mAnimView instanceof TextView) {
+                        mAnimView.setBackground(getDrawable(R.drawable.ic_case_select_down_nor));
+                    }
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+
+                }
+            });
+
+        } else {
+            ObjectAnimator animator = ObjectAnimator.ofFloat(mAnimView, "rotation", 180f, 360f);
+            animator.setDuration(150);
+            animator.start();
+            animator.addListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+
+                    if (mAnimView instanceof ImageView) {
+                        ImageView mView = (ImageView) mAnimView;
+                        mView.setImageDrawable(getDrawable(R.drawable.ic_case_select_down_nor));
+                    } else if (mAnimView instanceof TextView) {
+                        mAnimView.setBackground(getDrawable(R.drawable.ic_case_select_down_nor));
+                    }
+
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+
+                }
+            });
+        }
+
+    }
 
 
     @Override

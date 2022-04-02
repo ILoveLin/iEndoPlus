@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true">
+        <objectAnimator android:duration="900" android:fillAfter="true" android:fromDegrees="180" android:toDegrees="0" />
+
+
+    </item>
+    <!-- the default, non-pressed state; set x and y size to 100% -->
+    <item android:state_pressed="false">
+        <objectAnimator android:duration="900" android:fillAfter="true" android:fromDegrees="180" android:toDegrees="360" />
+
+    </item>
+</selector>

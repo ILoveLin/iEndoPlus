@@ -226,7 +226,8 @@
                 android:layout_gravity="center"
                 android:layout_marginLeft="@dimen/dp_10"
                 android:layout_marginRight="@dimen/dp_10"
-                android:src="@drawable/selector_detail_dialog" />
+                android:src="@drawable/ic_case_select_down_nor" />
+<!--                android:src="@drawable/selector_detail_dialog" />-->
 
 
         </LinearLayout>
