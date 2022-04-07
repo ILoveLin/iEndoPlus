@@ -95,9 +95,9 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
     }
 
     private void responseListener() {
-        mAdapter.setOnChildClickListener(R.id.tv_delete, this);
-        mAdapter.setOnChildClickListener(R.id.tv_change_password, this);
-        mAdapter.setOnChildClickListener(R.id.tv_change_relo, this);
+        mAdapter.setOnChildClickListener(R.id.linear_relo, this);
+        mAdapter.setOnChildClickListener(R.id.linear_change, this);
+        mAdapter.setOnChildClickListener(R.id.linear_delete, this);
 
         mTitleBar.setOnTitleBarListener(new OnTitleBarListener() {
             @Override
@@ -308,10 +308,10 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
     @Override
     public void onChildClick(RecyclerView recyclerView, View childView, int position) {
         switch (childView.getId()) {
-            case R.id.tv_delete://删除
+            case R.id.linear_delete://删除
                 showDeleteDialog(mAdapter.getItem(position));
                 break;
-            case R.id.tv_change_password://修改密码
+            case R.id.linear_change://修改密码
                 MMKV mmkv = MMKV.defaultMMKV();
                 if (mmkv.decodeBool(Constants.KEY_CanPsw)) {
                     showChangePasswordDialog(mAdapter.getItem(position));
@@ -319,7 +319,7 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
                     toast("暂无权限");
                 }
                 break;
-            case R.id.tv_change_relo://修改权限
+            case R.id.linear_relo://修改权限
                 showChangeReloDialog(mAdapter.getItem(position));
                 break;
         }

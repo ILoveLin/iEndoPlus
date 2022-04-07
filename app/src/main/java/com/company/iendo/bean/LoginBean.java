@@ -9,7 +9,7 @@ import com.google.gson.annotations.SerializedName;
  * desc：
  UserMan 			-- 用户管理
  CanPsw 			-- 设置口令
- SnapVideoRecord	 -- 拍照录像
+ SnapVideoRecord	-- 拍照录像
  CanNew 			-- 登记病人
  CanEdit 			-- 修改病历
  CanDelete 			-- 删除病历

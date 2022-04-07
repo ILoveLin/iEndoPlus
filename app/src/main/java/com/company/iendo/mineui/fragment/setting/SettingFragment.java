@@ -236,7 +236,7 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
                 Constants.UDP_FE);
 
         if (("".equals(mSocketPort))) {
-            toast("通讯端口不能为空!");
+            toast("通讯端口不能为空");
             return;
         }
         LogUtils.e("SocketUtils===发送消息==点对点==detailCaseActivity==sendByteData==" + sendByteData);

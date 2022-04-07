@@ -224,11 +224,11 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
         String sex = et_01_sex_type.getText().toString().trim();
 
         if (Name.isEmpty()) {
-            toast("姓名不能为空!");
+            toast("姓名不能为空");
         } else if (age.isEmpty()) {
-            toast("年龄不能为空!");
+            toast("年龄不能为空");
         } else if (sex.isEmpty()) {
-            toast("性别不能为空!");
+            toast("性别不能为空");
         } else {
             getElseCanSelected();
 
@@ -402,7 +402,7 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
         byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(handBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
                 Constants.UDP_HAND);
         if (("".equals(mSocketPort))) {
-            toast("通讯端口不能为空!");
+            toast("通讯端口不能为空");
             return;
         }
         SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), AddCaseActivity.this);
@@ -422,14 +422,14 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
             byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(handBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
                     CMDCode);
             if (("".equals(mSocketPort))) {
-                toast("通讯端口不能为空!");
+                toast("通讯端口不能为空");
                 return;
             }
             SocketUtils.startSendPointMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), AddCaseActivity.this);
 
         } else {
             sendHandLinkMessage();
-            toast("请先建立握手链接!");
+            toast("请先建立握手链接");
         }
 
     }
@@ -719,13 +719,8 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
                             String s = stringList.get(position);
                             String s1 = mEdit.getContentText() + "" + s;
                             startDialogIconAnim(false, mView);
+                            mEdit.setContentText(mEdit.getContentText() + "" + s);
 
-                            if (s1.length() >= 800) {
-                                toast("字数不能超过800!");
-                            } else {
-                                mEdit.setContentText(mEdit.getContentText() + "" + s);
-
-                            }
 
                         }
 

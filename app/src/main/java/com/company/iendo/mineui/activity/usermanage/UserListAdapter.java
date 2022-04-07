@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -38,6 +39,7 @@ public class UserListAdapter extends AppAdapter<UserListBean.DataDTO> {
         private final TextView mName, mCurrentFlag, mRelo;
         //        private final Button mChangeRelo, mDelete, mPassword;
         private final RelativeLayout mItemView;
+        private final LinearLayout linear_relo,linear_change,linear_delete;
 
         private ViewHolder() {
             super(R.layout.item_user_list);
@@ -48,6 +50,9 @@ public class UserListAdapter extends AppAdapter<UserListBean.DataDTO> {
 //            mPassword = findViewById(R.id.tv_change_password);
 //            mDelete = findViewById(R.id.tv_delete);
             mCurrentFlag = findViewById(R.id.tv_current_flag);
+            linear_relo = findViewById(R.id.linear_relo);
+            linear_change = findViewById(R.id.linear_change);
+            linear_delete = findViewById(R.id.linear_delete);
         }
 
         @Override
@@ -55,6 +60,17 @@ public class UserListAdapter extends AppAdapter<UserListBean.DataDTO> {
             UserListBean.DataDTO item = getItem(position);
             //角色权限:0-管理员 1-操作员 2-查询员
             String userName = item.getUserName();
+            if ("Admin".equals(userName)){
+                linear_relo.setVisibility(View.GONE);
+                linear_change.setVisibility(View.GONE);
+                linear_delete.setVisibility(View.GONE);
+            }else {
+                linear_relo.setVisibility(View.VISIBLE);
+                linear_change.setVisibility(View.VISIBLE);
+                linear_delete.setVisibility(View.VISIBLE);
+            }
+
+
             if (mLoginUserName.equals(userName)) {
                 mItemView.setBackgroundResource(R.drawable.shape_item_user_pre);
                 mCurrentFlag.setVisibility(View.VISIBLE);

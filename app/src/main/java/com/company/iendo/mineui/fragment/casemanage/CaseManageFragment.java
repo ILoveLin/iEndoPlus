@@ -274,7 +274,7 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
                                 });
                             }
                         } catch (Exception e) {
-                            toast("数据解析错误!");
+                            toast("数据解析错误");
 
                         }
 
@@ -296,12 +296,12 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
     public void onItemClick(RecyclerView recyclerView, View itemView, int position) {
         CaseManageListBean.DataDTO item = mAdapter.getItem(position);
         LogUtils.e("======GetPictureActivity=====Handler接受====item==" + item.toString());
-
         SharePreferenceUtil.put(getActivity(), SharePreferenceUtil.Current_Chose_CaseID, item.getID() + "");
         Intent intent = new Intent(getActivity(), DetailCaseActivity.class);
         ((MainActivity) getActivity()).setCurrentItemID(item.getID() + "");
         LogUtils.e("itemID==" + item.getID() + "");
         intent.putExtra("itemID", item.getID() + "");
+        intent.putExtra("itemUserName", item.getUserName() + "");
         startActivity(intent);
     }
 

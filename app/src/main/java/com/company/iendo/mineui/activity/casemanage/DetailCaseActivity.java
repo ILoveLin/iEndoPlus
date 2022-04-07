@@ -89,6 +89,7 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
     private static boolean UDP_EQUALS_ID = false; //获取当前操作id,和进入该界面的id 是否相等,相等才可以进行各种操作,默认不相等,
     private boolean isPrinted;   //true,    是否已经打印过,true表示打印过了,不能编辑
     private String mCreatedByWho;
+    private String itemUserName;
 
     @Override
     protected int getLayoutId() {
@@ -150,57 +151,42 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
 
             @Override
             public void onRightClick(View view) {
+
                 //勾选了几个判断几个
-                //未打印病历,权限
-                boolean KEY_UnPrinted = mMMKVInstace.decodeBool(Constants.KEY_UnPrinted);
-                //本人病历,权限
-                boolean KEY_OnlySelf = mMMKVInstace.decodeBool(Constants.KEY_OnlySelf);
-                //修改病历 权限
+                //是否能编辑遍历
                 boolean KEY_CanEdit = mMMKVInstace.decodeBool(Constants.KEY_CanEdit);
-                //有修改病例的权限
-
-
+                //仅限未打印病例,未打印病历,权限
+                boolean KEY_UnPrinted = mMMKVInstace.decodeBool(Constants.KEY_UnPrinted);
+                //仅限本人创建病例,本人病历,权限
+                boolean KEY_OnlySelf = mMMKVInstace.decodeBool(Constants.KEY_OnlySelf);
+                //当前病例是否打印
+                boolean KEY_Printed = isPrinted;
+                //当前病例是否该账号创建的
+                boolean caseIsSelf = itemUserName.equalsIgnoreCase(mLoginUserName) ? true : false;
+                //控制变量
+                boolean canOpeartion = false;
                 if (KEY_CanEdit) {
-                    //两者都勾选了
-                    if (KEY_UnPrinted && KEY_OnlySelf) {
-                        //需要判断两个值
-                        if (isPrinted) {//打印过
-                            //不能被编辑
-                        } else if (!isPrinted) {
-                            if (mLoginUserName.equals(mCreatedByWho)) {
-                                //能被编辑
-                                clickEidtListener();
-                            } else {
-                                //不能被编辑
-                                toast(Constants.HAVE_NO_PERMISSION);
-                            }
-                        }
-
-                        //勾选了,本人病历
-                    } else if (!KEY_UnPrinted && KEY_OnlySelf) {
-                        if (mLoginUserName.equals(mCreatedByWho)) {
-                            //能被编辑
-                            clickEidtListener();
+                    canOpeartion = true;
+                    if (KEY_OnlySelf) {
+                        if (KEY_UnPrinted) {
+                            canOpeartion = !KEY_Printed && caseIsSelf;
                         } else {
-                            toast(Constants.HAVE_NO_PERMISSION);
-                            //不能被编辑
+                            canOpeartion = caseIsSelf;
                         }
-                        //勾选了,未打印病历
-                    } else if (KEY_UnPrinted && !KEY_OnlySelf) {
-                        if (isPrinted) {//打印过
-                            //不能被编辑
-                            toast(Constants.HAVE_NO_PERMISSION);
-                        } else {
-                            //能被编辑
-                            clickEidtListener();
+                    } else {
+                        if (KEY_UnPrinted) {
+                            canOpeartion = !caseIsSelf;
                         }
-                    }else {
-                        toast(Constants.HAVE_NO_PERMISSION);
                     }
-
+                }
+                if (canOpeartion) {
+                    //能被编辑
+                    clickEidtListener();
                 } else {
                     toast(Constants.HAVE_NO_PERMISSION);
+
                 }
+
             }
         });
 
@@ -223,7 +209,7 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
                 if (UDP_HAND_TAG) {
                     sendSocketPointMessage(Constants.UDP_F2);
                 } else {
-                    toast("暂未建立连接!");
+                    toast("暂未建立连接");
                     sendHandLinkMessage();
                 }
             }
@@ -442,9 +428,9 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
             case Constants.UDP_F2://打印报告
                 LogUtils.e("Socket回调==DetailCaseActivity==当前UDP命令==打印报告==" + data);
                 if ("00".equals(data)) {
-                    toast("报告打印成功!");
+                    toast("报告打印成功");
                 } else {
-                    toast("报告打印失败!");
+                    toast("报告打印失败");
                 }
                 break;
             case Constants.UDP_F7://权限通知变动,在病例列表,病例详情,和图像采集三个界面相互监听,发现了请求后台更新本地权限
@@ -533,7 +519,7 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
             byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(shotPictureBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
                     CMDCode);
             if (("".equals(mSocketPort))) {
-                toast("通讯端口不能为空!");
+                toast("通讯端口不能为空");
                 return;
             }
 
@@ -542,7 +528,7 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
 
         } else {
             sendHandLinkMessage();
-            toast("请先建立握手链接!");
+            toast("请先建立握手链接");
         }
 
     }
@@ -558,7 +544,7 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
                 Constants.UDP_HAND);
 
         if (("".equals(mSocketPort))) {
-            toast("通讯端口不能为空!");
+            toast("通讯端口不能为空");
             return;
         }
         LogUtils.e("SocketUtils===发送消息==点对点==detailCaseActivity==sendByteData==" + sendByteData);
@@ -588,6 +574,7 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
     @Override
     protected void initData() {
         currentItemID = getIntent().getStringExtra("itemID");
+        itemUserName = getIntent().getStringExtra("itemUserName");
         mTabAdapter.addItem("详情");
         mTabAdapter.addItem("图片");
         mTabAdapter.addItem("视频");
@@ -711,7 +698,6 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
 
                     @Override
                     public void onCancel(BaseDialog dialog) {
-                        toast("取消了");
                     }
                 })
                 .show();

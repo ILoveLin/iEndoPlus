@@ -93,6 +93,7 @@ import okhttp3.Call;
 public final class GetPictureActivity extends AppActivity implements StatusAction, OnRangeChangedListener,
         SwitchButton.OnCheckedChangeListener, TextView.OnEditorActionListener, ConnectCheckerRtmp, TextWatcher {
     public static String path = "http://9890.vod.myqcloud.com/9890_4e292f9a3dd011e6b4078980237cc3d3.f20.mp4";
+    public static String path1 = "rtsp://184.72.239.149/vod/mp4://BigBuckBunny_175k.mov";
     public boolean isFullscreen = false;
     private StatusLayout mStatusLayout;
     private TextView mChangeFull;
@@ -503,7 +504,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                         toast(Constants.UDP_CASE_ID_DIFFERENT);
                     }
                 } else {
-                    toast("握手失败,正在尝试连接设备!");
+                    toast("握手失败,正在尝试连接设备");
                     sendHandLinkMessage();
                 }
 //                if (isPlayering) {
@@ -719,12 +720,12 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(bean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
                     CMDCode);
             if (("".equals(mSocketPort))) {
-                toast("通讯端口不能为空!");
+                toast("通讯端口不能为空");
                 return;
             }
             SocketUtils.startSendPointMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), GetPictureActivity.this);
         } else {
-            toast("请先建立握手链接!");
+            toast("请先建立握手链接");
             sendHandLinkMessage();
         }
 
@@ -743,12 +744,12 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(handBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
                     CMDCode);
             if (("".equals(mSocketPort))) {
-                toast("通讯端口不能为空!");
+                toast("通讯端口不能为空");
                 return;
             }
             SocketUtils.startSendPointMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), GetPictureActivity.this);
         } else {
-            toast("请先建立握手链接!");
+            toast("请先建立握手链接");
             sendHandLinkMessage();
 
         }
@@ -766,7 +767,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                 Constants.UDP_HAND);
 
         if (("".equals(mSocketPort))) {
-            toast("通讯端口不能为空!");
+            toast("通讯端口不能为空");
             return;
         }
         LogUtils.e("SocketUtils===发送消息==点对点==detailCaseActivity==sendByteData==" + sendByteData);
@@ -792,7 +793,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                 Constants.UDP_F4);
 
         if (("".equals(mSocketPort))) {
-            toast("通讯端口不能为空!");
+            toast("通讯端口不能为空");
             return;
         }
         LogUtils.e("SocketUtils===发送消息==点对点==detailCaseActivity==sendByteData==" + sendByteData);
@@ -817,12 +818,12 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(bean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
                     CMDCode);
             if (("".equals(mSocketPort))) {
-                toast("通讯端口不能为空!");
+                toast("通讯端口不能为空");
                 return;
             }
             SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), GetPictureActivity.this);
         } else {
-            toast("请先建立握手链接!");
+            toast("请先建立握手链接");
             sendHandLinkMessage();
         }
 
@@ -846,12 +847,12 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             LogUtils.e("======GetPictureActivity==回调===>发送冷光源参数==" + sendByteData);
 
             if (("".equals(mSocketPort))) {
-                toast("通讯端口不能为空!");
+                toast("通讯端口不能为空");
                 return;
             }
             SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), GetPictureActivity.this);
         } else {
-            toast("请先建立握手链接!");
+            toast("请先建立握手链接");
             sendHandLinkMessage();
         }
 
@@ -877,12 +878,12 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             LogUtils.e("======GetPictureActivity==回调===>发送冷光源参数==" + sendByteData);
 
             if (("".equals(mSocketPort))) {
-                toast("通讯端口不能为空!");
+                toast("通讯端口不能为空");
                 return;
             }
             SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), GetPictureActivity.this);
         } else {
-            toast("请先建立握手链接!");
+            toast("请先建立握手链接");
             sendHandLinkMessage();
         }
 
@@ -902,12 +903,12 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             LogUtils.e("======GetPictureActivity==回调===>发送摄像机==" + sendByteData);
 
             if (("".equals(mSocketPort))) {
-                toast("通讯端口不能为空!");
+                toast("通讯端口不能为空");
                 return;
             }
             SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), GetPictureActivity.this);
         } else {
-            toast("请先建立握手链接!");
+            toast("请先建立握手链接");
             sendHandLinkMessage();
         }
 

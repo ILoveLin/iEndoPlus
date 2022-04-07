@@ -154,25 +154,25 @@ public class LinesEditView extends LinearLayout {
             // 先去掉监听器，否则会出现栈溢出
             id_et_input.removeTextChangedListener(mTextWatcher);
 
-            try {
-                if (ignoreCnOrEn) {
-                    //当输入字符个数超过限制的大小时，进行截断操作
-                    while (calculateLengthIgnoreCnOrEn(editable.toString()) > MAX_COUNT) {
-                        editable.delete(editStart - 1, editEnd);
-                        editStart--;
-                        editEnd--;
-                    }
-                } else {
-                    // 因为是中英文混合，单个字符而言，calculateLength函数都会返回1
-                    while (calculateLength(editable.toString()) > MAX_COUNT) { // 当输入字符个数超过限制的大小时，进行截断操作
-                        editable.delete(editStart - 1, editEnd);
-                        editStart--;
-                        editEnd--;
-                    }
-                }
-            }catch (Exception e){
-                LogUtils.e("Exception===LinesEditView字数操过异常!!! 173行");
-            }
+//            try {
+//                if (ignoreCnOrEn) {
+//                    //当输入字符个数超过限制的大小时，进行截断操作
+//                    while (calculateLengthIgnoreCnOrEn(editable.toString()) > MAX_COUNT) {
+//                        editable.delete(editStart - 1, editEnd);
+//                        editStart--;
+//                        editEnd--;
+//                    }
+//                } else {
+//                    // 因为是中英文混合，单个字符而言，calculateLength函数都会返回1
+//                    while (calculateLength(editable.toString()) > MAX_COUNT) { // 当输入字符个数超过限制的大小时，进行截断操作
+//                        editable.delete(editStart - 1, editEnd);
+//                        editStart--;
+//                        editEnd--;
+//                    }
+//                }
+//            }catch (Exception e){
+//                LogUtils.e("Exception===LinesEditView字数操过异常!!! 173行");
+//            }
 
 
 
@@ -217,10 +217,12 @@ public class LinesEditView extends LinearLayout {
         }
         if (showPositive) {
             //正数显示 【当前输入数/总数】
-            id_tv_input.setText(String.valueOf(nowCount) + "/" + MAX_COUNT);
+            id_tv_input.setText(String.valueOf(nowCount) );
+//            id_tv_input.setText(String.valueOf(nowCount) + "/" + MAX_COUNT);
         } else {
             //倒数显示 【剩余输入数/总数】
-            id_tv_input.setText(String.valueOf((MAX_COUNT - nowCount)) + "/" + MAX_COUNT);
+            id_tv_input.setText(String.valueOf((nowCount )));
+//            id_tv_input.setText(String.valueOf((MAX_COUNT - nowCount)) + "/" + MAX_COUNT);
         }
 
     }

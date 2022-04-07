@@ -143,7 +143,7 @@ public final class PictureChoseActivity extends AppActivity implements StatusAct
                 if (UDP_HAND_TAG) {
                     sendSocketPointMessage(Constants.UDP_F2);
                 } else {
-                    toast("暂未建立连接!");
+                    toast("暂未建立连接");
                     sendHandLinkMessage();
                 }
             }
@@ -189,7 +189,7 @@ public final class PictureChoseActivity extends AppActivity implements StatusAct
                 LogUtils.e("图片" + "id==========newImageIDs==" + getIDs(newImageIDs));////原图路径
 
                 if (mList.size() > 9) {
-                    toast("最多不超过9张!");
+                    toast("最多不超过9张");
                     return;
                 } else {
                     sendReportRequest(getIDs(oldIDS), getIDs(newImageIDs));
@@ -403,16 +403,16 @@ public final class PictureChoseActivity extends AppActivity implements StatusAct
                     Glide.with(PictureChoseActivity.this)
                             .load(path)
                             .placeholder(R.drawable.ic_bg_splash_des) //占位符 也就是加载中的图片，可放个gif
-                            .error(R.mipmap.bg_splash_des)
+                            .error(R.drawable.ic_bg_splash_des)
                             .signature(new ObjectKey(System.currentTimeMillis()))//不使用缓存
                             .into(mAnimReport);
                 }
                 break;
             case Constants.UDP_F2://打印报告
                 if ("00".equals(data)) {
-                    toast("报告打印成功!");
+                    toast("报告打印成功");
                 } else {
-                    toast("报告打印失败!");
+                    toast("报告打印失败");
                 }
                 break;
         }
@@ -429,7 +429,7 @@ public final class PictureChoseActivity extends AppActivity implements StatusAct
         byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(handBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
                 Constants.UDP_HAND);
         if (("".equals(mSocketPort))) {
-            toast("通讯端口不能为空!");
+            toast("通讯端口不能为空");
             return;
         }
         SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort),this);
@@ -451,14 +451,14 @@ public final class PictureChoseActivity extends AppActivity implements StatusAct
             byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(shotPictureBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
                     CMDCode);
             if (("".equals(mSocketPort))) {
-                toast("通讯端口不能为空!");
+                toast("通讯端口不能为空");
                 return;
             }
 
             SocketUtils.startSendPointMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), PictureChoseActivity.this);
         } else {
             sendHandLinkMessage();
-            toast("请先建立握手链接!");
+            toast("请先建立握手链接");
         }
 
     }

@@ -501,7 +501,7 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                                 )
                                 .showAsDropDown(mPhoneView);
                     } else {
-                        toast("暂无数据哦!");
+                        toast("暂无数据哦");
 
                     }
 
@@ -633,7 +633,6 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
      */
     private void LoginByOnline() {
         //动态清零用户列表
-        mUserListData.clear();
         // 隐藏软键盘
         hideKeyboard(getCurrentFocus());
         LogUtils.e("登录===" + MD5ChangeUtil.Md5_16(mPasswordView.getText().toString()));
@@ -661,7 +660,7 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
 
                     @Override
                     public void onResponse(String response, int id) {
-//                                mCommitView.showProgress();
+                        mUserListData.clear();
                         showComplete();
                         LogUtils.e("登录=成功==" + response);
                         if (!"".equals(response)) {
@@ -716,12 +715,12 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                                 finish();
                             } else {
 //
-                                toast("密码错误!!");
+                                toast("密码错误");
                             }
 
                         } else {
                             showError();
-                            toast("返回数据为空!");
+                            toast("返回数据为空 ");
                         }
 
                     }
@@ -887,10 +886,6 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
 //                .circleCrop()
 //                .into(mLogoView);
 
-        toast("昵称：" + data.getName() + "\n" +
-                "性别：" + data.getSex() + "\n" +
-                "id：" + data.getId() + "\n" +
-                "token：" + data.getToken());
     }
 
     /**

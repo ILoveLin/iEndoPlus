@@ -990,7 +990,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                         }
                     });
         } else {
-            toast("稍后在尝试删除!");
+            toast("稍后在尝试删除");
         }
 
     }
@@ -1289,13 +1289,8 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                             String s = stringList.get(position);
                             String s1 = mEdit.getContentText() + "" + s;
                             startDialogIconAnim(false, mView);
+                            mEdit.setContentText(mEdit.getContentText() + "" + s);
 
-                            if (s1.length() >= 800) {
-                                toast("字数不能超过800!");
-                            } else {
-                                mEdit.setContentText(mEdit.getContentText() + "" + s);
-
-                            }
 
                         }
 
@@ -1644,7 +1639,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
     private void checkDataAndRequest() {
         String Name = et_01_name.getText().toString().trim();
         if (Name.isEmpty()) {
-            toast("用户名不能为空!");
+            toast("用户名不能为空");
         } else {
             getElseCanSelected();
         }
@@ -1858,7 +1853,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         byte[] sendByteData = CalculateUtils.getSendByteData(getAttachActivity(), mGson.toJson(handBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
                 Constants.UDP_HAND);
         if (("".equals(mSocketPort))) {
-            toast("通讯端口不能为空!");
+            toast("通讯端口不能为空");
             return;
         }
         LogUtils.e("SocketUtils===发送消息==点对点==detailfragment==sendByteData==" + sendByteData);
@@ -1885,14 +1880,14 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
             byte[] sendByteData = CalculateUtils.getSendByteData(getAttachActivity(), mGson.toJson(bean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
                     CMDCode);
             if (("".equals(mSocketPort))) {
-                toast("通讯端口不能为空!");
+                toast("通讯端口不能为空");
                 return;
             }
 
             SocketUtils.startSendPointMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), getAttachActivity());
         } else {
             sendHandLinkMessage();
-            toast("请先建立握手链接!");
+            toast("请先建立握手链接");
         }
 
     }
@@ -1911,14 +1906,14 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
             byte[] sendByteData = CalculateUtils.getSendByteData(getAttachActivity(), mGson.toJson(handBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
                     CMDCode);
             if (("".equals(mSocketPort))) {
-                toast("通讯端口不能为空!");
+                toast("通讯端口不能为空");
                 return;
             }
 
             SocketUtils.startSendPointMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), getAttachActivity());
         } else {
             sendHandLinkMessage();
-            toast("请先建立握手链接!");
+            toast("请先建立握手链接");
         }
 
     }
