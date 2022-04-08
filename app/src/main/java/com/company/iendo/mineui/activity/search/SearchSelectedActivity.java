@@ -53,7 +53,6 @@ public class SearchSelectedActivity extends AppActivity {
     private EditText mEtCheckNum;
     private EditText mEtCheckName;
     //    private EditText mEtStartAge;
-    private EditText mEtEndAge;
     private TextView mSexType;
     private EditText mEtWorker;
     private TextView mMarriedType;
@@ -102,7 +101,7 @@ public class SearchSelectedActivity extends AppActivity {
         mEtGetDoctor = findViewById(R.id.edit_get_doctor);  //送检医生
         mSearch = findViewById(R.id.sp_search);
         mTitleBar = findViewById(R.id.titlebar);
-        setOnClickListener(R.id.tv_sex_type, R.id.edit_worker, R.id.edit_section, R.id.edit_device, R.id.edit_check_doctor,
+        setOnClickListener(R.id.iv_time_start,R.id.iv_time_end,R.id.tv_sex_type, R.id.edit_worker, R.id.edit_section, R.id.edit_device, R.id.edit_check_doctor,
                 R.id.edit_get_doctor, R.id.sp_search, R.id.sp_start_date, R.id.sp_end_date, R.id.tv_married_type, R.id.iv_age);
 
         getCurrentDataTime();
@@ -257,18 +256,20 @@ public class SearchSelectedActivity extends AppActivity {
         mEtCheckNum.setHint("请输入检查号");
         mEtCheckName.setText("");
         mEtCheckName.setHint("请输入姓名");
-        mEtEndAge.setText("");
-        mEtEndAge.setHint("请输入年龄");
+        mEtAgeTimeStart.setText("");
+        mEtAgeTimeEnd.setText("");
+        mEtAgeTimeStart.setHint("请输入年龄");
+        mEtAgeTimeEnd.setHint("请输入年龄");
         mEtWorker.setText("");
         mEtWorker.setHint("请输入职业");
         mEtSection.setText("");
-        mEtSection.setHint("请选择科室");
+        mEtSection.setHint("请输入科室");
         mEtDevice.setText("");
-        mEtDevice.setHint("请选择设备");
+        mEtDevice.setHint("请输入设备");
         mEtCheckDoctor.setText("");
-        mEtCheckDoctor.setHint("请选择检查医生");
+        mEtCheckDoctor.setHint("请输入检查医生");
         mEtGetDoctor.setText("");
-        mEtGetDoctor.setHint("请选择送检医生");
+        mEtGetDoctor.setHint("请输入送检医生");
     }
 
 
@@ -282,9 +283,11 @@ public class SearchSelectedActivity extends AppActivity {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.sp_start_date: //开始时间
+            case R.id.iv_time_start: //开始时间
                 showDateDialog("开始");
                 break;
             case R.id.sp_end_date:  //结束时间
+            case R.id.iv_time_end: //开始时间
                 showDateDialog("结束");
                 break;
             case R.id.edit_worker:  //职业
@@ -336,8 +339,8 @@ public class SearchSelectedActivity extends AppActivity {
 
                 String CaseNo = mEtCheckNum.getText().toString().trim();
                 String Name = mEtCheckName.getText().toString().trim();
-//                String PatientAgeStart = mEtStartAge.getText().toString().trim();
-                String PatientAgeEnd = mEtEndAge.getText().toString().trim();
+                String PatientAgeStart = mEtAgeTimeStart.getText().toString().trim();
+                String PatientAgeEnd = mEtAgeTimeEnd.getText().toString().trim();
 
 //                String AgeUnit = mAgeType.getText().toString().trim();
                 String Sex = mSexType.getText().toString().trim();
@@ -350,15 +353,18 @@ public class SearchSelectedActivity extends AppActivity {
                 HashMap<String, String> parmasMap = new HashMap<>();
                 parmasMap.put("CheckDateStart", CheckDateStart);
                 parmasMap.put("CheckDateEnd", CheckDateEnd);
-                parmasMap.put("PatientAgeStart", mEtAgeTimeStart.getText().toString().trim());
-                parmasMap.put("PatientAgeEnd", mEtAgeTimeEnd.getText().toString().trim());
+
+                String trimStart = mEtAgeTimeStart.getText().toString().trim();
+                String trimEnd = mEtAgeTimeEnd.getText().toString().trim();
+
+                if (!"".equals(trimStart)){
+                    parmasMap.put("PatientAgeStart",trimStart);
+                }
+                if (!"".equals(trimEnd)){
+                    parmasMap.put("PatientAgeEnd", trimEnd);
+                }
                 parmasMap.put("CaseNo", CaseNo);
                 parmasMap.put("Name", Name);
-//                if ("".equals(PatientAgeStart)) {
-//
-//                } else {
-//                    parmasMap.put("PatientAgeStart", PatientAgeStart);
-//                }
                 if ("".equals(PatientAgeEnd)) {
 
                 } else {

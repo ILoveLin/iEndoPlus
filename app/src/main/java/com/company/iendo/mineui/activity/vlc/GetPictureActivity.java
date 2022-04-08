@@ -136,7 +136,6 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
     private static final int Record = 102;
     private static final int Record_Request = 103;
     private static final int Time = 104;
-    private static final int UDP_Hand = 106;   //握手
     //  private static final int UDP_Cold = 108;      //获取病例ID
     private static boolean UDP_RECODE_INIT_TAG = false; //首次进入该界面,查询是否录像的标识
     private static boolean UDP_RECODE_STATUS_TAG = UDP_RECODE_INIT_TAG; //每次请求的时候,需要再次请求状态,不然容易在未接受到消息的时候出现ui错乱的bug
@@ -230,6 +229,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
     private LinearLayout mMic;
     private String micUrl;
     private TextView mTvMicStatus;
+    private boolean isFirstInitData;
 
     /**
      * eventbus 刷新socket数据
@@ -296,7 +296,6 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                 LogUtils.e("======LiveServiceImpl==回调=event==获取当前设备参数==" + event.getData());
                 DeviceParamsBean deviceParamsBean = mGson.fromJson(event.getData(), DeviceParamsBean.class);
                 LogUtils.e("======LiveServiceImpl==回调=event==获取当前设备参数deviceParamsBean==" + deviceParamsBean.toString());
-
                 //设置Tab
                 setTypeTabData(deviceParamsBean);
 
@@ -379,6 +378,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
 
 
     private void setTypeTabData(DeviceParamsBean deviceParamsBean) {
+        isFirstInitData = true;
         DeviceParamsBean.Type01 type01 = deviceParamsBean.getType01(); //摄像机
         DeviceParamsBean.Type02 type02 = deviceParamsBean.getType02(); //光源
         if (type02 != null) {
@@ -395,8 +395,8 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             mRangeBar02Saturation.setProgress(Integer.parseInt(type01.getSaturation()));
 
             //清晰度
-            mEdit02Saturation.setText(type01.getSharpness());
-            mRangeBar02Saturation.setProgress(Integer.parseInt(type01.getSharpness()));
+            mEdit02Definition.setText(type01.getSharpness());
+            mRangeBar02Definition.setProgress(Integer.parseInt(type01.getSharpness()));
 
             //放大倍数           //显示是1到2.5倍,传值是0--15
             float rangeBarNeedSetData = CommonUtil.getRangeBarNeedSetData(type01.getZoomrate());
@@ -431,6 +431,8 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             } else {
                 mSwitchBlood.setChecked(true);
             }
+
+            isFirstInitData =false;
 
         }
 
@@ -657,7 +659,6 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                                         //tag为关闭状态(默认是关闭状态)点击的时候如果关闭状态就开启推流
                                         if ("stopStream".equals(mTvMicStatus.getTag())) {
                                             sendSocketPointMicMessage("1");
-
                                         }
                                     } else {
                                         toast("握手失败,请尝试再次链接");
@@ -739,8 +740,8 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
     public void sendSocketPointMessage(String CMDCode) {
         if (UDP_HAND_TAG) {
             HandBean handBean = new HandBean();
-            handBean.setHelloPc("HelloPc");
-            handBean.setComeFrom("Android");
+            handBean.setHelloPc("");
+            handBean.setComeFrom("");
             byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(handBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
                     CMDCode);
             if (("".equals(mSocketPort))) {
@@ -761,8 +762,8 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
      */
     public void sendHandLinkMessage() {
         HandBean handBean = new HandBean();
-        handBean.setHelloPc("HelloPc");
-        handBean.setComeFrom("Android");
+        handBean.setHelloPc("");
+        handBean.setComeFrom("");
         byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(handBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
                 Constants.UDP_HAND);
 
@@ -810,7 +811,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
     public void sendSocketPointShotMessage(String CMDCode) {
         if (UDP_HAND_TAG) {
             ShotPictureBean bean = new ShotPictureBean();
-            String spCaseID = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_Chose_CaseID, "");
+            String spCaseID = mMMKVInstace.decodeString(Constants.KEY_CurrentCaseID);
             String hexID = CalculateUtils.numToHex16(Integer.parseInt(spCaseID));
             bean.setRecordid(hexID);
             LogUtils.e("======GetPictureActivity==回调===获取当前病例==" + bean.toString());
@@ -1389,6 +1390,10 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
      */
     @Override
     public void onCheckedChanged(SwitchButton button, boolean checked) {
+        if (isFirstInitData){
+            return;
+        }
+        LogUtils.e("progress==switch===onCheckedChanged==");
         Type01Bean bean = new Type01Bean();
         Type01Bean.Type01 typeBean = new Type01Bean.Type01();
         //影像翻转取值：  0（无翻转），1（水平翻转），2（垂直翻转），3（水平翻转+垂直翻转）
@@ -1442,17 +1447,22 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
      */
     @Override
     public void onRangeChanged(RangeSeekBar view, float leftValue, float rightValue, boolean isFromUser) {
+        LogUtils.e("progress==onRangeChanged==");//拖动改变就回调
 
     }
 
 
     @Override
     public void onStartTrackingTouch(RangeSeekBar view, boolean isLeft) {
+        LogUtils.e("progress==onStartTrackingTouch=="+isLeft);
 
     }
 
     @Override
     public void onStopTrackingTouch(RangeSeekBar view, boolean isLeft) {
+        if (isFirstInitData){
+            return;
+        }
         float progress = view.getLeftSeekBar().getProgress();
         String round = (Math.round(progress) + "").replace(".", "");
         //创建摄像机数据bean
@@ -1614,11 +1624,14 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
     @Override
     public void onConnectionSuccessRtmp() {
         Log.e("TAG", "RtmpOnlyAudio===onConnectionSuccessRtmp==");
-        toast("链接成功");
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                toast("语音链接成功");
+                setMicStatus("startStream", "通话中..");
 
-        setMicStatus("startStream", "通话中..");
-
-
+            }
+        });
     }
 
     @Override
@@ -1630,7 +1643,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                 Log.e("TAG", "RtmpOnlyAudio===onConnectionFailedRtmp==");
 
                 Log.e("TAG", "RtmpOnlyAudio=====" + reason);
-                toast("Connection failed. " + reason);
+                toast("语音链接失败: " + reason);
                 rtmpOnlyAudio.stopStream();
 
             }
@@ -1645,7 +1658,16 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
     @Override
     public void onDisconnectRtmp() {
         Log.e("TAG", "RtmpOnlyAudio===onDisconnectRtmp==");
+        runOnUiThread(new Runnable() {
+            @SuppressLint("NewApi")
+            @Override
+            public void run() {
+                Log.e("TAG", "RtmpOnlyAudio===onConnectionFailedRtmp==");
 
+                toast("语音断开链接 " );
+
+            }
+        });
 //        runOnUiThread(new Runnable() {
 //            @Override
 //            public void run() {

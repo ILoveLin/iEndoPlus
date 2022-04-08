@@ -100,6 +100,7 @@
                                         app:shape_strokeColor="@color/color_9A9A9A" />
 
                                     <ImageView
+                                        android:id="@+id/iv_time_start"
                                         android:layout_width="@dimen/dp_14"
                                         android:layout_height="@dimen/dp_14"
                                         android:src="@drawable/selector_detail_dialog" />
@@ -139,6 +140,8 @@
                                         app:shape_strokeColor="@color/color_9A9A9A" />
 
                                     <ImageView
+                                        android:id="@+id/iv_time_end"
+
                                         android:layout_width="@dimen/dp_14"
                                         android:layout_height="@dimen/dp_14"
                                         android:src="@drawable/ic_icon_an" />
@@ -294,7 +297,7 @@
                                     android:layout_height="@dimen/dp_11"
                                     android:layout_gravity="center"
                                     android:layout_marginRight="@dimen/dp_1"
-                                    android:src="@drawable/ic_icon_age" />
+                                    android:src="@drawable/ic_icon_name" />
 
                                 <EditText
                                     android:paddingLeft="@dimen/dp_5"
@@ -325,7 +328,7 @@
                                     android:layout_weight="1"
                                     android:drawableRight="@drawable/selector_detail_dialog_search"
                                     android:gravity="center_vertical"
-                                    android:text="请选择性别"
+                                    android:hint="请选择性别"
                                     android:textColor="@color/color_9A9A9A"
                                     android:textSize="@dimen/sp_13" />
 
@@ -378,7 +381,14 @@
                                     android:layout_height="match_parent"
                                     android:layout_weight="3"
                                     android:gravity="center_vertical">
-
+                                    <ImageView
+                                        android:id="@+id/iv_age_tag"
+                                        android:layout_alignParentLeft="true"
+                                        android:layout_centerVertical="true"
+                                        android:layout_width="@dimen/dp_14"
+                                        android:layout_height="@dimen/dp_11"
+                                        android:layout_gravity="center"
+                                        android:src="@drawable/ic_icon_age" />
                                     <TextView
                                         android:id="@+id/tv_mid"
                                         android:layout_width="wrap_content"
@@ -389,6 +399,8 @@
                                         android:textSize="@dimen/sp_13" />
 
                                     <EditText
+                                        android:paddingLeft="@dimen/dp_5"
+                                        android:layout_toRightOf="@+id/iv_age_tag"
                                         android:id="@+id/edit_age_start"
                                         android:layout_width="match_parent"
                                         android:layout_height="@dimen/dp_35"
@@ -396,7 +408,7 @@
                                         android:layout_toLeftOf="@+id/tv_mid"
                                         android:layout_weight="1"
                                         android:background="@null"
-                                        android:hint="请输入姓名"
+                                        android:hint="请输入"
                                         android:singleLine="true"
                                         android:textColor="@color/color_9A9A9A"
                                         android:textColorHint="@color/color_9A9A9A"
@@ -410,7 +422,7 @@
                                         android:layout_toRightOf="@+id/tv_mid"
                                         android:layout_weight="1"
                                         android:background="@null"
-                                        android:hint="请输入姓名"
+                                        android:hint="请输入"
                                         android:paddingLeft="@dimen/dp_10"
                                         android:singleLine="true"
                                         android:textColor="@color/color_9A9A9A"
@@ -438,7 +450,7 @@
                                         android:layout_height="match_parent"
                                         android:layout_weight="1"
                                         android:gravity="center"
-                                        android:text="岁"
+                                        android:hint="岁"
                                         android:textColor="@color/color_9A9A9A"
                                         android:textSize="@dimen/sp_13" />
 
@@ -514,7 +526,7 @@
                                     android:layout_height="@dimen/dp_35"
                                     android:layout_weight="1"
                                     android:background="@null"
-                                    android:hint="请选择职业"
+                                    android:hint="请输入职业"
                                     android:inputType="phone"
                                     android:textColor="@color/color_9A9A9A"
                                     android:textColorHint="@color/color_9A9A9A"
@@ -535,7 +547,7 @@
                                     android:layout_weight="1"
                                     android:drawableRight="@drawable/selector_detail_dialog_search"
                                     android:gravity="center_vertical"
-                                    android:text="请选择婚否"
+                                    android:hint="请选择婚否"
                                     android:textColor="@color/color_9A9A9A"
                                     android:textSize="@dimen/sp_13" />
 
@@ -600,7 +612,7 @@
                                     android:layout_weight="1"
                                     android:background="@null"
                                     
-                                    android:hint="请选择科室"
+                                    android:hint="请输入科室"
                                     android:inputType="phone"
                                     android:textColor="@color/color_9A9A9A"
                                     android:textColorHint="@color/color_9A9A9A"
@@ -622,7 +634,7 @@
                                     android:background="@null"
                                     
                                     android:gravity="center_vertical"
-                                    android:hint="请选择设备"
+                                    android:hint="请输入设备"
                                     android:inputType="phone"
                                     android:textColor="@color/color_9A9A9A"
                                     android:textColorHint="@color/color_9A9A9A"
@@ -691,7 +703,7 @@
                                     android:layout_weight="1"
                                     android:background="@null"
                                     
-                                    android:hint="请选择检查医生"
+                                    android:hint="请输入检查医生"
                                     android:inputType="phone"
                                     android:textColor="@color/color_9A9A9A"
                                     android:textColorHint="@color/color_9A9A9A"
@@ -713,7 +725,7 @@
                                     android:background="@null"
                                     
                                     android:gravity="center_vertical"
-                                    android:hint="请选择送检医生"
+                                    android:hint="请输入送检医生"
                                     android:inputType="phone"
                                     android:text=""
                                     android:textColor="@color/color_9A9A9A"

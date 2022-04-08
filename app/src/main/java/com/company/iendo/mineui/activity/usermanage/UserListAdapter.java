@@ -79,20 +79,20 @@ public class UserListAdapter extends AppAdapter<UserListBean.DataDTO> {
                 mCurrentFlag.setVisibility(View.INVISIBLE);
             }
             mName.setText("" + item.getUserName());
-            //角色权限:0-管理员 1-操作员 2-查询员
+            //角色权限:0-管理员 1-操作员 2-普通用户
             switch (item.getRole()) {
                 case 0:
-                    if ("Admin".equals(item.getUserName())) {
-                        mRelo.setText("超级管理员");
-                    } else {
+//                    if ("Admin".equals(item.getUserName())) {
+//                        mRelo.setText("超级管理员");
+//                    } else {
                         mRelo.setText("管理员");
-                    }
+//                    }
                     break;
                 case 1:
                     mRelo.setText("操作员");
                     break;
                 case 2:
-                    mRelo.setText("查询员");
+                    mRelo.setText("普通用户");
                     break;
             }
         }

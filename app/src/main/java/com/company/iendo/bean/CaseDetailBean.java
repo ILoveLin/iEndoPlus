@@ -165,6 +165,8 @@ public class CaseDetailBean {
         private int ImageCount;
         @SerializedName("imagesCount")
         private int imagesCount;
+        @SerializedName("videosCount")
+        private int videosCount;
         @SerializedName("UpdateTime")
         private String UpdateTime;
         @SerializedName("EndoType")
@@ -256,6 +258,14 @@ public class CaseDetailBean {
 
         public void setTel(String Tel) {
             this.Tel = Tel;
+        }
+
+        public int getVideosCount() {
+            return videosCount;
+        }
+
+        public void setVideosCount(int videosCount) {
+            this.videosCount = videosCount;
         }
 
         public String getAddress() {

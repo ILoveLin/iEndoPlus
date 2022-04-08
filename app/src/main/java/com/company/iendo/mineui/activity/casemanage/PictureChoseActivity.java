@@ -424,8 +424,8 @@ public final class PictureChoseActivity extends AppActivity implements StatusAct
      */
     public void sendHandLinkMessage() {
         HandBean handBean = new HandBean();
-        handBean.setHelloPc("HelloPc");
-        handBean.setComeFrom("Android");
+        handBean.setHelloPc("");
+        handBean.setComeFrom("");
         byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(handBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
                 Constants.UDP_HAND);
         if (("".equals(mSocketPort))) {
@@ -445,7 +445,7 @@ public final class PictureChoseActivity extends AppActivity implements StatusAct
     public void sendSocketPointMessage(String CMDCode) {
         if (UDP_HAND_TAG) {
             ShotPictureBean shotPictureBean = new ShotPictureBean();
-            String spCaseID = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_Chose_CaseID, "");
+            String spCaseID = mMMKVInstace.decodeString(Constants.KEY_CurrentCaseID);
             String s = CalculateUtils.hex10To16Result4(Integer.parseInt(spCaseID));
             shotPictureBean.setRecordid(s);
             byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(shotPictureBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,

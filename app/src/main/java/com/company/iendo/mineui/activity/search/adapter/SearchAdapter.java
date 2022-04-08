@@ -31,17 +31,24 @@ public class SearchAdapter extends AppAdapter<SearchListBean.DataDTO> {
 
     private final class ViewHolder extends AppAdapter<?>.ViewHolder {
 
-        private final TextView mTextView;
+        private final TextView mName, mAge, mNum;
+        private TextView mSexLogo;
 
         private ViewHolder() {
-            super(R.layout.status_item);
-            mTextView = findViewById(R.id.tv_status_text);
+            super(R.layout.item_case_listv3);
+            mName = findViewById(R.id.tv_case_name);
+            mSexLogo = findViewById(R.id.iv_sex_logo);
+            mAge = findViewById(R.id.tv_case_age);
+            mNum = findViewById(R.id.tv_case_num);
         }
 
         @Override
         public void onBindView(int position) {
             SearchListBean.DataDTO item = getItem(position);
-            mTextView.setText("Name:" + item.getName() + "ID:" + item.getID());
+            mName.setText(item.getName() + "");
+            mAge.setText(item.getPatientAge() + " " + item.getAgeUnit());
+            mNum.setText(item.getCaseNo());
+            mSexLogo.setText(item.getSex() + "");
         }
     }
 }

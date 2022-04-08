@@ -226,7 +226,7 @@
 
             <TextView
                 style="@style/CaseTextViewStyle"
-                android:text="病例号" />
+                android:text="病历号" />
 
             <com.hjq.widget.view.ClearEditText
                 android:id="@+id/et_03_case_num"

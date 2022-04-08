@@ -670,7 +670,8 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                                 LogUtils.e("登录==userid==" + mBean.getData().getUserID());
                                 SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Current_Login_Role, mBean.getData().getRole() + "");
                                 SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Current_Login_UserID, mBean.getData().getUserID() + "");
-                                SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Current_Login_UserName, mPhoneView.getText().toString());
+//                                SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Current_Login_UserName, mPhoneView.getText().toString());
+                                mMMKVInstace.encode(Constants.KEY_CurrentLoginUserName, mPhoneView.getText().toString());
                                 SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Current_Login_Password, mPasswordView.getText().toString());
                                 SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Flag_UserDBSave, true);
                                 SharePreferenceUtil.put(LoginActivity.this, Constants.Is_Logined, true);
@@ -806,7 +807,9 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
             String password1 = bean.getPassword();
             if (password1.equals(password)) {
                 SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Current_Login_Role, bean.getRelo() + "");
-                SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Current_Login_UserName, username);
+//                SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Current_Login_UserName, username);
+                mMMKVInstace.encode(Constants.KEY_CurrentLoginUserName, mPhoneView.getText().toString());
+
                 SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Current_Login_Password, password);
                 SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Flag_UserDBSave, true);
                 SharePreferenceUtil.put(LoginActivity.this, Constants.Is_Logined, true);

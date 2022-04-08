@@ -2,46 +2,38 @@ package com.company.iendo.mineui.activity.setting;
 
 import android.net.Uri;
 import android.os.Build;
-import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
 
 import com.bumptech.glide.load.MultiTransformation;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
-import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.company.iendo.R;
 import com.company.iendo.action.StatusAction;
 import com.company.iendo.app.AppActivity;
-import com.company.iendo.bean.DetailPictureBean;
 import com.company.iendo.bean.HospitalBean;
 import com.company.iendo.bean.HospitalUpdateBean;
 import com.company.iendo.bean.event.SocketRefreshEvent;
-import com.company.iendo.http.api.UpdateImageApi;
+import com.company.iendo.bean.socket.HandBean;
 import com.company.iendo.http.glide.GlideApp;
-import com.company.iendo.http.model.HttpData;
-import com.company.iendo.mineui.activity.MainActivity;
 import com.company.iendo.other.Constants;
 import com.company.iendo.other.HttpConstant;
 import com.company.iendo.ui.activity.ImageCropActivity;
 import com.company.iendo.ui.activity.ImagePreviewActivity;
 import com.company.iendo.ui.activity.ImageSelectActivity;
+import com.company.iendo.utils.CalculateUtils;
 import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.PictureFileUtil;
 import com.company.iendo.utils.RegexUtils;
+import com.company.iendo.utils.SocketUtils;
 import com.company.iendo.widget.StatusLayout;
 import com.gyf.immersionbar.ImmersionBar;
 import com.hjq.bar.OnTitleBarListener;
 import com.hjq.bar.TitleBar;
-import com.hjq.http.EasyHttp;
-import com.hjq.http.listener.HttpCallback;
 import com.hjq.http.model.FileContentResolver;
 import com.hjq.widget.view.ClearEditText;
-import com.makeramen.roundedimageview.RoundedImageView;
-import com.umeng.commonsdk.debug.D;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -50,19 +42,11 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 /**
  * company：江西神州医疗设备有限公司
@@ -71,7 +55,7 @@ import okhttp3.Response;
  * desc：医院信息
  */
 public class HospitalActivity extends AppActivity implements StatusAction {
-
+    private static boolean UDP_HAND_TAG = false; //握手成功表示  true 成功
     private TitleBar mTitlebar;
     private StatusLayout mStatusLayout;
     /**
@@ -126,9 +110,58 @@ public class HospitalActivity extends AppActivity implements StatusAction {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void SocketRefreshEvent(SocketRefreshEvent event) {
         switch (event.getUdpCmd()) {
+            case Constants.UDP_HAND://刷新医院信息
+                UDP_HAND_TAG = true;
+                break;
             case Constants.UDP_40://刷新医院信息
                 sendRequest();
                 break;
+        }
+
+    }
+
+    /**
+     * 发送握手消息
+     */
+    public void sendHandLinkMessage() {
+        HandBean handBean = new HandBean();
+        handBean.setHelloPc("");
+        handBean.setComeFrom("");
+        byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(handBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
+                Constants.UDP_HAND);
+
+        if (("".equals(mSocketPort))) {
+            toast("通讯端口不能为空");
+            return;
+        }
+        LogUtils.e("SocketUtils===发送消息==点对点==detailCaseActivity==sendByteData==" + sendByteData);
+        LogUtils.e("SocketUtils===发送消息==点对点==detailCaseActivity==mSocketPort==" + mSocketPort);
+
+        SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), this);
+//        SocketManage.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort));
+    }
+
+    /**
+     * 采图--->发送点对点消息,必须握手成功
+     *
+     * @param CMDCode 命令cmd
+     */
+    public void sendSocketPointRefreshData(String CMDCode) {
+        if (UDP_HAND_TAG) {
+            HandBean handBean = new HandBean();
+            handBean.setHelloPc("");
+            handBean.setComeFrom("");
+            LogUtils.e("======GetPictureActivity==回调===获取当前病例==" + handBean.toString());
+            byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(handBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
+                    CMDCode);
+            if (("".equals(mSocketPort))) {
+                toast("通讯端口不能为空");
+                return;
+            }
+            SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), HospitalActivity.this);
+        } else {
+            toast("请先建立握手链接");
+            sendHandLinkMessage();
         }
 
     }
@@ -174,6 +207,8 @@ public class HospitalActivity extends AppActivity implements StatusAction {
         boolean postCode = RegexUtils.checkPostcode(mNumber.getText().toString().trim());
         if (postCode) {
             showLoading();
+            LogUtils.e("医院信息==e=szPostCode=" + mNumber.getText().toString().trim());
+
             OkHttpUtils.post()
                     .url(mBaseUrl + HttpConstant.CaseManager_CaseUpdateHospitalInfo)
                     .addParams("ID", mID)//内部ID
@@ -192,14 +227,20 @@ public class HospitalActivity extends AppActivity implements StatusAction {
                             showError(listener -> {
                                 sendRequest();
                             });
+                            LogUtils.e("医院信息==e==" + e);
+
                         }
 
                         @Override
                         public void onResponse(String response, int id) {
                             showComplete();
+                            LogUtils.e("医院信息==e=response=" + response);
+
                             HospitalUpdateBean mBean = mGson.fromJson(response, HospitalUpdateBean.class);
                             if ("" != response && 0 == mBean.getCode()) {  //成功
                                 toast("修改成功!");
+                                sendSocketPointRefreshData(Constants.UDP_40);
+
                             } else {
                                 showError(listener -> {
                                     sendRequest();
@@ -257,11 +298,14 @@ public class HospitalActivity extends AppActivity implements StatusAction {
         mNumber.setText("" + data.getSzPostCode());
         szPostCode = data.getSzPostCode();
         //http://ip:port/DefaultLogo.jpg
-        String szIconPath = HttpConstant.Common + "/" + data.getSzIconPath();
+        String szIconPath = mBaseUrl+ "/" + data.getSzIconPath();
+        LogUtils.e("医院信息====" + szIconPath);
 
         // 显示圆角的 ImageView
         GlideApp.with(this)
-                .load(R.drawable.update_app_top_bg)
+                .load(szIconPath)
+                .placeholder(R.mipmap.bg_splash_des) //占位符 也就是加载中的图片，可放个gif
+                .error(R.mipmap.bg_splash_des)
                 .transform(new MultiTransformation<>(new CenterCrop(), new RoundedCorners((int) getResources().getDimension(R.dimen.dp_5))))
                 .into(mAvatarView);
 
@@ -381,6 +425,12 @@ public class HospitalActivity extends AppActivity implements StatusAction {
                         LogUtils.e("logo====response====" + response);
                     }
                 });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        sendHandLinkMessage();
     }
 
     @Override

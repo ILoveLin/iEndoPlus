@@ -73,8 +73,8 @@ import okhttp3.Call;
 public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabListener, ViewPager.OnPageChangeListener {
     private NestedViewPager mViewPager;
     private RecyclerView mTabView;
-    private TabAdapter mTabAdapter;
-    private TitleBar mTitlebar;
+    public static TabAdapter mTabAdapter;
+    public static TitleBar mTitlebar;
     private TextView mDown;
     private TextView mDelete;
     private TextView mPicture;
@@ -90,10 +90,53 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
     private boolean isPrinted;   //true,    是否已经打印过,true表示打印过了,不能编辑
     private String mCreatedByWho;
     private String itemUserName;
+    private String currentCaseName;
+    private String videosCounts;
+    private String imageCounts;
 
     @Override
     protected int getLayoutId() {
         return R.layout.activity_case_detail;
+    }
+
+    //获取病例图片数目
+    private void sendImageRequest(String mCaseID) {
+        OkHttpUtils.get()
+                .url(mBaseUrl + HttpConstant.CaseManager_CaseInfo)
+                .addParams("ID", mCaseID)
+                .build()
+                .execute(new StringCallback() {
+
+
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        toast("请求错误" + e);
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        if ("" != response) {
+                            LogUtils.e("详情界面---截图界面===病例详情response==itemID=" + mCaseID);
+                            LogUtils.e("详情界面---截图界面===病例详情response===" + response);
+
+                            CaseDetailBean mBean = mGson.fromJson(response, CaseDetailBean.class);
+                            if (0 == mBean.getCode()) {  //成功
+                                imageCounts = mBean.getData().getImagesCount() + "";
+                                videosCounts = mBean.getData().getVideosCount() + "";
+                                LogUtils.e("详情界面---截图界面===病例详情response==imageCount=" + imageCounts);
+                                DetailCaseActivity.mTabAdapter.setItem(1, "图片(" + imageCounts + ")");
+                                DetailCaseActivity.mTabAdapter.setItem(2, "视频(" + videosCounts + ")");
+
+
+                            } else {
+                                toast("请求错误");
+                            }
+                        } else {
+                            toast("请求错误");
+
+                        }
+                    }
+                });
     }
 
     @Override
@@ -124,6 +167,7 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
 
     }
 
+
     private void responseListener() {
         sendGetEditStatueRequest();
         setOnClickListener(R.id.linear_get_picture, R.id.linear_get_report, R.id.linear_delete, R.id.linear_down);
@@ -134,11 +178,14 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
                     //退出界面的时候必须保存数据
                     if (null != mOnEditStatusListener) {
                         mOnEditStatusListener.onEditStatus(true, true);
+//                        mOnEditStatusListener.onEditStatus(true, true);
                     }
+
+
+                } else {
                     postDelayed(() -> {
                         finish();
                     }, 100);
-                } else {
                 }
 
 
@@ -231,6 +278,7 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
             }
         }
     }
+
 
     /**
      * 获取病例详情,
@@ -385,6 +433,11 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
     public void SocketRefreshEvent(SocketRefreshEvent event) {
         String data = event.getData();
         switch (event.getUdpCmd()) {
+            case Constants.UDP_CUSTOM_FINISH://自定义信息,结束当前界面
+                postDelayed(() -> {
+                    finish();
+                }, 100);
+                break;
             case Constants.UDP_HAND://握手
                 UDP_HAND_TAG = true;
                 //获取当前病例ID
@@ -513,7 +566,7 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
     public void sendSocketPointMessage(String CMDCode) {
         if (UDP_HAND_TAG) {
             ShotPictureBean shotPictureBean = new ShotPictureBean();
-            String spCaseID = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_Chose_CaseID, "");
+            String spCaseID = mMMKVInstace.decodeString(Constants.KEY_CurrentCaseID);
             String s = CalculateUtils.hex10To16Result4(Integer.parseInt(spCaseID));
             shotPictureBean.setRecordid(s);
             byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(shotPictureBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
@@ -538,8 +591,8 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
      */
     public void sendHandLinkMessage() {
         HandBean handBean = new HandBean();
-        handBean.setHelloPc("HelloPc");
-        handBean.setComeFrom("Android");
+        handBean.setHelloPc("");
+        handBean.setComeFrom("");
         byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(handBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
                 Constants.UDP_HAND);
 
@@ -563,6 +616,7 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
         super.onResume();
         LogUtils.e("onResume===DetailCaseActivity===开始建立握手链接!");
         sendHandLinkMessage();
+        sendImageRequest(currentItemID);
     }
 
     @Override
@@ -574,7 +628,10 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
     @Override
     protected void initData() {
         currentItemID = getIntent().getStringExtra("itemID");
+        currentCaseName = getIntent().getStringExtra("Name");
         itemUserName = getIntent().getStringExtra("itemUserName");
+        mTitlebar.setTitle(currentCaseName + "");
+
         mTabAdapter.addItem("详情");
         mTabAdapter.addItem("图片");
         mTabAdapter.addItem("视频");
@@ -654,8 +711,13 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
                         //弹出对话框显示历史报告,还是获取新的报告
                         showSingleDialog(intent);
                     } else {
-                        mOnEditStatusListener.onGetReport();
-                        startActivity(intent);
+                        boolean b = mMMKVInstace.decodeBool(Constants.KEY_CanPrint);
+                        if (b) {
+                            mOnEditStatusListener.onGetReport();
+                            startActivity(intent);
+                        } else {
+                            toast("当前账号无权限修改病历");
+                        }
                     }
 
                     break;
@@ -673,8 +735,8 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
     private void showSingleDialog(Intent intent) {
         // 单选对话框
         new SelectDialog.Builder(this)
-                .setTitle("请选择")
-                .setList("获取报告", "历史报告")
+                .setTitle("当前病例已经生产报告")
+                .setList("预览报告", "重新生成")
                 // 设置单选模式
                 .setSingleSelect()
                 // 设置默认选中
@@ -686,9 +748,14 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
                         String substring = data.toString().substring(1, 2);
                         LogUtils.e("确定了=" + substring);
                         String str = data.get(Integer.parseInt(substring));
-                        if ("获取报告".equals(str)) {  //进入图片选择界面,选择获取新的报告
-                            mOnEditStatusListener.onGetReport();
-                            startActivity(intent);
+                        if ("获取报告".equals(str)) {  //进入图片选择界面,选择获取新的报告,需要获取CanPrint字段判断是否有能打印的权限
+                            boolean b = mMMKVInstace.decodeBool(Constants.KEY_CanPrint);
+                            if (b) {
+                                mOnEditStatusListener.onGetReport();
+                                startActivity(intent);
+                            } else {
+                                toast("当前账号无权限修改病历");
+                            }
                         } else { //获取历史报告
                             showStartReportAnim();
                         }

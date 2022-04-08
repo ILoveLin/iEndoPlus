@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.view.View;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.company.iendo.R;
@@ -20,14 +21,14 @@ import com.gyf.immersionbar.ImmersionBar;
 import com.hjq.base.BaseAdapter;
 import com.hjq.widget.layout.WrapRecyclerView;
 import com.scwang.smart.refresh.layout.SmartRefreshLayout;
-import com.scwang.smart.refresh.layout.api.RefreshLayout;
-import com.scwang.smart.refresh.layout.listener.OnRefreshLoadMoreListener;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import okhttp3.Call;
 
@@ -37,7 +38,7 @@ import okhttp3.Call;
  * time：2021/11/1 13:46
  * desc：搜索界面
  */
-public class SearchActivity extends AppActivity implements StatusAction, BaseAdapter.OnItemClickListener, OnRefreshLoadMoreListener {
+public class SearchActivity extends AppActivity implements StatusAction, BaseAdapter.OnItemClickListener {
     private List<SearchListBean.DataDTO> mDataLest = new ArrayList<>();
     private SmartRefreshLayout mRefreshLayout;
     private WrapRecyclerView mRecyclerView;
@@ -62,20 +63,22 @@ public class SearchActivity extends AppActivity implements StatusAction, BaseAda
         String checkDateStart = (String) parmasMap.get("CheckDateStart");
         String CheckDateEnd = (String) parmasMap.get("CheckDateEnd");
         String Married = (String) parmasMap.get("Married");
-
-
-        LogUtils.e("parmasMap=02==参数===" + checkDateStart);
-        LogUtils.e("parmasMap=02==参数===" + CheckDateEnd);
-        LogUtils.e("parmasMap=02==参数===" + Married);
-//        setOnClickListener(R.id.tv_back);
+        // Iterator entrySet 获取key and value
+        Iterator<Map.Entry<Integer, Integer>> it = parmasMap.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<Integer, Integer> entry = it.next();
+            LogUtils.e(entry.getKey() + ":" + entry.getValue());
+            // it.remove(); 删除元素
+        }
     }
 
     @Override
     protected void initData() {
         mAdapter = new SearchAdapter(SearchActivity.this);
         mAdapter.setOnItemClickListener(this);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 2);
+        mRecyclerView.setLayoutManager(gridLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
-
         mRecyclerView.addItemDecoration(new MyItemDecoration(this, 1, R.drawable.shape_divideritem_decoration));
         mAdapter.setData(mDataLest);
     }
@@ -97,7 +100,6 @@ public class SearchActivity extends AppActivity implements StatusAction, BaseAda
                     @Override
                     public void onError(Call call, Exception e, int id) {
                         LogUtils.e("=TAG=sendRequest=onError==" + e.toString());
-
                         showError(listener -> {
                             sendRequest(systemDate);
                         });
@@ -118,6 +120,7 @@ public class SearchActivity extends AppActivity implements StatusAction, BaseAda
                                     showEmpty();
                                 }
                             } else {
+                                toast(mBean.getMsg() + "");
                                 showError(listener -> {
                                     sendRequest(systemDate);
                                 });
@@ -150,31 +153,31 @@ public class SearchActivity extends AppActivity implements StatusAction, BaseAda
      */
     @Override
     public void onItemClick(RecyclerView recyclerView, View itemView, int position) {
-        SearchListBean.DataDTO item = mAdapter.getItem(position);
-        toast(item.getCheckDate());
+//        SearchListBean.DataDTO item = mAdapter.getItem(position);
+//        toast(item.getCheckDate());
     }
 
-    /**
-     * {@link OnRefreshLoadMoreListener}
-     */
-
-    @Override
-    public void onRefresh(@NonNull RefreshLayout refreshLayout) {
-        postDelayed(() -> {
-            mAdapter.clearData();
-            mAdapter.setData(mDataLest);
-            mRefreshLayout.finishRefresh();
-        }, 1000);
-    }
-
-    @Override
-    public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
-        postDelayed(() -> {
-            mRefreshLayout.finishLoadMore();
-            mAdapter.setLastPage(true);
-            mRefreshLayout.setNoMoreData(mAdapter.isLastPage());
-        }, 1000);
-    }
+//    /**
+//     * {@link OnRefreshLoadMoreListener}
+//     */
+//
+//    @Override
+//    public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+//        postDelayed(() -> {
+//            mAdapter.clearData();
+//            mAdapter.setData(mDataLest);
+//            mRefreshLayout.finishRefresh();
+//        }, 1000);
+//    }
+//
+//    @Override
+//    public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
+//        postDelayed(() -> {
+//            mRefreshLayout.finishLoadMore();
+//            mAdapter.setLastPage(true);
+//            mRefreshLayout.setNoMoreData(mAdapter.isLastPage());
+//        }, 1000);
+//    }
 
 
     @NonNull

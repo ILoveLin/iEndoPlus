@@ -90,7 +90,7 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
     protected void initData() {
         mLoginUserID = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_Login_UserID, "");
         mLoginPassword = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_Login_Password, "");
-        mLoginUserName = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_Login_UserName, "");
+        mLoginUserName = mMMKVInstace.decodeString(Constants.KEY_CurrentLoginUserName);
 //         最终确定确实表现:0管理员，1操作员，2普通用户，3自定义
         mLoginReol = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_Login_Role, "");
         String romAvailableSize = FileUtil.getROMAvailableSize(getActivity());
@@ -230,8 +230,8 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
      */
     public void sendProgramExitMessage() {
         HandBean handBean = new HandBean();
-        handBean.setHelloPc("HelloPc");
-        handBean.setComeFrom("Android");
+        handBean.setHelloPc("");
+        handBean.setComeFrom("");
         byte[] sendByteData = CalculateUtils.getSendByteData(getAttachActivity(), mGson.toJson(handBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
                 Constants.UDP_FE);
 
@@ -251,7 +251,7 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
      */
     private void showChangePasswordDialog() {
         new Input2Dialog.Builder(getActivity())
-                .setTitle("提示")
+                .setTitle("修改密码")
                 .setHint("请输入原密码")
                 .set2Hint("请输入新密码")
                 .setCancel("取消")
@@ -298,7 +298,7 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
                             toast(mBean.getMsg() + "");
 
                             if (mBean.getCode().equals("0")) {
-                                toast(mBean.getMsg() + "");
+                                toast(  "修改成功");
                             }
                         } else {
                             showError();

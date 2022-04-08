@@ -125,7 +125,7 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
             @Override
             public void onClick(View v) {
                 startDialogIconAnim(true, iv_01_i_tell_you);
-                showITellyouMenuDialog(lines_01_i_tell_you, "11",iv_01_i_tell_you);
+                showITellyouMenuDialog(lines_01_i_tell_you, "11", iv_01_i_tell_you);
 
             }
         });
@@ -262,6 +262,8 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
         if (!"职业".equals(Occupatior)) {
             mParamsMap.put("Occupatior", Occupatior);
         }
+        String SubmitDoctor = et_01_get_check_doctor.getText().toString().trim();       //送检医生      ???
+
         String InsuranceID = et_03_protection_num.getText().toString().trim();       //社保卡ID
         String NativePlace = et_03_native_place.getText().toString().trim();       //籍贯
 //        String IsInHospital = et_03_in_hospital_num.getText().toString().trim();       //是否还在医院住院  ???
@@ -303,13 +305,14 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
 
 
         //添加三个必须添加的参数
-        String UserName = (String) SharePreferenceUtil.get(AddCaseActivity.this, SharePreferenceUtil.Current_Login_UserName, "Admin");
+        String UserName = mMMKVInstace.decodeString(Constants.KEY_CurrentLoginUserName);
         String EndoType = (String) SharePreferenceUtil.get(AddCaseActivity.this, SharePreferenceUtil.Current_EndoType, "3");
         mParamsMap.put("Name", et_01_name.getText().toString().trim());
         mParamsMap.put("UserName", UserName);
         mParamsMap.put("EndoType", endoType);
         mParamsMap.put("UserID", mUserID);
         mParamsMap.put("Tel", Tel);
+        mParamsMap.put("SubmitDoctor", SubmitDoctor);
         mParamsMap.put("Address", Address);
         mParamsMap.put("CardID", CardID);
         mParamsMap.put("MedHistory", MedHistory);
@@ -397,8 +400,8 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
      */
     public void sendHandLinkMessage() {
         HandBean handBean = new HandBean();
-        handBean.setHelloPc("HelloPc");
-        handBean.setComeFrom("Android");
+        handBean.setHelloPc("");
+        handBean.setComeFrom("");
         byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(handBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
                 Constants.UDP_HAND);
         if (("".equals(mSocketPort))) {
@@ -417,8 +420,8 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
     public void sendSocketPointMessage(String CMDCode) {
         if (UDP_HAND_TAG) {
             HandBean handBean = new HandBean();
-            handBean.setHelloPc("HelloPc");
-            handBean.setComeFrom("Android");
+            handBean.setHelloPc("");
+            handBean.setComeFrom("");
             byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(handBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
                     CMDCode);
             if (("".equals(mSocketPort))) {

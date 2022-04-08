@@ -70,6 +70,15 @@ public class Constants {
 
 
     /**
+     * 接受线程需要实时获取的数据
+     */
+    public static final String KEY_CurrentCaseID = "KEY_CurrentCaseID";                     //当前选中的病例ID
+    public static final String KEY_CurrentLoginUserName = "KEY_CurrentLoginUserName";            //当前登录的用户名
+
+
+
+
+    /**
      * toast 提示语
      */
 
@@ -89,6 +98,7 @@ public class Constants {
     public static final String UDP_13 = "13";                    //更新病历     本地监听,到这个消息病例列表需要重新请求数据,病例详情界面如果当前的回调的caseid==当前操作id,这个界面也需要刷新
     public static final String UDP_14 = "14";                    //删除病历
     public static final String UDP_CUSTOM14 = "UDP_CUSTOM14";    //自定义命令     在图像采集界面,接受到删除病例,需要退到病例列表界面而不是回退病例详情界面
+    public static final String UDP_CUSTOM_FINISH = "UDP_CUSTOM_FINISH";    //自定义命令     结束DetailCaseActivity界面
     public static final String UDP_15 = "15";                    //新增图片（采图）
     public static final String UDP_F1 = "F1";                    //预览报告
     public static final String UDP_F2 = "F2";                    //打印报告

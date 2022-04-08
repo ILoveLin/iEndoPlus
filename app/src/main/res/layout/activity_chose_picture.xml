@@ -12,7 +12,6 @@
         android:id="@+id/titlebar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:rightTitle="取消"
         app:rightTitleColor="@color/color_25A5FFA"
         app:rightTitleSize="@dimen/sp_13"
         app:title="选择报告图片" />

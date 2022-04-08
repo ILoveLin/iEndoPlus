@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.company.iendo.other.Constants;
 import com.company.iendo.utils.SharePreferenceUtil;
 import com.google.gson.Gson;
 import com.gyf.immersionbar.ImmersionBar;
@@ -35,7 +36,7 @@ public abstract class TitleBarFragment<A extends AppActivity> extends AppFragmen
     /** 状态栏沉浸 */
     private ImmersionBar mImmersionBar;
     public static String currentIP;
-
+    public String mCaseID,mLoginUserName;
     public  Gson mGson;
     public String endoType;
     public String mBaseUrl;  //当前用户的头部url
@@ -46,11 +47,11 @@ public abstract class TitleBarFragment<A extends AppActivity> extends AppFragmen
     public String mSocketOrLiveIP;       //socket或者直播通讯的ip
     public String mSocketPort;           //socket通讯端口
     public MMKV mMMKVInstace;
-
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mGson = GsonFactory.getSingletonGson();
+        mMMKVInstace = MMKV.defaultMMKV();
 
         // 设置标题栏点击监听
         if (getTitleBar() != null) {
@@ -66,9 +67,9 @@ public abstract class TitleBarFragment<A extends AppActivity> extends AppFragmen
                 ImmersionBar.setTitleBar(this, getTitleBar());
             }
         }
-        mMMKVInstace = MMKV.defaultMMKV();
         endoType = (String) SharePreferenceUtil.get(getAttachActivity(), SharePreferenceUtil.Current_EndoType, "3");
-
+        mCaseID = mMMKVInstace.decodeString(Constants.KEY_CurrentCaseID);
+        mLoginUserName = mMMKVInstace.decodeString(Constants.KEY_CurrentLoginUserName);
         mBaseUrl = (String) SharePreferenceUtil.get(getAttachActivity(), SharePreferenceUtil.Current_BaseUrl, "192.167.132.102");
         endoType = (String) SharePreferenceUtil.get(getAttachActivity(), SharePreferenceUtil.Current_EndoType, "3");
         mUserID = (String) SharePreferenceUtil.get(getAttachActivity(), SharePreferenceUtil.Current_Login_UserID, "3");

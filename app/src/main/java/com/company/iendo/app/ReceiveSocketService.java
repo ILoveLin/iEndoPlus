@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.IBinder;
-import android.widget.Toast;
 
 import com.company.iendo.bean.UserReloChanged;
 import com.company.iendo.bean.event.SocketRefreshEvent;
@@ -22,10 +21,8 @@ import com.company.iendo.bean.socket.getpicture.UserIDBean;
 import com.company.iendo.other.Constants;
 import com.company.iendo.utils.CalculateUtils;
 import com.company.iendo.utils.LogUtils;
-import com.company.iendo.utils.SharePreferenceUtil;
 import com.google.gson.Gson;
 import com.hjq.gson.factory.GsonFactory;
-import com.lzh.easythread.EasyThread;
 import com.tencent.mmkv.MMKV;
 import com.xdandroid.hellodaemon.AbsWorkService;
 
@@ -33,13 +30,8 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.SocketAddress;
-import java.net.SocketException;
-import java.util.concurrent.TimeUnit;
 
-import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
 
 
@@ -266,7 +258,7 @@ public class ReceiveSocketService extends AbsWorkService {
 //                                                    LogUtils.e("======GetPictureActivity==回调===CMD=jsonID==" + jsonID);
                                                 String jsonID = CalculateUtils.hex16To10(mUserIDBean.getRecordid()) + "";
                                                 //必须从新取数据不然会错乱
-                                                String spCaseID = (String) SharePreferenceUtil.get(getApplicationContext(), SharePreferenceUtil.Current_Chose_CaseID, "");
+                                                String spCaseID = MMKV.defaultMMKV().decodeString(Constants.KEY_CurrentCaseID);
                                                 LogUtils.e("======GetPictureActivity==回调===itemID=spCaseID=" + spCaseID);
                                                 LogUtils.e("======GetPictureActivity==回调===jsonID=jsonID=" + jsonID);
                                                 if (spCaseID.equals(jsonID)) {
@@ -401,7 +393,7 @@ public class ReceiveSocketService extends AbsWorkService {
                                                 break;
                                             case Constants.UDP_F7://通知权限变动
                                                 LogUtils.e("======LiveServiceImpl==回调===通知权限变动==");
-                                                String mLoginUserName = (String) SharePreferenceUtil.get(getApplicationContext(), SharePreferenceUtil.Current_Login_UserName, "3");
+                                              String  mLoginUserName = MMKV.defaultMMKV().decodeString(Constants.KEY_CurrentLoginUserName);
                                                 UserReloChanged reloBean = mGson.fromJson(str, UserReloChanged.class);
                                                 if (mLoginUserName.equals(reloBean.getUsername())) {
                                                     event.setTga(true);
@@ -430,7 +422,7 @@ public class ReceiveSocketService extends AbsWorkService {
 //                            lock.release();
                             } else {
                                 LogUtils.e("保活服务开启======LiveServiceImpl==回调==Thread监听的==不!==相等");
-                                LogUtils.e("保活服务开启======LiveServiceImpl==回调==Thread监听的==不!==相等==线程名=：%s"+Thread.currentThread().getName()+",关闭线程");
+                                LogUtils.e("保活服务开启======LiveServiceImpl==回调==Thread监听的==不!==相等==线程名=：%s" + Thread.currentThread().getName() + ",关闭线程");
                                 break;//不相等的直接跳出接收,关闭线程
                             }
 

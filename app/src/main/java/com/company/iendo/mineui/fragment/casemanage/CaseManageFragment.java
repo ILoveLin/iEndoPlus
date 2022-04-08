@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import com.company.iendo.R;
 import com.company.iendo.action.StatusAction;
 import com.company.iendo.app.TitleBarFragment;
+import com.company.iendo.bean.CaseDetailBean;
 import com.company.iendo.bean.CaseManageListBean;
 import com.company.iendo.bean.UserReloBean;
 import com.company.iendo.bean.ZXBean;
@@ -90,6 +91,7 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
     private String currentChoseDate;
     private String endoType;
     private ImageView mAnim;
+    private String imageCounts;
 
     public static CaseManageFragment newInstance() {
         return new CaseManageFragment();
@@ -111,7 +113,7 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
         mStatusLayout = findViewById(R.id.b_hint);
         mTitle.setText(DateUtil.getSystemDate());
         currentChoseDate = mTitle.getText().toString().trim();
-        setOnClickListener(R.id.ib_right, R.id.ib_left, R.id.tv_title,R.id.iv_tag_anim, R.id.iv_tag_anim);
+        setOnClickListener(R.id.ib_right, R.id.ib_left, R.id.tv_title, R.id.iv_tag_anim, R.id.iv_tag_anim);
         ObjectAnimator animator = ObjectAnimator.ofFloat(mAnim, "rotation", 0f, 180f);
         animator.setDuration(100);
         animator.start();
@@ -137,7 +139,7 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
                 //跳转病例添加界面
                 if (mMMKVInstace.decodeBool(Constants.KEY_CanNew)) {
                     startActivity(AddCaseActivity.class);
-                }else {
+                } else {
                     toast(Constants.HAVE_NO_PERMISSION);
                 }
                 break;
@@ -285,6 +287,7 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
 
     }
 
+
     /**
      * {@link BaseAdapter.OnItemClickListener}
      *
@@ -296,10 +299,11 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
     public void onItemClick(RecyclerView recyclerView, View itemView, int position) {
         CaseManageListBean.DataDTO item = mAdapter.getItem(position);
         LogUtils.e("======GetPictureActivity=====Handler接受====item==" + item.toString());
-        SharePreferenceUtil.put(getActivity(), SharePreferenceUtil.Current_Chose_CaseID, item.getID() + "");
+        mMMKVInstace.encode(Constants.KEY_CurrentCaseID, item.getID() + "");
         Intent intent = new Intent(getActivity(), DetailCaseActivity.class);
         ((MainActivity) getActivity()).setCurrentItemID(item.getID() + "");
         LogUtils.e("itemID==" + item.getID() + "");
+        intent.putExtra("Name", item.getName() + "");
         intent.putExtra("itemID", item.getID() + "");
         intent.putExtra("itemUserName", item.getUserName() + "");
         startActivity(intent);
@@ -378,7 +382,7 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
                 break;
 
             case Constants.UDP_F7://权限通知变动,在病例列表,病例详情,和图像采集三个界面相互监听,发现了请求后台更新本地权限
-                if (event.getTga()){
+                if (event.getTga()) {
                     requestCurrentPermission();
                 }
                 break;

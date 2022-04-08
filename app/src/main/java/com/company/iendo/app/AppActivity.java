@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 
+import com.company.iendo.other.Constants;
 import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.SharePreferenceUtil;
 import com.google.gson.Gson;
@@ -123,6 +124,7 @@ public abstract class AppActivity extends BaseActivity
 
         mDialog.dismiss();
     }
+
     /**
      * 将获取到的int型ip转成string类型
      */
@@ -139,7 +141,7 @@ public abstract class AppActivity extends BaseActivity
         mBaseUrlPort = (String) SharePreferenceUtil.get(AppActivity.this, SharePreferenceUtil.Current_HttpPort, "7001");
         endoType = (String) SharePreferenceUtil.get(AppActivity.this, SharePreferenceUtil.Current_EndoType, "3");
         mUserID = (String) SharePreferenceUtil.get(AppActivity.this, SharePreferenceUtil.Current_Login_UserID, "3");
-        mLoginUserName = (String) SharePreferenceUtil.get(AppActivity.this, SharePreferenceUtil.Current_Login_UserName, "3");
+        mLoginUserName = mMMKVInstace.decodeString(Constants.KEY_CurrentLoginUserName);
         mCurrentTypeDes = (String) SharePreferenceUtil.get(AppActivity.this, SharePreferenceUtil.Current_Type, "妇科治疗台");
         mCurrentTypeMsg = (String) SharePreferenceUtil.get(AppActivity.this, SharePreferenceUtil.Current_Type_Msg, "1号内镜室");
         mCurrentTypeNum = (String) SharePreferenceUtil.get(AppActivity.this, SharePreferenceUtil.Current_Type_Num, "07");
@@ -151,8 +153,8 @@ public abstract class AppActivity extends BaseActivity
         mLivePort = (String) SharePreferenceUtil.get(AppActivity.this, SharePreferenceUtil.Current_LivePort, "7788");
 
 
-        LogUtils.e("AppActivity===mSocketOrLiveIP===="+mSocketOrLiveIP);
-        LogUtils.e("AppActivity===mSocketPort===="+mSocketPort);
+        LogUtils.e("AppActivity===mSocketOrLiveIP====" + mSocketOrLiveIP);
+        LogUtils.e("AppActivity===mSocketPort====" + mSocketPort);
         // 初始化沉浸式状态栏
         if (isStatusBarEnabled()) {
             getStatusBarConfig().init();

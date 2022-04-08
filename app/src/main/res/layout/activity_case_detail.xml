@@ -109,7 +109,7 @@
                                 android:layout_marginTop="@dimen/dp_6"
                                 android:layout_marginBottom="@dimen/dp_5"
                                 android:gravity="center"
-                                android:text="获取报告"
+                                android:text="生产报告"
                                 android:textColor="@color/white"
                                 android:textSize="@dimen/sp_12" />
                         </LinearLayout>
@@ -138,7 +138,7 @@
                                 android:layout_marginTop="@dimen/dp_6"
                                 android:layout_marginBottom="@dimen/dp_5"
                                 android:gravity="center"
-                                android:text="删除"
+                                android:text="删除病历"
                                 android:textColor="@color/white"
                                 android:textSize="@dimen/sp_12" />
                         </LinearLayout>
@@ -167,7 +167,7 @@
                                 android:layout_marginTop="@dimen/dp_6"
                                 android:layout_marginBottom="@dimen/dp_5"
                                 android:gravity="center"
-                                android:text="下载"
+                                android:text="下载病历"
                                 android:textColor="@color/white"
                                 android:textSize="@dimen/sp_12" />
                         </LinearLayout>

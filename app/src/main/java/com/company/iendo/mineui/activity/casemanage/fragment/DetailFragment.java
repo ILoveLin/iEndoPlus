@@ -120,7 +120,6 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
     private static boolean UDP_HAND_TAG = false; //握手成功表示  true 成功
     private static boolean Details_Reault_Ok = false; //握手成功表示  true 成功
     private String itemID;
-    private String mCaseID;
     private String mCurrentDonwTime;
     private ImageView iv_01_age_type;
     private ImageView iv_01_jop;
@@ -141,6 +140,8 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
     private ImageView iv_03_is_married;
     private ArrayList<ImageView> mImageViewList;
     private ImageView iv_01_sex_type;
+    private String videosCounts;
+    private String imageCounts;
 
 
     public static DetailFragment newInstance() {
@@ -159,9 +160,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         mBaseUrl = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_BaseUrl, "192.168.132.102");
         mDeviceCode = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_DeviceCode, "");
         mUserID = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_Login_UserID, "");
-        mUserName = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_Login_UserName, "Admin");
-        mCaseID = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_Chose_CaseID, "4600");
-
+        mUserName =mLoginUserName;
         currentItemCaseID = MainActivity.getCurrentItemID();
         initLayoutViewDate();
         setEditStatus();
@@ -315,7 +314,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         et_03_device.setText("" + mDataBean.getDevice());
         et_01_fee.setText("" + mDataBean.getFee());
         //        String FeeType = et_03_tel.getText().toString().trim();       //收费类型         ???
-
+//        et_02_live_check
         et_01_get_check_doctor.setText("" + mDataBean.getSubmitDoctor());
         etlines_02_test.setContentText("" + mDataBean.getTest());
         etlines_02_advice.setContentText("" + mDataBean.getAdvice());
@@ -395,6 +394,9 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
             }
         }
 
+//        private Boolean mEditStatus = false;    //编辑状态为true,不可编辑状态为flase
+//        private Boolean isFatherExit = false;   //父类Activity 是否主动退出的标识,主动退出需要请求保存fragment的更新数据
+
 //        //编辑状态为true,不可编辑状态为flase,默认false不可编辑
         if (!mEditStatus) {//切换到了不可编辑模式,发送请求
             if (mFirstIn) {  //解决  首次进来 tosat 提示
@@ -404,10 +406,44 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
             }
         }
         if (isFatherExit) {//父类界面主动退出,保存当前数据
-            if (mEditStatus) {
-                showComplete();
-                checkDataAndRequest();
+            CharSequence rightTitle = DetailCaseActivity.mTitlebar.getRightTitle();
+            if ("编辑".equals(rightTitle)){
+                SocketRefreshEvent event = new SocketRefreshEvent();
+                event.setUdpCmd(Constants.UDP_CUSTOM_FINISH);
+                EventBus.getDefault().post(event);
+            }else {
+                // 消息对话框
+                new MessageDialog.Builder(getActivity())
+                        // 标题可以不用填写
+                        .setTitle("是否返回")
+                        // 内容必须要填写
+                        .setMessage("当前正在编辑病历信息,是否返回")
+                        // 确定按钮文本
+                        .setConfirm("继续编辑")
+                        // 设置 null 表示不显示取消按钮
+                        .setCancel("立即返回")
+                        // 设置点击按钮后不关闭对话框
+                        //.setAutoDismiss(false)
+                        .setListener(new MessageDialog.OnListener() {
+
+                            @Override
+                            public void onConfirm(BaseDialog dialog) {
+//                                showComplete();
+//                                checkDataAndRequest();
+
+                            }
+
+                            @Override
+                            public void onCancel(BaseDialog dialog) {
+                                SocketRefreshEvent event = new SocketRefreshEvent();
+                                event.setUdpCmd(Constants.UDP_CUSTOM_FINISH);
+                                EventBus.getDefault().post(event);
+
+                            }
+                        })
+                        .show();
             }
+
 
         }
 
@@ -427,6 +463,8 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 
     @Override
     public void onDown(boolean userInfo, boolean userPicture) {
+
+
         //下载的时候就去请求,获取Video视频数目和标题
         sendGetVideoPathListRequest(currentItemCaseID);
         // 消息对话框
@@ -803,7 +841,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
             caseDBBean.setInsuranceID(mDataBean.getInsuranceID() + "");    // 社保卡号
             CaseDBUtils.insertOrReplaceInTx(getActivity(), caseDBBean);
         }
-        String userLoginUserName = (String) SharePreferenceUtil.get(getAttachActivity(), SharePreferenceUtil.Current_Login_UserName, "");
+        String userLoginUserName = mLoginUserName;
         String userLoginPassword = (String) SharePreferenceUtil.get(getAttachActivity(), SharePreferenceUtil.Current_Login_Password, "");
         String mLoginReol = (String) SharePreferenceUtil.get(getAttachActivity(), SharePreferenceUtil.Current_Login_Role, "");
         Boolean isRemember = (Boolean) SharePreferenceUtil.get(getAttachActivity(), SharePreferenceUtil.Current_Login_Remember_Password, true);
@@ -921,7 +959,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         if (mMMKVInstace.decodeBool(Constants.KEY_CanDelete)) {
             new MessageDialog.Builder(getActivity())
                     .setTitle("提示")
-                    .setMessage("确认删除该用户吗?")
+                    .setMessage("确认删除该病历吗?")
                     .setConfirm("确定")
                     .setCancel("取消")
                     .setListener(new MessageDialog.OnListener() {
@@ -1675,6 +1713,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
             mParamsMap.put("Occupatior", Occupatior);
         }
         String InsuranceID = et_03_protection_num.getText().toString().trim();       //社保卡ID
+        String SubmitDoctor = et_01_get_check_doctor.getText().toString().trim();       //社保卡ID
         String NativePlace = et_03_native_place.getText().toString().trim();       //籍贯
 //        String IsInHospital = et_03_in_hospital_num.getText().toString().trim();       //是否还在医院住院  ???
 //        String LastCheckUserID = et_03_tel.getText().toString().trim();       //最后一个来查房的医生  ???
@@ -1685,7 +1724,6 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         String BedID = et_03_case_bed_num.getText().toString().trim();       //病床号
         String WardID = et_03_case_area_num.getText().toString().trim();       //病区号
         String CaseID = et_03_case_num.getText().toString().trim();       //病历号
-//        String SubmitDoctor = et_03_tel.getText().toString().trim();       //申请医生        ???
         String Department = et_03_section.getText().toString().trim();       //科室
 
         if (!"科室".equals(Department)) {
@@ -1713,7 +1751,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 
 
         //添加三个必须添加的参数
-        String UserName = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_Login_UserName, "Admin");
+        String UserName = mLoginUserName;
         String EndoType = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_EndoType, "3");
         mParamsMap.put("ID", MainActivity.getCurrentItemID());
         mParamsMap.put("Name", et_01_name.getText().toString().trim());
@@ -1747,6 +1785,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         mParamsMap.put("ExaminingPhysician", ExaminingPhysician);
         mParamsMap.put("ClinicalDiagnosis", ClinicalDiagnosis);
         mParamsMap.put("CheckContent", CheckContent);
+        mParamsMap.put("SubmitDoctor", SubmitDoctor);
         mParamsMap.put("CheckDiagnosis", CheckDiagnosis);
         sendUpdateRequest();
 
@@ -1797,6 +1836,48 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 
 
     }
+    //获取病例图片数目
+    private void sendImageRequest(String mCaseID) {
+        OkHttpUtils.get()
+                .url(mBaseUrl + HttpConstant.CaseManager_CaseInfo)
+                .addParams("ID", mCaseID)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        showError(listener -> {
+                            sendRequest(mCaseID);
+                        });
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        if ("" != response) {
+                            LogUtils.e("详情界面---截图界面===病例详情response==itemID=" + mCaseID);
+                            LogUtils.e("详情界面---截图界面===病例详情response===" + response);
+
+                            CaseDetailBean mBean = mGson.fromJson(response, CaseDetailBean.class);
+                            if (0 == mBean.getCode()) {  //成功
+                                showComplete();
+                                imageCounts = mBean.getData().getImagesCount() + "";
+                                videosCounts = mBean.getData().getVideosCount() + "";
+                                LogUtils.e("详情界面---截图界面===病例详情response==imageCount=" + imageCounts);
+                                DetailCaseActivity.mTabAdapter.setItem(1,"图片("+ imageCounts +")");
+                                DetailCaseActivity.mTabAdapter.setItem(2,"视频("+ videosCounts +")");
+
+                            } else {
+                                showError(listener -> {
+                                    sendRequest(mCaseID);
+                                });
+                            }
+                        } else {
+                            showError(listener -> {
+                                sendRequest(mCaseID);
+                            });
+                        }
+                    }
+                });
+    }
     /**
      * ***************************************************************************通讯模块**************************************************************************
      */
@@ -1820,6 +1901,12 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         switch (event.getUdpCmd()) {
             case Constants.UDP_HAND://握手
                 UDP_HAND_TAG = true;
+                break;
+            case Constants.UDP_15://截图
+                LogUtils.e("======LiveServiceImpl==回调=event==采图==" + event.getData());
+                if (mCaseID.equals(event.getData())) {
+                    sendImageRequest(mCaseID);
+                }
                 break;
             case Constants.UDP_13://有病例,并且当前病例id==回调病例id则更新界面数据
                 LogUtils.e("Socket回调==DetailFragment==当前UDP命令==event.getData()==" + event.getData());
@@ -1847,8 +1934,8 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
      */
     public void sendHandLinkMessage() {
         HandBean handBean = new HandBean();
-        handBean.setHelloPc("HelloPc");
-        handBean.setComeFrom("Android");
+        handBean.setHelloPc("");
+        handBean.setComeFrom("");
 
         byte[] sendByteData = CalculateUtils.getSendByteData(getAttachActivity(), mGson.toJson(handBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
                 Constants.UDP_HAND);
@@ -1901,8 +1988,8 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
     public void sendSocketPointMessage(String CMDCode) {
         if (UDP_HAND_TAG) {
             HandBean handBean = new HandBean();
-            handBean.setHelloPc("HelloPc");
-            handBean.setComeFrom("Android");
+            handBean.setHelloPc("");
+            handBean.setComeFrom("");
             byte[] sendByteData = CalculateUtils.getSendByteData(getAttachActivity(), mGson.toJson(handBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
                     CMDCode);
             if (("".equals(mSocketPort))) {

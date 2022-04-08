@@ -200,7 +200,8 @@ public class PictureFragment extends TitleBarFragment<MainActivity> implements S
     @Override
     public void onItemClick(RecyclerView recyclerView, View itemView, int position) {
         DetailPictureBean.DataDTO item = mAdapter.getItem(position);
-        ImagePreviewActivity.start(getAttachActivity(), mPathList, mPathList.size() - 1);
+        ImagePreviewActivity.start(getAttachActivity(), mPathList, position);
+//        ImagePreviewActivity.start(getAttachActivity(), mPathList, mPathList.size() - 1);
 
 
     }

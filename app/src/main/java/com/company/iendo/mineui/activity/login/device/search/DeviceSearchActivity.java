@@ -496,7 +496,7 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
         // 消息对话框
         new MessageDialog.Builder(getActivity())
                 // 标题可以不用填写
-                .setTitle("提示!")
+                .setTitle("提示")
                 // 内容必须要填写
                 .setMessage("设备已经存在,是否刷新数据?")
                 // 确定按钮文本

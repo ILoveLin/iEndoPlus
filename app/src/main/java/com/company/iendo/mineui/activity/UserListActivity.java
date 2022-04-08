@@ -83,7 +83,7 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
     protected void initData() {
         mLoginRole = (String) SharePreferenceUtil.get(this, SharePreferenceUtil.Current_Login_Role, "");
         mLoginUserID = (String) SharePreferenceUtil.get(this, SharePreferenceUtil.Current_Login_UserID, "1");
-        mLoginUserName = (String) SharePreferenceUtil.get(this, SharePreferenceUtil.Current_Login_UserName, "A");
+        mLoginUserName = mMMKVInstace.decodeString(Constants.KEY_CurrentLoginUserName);
 
         mAdapter = new UserListAdapter(this, mLoginUserName);
         mAdapter.setData(mDataLest);
