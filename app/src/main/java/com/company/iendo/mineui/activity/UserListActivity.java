@@ -193,7 +193,7 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
                 .addParams("CurrentRelo", mLoginRole)    //当前用户权限
                 .addParams("CreateRelo", mAddCurrentCode + "")     //新用户的权限
                 .addParams("UserName", userName)    //新用户的名字
-                .addParams("Password", passwrod)    //新用户的密码
+                .addParams("Password",MD5ChangeUtil.Md5_32(passwrod) )    //新用户的密码
                 .addParams("Des", mAddCurrentString)    //新用户的描述
                 .addParams("CanSUE", "1")    //新用户是否激活1激活，0是未激活
                 .addParams("UserID", UserID)    //用户ID

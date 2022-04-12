@@ -943,6 +943,9 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
             String o = (String) SharePreferenceUtil.get(DeviceActivity.this, SharePreferenceUtil.Current_DeviceID, "");
             LogUtils.e("选择的设备=== 存入的设备id是===" + o);
 
+            mMMKVInstace.encode(Constants.KEY_Device_Ip,mDBBean.getIp());
+
+
             SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_Type_Msg, mDBBean.getMsg());
             SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_IP, mDBBean.getIp());
             SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_HttpPort, mDBBean.getHttpPort());

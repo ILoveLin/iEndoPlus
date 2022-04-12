@@ -660,12 +660,13 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
 
                     @Override
                     public void onResponse(String response, int id) {
-                        mUserListData.clear();
                         showComplete();
                         LogUtils.e("登录=成功==" + response);
                         if (!"".equals(response)) {
                             LoginBean mBean = mGson.fromJson(response, LoginBean.class);
                             if (0 == mBean.getCode()) {
+                                mUserListData.clear();
+
                                 LogUtils.e("登录==role==" + mBean.getData().getRole());
                                 LogUtils.e("登录==userid==" + mBean.getData().getUserID());
                                 SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Current_Login_Role, mBean.getData().getRole() + "");
@@ -715,7 +716,6 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                                 MainActivity.start(getContext(), CaseManageFragment.class);
                                 finish();
                             } else {
-//
                                 toast("密码错误");
                             }
 

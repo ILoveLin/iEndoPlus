@@ -65,11 +65,19 @@ public class Constants {
     public static final String KEY_CanPrint = "KEY_CanPrint";          //打印病历
     public static final String KEY_UnPrinted = "KEY_UnPrinted";        //未打印病历    是否具有该权限 true的时候就需要去判断编辑病例返回的Printed
     public static final String KEY_OnlySelf = "KEY_OnlySelf";           //本人病历     是否具有该权限 true的时候就需要去判断编辑病例返回的UserName
-
     public static final String KEY_HospitalInfo = "KEY_HospitalInfo";      //医院信息(不能进入医院信息界面)
 
 
     /**
+     * 登录成功之后,存储当前设备信息
+     *
+     */
+
+
+
+     public static final String KEY_Device_Ip = "KEY_Device_Ip";      //选中设备的ip
+
+     /**
      * 接受线程需要实时获取的数据
      */
     public static final String KEY_CurrentCaseID = "KEY_CurrentCaseID";                     //当前选中的病例ID
@@ -99,6 +107,7 @@ public class Constants {
     public static final String UDP_14 = "14";                    //删除病历
     public static final String UDP_CUSTOM14 = "UDP_CUSTOM14";    //自定义命令     在图像采集界面,接受到删除病例,需要退到病例列表界面而不是回退病例详情界面
     public static final String UDP_CUSTOM_FINISH = "UDP_CUSTOM_FINISH";    //自定义命令     结束DetailCaseActivity界面
+    public static final String UDP_CUSTOM_TOAST = "UDP_CUSTOM_TOAST";    //自定义命令     toast
     public static final String UDP_15 = "15";                    //新增图片（采图）
     public static final String UDP_F1 = "F1";                    //预览报告
     public static final String UDP_F2 = "F2";                    //打印报告

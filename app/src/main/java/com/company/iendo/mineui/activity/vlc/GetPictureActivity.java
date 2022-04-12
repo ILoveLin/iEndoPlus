@@ -240,7 +240,11 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         LogUtils.e("Socket回调==DeviceSearchActivity==当前UDP命令==event.getUdpCmd()==" + event.getUdpCmd());
         String data = event.getData();
         switch (event.getUdpCmd()) {
-            case Constants.UDP_HAND://握手
+            case Constants.UDP_CUSTOM_TOAST://握手
+                toast(""+data);
+
+                break;
+                case Constants.UDP_HAND://握手
                 LogUtils.e("======LiveServiceImpl==回调=event==握手成功的回调==" + event.getUdpCmd());
                 UDP_HAND_TAG = true;
                 //获取当前设备参数
@@ -840,7 +844,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         if (UDP_HAND_TAG) {
             Type02Bean bean = new Type02Bean();
             Type02Bean.Type02 Type02 = new Type02Bean.Type02();
-            Type02.setBrightness("60");
+            Type02.setBrightness("");
             bean.setType02(Type02);
             LogUtils.e("======GetPictureActivity==回调===获取当前病例00==" + mGson.toJson(bean));
             byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(bean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
@@ -891,7 +895,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
     }
 
     /**
-     * 参数上传-->发送摄像机
+     * 参数上传(设置参数)-->发送摄像机
      * 01-冷光源(type01)
      *
      * @param CMDCode 命令cmd
@@ -1521,7 +1525,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         Type01Bean.Type01 typeBean = new Type01Bean.Type01();
         switch (v.getId()) {
             case R.id.edit_01_light: //冷光源,亮度
-                sendSocketPointLight(Constants.UDP_F5, "" + Integer.parseInt(mEdit01Light.getText().toString().trim()));
+                sendSocketPointLight(Constants.UDP_F6, "" + Integer.parseInt(mEdit01Light.getText().toString().trim()));
                 if (!("".equals(mEdit01Light.getText().toString().trim()))) {
                     mRangeBar01Light.setProgress(Integer.parseInt(mEdit01Light.getText().toString().trim()));
                     mEdit01Light.clearFocus();
@@ -1663,9 +1667,8 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             @Override
             public void run() {
                 Log.e("TAG", "RtmpOnlyAudio===onConnectionFailedRtmp==");
-
                 toast("语音断开链接 " );
-
+                setMicStatus("stopStream", "语音通话");
             }
         });
 //        runOnUiThread(new Runnable() {
