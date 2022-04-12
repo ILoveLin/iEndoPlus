@@ -1649,7 +1649,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                 Log.e("TAG", "RtmpOnlyAudio=====" + reason);
                 toast("语音链接失败: " + reason);
                 rtmpOnlyAudio.stopStream();
-              
+
 
             }
         });
