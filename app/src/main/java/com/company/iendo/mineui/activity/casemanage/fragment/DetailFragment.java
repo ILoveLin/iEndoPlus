@@ -987,19 +987,21 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 
     //删除用户请求
     private void sendDeleteRequest() {
+        mLoginUserName = mMMKVInstace.decodeString(Constants.KEY_CurrentLoginUserName);
         if (Details_Reault_Ok) {
             LogUtils.e("删除用户==params=" + mBean.getData().getID() + "");
             showLoading();
             OkHttpUtils.post()
                     .url(mBaseUrl + HttpConstant.CaseManager_DeleteCase)
                     .addParams("ID", mBean.getData().getID() + "")
-                    .addParams("UserName", mUserName)
+                    .addParams("UserName", mLoginUserName)
                     .addParams("EndoType", endoType)
                     .addParams("UserID", mUserID)
                     .build()
                     .execute(new StringCallback() {
                         @Override
                         public void onError(Call call, Exception e, int id) {
+                            LogUtils.e("删除用户==e=" + e);
                             showError(listener -> {
                                 sendDeleteRequest();
                             });
@@ -1007,7 +1009,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 
                         @Override
                         public void onResponse(String response, int id) {
-                            LogUtils.e("删除用户===" + response);
+                            LogUtils.e("删除用户==response=" + response);
                             if ("" != response) {
                                 DeleteBean mBean = mGson.fromJson(response, DeleteBean.class);
                                 if (0 == mBean.getCode()) {  //成功

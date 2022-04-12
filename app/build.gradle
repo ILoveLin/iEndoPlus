@@ -231,8 +231,8 @@ dependencies {
     implementation 'com.tencent:mmkv-static:1.2.10'
 
     // 内存泄漏监测框架：https://github.com/square/leakcanary
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'
-    previewImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'
+//    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'
+//    previewImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'
 
 
     implementation 'com.zhy:okhttputils:2.6.2'

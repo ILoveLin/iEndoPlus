@@ -1649,6 +1649,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                 Log.e("TAG", "RtmpOnlyAudio=====" + reason);
                 toast("语音链接失败: " + reason);
                 rtmpOnlyAudio.stopStream();
+              
 
             }
         });
@@ -1669,6 +1670,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                 Log.e("TAG", "RtmpOnlyAudio===onConnectionFailedRtmp==");
                 toast("语音断开链接 " );
                 setMicStatus("stopStream", "语音通话");
+                sendSocketPointMicMessage("0");
             }
         });
 //        runOnUiThread(new Runnable() {
