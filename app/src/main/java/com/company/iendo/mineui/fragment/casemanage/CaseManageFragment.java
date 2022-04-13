@@ -21,6 +21,7 @@ import com.company.iendo.bean.CaseManageListBean;
 import com.company.iendo.bean.UserReloBean;
 import com.company.iendo.bean.ZXBean;
 import com.company.iendo.bean.event.SocketRefreshEvent;
+import com.company.iendo.bean.socket.HandBean;
 import com.company.iendo.http.glide.GlideRequest;
 import com.company.iendo.mineui.activity.MainActivity;
 import com.company.iendo.mineui.activity.casemanage.AddCaseActivity;
@@ -37,6 +38,7 @@ import com.company.iendo.utils.DateUtil;
 import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.ScreenSizeUtil;
 import com.company.iendo.utils.SharePreferenceUtil;
+import com.company.iendo.utils.SocketUtils;
 import com.company.iendo.widget.GridSpaceItemDecoration;
 import com.company.iendo.widget.MyItemDecoration;
 import com.company.iendo.widget.StatusLayout;
@@ -339,6 +341,28 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
         } else {
             sendRequest(currentChoseDate);
         }
+        sendHandLinkMessage();
+    }
+
+    /**
+     * 发送握手消息
+     */
+    public void sendHandLinkMessage() {
+        HandBean handBean = new HandBean();
+        handBean.setHelloPc("");
+        handBean.setComeFrom("");
+
+        byte[] sendByteData = CalculateUtils.getSendByteData(getAttachActivity(), mGson.toJson(handBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
+                Constants.UDP_HAND);
+
+        if (("".equals(mSocketPort))) {
+//            toast("通讯端口不能为空");
+            return;
+        }
+        LogUtils.e("SocketUtils==HandService===发送消息==点对点==detailCaseActivity==sendByteData==" + sendByteData);
+        LogUtils.e("SocketUtils==HandService===发送消息==点对点==detailCaseActivity==mSocketPort==" + mSocketPort);
+        SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), getAttachActivity());
+//        SocketManage.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort));
     }
 
     @Override
@@ -361,17 +385,11 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void SocketRefreshEvent(SocketRefreshEvent event) {
         LogUtils.e("Socket回调==DetailFragment==event.getData()==" + event.getData());
-//        String mRun2End4 = CalculateUtils.getReceiveRun2End4String(event.getData());//随机数之后到data结尾的String
-//        String deviceType = CalculateUtils.getSendDeviceType(event.getData());
-//        String deviceOnlyCode = CalculateUtils.getSendDeviceOnlyCode(event.getData());
-//        String currentCMD = CalculateUtils.getCMD(event.getData());
-//        LogUtils.e("Socket回调==DetailFragment==随机数之后到data的Str==mRun2End4==" + mRun2End4);
-//        LogUtils.e("Socket回调==DetailFragment==发送方设备类型==deviceType==" + deviceType);
-//        LogUtils.e("Socket回调==DetailFragment==获取发送方设备Code==deviceOnlyCode==" + deviceOnlyCode);
-//        LogUtils.e("Socket回调==DetailFragment==当前UDP命令==currentCMD==" + currentCMD);
-//        LogUtils.e("Socket回调==DetailFragment==当前UDP命令==event.getUdpCmd()==" + event.getUdpCmd());
         String data = event.getData();
         switch (event.getUdpCmd()) {
+            case Constants.UDP_CUSTOM_TOAST://吐司
+                toast("" + data);
+                break;
             case Constants.UDP_12://新增病例,刷新界面数据
             case Constants.UDP_13://更新病例,刷新界面数据
                 if (!mTitle.getText().toString().trim().isEmpty()) {

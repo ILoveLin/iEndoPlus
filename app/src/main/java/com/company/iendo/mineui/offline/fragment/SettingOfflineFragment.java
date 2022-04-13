@@ -9,7 +9,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.company.iendo.R;
-import com.company.iendo.app.ReceiveSocketService;
+import com.company.iendo.service.ReceiveSocketService;
 import com.company.iendo.app.TitleBarFragment;
 import com.company.iendo.mineui.activity.MainActivity;
 import com.company.iendo.mineui.activity.login.LoginActivity;

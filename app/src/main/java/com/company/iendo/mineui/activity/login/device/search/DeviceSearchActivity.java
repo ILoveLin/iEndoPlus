@@ -18,7 +18,7 @@ import com.company.iendo.R;
 import com.company.iendo.action.StatusAction;
 import com.company.iendo.aop.SingleClick;
 import com.company.iendo.app.AppActivity;
-import com.company.iendo.app.ReceiveSocketService;
+import com.company.iendo.service.ReceiveSocketService;
 import com.company.iendo.bean.RefreshEvent;
 import com.company.iendo.bean.event.SocketRefreshEvent;
 import com.company.iendo.bean.socket.searchdevice.BroadCastReceiveBean;

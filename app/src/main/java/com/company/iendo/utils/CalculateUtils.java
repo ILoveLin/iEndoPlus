@@ -5,6 +5,7 @@ import android.content.Context;
 import com.company.iendo.other.Constants;
 import com.google.gson.Gson;
 
+import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.text.DateFormat;
@@ -394,6 +395,7 @@ public class CalculateUtils {
 
 
     /**
+     *
      * 16进制直接转换成为字符串(无需Unicode解码)
      *
      * @param hexStr 字母必须为大写
@@ -402,6 +404,7 @@ public class CalculateUtils {
     public static String hexStr2Str(String hexStr) {
         String str = "0123456789ABCDEF";
         char[] hexs = hexStr.toCharArray();
+
         byte[] bytes = new byte[hexStr.length() / 2];
         int n;
         for (int i = 0; i < bytes.length; i++) {
@@ -531,13 +534,13 @@ public class CalculateUtils {
     public static String getReceiveDataString(String str) {
 //        String str = "AAC5 01 0059 D8 FF A1f9432b11b93e8bb4ae34539b7472c20eFF00000000000000000000000000000000FD7B2262726F6164636173746572223A22737A636D65222C2272616D646F6D223A223230323230313237313133353130227DEEDD";
         if (str.length() < 82) {
-            LogUtils.e("======ReceiveThread==getReceiveDataString==接收到数据但是!!!数据格式长度不对 ====");
+            LogUtils.e("UDP==命令===AAA==111====ReceiveThread==getReceiveDataString==接收到数据但是!!!数据格式长度不对 ====");
             return "";
         }
         String substring = str.substring(82 + 2, str.length() - 4);
-        LogUtils.e("UDP==命令===getReceiveDataString=====" + substring);
+        LogUtils.e("UDP==命令===AAA==222==getReceiveDataString=====" + substring);
         String s1 = hexStr2Str(substring);
-        LogUtils.e("UDP==命令===getReceiveDataString=====" + s1);
+        LogUtils.e("UDP==命令===AAA==333==getReceiveDataString==333===" + s1);
 //        Gson gson = GsonFactory.getSingletonGson();
 //        BroadCastDataBean bean = gson.fromJson(s1, BroadCastDataBean.class);
 //        LogUtils.e("UDP==命令===bean=====" + bean.getBroadcaster());
@@ -907,6 +910,27 @@ public class CalculateUtils {
         return r;
     }
     /**********************************转换字节数组为16进制字串****************第二种方式*******************************/
+
+    /**
+     *     * 将byte转为16进制
+     *     * @param bytes
+     *     * @return
+     *
+     */
+//    public static String byteArrayToHexString(byte[] bytes) {
+//        StringBuffer stringBuffer = new StringBuffer();
+//        String temp = null;
+//        for (int i = 0; i < bytes.length; i++) {
+//            temp = Integer.toHexString(bytes[i] & 0xFF);
+//            if (temp.length() == 1) {
+//                //1得到一位的进行补0操作
+//                stringBuffer.append("0");
+//            }
+//            stringBuffer.append(temp);
+//        }
+//        return stringBuffer.toString();
+//    }
+
     /**
      * 转换字节数组为16进制字串
      *
@@ -914,6 +938,7 @@ public class CalculateUtils {
      * @return 16进制字串
      */
     public static String byteArrayToHexString(byte[] b) {
+
         StringBuffer resultSb = new StringBuffer();
         for (int i = 0; i < b.length; i++) {
             resultSb.append(byteToHexString(b[i]));

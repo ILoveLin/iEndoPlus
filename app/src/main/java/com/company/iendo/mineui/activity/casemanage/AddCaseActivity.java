@@ -21,6 +21,7 @@ import com.company.iendo.bean.socket.HandBean;
 import com.company.iendo.manager.ActivityManager;
 import com.company.iendo.other.Constants;
 import com.company.iendo.other.HttpConstant;
+import com.company.iendo.service.HandService;
 import com.company.iendo.ui.dialog.MenuDialog;
 import com.company.iendo.utils.CalculateUtils;
 import com.company.iendo.utils.LogUtils;
@@ -89,9 +90,7 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
     private ImageView iv_03_is_married;
     private ArrayList<ImageView> mImageViewList;
     private ImageView iv_01_sex_type;
-    private static boolean UDP_HAND_TAG = false; //握手成功表示  true 成功
     private NestedScrollView mScrollView;
-
     private ArrayList<ClearEditText> mEditList = new ArrayList<>();
 
     @Override
@@ -297,7 +296,7 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
         String Biopsy = etlines_02_live_check.getContentText().toString().trim();       //活检
         String Ctology = etlines_02_cytology.getContentText().toString().trim();       //细胞学
         String Pathology = etlines_02_pathology.getContentText().toString().trim();       //病理学
-        String ExaminingPhysician = etlines_02_live_check.getContentText().toString().trim();       //检查医生
+        String ExaminingPhysician = et_02_check_doctor.getText().toString().trim();       //检查医生
         String ClinicalDiagnosis = lines_01_bad_tell.getContentText().trim();       //临床诊断
 //        String ClinicalDiagnosis = et_01_bad_tell.getText().toString().trim();       //临床诊断
         String CheckContent = etlines_02_mirror_see.getContentText().toString().trim();       //检查内容（镜检所见）
@@ -395,22 +394,7 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
      * ***************************************************************************通讯模块**************************************************************************
      */
 
-    /**
-     * 发送握手消息
-     */
-    public void sendHandLinkMessage() {
-        HandBean handBean = new HandBean();
-        handBean.setHelloPc("");
-        handBean.setComeFrom("");
-        byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(handBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
-                Constants.UDP_HAND);
-        if (("".equals(mSocketPort))) {
-            toast("通讯端口不能为空");
-            return;
-        }
-        SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), AddCaseActivity.this);
-//        SocketManage.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort));
-    }
+
 
     /**
      * 发送点对点消息,必须握手成功
@@ -418,7 +402,7 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
      * @param CMDCode 命令cmd
      */
     public void sendSocketPointMessage(String CMDCode) {
-        if (UDP_HAND_TAG) {
+        if (HandService.UDP_HAND_GLOBAL_TAG) {
             HandBean handBean = new HandBean();
             handBean.setHelloPc("");
             handBean.setComeFrom("");
@@ -431,36 +415,12 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
             SocketUtils.startSendPointMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), AddCaseActivity.this);
 
         } else {
-            sendHandLinkMessage();
-            toast("请先建立握手链接");
+            toast(Constants.HAVE_HAND_FAIL_OFFLINE);
         }
 
     }
 
-    /**
-     * eventbus 刷新socket数据
-     */
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void SocketRefreshEvent(SocketRefreshEvent event) {
-        LogUtils.e("Socket回调==AddCaseActivity==event.getData()==" + event.getData());
-        String mRun2End4 = CalculateUtils.getReceiveRun2End4String(event.getData());//随机数之后到data结尾的String
-        String deviceType = CalculateUtils.getSendDeviceType(event.getData());
-        String deviceOnlyCode = CalculateUtils.getSendDeviceOnlyCode(event.getData());
-        String currentCMD = CalculateUtils.getCMD(event.getData());
-        LogUtils.e("Socket回调==AddCaseActivity==随机数之后到data的Str==mRun2End4==" + mRun2End4);
-        LogUtils.e("Socket回调==AddCaseActivity==发送方设备类型==deviceType==" + deviceType);
-        LogUtils.e("Socket回调==AddCaseActivity==获取发送方设备Code==deviceOnlyCode==" + deviceOnlyCode);
-        LogUtils.e("Socket回调==AddCaseActivity==当前UDP命令==currentCMD==" + currentCMD);
-        LogUtils.e("Socket回调==AddCaseActivity==当前UDP命令==event.getUdpCmd()==" + event.getUdpCmd());
-        String data = event.getData();
-        switch (event.getUdpCmd()) {
-            case Constants.UDP_HAND://握手
-                UDP_HAND_TAG = true;
-                //获取当前病例ID
-                break;
-        }
 
-    }
 
     /**
      * ***************************************************************************通讯模块**************************************************************************
@@ -1001,7 +961,6 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
         sendListDictsRequest();
         //握手通讯
         LogUtils.e("onResume===AddCaseActivity===开始建立握手链接!");
-        sendHandLinkMessage();
     }
 
 

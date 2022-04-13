@@ -9,9 +9,13 @@ import com.company.iendo.R;
 import com.company.iendo.app.AppActivity;
 import com.company.iendo.mineui.activity.MainActivity;
 import com.company.iendo.other.Constants;
+import com.company.iendo.service.HandService;
+import com.company.iendo.service.ReceiveSocketService;
 import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.SharePreferenceUtil;
 import com.google.gson.Gson;
+import com.tencent.mmkv.MMKV;
+import com.xdandroid.hellodaemon.DaemonEnv;
 
 import static java.lang.Thread.sleep;
 
@@ -60,8 +64,37 @@ public class SplashActivity extends AppActivity {
 
             }
         });
+
+
+
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Boolean workStatue = HandService.getWorkStatue();
+        LogUtils.e("保活服务HandService=====SplashActivity===workStatue。"+workStatue);
+        if (!workStatue){
+            initHandService();
+        }
+
+
+
+
+    }
+    /**
+     * 开启保活握手服务
+     */
+    private void initHandService() {
+
+        //初始化
+        DaemonEnv.initialize(this, HandService.class, DaemonEnv.DEFAULT_WAKE_UP_INTERVAL);
+        //是否 任务完成, 不再需要服务运行?
+        HandService.sShouldStopService = false;
+        //开启服务
+        DaemonEnv.startServiceMayBind(HandService.class);
+
+    }
     @Override
     protected void initData() {
         postDelayed(new Runnable() {

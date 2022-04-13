@@ -559,7 +559,6 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
     }
 
 
-
     @Override
     public StatusLayout getStatusLayout() {
         return mStatusLayout;
@@ -718,17 +717,17 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
      */
     private void setChangeTypeData(String str, String type) {
         String code = "";
-        if(str.equals(currentChangeType)){
-            code =currentDeviceCode;
-        }else {
-            code="";
+        if (str.equals(currentChangeType)) {
+            code = currentDeviceCode;
+        } else {
+            code = "";
         }
         switch (str) {
             case Constants.Type_FuKeTable:
                 if ("修改类型".equals(type)) {
                     mChangeDialog.setDeviceNameContent(Constants.Type_FuKeTable)
                             .setDeviceNoteContent("")
-                            .setDeviceCodeContent(code+"")//当修改的时候,选择切换设备类型时候,还是选择同一设备类型,默认使用之前该设备类型的deviceCode
+                            .setDeviceCodeContent(code + "")//当修改的时候,选择切换设备类型时候,还是选择同一设备类型,默认使用之前该设备类型的deviceCode
                             .setDeviceNoteContent("妇科治疗台备注信息")
                             .setDeviceIPContent("192.168.1.200")
                             .setAccountContent("root")
@@ -758,7 +757,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                 if ("修改类型".equals(type)) {
                     mChangeDialog.setDeviceNameContent(Constants.Type_MiNiaoTable)
                             .setDeviceNoteContent("")
-                            .setDeviceCodeContent(code+"")
+                            .setDeviceCodeContent(code + "")
                             .setDeviceNoteContent("泌尿治疗台备注信息")
                             .setDeviceIPContent("192.168.1.200")
                             .setAccountContent("root")
@@ -788,7 +787,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                 if ("修改类型".equals(type)) {
                     mChangeDialog.setDeviceNameContent(Constants.Type_V1_YiTiJi)
                             .setDeviceNoteContent("")
-                            .setDeviceCodeContent(code+"")
+                            .setDeviceCodeContent(code + "")
                             .setDeviceNoteContent("一代一体机备注信息")
                             .setDeviceIPContent("192.168.1.200")
                             .setAccountContent("root")
@@ -818,7 +817,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                 if ("修改类型".equals(type)) {
                     mChangeDialog.setDeviceNameContent(Constants.Type_EarNoseTable)
                             .setDeviceNoteContent("")
-                            .setDeviceCodeContent(code+"")
+                            .setDeviceCodeContent(code + "")
                             .setDeviceNoteContent("耳鼻喉治疗台备注信息")
                             .setDeviceIPContent("192.168.1.200")
                             .setAccountContent("root")
@@ -897,31 +896,33 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                     SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_EndoType, "4");//妇科
                     SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_Type, Constants.Type_FuKeTable);
                     SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_Type_Num, mDBBean.getType_num());
+                    mMMKVInstace.encode(Constants.KEY_Device_Type_Num, mDBBean.getType_num());
 
                     break;
                 case Constants.Type_V1_YiTiJi:
                     SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_EndoType, "3");//一体机
                     SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_Type, Constants.Type_V1_YiTiJi);
                     SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_Type_Num, mDBBean.getType_num());
-
+                    mMMKVInstace.encode(Constants.KEY_Device_Type_Num, mDBBean.getType_num());
 
                     break;
                 case Constants.Type_EarNoseTable:
                     SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_EndoType, "3");//耳鼻喉
                     SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_Type, Constants.Type_EarNoseTable);
                     SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_Type_Num, mDBBean.getType_num());
-
+                    mMMKVInstace.encode(Constants.KEY_Device_Type_Num, mDBBean.getType_num());
 
                     break;
                 case Constants.Type_MiNiaoTable:
                     SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_EndoType, "6");//泌尿
                     SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_Type, Constants.Type_MiNiaoTable);
                     SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_Type_Num, mDBBean.getType_num());
-
+                    mMMKVInstace.encode(Constants.KEY_Device_Type_Num, mDBBean.getType_num());
                     break;
 
             }
-
+            mMMKVInstace.encode(Constants.KEY_Device_SocketPort, mDBBean.getSocketPort());
+            mMMKVInstace.encode(Constants.KEY_DeviceCode, mDBBean.getDeviceCode());
 
             LogUtils.e("添加病例=== mDBBean.getType()===" + mDBBean.getType());   //通过此字段判断EndoType
 
@@ -943,7 +944,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
             String o = (String) SharePreferenceUtil.get(DeviceActivity.this, SharePreferenceUtil.Current_DeviceID, "");
             LogUtils.e("选择的设备=== 存入的设备id是===" + o);
 
-            mMMKVInstace.encode(Constants.KEY_Device_Ip,mDBBean.getIp());
+            mMMKVInstace.encode(Constants.KEY_Device_Ip, mDBBean.getIp());
 
 
             SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_Type_Msg, mDBBean.getMsg());
@@ -1029,7 +1030,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
         mDataLest.clear();
 
         if ("toast".equals(event.getType())) {
-            toast(event.getStr()+"");
+            toast(event.getStr() + "");
         } else if (deviceDBBeans.size() == 0) {
             showEmpty();
         } else {
@@ -1097,7 +1098,6 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
     }
 
 
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -1114,8 +1114,6 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
         }
 
     }
-
-
 
 
     //

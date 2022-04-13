@@ -7,8 +7,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.os.Build;
-import android.os.Handler;
-import android.os.Looper;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -18,6 +16,7 @@ import androidx.lifecycle.LifecycleOwner;
 import com.company.iendo.green.db.DaoMaster;
 import com.company.iendo.green.db.DaoSession;
 import com.company.iendo.other.Constants;
+import com.company.iendo.service.ReceiveSocketService;
 import com.company.iendo.utils.db.DBManager;
 import com.company.iendo.utils.db.MyOpenHelper;
 import com.hjq.bar.TitleBar;

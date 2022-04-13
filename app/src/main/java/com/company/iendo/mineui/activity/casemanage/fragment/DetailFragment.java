@@ -40,6 +40,7 @@ import com.company.iendo.mineui.activity.casemanage.AddCaseActivity;
 import com.company.iendo.mineui.activity.casemanage.DetailCaseActivity;
 import com.company.iendo.other.Constants;
 import com.company.iendo.other.HttpConstant;
+import com.company.iendo.service.HandService;
 import com.company.iendo.ui.dialog.MenuDialog;
 import com.company.iendo.ui.dialog.MessageDialog;
 import com.company.iendo.utils.CalculateUtils;
@@ -53,6 +54,7 @@ import com.hjq.permissions.OnPermissionCallback;
 import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
 import com.hjq.widget.view.ClearEditText;
+import com.tencent.mmkv.MMKV;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.FileCallBack;
 import com.zhy.http.okhttp.callback.StringCallback;
@@ -117,7 +119,6 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
     private CaseDetailBean.DataDTO mDataBean;
     private String mUserName;
     private static final int UDP_Hand = 126;   //握手
-    private static boolean UDP_HAND_TAG = false; //握手成功表示  true 成功
     private static boolean Details_Reault_Ok = false; //握手成功表示  true 成功
     private String itemID;
     private String mCurrentDonwTime;
@@ -1901,9 +1902,6 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 //        LogUtils.e("Socket回调==DetailFragment==当前UDP命令==event.getUdpCmd()==" + event.getUdpCmd());
         String data = event.getData();
         switch (event.getUdpCmd()) {
-            case Constants.UDP_HAND://握手
-                UDP_HAND_TAG = true;
-                break;
             case Constants.UDP_15://截图
                 LogUtils.e("======LiveServiceImpl==回调=event==采图==" + event.getData());
                 if (mCaseID.equals(event.getData())) {
@@ -1931,25 +1929,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
     }
 
 
-    /**
-     * 发送握手消息
-     */
-    public void sendHandLinkMessage() {
-        HandBean handBean = new HandBean();
-        handBean.setHelloPc("");
-        handBean.setComeFrom("");
 
-        byte[] sendByteData = CalculateUtils.getSendByteData(getAttachActivity(), mGson.toJson(handBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
-                Constants.UDP_HAND);
-        if (("".equals(mSocketPort))) {
-            toast("通讯端口不能为空");
-            return;
-        }
-        LogUtils.e("SocketUtils===发送消息==点对点==detailfragment==sendByteData==" + sendByteData);
-        LogUtils.e("SocketUtils===发送消息==点对点==detailfragment==mSocketPort==" + mSocketPort);
-
-        SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), getAttachActivity());
-    }
 
     /**
      * 发送点对点消息,必须握手成功
@@ -1957,7 +1937,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
      * @param CMDCode 命令cmd
      */
     public void sendSocketPointUpdateMessage(String CMDCode) {
-        if (UDP_HAND_TAG) {
+        if (HandService.UDP_HAND_GLOBAL_TAG) {
 //            mCaseID
             UpdateCaseBean bean = new UpdateCaseBean();
             if (!"".equals(mCaseID)) {
@@ -1975,8 +1955,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 
             SocketUtils.startSendPointMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), getAttachActivity());
         } else {
-            sendHandLinkMessage();
-            toast("请先建立握手链接");
+            toast(Constants.HAVE_HAND_FAIL_OFFLINE);
         }
 
     }
@@ -1988,7 +1967,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
      * @param CMDCode 命令cmd
      */
     public void sendSocketPointMessage(String CMDCode) {
-        if (UDP_HAND_TAG) {
+        if (HandService.UDP_HAND_GLOBAL_TAG) {
             HandBean handBean = new HandBean();
             handBean.setHelloPc("");
             handBean.setComeFrom("");
@@ -2001,8 +1980,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 
             SocketUtils.startSendPointMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), getAttachActivity());
         } else {
-            sendHandLinkMessage();
-            toast("请先建立握手链接");
+            toast(Constants.HAVE_HAND_FAIL_OFFLINE);
         }
 
     }
@@ -2090,8 +2068,9 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         super.onResume();
         isFatherExit = false;
         sendListDictsRequest();
-        sendHandLinkMessage();
-
+        LogUtils.e("onResume===DetailFragment===开始建立握手链接!"+ HandService.UDP_HAND_GLOBAL_TAG);
+        LogUtils.e("onResume===DetailFragment===开始建立握手链接222!"+ HandService.UDP_HAND_GLOBAL_TAG);
+        LogUtils.e("onResume===DetailFragment===开始建立握手链接333!"+ HandService.UDP_HAND_GLOBAL_TAG);
     }
 
     @Override

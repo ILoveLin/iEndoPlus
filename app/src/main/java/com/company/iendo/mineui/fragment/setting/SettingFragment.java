@@ -10,7 +10,8 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.company.iendo.R;
-import com.company.iendo.app.ReceiveSocketService;
+import com.company.iendo.service.HandService;
+import com.company.iendo.service.ReceiveSocketService;
 import com.company.iendo.app.TitleBarFragment;
 import com.company.iendo.bean.UserDeletedBean;
 import com.company.iendo.bean.socket.HandBean;
@@ -188,6 +189,7 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
                         //程序退出命令
                         sendProgramExitMessage();
                         SharePreferenceUtil.put(getActivity(), Constants.Is_Logined, false);
+                        mMMKVInstace.encode(Constants.KEY_Login_Tag, false);
                         startActivity(LoginActivity.class);
                         //开启默认监听端口
                         ReceiveSocketService receiveSocketService = new ReceiveSocketService();
@@ -219,7 +221,8 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
                         kv.encode(Constants.KEY_UnPrinted, false); //未打印病历
                         kv.encode(Constants.KEY_OnlySelf, false);//本人病历
                         kv.encode(Constants.KEY_HospitalInfo, false);//医院信息(不能进入医院信息界面)
-
+                        HandService.UDP_HAND_GLOBAL_TAG = false;
+                        HandService.stopService();
                         finish();
                     }
                 }).show();
@@ -298,7 +301,7 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
                             toast(mBean.getMsg() + "");
 
                             if (mBean.getCode().equals("0")) {
-                                toast(  "修改成功");
+                                toast("修改成功");
                             }
                         } else {
                             showError();

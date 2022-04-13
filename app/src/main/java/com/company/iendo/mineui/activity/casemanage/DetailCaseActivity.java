@@ -3,10 +3,7 @@ package com.company.iendo.mineui.activity.casemanage;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.content.Context;
 import android.content.Intent;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.RelativeLayout;
@@ -21,30 +18,24 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.signature.ObjectKey;
 import com.company.iendo.R;
 import com.company.iendo.app.AppActivity;
-import com.company.iendo.app.ReceiveSocketService;
 import com.company.iendo.bean.CaseDetailBean;
-import com.company.iendo.bean.LoginBean;
 import com.company.iendo.bean.ReportExistBean;
 import com.company.iendo.bean.UserReloBean;
 import com.company.iendo.bean.event.SocketRefreshEvent;
 import com.company.iendo.bean.socket.HandBean;
 import com.company.iendo.bean.socket.getpicture.ShotPictureBean;
 import com.company.iendo.manager.ActivityManager;
-import com.company.iendo.mineui.activity.MainActivity;
 import com.company.iendo.mineui.activity.casemanage.fragment.DetailFragment;
 import com.company.iendo.mineui.activity.casemanage.fragment.PictureFragment;
 import com.company.iendo.mineui.activity.casemanage.fragment.VideoFragment;
-import com.company.iendo.mineui.activity.login.LoginActivity;
 import com.company.iendo.mineui.activity.vlc.GetPictureActivity;
-import com.company.iendo.mineui.fragment.casemanage.CaseManageFragment;
 import com.company.iendo.other.Constants;
 import com.company.iendo.other.HttpConstant;
+import com.company.iendo.service.HandService;
 import com.company.iendo.ui.adapter.TabAdapter;
 import com.company.iendo.ui.dialog.SelectDialog;
 import com.company.iendo.utils.CalculateUtils;
 import com.company.iendo.utils.LogUtils;
-import com.company.iendo.utils.MD5ChangeUtil;
-import com.company.iendo.utils.SharePreferenceUtil;
 import com.company.iendo.utils.SocketUtils;
 import com.gyf.immersionbar.ImmersionBar;
 import com.hjq.bar.OnTitleBarListener;
@@ -52,7 +43,6 @@ import com.hjq.bar.TitleBar;
 import com.hjq.base.BaseDialog;
 import com.hjq.base.FragmentPagerAdapter;
 import com.hjq.widget.layout.NestedViewPager;
-import com.tencent.mmkv.MMKV;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -85,7 +75,6 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
     private RelativeLayout mReportAll;
     private TitleBar mReportBar;
     private AppCompatImageView mReportImageView;
-    private static boolean UDP_HAND_TAG = false; //握手成功表示  true 成功
     private static boolean UDP_EQUALS_ID = false; //获取当前操作id,和进入该界面的id 是否相等,相等才可以进行各种操作,默认不相等,
     private boolean isPrinted;   //true,    是否已经打印过,true表示打印过了,不能编辑
     private String mCreatedByWho;
@@ -252,12 +241,11 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
 
             @Override
             public void onRightClick(View view) {
-                LogUtils.e("Socket回调==DetailCaseActivity==握手==onRightClick==" + UDP_HAND_TAG);
-                if (UDP_HAND_TAG) {
+                LogUtils.e("Socket回调==DetailCaseActivity==握手==onRightClick==" + HandService.UDP_HAND_GLOBAL_TAG);
+                if (HandService.UDP_HAND_GLOBAL_TAG) {
                     sendSocketPointMessage(Constants.UDP_F2);
                 } else {
-                    toast("暂未建立连接");
-                    sendHandLinkMessage();
+                    toast(Constants.HAVE_HAND_FAIL_OFFLINE);
                 }
             }
         });
@@ -433,15 +421,13 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
     public void SocketRefreshEvent(SocketRefreshEvent event) {
         String data = event.getData();
         switch (event.getUdpCmd()) {
+            case Constants.UDP_CUSTOM_TOAST://吐司
+                toast("" + data);
+                break;
             case Constants.UDP_CUSTOM_FINISH://自定义信息,结束当前界面
                 postDelayed(() -> {
                     finish();
                 }, 100);
-                break;
-            case Constants.UDP_HAND://握手
-                UDP_HAND_TAG = true;
-                //获取当前病例ID
-                sendSocketPointMessage(Constants.UDP_F0);
                 break;
             case Constants.UDP_F0://获取当前病例
                 if ("true".equals(data)) {//当前病例相同才能操作
@@ -564,7 +550,7 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
      * @param CMDCode 命令cmd
      */
     public void sendSocketPointMessage(String CMDCode) {
-        if (UDP_HAND_TAG) {
+        if (HandService.UDP_HAND_GLOBAL_TAG) {
             ShotPictureBean shotPictureBean = new ShotPictureBean();
             String spCaseID = mMMKVInstace.decodeString(Constants.KEY_CurrentCaseID);
             String s = CalculateUtils.hex10To16Result4(Integer.parseInt(spCaseID));
@@ -580,32 +566,11 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
 //            SocketManage.startSendMessageBySocket(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), false);
 
         } else {
-            sendHandLinkMessage();
-            toast("请先建立握手链接");
+            toast(Constants.HAVE_HAND_FAIL_OFFLINE);
         }
 
     }
 
-    /**
-     * 发送握手消息
-     */
-    public void sendHandLinkMessage() {
-        HandBean handBean = new HandBean();
-        handBean.setHelloPc("");
-        handBean.setComeFrom("");
-        byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(handBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
-                Constants.UDP_HAND);
-
-        if (("".equals(mSocketPort))) {
-            toast("通讯端口不能为空");
-            return;
-        }
-        LogUtils.e("SocketUtils===发送消息==点对点==detailCaseActivity==sendByteData==" + sendByteData);
-        LogUtils.e("SocketUtils===发送消息==点对点==detailCaseActivity==mSocketPort==" + mSocketPort);
-
-        SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), this);
-//        SocketManage.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort));
-    }
 
     /**
      * ***************************************************************************通讯模块**************************************************************************
@@ -614,8 +579,8 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
     @Override
     protected void onResume() {
         super.onResume();
-        LogUtils.e("onResume===DetailCaseActivity===开始建立握手链接!");
-        sendHandLinkMessage();
+        //获取当前病例ID
+        sendSocketPointMessage(Constants.UDP_F0);
         sendImageRequest(currentItemID);
     }
 

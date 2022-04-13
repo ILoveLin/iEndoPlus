@@ -99,8 +99,9 @@
         <!-- iEndoPlus界面 -->
 
         <!-- 永久保活Socket服务 -->
-        <service android:name=".app.ReceiveSocketService" />
-
+        <service android:name=".service.ReceiveSocketService" />
+        <!-- 永久保活Socket服务 -->
+        <service android:name=".service.HandService" />
         <!-- 方案界面 -->
         <activity
             android:name=".mineui.activity.choice.ProgramActivity"

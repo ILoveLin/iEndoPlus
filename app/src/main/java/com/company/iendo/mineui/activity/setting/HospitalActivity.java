@@ -20,6 +20,7 @@ import com.company.iendo.bean.socket.HandBean;
 import com.company.iendo.http.glide.GlideApp;
 import com.company.iendo.other.Constants;
 import com.company.iendo.other.HttpConstant;
+import com.company.iendo.service.HandService;
 import com.company.iendo.ui.activity.ImageCropActivity;
 import com.company.iendo.ui.activity.ImagePreviewActivity;
 import com.company.iendo.ui.activity.ImageSelectActivity;
@@ -55,7 +56,6 @@ import okhttp3.Call;
  * desc：医院信息
  */
 public class HospitalActivity extends AppActivity implements StatusAction {
-    private static boolean UDP_HAND_TAG = false; //握手成功表示  true 成功
     private TitleBar mTitlebar;
     private StatusLayout mStatusLayout;
     /**
@@ -110,9 +110,6 @@ public class HospitalActivity extends AppActivity implements StatusAction {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void SocketRefreshEvent(SocketRefreshEvent event) {
         switch (event.getUdpCmd()) {
-            case Constants.UDP_HAND://刷新医院信息
-                UDP_HAND_TAG = true;
-                break;
             case Constants.UDP_40://刷新医院信息
                 sendRequest();
                 break;
@@ -120,26 +117,7 @@ public class HospitalActivity extends AppActivity implements StatusAction {
 
     }
 
-    /**
-     * 发送握手消息
-     */
-    public void sendHandLinkMessage() {
-        HandBean handBean = new HandBean();
-        handBean.setHelloPc("");
-        handBean.setComeFrom("");
-        byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(handBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
-                Constants.UDP_HAND);
 
-        if (("".equals(mSocketPort))) {
-            toast("通讯端口不能为空");
-            return;
-        }
-        LogUtils.e("SocketUtils===发送消息==点对点==detailCaseActivity==sendByteData==" + sendByteData);
-        LogUtils.e("SocketUtils===发送消息==点对点==detailCaseActivity==mSocketPort==" + mSocketPort);
-
-        SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), this);
-//        SocketManage.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort));
-    }
 
     /**
      * 采图--->发送点对点消息,必须握手成功
@@ -147,7 +125,7 @@ public class HospitalActivity extends AppActivity implements StatusAction {
      * @param CMDCode 命令cmd
      */
     public void sendSocketPointRefreshData(String CMDCode) {
-        if (UDP_HAND_TAG) {
+        if (HandService.UDP_HAND_GLOBAL_TAG) {
             HandBean handBean = new HandBean();
             handBean.setHelloPc("");
             handBean.setComeFrom("");
@@ -160,8 +138,7 @@ public class HospitalActivity extends AppActivity implements StatusAction {
             }
             SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), HospitalActivity.this);
         } else {
-            toast("请先建立握手链接");
-            sendHandLinkMessage();
+            toast(Constants.HAVE_HAND_FAIL_OFFLINE);
         }
 
     }
@@ -430,7 +407,6 @@ public class HospitalActivity extends AppActivity implements StatusAction {
     @Override
     protected void onResume() {
         super.onResume();
-        sendHandLinkMessage();
     }
 
     @Override

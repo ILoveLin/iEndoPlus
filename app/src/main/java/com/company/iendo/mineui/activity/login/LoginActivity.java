@@ -32,7 +32,8 @@ import com.company.iendo.R;
 import com.company.iendo.aop.Log;
 import com.company.iendo.aop.SingleClick;
 import com.company.iendo.app.AppActivity;
-import com.company.iendo.app.ReceiveSocketService;
+import com.company.iendo.service.HandService;
+import com.company.iendo.service.ReceiveSocketService;
 import com.company.iendo.bean.LoginBean;
 import com.company.iendo.bean.RefreshEvent;
 import com.company.iendo.bean.UserListBean;
@@ -64,6 +65,7 @@ import com.hjq.umeng.Platform;
 import com.hjq.umeng.UmengLogin;
 import com.hjq.widget.view.PasswordEditText;
 import com.tencent.mmkv.MMKV;
+import com.xdandroid.hellodaemon.DaemonEnv;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -679,7 +681,7 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                                 //此次需要存入当前登入用户具有的操作权限
                                 MMKV kv = MMKV.defaultMMKV();
                                 LoginBean.DataDTO.PurviewDTO purviewBean = mBean.getData().getPurview();
-
+                                kv.encode(Constants.KEY_Login_Tag, true);//是否登入成功
                                 kv.encode(Constants.KEY_UserMan, purviewBean.isUserMan());//用户管理(用户管理界面能不能进)
                                 kv.encode(Constants.KEY_CanPsw, purviewBean.isCanPsw());//设置口令(修改别人密码)
                                 kv.encode(Constants.KEY_SnapVideoRecord, purviewBean.isSnapVideoRecord());//拍照录像
@@ -709,11 +711,11 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                                     toast("本地广播发送端口不能为空");
                                     return;
                                 } else {
-                                    LogUtils.e("AppActivity=login==port====" + mSocketPort);
                                     receiveSocketService.setSettingReceiveThread(mAppIP, Integer.parseInt(mSocketPort), LoginActivity.this);
 
                                 }
                                 MainActivity.start(getContext(), CaseManageFragment.class);
+                                initHandService();
                                 finish();
                             } else {
                                 toast("密码错误");
@@ -727,7 +729,19 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                     }
                 });
     }
+    /**
+     * 开启保活握手服务
+     */
+    private void initHandService() {
 
+        //初始化
+        DaemonEnv.initialize(this, HandService.class, DaemonEnv.DEFAULT_WAKE_UP_INTERVAL);
+        //是否 任务完成, 不再需要服务运行?
+        HandService.sShouldStopService = false;
+        //开启服务
+        DaemonEnv.startServiceMayBind(HandService.class);
+
+    }
     /**
      * 获取权限存入当前app
      */

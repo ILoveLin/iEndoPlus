@@ -70,20 +70,20 @@ public class Constants {
 
     /**
      * 登录成功之后,存储当前设备信息
-     *
      */
 
 
+    public static final String KEY_Device_Ip = "KEY_Device_Ip";      //选中设备的ip
+    public static final String KEY_Device_Type_Num = "KEY_Device_Type_Num";      //选中设备的类型,此处是数字比如07
+    public static final String KEY_Login_Tag = "KEY_Login_Tag";      //选中设备的时候,是否登入成功
+    public static final String KEY_Device_SocketPort = "KEY_Device_SocketPort";      //选中设备的port
+    public static final String KEY_DeviceCode = "KEY_DeviceCode";      //选中的设备码
 
-     public static final String KEY_Device_Ip = "KEY_Device_Ip";      //选中设备的ip
-
-     /**
+    /**
      * 接受线程需要实时获取的数据
      */
     public static final String KEY_CurrentCaseID = "KEY_CurrentCaseID";                     //当前选中的病例ID
     public static final String KEY_CurrentLoginUserName = "KEY_CurrentLoginUserName";            //当前登录的用户名
-
-
 
 
     /**
@@ -92,6 +92,8 @@ public class Constants {
 
     public static final String UDP_CASE_ID_DIFFERENT = "两设备之间选择病历不一致，请重新确认";                 //当前病例ID和操作病例ID不相等,不能操作!
     public static final String HAVE_NO_PERMISSION = "暂无权限";
+//    public static final String HAVE_HAND_FAIL = "暂无权限";
+    public static final String HAVE_HAND_FAIL_OFFLINE = "远程设备连接失败,信息可能无法同步";
 
 
     /**
@@ -108,6 +110,7 @@ public class Constants {
     public static final String UDP_CUSTOM14 = "UDP_CUSTOM14";    //自定义命令     在图像采集界面,接受到删除病例,需要退到病例列表界面而不是回退病例详情界面
     public static final String UDP_CUSTOM_FINISH = "UDP_CUSTOM_FINISH";    //自定义命令     结束DetailCaseActivity界面
     public static final String UDP_CUSTOM_TOAST = "UDP_CUSTOM_TOAST";    //自定义命令     toast
+    public static final String UDP_CUSTOM_RESTART = "UDP_CUSTOM_RESTART";    //自定义命令     监听线程异常需要重启
     public static final String UDP_15 = "15";                    //新增图片（采图）
     public static final String UDP_F1 = "F1";                    //预览报告
     public static final String UDP_F2 = "F2";                    //打印报告

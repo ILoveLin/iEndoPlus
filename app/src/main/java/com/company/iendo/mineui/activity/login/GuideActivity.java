@@ -69,6 +69,7 @@ public final class GuideActivity extends AppActivity {
         userAgreementTag = (Boolean) SharePreferenceUtil.get(GuideActivity.this, Constants.Sp_UserAgreement_Tag, false);
         isLogined = (Boolean) SharePreferenceUtil.get(this, Constants.Is_Logined, false);
 
+
         if (!userAgreementTag) {
             showUserAgreementDialog();
         }
@@ -89,6 +90,8 @@ public final class GuideActivity extends AppActivity {
             } else {
                 SharePreferenceUtil.put(GuideActivity.this, Constants.SP_IS_FIRST_IN, false);   //false 不是第一次登入了
                 SharePreferenceUtil.put(GuideActivity.this, Constants.Is_Logined, false);
+                mMMKVInstace.encode(Constants.KEY_Login_Tag, false);//是否登入成功
+
                 startActivity(new Intent(GuideActivity.this, MainActivity.class));
             }
             finish();

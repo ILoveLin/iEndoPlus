@@ -39,6 +39,7 @@ import com.company.iendo.bean.socket.params.Type01Bean;
 import com.company.iendo.other.Constants;
 
 import com.company.iendo.other.HttpConstant;
+import com.company.iendo.service.HandService;
 import com.company.iendo.ui.dialog.SelectDialog;
 import com.company.iendo.utils.CalculateUtils;
 import com.company.iendo.utils.CommonUtil;
@@ -139,7 +140,6 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
     //  private static final int UDP_Cold = 108;      //获取病例ID
     private static boolean UDP_RECODE_INIT_TAG = false; //首次进入该界面,查询是否录像的标识
     private static boolean UDP_RECODE_STATUS_TAG = UDP_RECODE_INIT_TAG; //每次请求的时候,需要再次请求状态,不然容易在未接受到消息的时候出现ui错乱的bug
-    private static boolean UDP_HAND_TAG = false; //握手成功表示  true 成功
     private static boolean UDP_EQUALS_ID = false; //获取当前操作id,和进入该界面的id 是否相等,相等才可以进行各种操作,默认不相等,
     @SuppressLint("HandlerLeak")
     private Handler mHandler = new Handler() {
@@ -240,19 +240,8 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         LogUtils.e("Socket回调==DeviceSearchActivity==当前UDP命令==event.getUdpCmd()==" + event.getUdpCmd());
         String data = event.getData();
         switch (event.getUdpCmd()) {
-            case Constants.UDP_CUSTOM_TOAST://握手
-                toast(""+data);
-
-                break;
-                case Constants.UDP_HAND://握手
-                LogUtils.e("======LiveServiceImpl==回调=event==握手成功的回调==" + event.getUdpCmd());
-                UDP_HAND_TAG = true;
-                //获取当前设备参数
-                getSocketLightData(Constants.UDP_F5);
-                //获取当前病例ID
-                sendSocketPointMessage(Constants.UDP_F0);
-                //实时获取当前上位机,录像的状态
-                sendSocketPointRecodeStatusMessage(Constants.UDP_18, "0");
+            case Constants.UDP_CUSTOM_TOAST://吐司
+                toast("" + data);
                 break;
             case Constants.UDP_F0://获取当前病例
                 if ("true".equals(data)) {//当前病例相同才能操作
@@ -436,7 +425,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                 mSwitchBlood.setChecked(true);
             }
 
-            isFirstInitData =false;
+            isFirstInitData = false;
 
         }
 
@@ -499,7 +488,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
 //                }
                 break;
             case R.id.linear_picture:           //截图,本地不做,socket通讯机子做操作
-                if (UDP_HAND_TAG) {
+                if (HandService.UDP_HAND_GLOBAL_TAG) {
                     if (UDP_EQUALS_ID) {
                         if (mMMKVInstace.decodeBool(Constants.KEY_SnapVideoRecord)) {
                             sendSocketPointShotMessage(Constants.UDP_15);
@@ -510,8 +499,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                         toast(Constants.UDP_CASE_ID_DIFFERENT);
                     }
                 } else {
-                    toast("握手失败,正在尝试连接设备");
-                    sendHandLinkMessage();
+                    toast(Constants.HAVE_HAND_FAIL_OFFLINE);
                 }
 //                if (isPlayering) {
 //                    if (mVLCView.isPrepare()) {
@@ -659,14 +647,14 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                             if (!rtmpOnlyAudio.isStreaming()) {
                                 if (rtmpOnlyAudio.prepareAudio()) {
                                     //握手成功,
-                                    if (UDP_HAND_TAG) {
+                                    if (HandService.UDP_HAND_GLOBAL_TAG) {
                                         //tag为关闭状态(默认是关闭状态)点击的时候如果关闭状态就开启推流
                                         if ("stopStream".equals(mTvMicStatus.getTag())) {
                                             sendSocketPointMicMessage("1");
                                         }
                                     } else {
-                                        toast("握手失败,请尝试再次链接");
-                                        sendHandLinkMessage();
+                                        toast(Constants.HAVE_HAND_FAIL_OFFLINE);
+                                        toast(Constants.HAVE_HAND_FAIL_OFFLINE);
                                     }
 
 
@@ -674,14 +662,14 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
 
                                 }
                             } else {
-                                if (UDP_HAND_TAG) {
+                                if (HandService.UDP_HAND_GLOBAL_TAG) {
                                     //tag为开启状态,此时需要关闭推流
                                     if ("startStream".equals(mTvMicStatus.getTag())) {
                                         sendSocketPointMicMessage("0");
                                     }
                                 } else {
-                                    sendHandLinkMessage();
-                                    toast("握手失败,请尝试再次链接");
+
+                                    toast(Constants.HAVE_HAND_FAIL_OFFLINE);
                                 }
                             }
                         }
@@ -713,7 +701,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
      * @param status  状态值
      */
     public void sendSocketPointRecodeStatusMessage(String CMDCode, String status) {
-        if (UDP_HAND_TAG) {
+        if (HandService.UDP_HAND_GLOBAL_TAG) {
             RecodeBean bean = new RecodeBean();
             bean.setQrycode(status);
             if (!("".equals(mCaseID))) {
@@ -730,8 +718,8 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             }
             SocketUtils.startSendPointMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), GetPictureActivity.this);
         } else {
-            toast("请先建立握手链接");
-            sendHandLinkMessage();
+            toast(Constants.HAVE_HAND_FAIL_OFFLINE);
+
         }
 
     }
@@ -742,7 +730,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
      * @param CMDCode 命令cmd
      */
     public void sendSocketPointMessage(String CMDCode) {
-        if (UDP_HAND_TAG) {
+        if (HandService.UDP_HAND_GLOBAL_TAG) {
             HandBean handBean = new HandBean();
             handBean.setHelloPc("");
             handBean.setComeFrom("");
@@ -754,32 +742,11 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             }
             SocketUtils.startSendPointMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), GetPictureActivity.this);
         } else {
-            toast("请先建立握手链接");
-            sendHandLinkMessage();
+            toast(Constants.HAVE_HAND_FAIL_OFFLINE);
+
 
         }
 
-    }
-
-    /**
-     * 发送握手消息
-     */
-    public void sendHandLinkMessage() {
-        HandBean handBean = new HandBean();
-        handBean.setHelloPc("");
-        handBean.setComeFrom("");
-        byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(handBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
-                Constants.UDP_HAND);
-
-        if (("".equals(mSocketPort))) {
-            toast("通讯端口不能为空");
-            return;
-        }
-        LogUtils.e("SocketUtils===发送消息==点对点==detailCaseActivity==sendByteData==" + sendByteData);
-        LogUtils.e("SocketUtils===发送消息==点对点==detailCaseActivity==mSocketPort==" + mSocketPort);
-
-        SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), this);
-//        SocketManage.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort));
     }
 
     /**
@@ -813,7 +780,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
      * @param CMDCode 命令cmd
      */
     public void sendSocketPointShotMessage(String CMDCode) {
-        if (UDP_HAND_TAG) {
+        if (HandService.UDP_HAND_GLOBAL_TAG) {
             ShotPictureBean bean = new ShotPictureBean();
             String spCaseID = mMMKVInstace.decodeString(Constants.KEY_CurrentCaseID);
             String hexID = CalculateUtils.numToHex16(Integer.parseInt(spCaseID));
@@ -828,8 +795,8 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             }
             SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), GetPictureActivity.this);
         } else {
-            toast("请先建立握手链接");
-            sendHandLinkMessage();
+            toast(Constants.HAVE_HAND_FAIL_OFFLINE);
+
         }
 
     }
@@ -841,7 +808,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
      * @param CMDCode 命令cmd
      */
     public void getSocketLightData(String CMDCode) {
-        if (UDP_HAND_TAG) {
+        if (HandService.UDP_HAND_GLOBAL_TAG) {
             Type02Bean bean = new Type02Bean();
             Type02Bean.Type02 Type02 = new Type02Bean.Type02();
             Type02.setBrightness("");
@@ -857,8 +824,8 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             }
             SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), GetPictureActivity.this);
         } else {
-            toast("请先建立握手链接");
-            sendHandLinkMessage();
+            toast(Constants.HAVE_HAND_FAIL_OFFLINE);
+
         }
 
     }
@@ -871,7 +838,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
      * @param CMDCode 命令cmd
      */
     public void sendSocketPointLight(String CMDCode, String data) {
-        if (UDP_HAND_TAG) {
+        if (HandService.UDP_HAND_GLOBAL_TAG) {
             Type02Bean bean = new Type02Bean();
             Type02Bean.Type02 typeBean = new Type02Bean.Type02();
             typeBean.setBrightness(data);
@@ -888,8 +855,9 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             }
             SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), GetPictureActivity.this);
         } else {
-            toast("请先建立握手链接");
-            sendHandLinkMessage();
+            toast(Constants.HAVE_HAND_FAIL_OFFLINE);
+            toast(Constants.HAVE_HAND_FAIL_OFFLINE);
+
         }
 
     }
@@ -901,7 +869,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
      * @param CMDCode 命令cmd
      */
     public void sendSocketPointVideoDevice(String CMDCode, Type01Bean bean) {
-        if (UDP_HAND_TAG) {
+        if (HandService.UDP_HAND_GLOBAL_TAG) {
             LogUtils.e("======GetPictureActivity==回调===获取当前病例==" + mGson.toJson(bean));
             byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(bean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
                     CMDCode);
@@ -913,8 +881,8 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             }
             SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), GetPictureActivity.this);
         } else {
-            toast("请先建立握手链接");
-            sendHandLinkMessage();
+            toast(Constants.HAVE_HAND_FAIL_OFFLINE);
+
         }
 
     }
@@ -1301,9 +1269,18 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         isFirstIn = true;
         startLive(path);
         //握手通讯
-        LogUtils.e("onResume===GetPictureActivity===开始建立握手链接!");
-        sendHandLinkMessage();
+        LogUtils.e("onResume===GetPictureActivity===开始建立握手链接!"+ HandService.UDP_HAND_GLOBAL_TAG);
+        LogUtils.e("onResume===GetPictureActivity===开始建立握手链接222!"+ HandService.UDP_HAND_GLOBAL_TAG);
+        LogUtils.e("onResume===GetPictureActivity===开始建立握手链接333!"+ HandService.UDP_HAND_GLOBAL_TAG);
+
+
         sendRequest(mCaseID);
+        //获取当前设备参数
+        getSocketLightData(Constants.UDP_F5);
+        //获取当前病例ID
+        sendSocketPointMessage(Constants.UDP_F0);
+        //实时获取当前上位机,录像的状态
+        sendSocketPointRecodeStatusMessage(Constants.UDP_18, "0");
     }
 
     //获取病例图片数目
@@ -1394,7 +1371,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
      */
     @Override
     public void onCheckedChanged(SwitchButton button, boolean checked) {
-        if (isFirstInitData){
+        if (isFirstInitData) {
             return;
         }
         LogUtils.e("progress==switch===onCheckedChanged==");
@@ -1458,13 +1435,13 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
 
     @Override
     public void onStartTrackingTouch(RangeSeekBar view, boolean isLeft) {
-        LogUtils.e("progress==onStartTrackingTouch=="+isLeft);
+        LogUtils.e("progress==onStartTrackingTouch==" + isLeft);
 
     }
 
     @Override
     public void onStopTrackingTouch(RangeSeekBar view, boolean isLeft) {
-        if (isFirstInitData){
+        if (isFirstInitData) {
             return;
         }
         float progress = view.getLeftSeekBar().getProgress();
@@ -1668,7 +1645,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             @Override
             public void run() {
                 Log.e("TAG", "RtmpOnlyAudio===onConnectionFailedRtmp==");
-                toast("语音断开链接 " );
+                toast("语音断开链接 ");
                 setMicStatus("stopStream", "语音通话");
                 sendSocketPointMicMessage("0");
             }

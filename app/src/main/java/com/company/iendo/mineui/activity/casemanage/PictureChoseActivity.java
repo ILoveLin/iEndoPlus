@@ -28,6 +28,7 @@ import com.company.iendo.mineui.activity.casemanage.fragment.adapter.ChosePictur
 import com.company.iendo.other.Constants;
 import com.company.iendo.other.GridSpaceDecoration;
 import com.company.iendo.other.HttpConstant;
+import com.company.iendo.service.HandService;
 import com.company.iendo.utils.CalculateUtils;
 import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.SharePreferenceUtil;
@@ -68,7 +69,6 @@ public final class PictureChoseActivity extends AppActivity implements StatusAct
     private RelativeLayout mAnimRelative;
     private TitleBar mAnimTitlebar;
     private AppCompatImageView mAnimReport;
-    private static boolean UDP_HAND_TAG = false; //握手成功表示  true 成功
     private String oldIDS = "";
     private RelativeLayout mRelativeAll;
     private TextView mImageEmpty;
@@ -140,11 +140,11 @@ public final class PictureChoseActivity extends AppActivity implements StatusAct
 
             @Override
             public void onRightClick(View view) {
-                if (UDP_HAND_TAG) {
+                if (HandService.UDP_HAND_GLOBAL_TAG) {
                     sendSocketPointMessage(Constants.UDP_F2);
                 } else {
-                    toast("暂未建立连接");
-                    sendHandLinkMessage();
+                    toast(Constants.HAVE_HAND_FAIL_OFFLINE);
+
                 }
             }
         });
@@ -347,10 +347,10 @@ public final class PictureChoseActivity extends AppActivity implements StatusAct
                             LogUtils.e("图片" + "response===" + response);////原图路径
                             if (0 == code) {
                                 //成功,之后才开启动画显示报告预览
-                                if(UDP_HAND_TAG){
+                                if(HandService.UDP_HAND_GLOBAL_TAG){
                                     showStartReportAnim();
                                 }else {
-                                    toast("请先建立握手连接");
+                                    toast(Constants.HAVE_HAND_FAIL_OFFLINE);
                                 }
                             } else {
                                 toast("请求失败");
@@ -390,9 +390,6 @@ public final class PictureChoseActivity extends AppActivity implements StatusAct
 
         String data = event.getData();
         switch (event.getUdpCmd()) {
-            case Constants.UDP_HAND://握手
-                UDP_HAND_TAG = true;
-                break;
             case Constants.UDP_F1://预览报告
                 if ("".equals(data)) {
                     toast("暂无报告");
@@ -419,22 +416,7 @@ public final class PictureChoseActivity extends AppActivity implements StatusAct
 
     }
 
-    /**
-     * 发送握手消息
-     */
-    public void sendHandLinkMessage() {
-        HandBean handBean = new HandBean();
-        handBean.setHelloPc("");
-        handBean.setComeFrom("");
-        byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(handBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
-                Constants.UDP_HAND);
-        if (("".equals(mSocketPort))) {
-            toast("通讯端口不能为空");
-            return;
-        }
-        SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort),this);
-//        SocketManage.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort));
-    }
+
 
 
     /**
@@ -443,7 +425,7 @@ public final class PictureChoseActivity extends AppActivity implements StatusAct
      * @param CMDCode 命令cmd
      */
     public void sendSocketPointMessage(String CMDCode) {
-        if (UDP_HAND_TAG) {
+        if (HandService.UDP_HAND_GLOBAL_TAG) {
             ShotPictureBean shotPictureBean = new ShotPictureBean();
             String spCaseID = mMMKVInstace.decodeString(Constants.KEY_CurrentCaseID);
             String s = CalculateUtils.hex10To16Result4(Integer.parseInt(spCaseID));
@@ -457,7 +439,6 @@ public final class PictureChoseActivity extends AppActivity implements StatusAct
 
             SocketUtils.startSendPointMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), PictureChoseActivity.this);
         } else {
-            sendHandLinkMessage();
             toast("请先建立握手链接");
         }
 
@@ -580,7 +561,6 @@ public final class PictureChoseActivity extends AppActivity implements StatusAct
     protected void onResume() {
         super.onResume();
         LogUtils.e("onResume===PictureChoseActivity===开始建立握手链接!");
-        sendHandLinkMessage();
 
     }
 
