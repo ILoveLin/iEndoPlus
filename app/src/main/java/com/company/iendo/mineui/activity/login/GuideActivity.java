@@ -84,13 +84,14 @@ public final class GuideActivity extends AppActivity {
                 Intent intent = new Intent();
                 intent.setClass(GuideActivity.this, LoginActivity.class);
 //                intent.setClass(GuideActivity.this, LoginActivity.class);
+                mMMKVInstace.encode(Constants.KEY_Login_Tag, false);//是否登入成功
                 startActivity(intent);
                 SharePreferenceUtil.put(GuideActivity.this, Constants.SP_IS_FIRST_IN, false);
                 SharePreferenceUtil.put(GuideActivity.this, Constants.Sp_UserAgreement_Tag, true);
             } else {
                 SharePreferenceUtil.put(GuideActivity.this, Constants.SP_IS_FIRST_IN, false);   //false 不是第一次登入了
                 SharePreferenceUtil.put(GuideActivity.this, Constants.Is_Logined, false);
-                mMMKVInstace.encode(Constants.KEY_Login_Tag, false);//是否登入成功
+                mMMKVInstace.encode(Constants.KEY_Login_Tag, true);//是否登入成功
 
                 startActivity(new Intent(GuideActivity.this, MainActivity.class));
             }

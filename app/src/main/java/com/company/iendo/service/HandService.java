@@ -165,7 +165,7 @@ public class HandService extends AbsWorkService {
                         sDisposable10s.dispose();
                         start60STask();
 
-                    }else if (tag == 0 && !UDP_HAND_GLOBAL_TAG){
+                    } else if (tag == 0 && !UDP_HAND_GLOBAL_TAG) {
                         MMKV mmkv = MMKV.defaultMMKV();
                         boolean b = mmkv.decodeBool(Constants.KEY_Login_Tag);
                         String mSocketPort = mmkv.decodeString(Constants.KEY_Device_SocketPort);
@@ -180,8 +180,6 @@ public class HandService extends AbsWorkService {
                             receiveSocketService.initFirstThread(mAppIP);
                         }
                     }
-
-
 
 
                 });
@@ -210,26 +208,28 @@ public class HandService extends AbsWorkService {
      * 发送握手消息
      */
     public void sendHandLinkMessage() {
-        HandBean handBean = new HandBean();
-        handBean.setHelloPc("");
-        handBean.setComeFrom("");
         MMKV mmkv = MMKV.defaultMMKV();
         String mCurrentTypeNum = mmkv.decodeString(Constants.KEY_Device_Type_Num);
+        Boolean mLoginTag = mmkv.decodeBool(Constants.KEY_Login_Tag);
         String mCurrentReceiveDeviceCode = mmkv.decodeString(Constants.KEY_DeviceCode);
         String mSocketPort = mmkv.decodeString(Constants.KEY_Device_SocketPort);
         String mSocketOrLiveIP = mmkv.decodeString(Constants.KEY_Device_Ip);
-        byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(handBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
-                Constants.UDP_HAND);
+        if (mLoginTag) {
+            HandBean handBean = new HandBean();
+            handBean.setHelloPc("");
+            handBean.setComeFrom("");
+            byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(handBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
+                    Constants.UDP_HAND);
 
-        if (("".equals(mSocketPort))) {
+            if (("".equals(mSocketPort))) {
 //            toast("通讯端口不能为空");
-            return;
+                return;
+            }
+            LogUtils.e("SocketUtils==HandService===发送消息==点对点==detailCaseActivity==sendByteData==" + sendByteData);
+            LogUtils.e("SocketUtils==HandService===发送消息==点对点==detailCaseActivity==mSocketPort==" + mSocketPort);
+            startTime = System.currentTimeMillis();
+            SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), this);
         }
-        LogUtils.e("SocketUtils==HandService===发送消息==点对点==detailCaseActivity==sendByteData==" + sendByteData);
-        LogUtils.e("SocketUtils==HandService===发送消息==点对点==detailCaseActivity==mSocketPort==" + mSocketPort);
-        startTime = System.currentTimeMillis();
-        SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), this);
-//        SocketManage.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort));
     }
 
     /**
