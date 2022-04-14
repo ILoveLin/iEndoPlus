@@ -70,6 +70,7 @@
                 android:id="@+id/rv_search_recyclerview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:scrollbars="vertical"
                 tools:listCount="10"
                 tools:listitem="@layout/picker_item" />
         </com.scwang.smart.refresh.layout.SmartRefreshLayout>

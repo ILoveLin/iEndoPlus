@@ -300,6 +300,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
     private void setLayoutData(CaseDetailBean mBean) {
         mDataBean = mBean.getData();
         LogUtils.e("病例详情界面数据====" + mDataBean);
+        //送检医生/SubmitDoctor   检查医生/ExaminingPhysician
         et_01_check_num.setText(mDataBean.getCaseNo());     //检查号也叫病例编号
         et_01_name.setText(mDataBean.getName());
         edit_01_i_tell_you.setText(mDataBean.getChiefComplaint() + "");
@@ -307,6 +308,8 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         et_01_sex_type.setText("" + mDataBean.getSex());
         et_03_tel.setText("" + mDataBean.getTel());
         et_03_address.setText("" + mDataBean.getAddress());
+        et_02_live_check.setText(mDataBean.getBiopsy()); //活检
+
         //        String PatientNo = et_01_check_num.getText().toString().trim();       //病人编号---检查号???
         et_03_my_id_num.setText("" + mDataBean.getCardID());
         lines_03_case_history.setContentText("" + mDataBean.getMedHistory());
@@ -316,21 +319,16 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         et_03_protection_num.setText("" + mDataBean.getInsuranceID());
         et_03_native_place.setText("" + mDataBean.getNativePlace());
         //        String IsInHospital = et_03_in_hospital_num.getText().toString().trim();       //是否还在医院住院  ???
-//        String LastCheckUserID = et_03_tel.getText().toString().trim();       //最后一个来查房的医生  ???
 //        String DOB = et_.getText().toString().trim();       //生日                                  ???
         et_01_age.setText("" + mDataBean.getPatientAge());
         tv_01_age_type.setText("" + mDataBean.getAgeUnit());
-        //        String ReturnVisit = et_03_tel.getText().toString().trim();       //初复诊 （0-初诊 1-复诊）  ???
         et_03_case_bed_num.setText("" + mDataBean.getBedID());
         et_03_case_area_num.setText("" + mDataBean.getWardID());
         et_03_case_num.setText("" + mDataBean.getCaseID());
-        //        String SubmitDoctor = et_03_tel.getText().toString().trim();       //申请医生        ???
+        String SubmitDoctor = et_03_tel.getText().toString().trim();       //送检医生/SubmitDoctor   检查医生/ExaminingPhysician       ???
         et_03_section.setText("" + mDataBean.getDepartment());
         et_03_device.setText("" + mDataBean.getDevice());
         et_01_fee.setText("" + mDataBean.getFee());
-        //        String FeeType = et_03_tel.getText().toString().trim();       //收费类型         ???
-//        et_02_live_check
-        et_01_get_check_doctor.setText("" + mDataBean.getSubmitDoctor());
         etlines_02_test.setContentText("" + mDataBean.getTest());
         etlines_02_advice.setContentText("" + mDataBean.getAdvice());
         et_03_in_hospital_num.setText("" + mDataBean.getInpatientID());
@@ -338,10 +336,13 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         etlines_02_live_check.setContentText("" + mDataBean.getBiopsy());
         etlines_02_cytology.setContentText("" + mDataBean.getCtology());
         etlines_02_pathology.setContentText("" + mDataBean.getPathology());
-        etlines_02_live_check.setContentText("" + mDataBean.getExaminingPhysician());
         lines_01_bad_tell.setContentText("" + mDataBean.getClinicalDiagnosis());
         etlines_02_mirror_see.setContentText("" + mDataBean.getCheckContent());
         etlines_02_mirror_result.setContentText("" + mDataBean.getCheckDiagnosis());
+
+
+        et_02_check_doctor.setText(mDataBean.getExaminingPhysician());//检查医生/ExaminingPhysician
+        et_01_get_check_doctor.setText(mDataBean.getSubmitDoctor());//检查医生/ExaminingPhysician
 
     }
 
@@ -1767,7 +1768,6 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
             mParamsMap.put("Occupatior", Occupatior);
         }
         String InsuranceID = et_03_protection_num.getText().toString().trim();       //社保卡ID
-        String SubmitDoctor = et_01_get_check_doctor.getText().toString().trim();       //送检医生
         String NativePlace = et_03_native_place.getText().toString().trim();       //籍贯
 //        String IsInHospital = et_03_in_hospital_num.getText().toString().trim();       //是否还在医院住院  ???
 //        String LastCheckUserID = et_03_tel.getText().toString().trim();       //最后一个来查房的医生  ???
@@ -1798,6 +1798,8 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         String Biopsy = etlines_02_live_check.getContentText().toString().trim();       //活检
         String Ctology = etlines_02_cytology.getContentText().toString().trim();       //细胞学
         String Pathology = etlines_02_pathology.getContentText().toString().trim();       //病理学
+        //送检医生/SubmitDoctor   检查医生/ExaminingPhysician
+        String SubmitDoctor = et_01_get_check_doctor.getText().toString().trim();       //送检医生
         String ExaminingPhysician = et_02_check_doctor.getText().toString().trim();       //检查医生
         String ClinicalDiagnosis = lines_01_bad_tell.getContentText().toString().trim();       //临床诊断
         String CheckContent = etlines_02_mirror_see.getContentText().toString().trim();       //检查内容（镜检所见）

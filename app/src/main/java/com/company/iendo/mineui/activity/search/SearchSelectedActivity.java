@@ -7,11 +7,12 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.company.iendo.R;
 import com.company.iendo.app.AppActivity;
 import com.company.iendo.bean.DialogItemBean;
 import com.company.iendo.bean.ListDialogDateBean;
-import com.company.iendo.mineui.activity.MainActivity;
 import com.company.iendo.other.HttpConstant;
 import com.company.iendo.ui.dialog.DateDialog;
 import com.company.iendo.ui.dialog.MenuDialog;
@@ -20,10 +21,10 @@ import com.company.iendo.utils.DateUtil;
 import com.company.iendo.utils.LogUtils;
 import com.hjq.bar.OnTitleBarListener;
 import com.hjq.bar.TitleBar;
+import com.hjq.base.BaseAdapter;
 import com.hjq.base.BaseDialog;
 import com.hjq.shape.view.ShapeButton;
 import com.hjq.shape.view.ShapeTextView;
-import com.hjq.widget.view.ClearEditText;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -45,7 +46,7 @@ import okhttp3.Call;
  * 年龄默认给---岁
  * 性别默认给---全部
  */
-public class SearchSelectedActivity extends AppActivity {
+public class SearchSelectedActivity extends AppActivity  {
     private boolean mFragClickable = false;  //dialog数据请求错误,相对于dialog不允许弹窗,不然会闪退
     private HashMap mDialogItemMap;
     private ShapeTextView mStartDate;
@@ -101,7 +102,7 @@ public class SearchSelectedActivity extends AppActivity {
         mEtGetDoctor = findViewById(R.id.edit_get_doctor);  //送检医生
         mSearch = findViewById(R.id.sp_search);
         mTitleBar = findViewById(R.id.titlebar);
-        setOnClickListener(R.id.iv_time_start,R.id.iv_time_end,R.id.tv_sex_type, R.id.edit_worker, R.id.edit_section, R.id.edit_device, R.id.edit_check_doctor,
+        setOnClickListener(R.id.iv_time_start, R.id.iv_time_end, R.id.tv_sex_type, R.id.edit_worker, R.id.edit_section, R.id.edit_device, R.id.edit_check_doctor,
                 R.id.edit_get_doctor, R.id.sp_search, R.id.sp_start_date, R.id.sp_end_date, R.id.tv_married_type, R.id.iv_age);
 
         getCurrentDataTime();
@@ -357,10 +358,10 @@ public class SearchSelectedActivity extends AppActivity {
                 String trimStart = mEtAgeTimeStart.getText().toString().trim();
                 String trimEnd = mEtAgeTimeEnd.getText().toString().trim();
 
-                if (!"".equals(trimStart)){
-                    parmasMap.put("PatientAgeStart",trimStart);
+                if (!"".equals(trimStart)) {
+                    parmasMap.put("PatientAgeStart", trimStart);
                 }
-                if (!"".equals(trimEnd)){
+                if (!"".equals(trimEnd)) {
                     parmasMap.put("PatientAgeEnd", trimEnd);
                 }
                 parmasMap.put("CaseNo", CaseNo);
@@ -379,7 +380,6 @@ public class SearchSelectedActivity extends AppActivity {
                 parmasMap.put("ExaminingPhysician", ExaminingPhysician);
                 parmasMap.put("SubmitDoctor", SubmitDoctor);
                 parmasMap.put("EndoType", endoType);
-
 
                 Intent intent = new Intent(SearchSelectedActivity.this, SearchActivity.class);
                 intent.putExtra("parmasMap", (Serializable) parmasMap);
@@ -456,4 +456,5 @@ public class SearchSelectedActivity extends AppActivity {
 
 
     }
+
 }

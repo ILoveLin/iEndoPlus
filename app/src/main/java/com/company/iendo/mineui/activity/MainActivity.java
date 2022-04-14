@@ -13,6 +13,8 @@ import androidx.viewpager.widget.ViewPager;
 import com.company.iendo.R;
 import com.company.iendo.app.AppActivity;
 import com.company.iendo.app.AppFragment;
+import com.company.iendo.bean.event.RefreshItemIdEvent;
+import com.company.iendo.bean.event.SocketRefreshEvent;
 import com.company.iendo.manager.ActivityManager;
 import com.company.iendo.mineui.fragment.casemanage.CaseManageFragment;
 import com.company.iendo.mineui.fragment.setting.SettingFragment;
@@ -21,12 +23,17 @@ import com.company.iendo.mineui.offline.fragment.SettingOfflineFragment;
 import com.company.iendo.other.DoubleClickHelper;
 import com.company.iendo.ui.adapter.NavigationAdapter;
 import com.company.iendo.ui.fragment.HomeFragment;
+import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.SharePreferenceUtil;
 import com.gyf.immersionbar.ImmersionBar;
 import com.hjq.base.FragmentPagerAdapter;
 import com.hjq.permissions.OnPermissionCallback;
 import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
 
@@ -69,6 +76,7 @@ public class MainActivity extends AppActivity implements NavigationAdapter.OnNav
 
     @Override
     protected void initView() {
+        EventBus.getDefault().register(this);
         mOnLineFlag = (Boolean) SharePreferenceUtil.get(MainActivity.this, SharePreferenceUtil.OnLine_Flag, true);
         mViewPager = findViewById(R.id.vp_home_pager);
         mNavigationView = findViewById(R.id.rv_home_navigation);
@@ -83,8 +91,6 @@ public class MainActivity extends AppActivity implements NavigationAdapter.OnNav
 //                ContextCompat.getDrawable(this, R.drawable.home_me_selector)));
         mNavigationAdapter.setOnNavigationListener(this);
         mNavigationView.setAdapter(mNavigationAdapter);
-
-
 
 
     }
@@ -215,10 +221,22 @@ public class MainActivity extends AppActivity implements NavigationAdapter.OnNav
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        EventBus.getDefault().unregister(this);
+
         mViewPager.setAdapter(null);
         mNavigationView.setAdapter(null);
         mNavigationAdapter.setOnNavigationListener(null);
     }
+
+    /**
+     * eventbus 刷新socket数据
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void RefreshItemIdEvent(RefreshItemIdEvent event) {
+        LogUtils.e("eventbus 刷新socket数据=====event.getId()===="+event.getId());
+        setCurrentItemID(event.getId()+"");
+    }
+
 
     public static String getCurrentItemID() {
         return mCurrentItemID;

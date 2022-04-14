@@ -181,7 +181,6 @@ public class HandService extends AbsWorkService {
                         }
                     }
 
-
                 });
 
 

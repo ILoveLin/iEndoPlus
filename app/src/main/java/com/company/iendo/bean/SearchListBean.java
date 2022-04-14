@@ -18,6 +18,15 @@ public class SearchListBean {
     @SerializedName("data")
     private List<DataDTO> data;
 
+    @Override
+    public String toString() {
+        return "SearchListBean{" +
+                "code=" + code +
+                ", msg='" + msg + '\'' +
+                ", data=" + data +
+                '}';
+    }
+
     public int getCode() {
         return code;
     }
@@ -175,6 +184,78 @@ public class SearchListBean {
         private String CheckContent;
         @SerializedName("CheckDiagnosis")
         private String CheckDiagnosis;
+
+        @Override
+        public String toString() {
+            return "DataDTO{" +
+                    "check_date='" + check_date + '\'' +
+                    ", record_date='" + record_date + '\'' +
+                    ", update_time='" + update_time + '\'' +
+                    ", ID=" + ID +
+                    ", RecordType='" + RecordType + '\'' +
+                    ", PatientID='" + PatientID + '\'' +
+                    ", Married='" + Married + '\'' +
+                    ", Name='" + Name + '\'' +
+                    ", Sex='" + Sex + '\'' +
+                    ", Tel='" + Tel + '\'' +
+                    ", Address='" + Address + '\'' +
+                    ", PatientNo='" + PatientNo + '\'' +
+                    ", CardID='" + CardID + '\'' +
+                    ", MedHistory='" + MedHistory + '\'' +
+                    ", FamilyHistory='" + FamilyHistory + '\'' +
+                    ", Race='" + Race + '\'' +
+                    ", Occupatior='" + Occupatior + '\'' +
+                    ", InsuranceID='" + InsuranceID + '\'' +
+                    ", NativePlace='" + NativePlace + '\'' +
+                    ", IsInHospital=" + IsInHospital +
+                    ", LastCheckUserID=" + LastCheckUserID +
+                    ", DOB='" + DOB + '\'' +
+                    ", PatientAge=" + PatientAge +
+                    ", AgeUnit='" + AgeUnit + '\'' +
+                    ", CaseNo='" + CaseNo + '\'' +
+                    ", ReturnVisit=" + ReturnVisit +
+                    ", BedID='" + BedID + '\'' +
+                    ", WardID='" + WardID + '\'' +
+                    ", CaseID='" + CaseID + '\'' +
+                    ", SubmitDoctor='" + SubmitDoctor + '\'' +
+                    ", Department='" + Department + '\'' +
+                    ", Device='" + Device + '\'' +
+                    ", Fee='" + Fee + '\'' +
+                    ", FeeType='" + FeeType + '\'' +
+                    ", ChiefComplaint='" + ChiefComplaint + '\'' +
+                    ", Test='" + Test + '\'' +
+                    ", Advice='" + Advice + '\'' +
+                    ", InpatientID='" + InpatientID + '\'' +
+                    ", OutpatientID='" + OutpatientID + '\'' +
+                    ", Others='" + Others + '\'' +
+                    ", Await1='" + Await1 + '\'' +
+                    ", Await2='" + Await2 + '\'' +
+                    ", Await3='" + Await3 + '\'' +
+                    ", Await4='" + Await4 + '\'' +
+                    ", Await5=" + Await5 +
+                    ", Biopsy='" + Biopsy + '\'' +
+                    ", Ctology='" + Ctology + '\'' +
+                    ", Pathology='" + Pathology + '\'' +
+                    ", CheckDate='" + CheckDate + '\'' +
+                    ", RecordDate='" + RecordDate + '\'' +
+                    ", Printed=" + Printed +
+                    ", Upload=" + Upload +
+                    ", Bespeak=" + Bespeak +
+                    ", Images='" + Images + '\'' +
+                    ", ReportStyle='" + ReportStyle + '\'' +
+                    ", UserName='" + UserName + '\'' +
+                    ", StudyInstanceUID='" + StudyInstanceUID + '\'' +
+                    ", SeriesInstanceUID='" + SeriesInstanceUID + '\'' +
+                    ", ReportSeriesInstanceUID=" + ReportSeriesInstanceUID +
+                    ", ImageCount=" + ImageCount +
+                    ", UpdateTime='" + UpdateTime + '\'' +
+                    ", EndoType=" + EndoType +
+                    ", ExaminingPhysician='" + ExaminingPhysician + '\'' +
+                    ", ClinicalDiagnosis='" + ClinicalDiagnosis + '\'' +
+                    ", CheckContent='" + CheckContent + '\'' +
+                    ", CheckDiagnosis='" + CheckDiagnosis + '\'' +
+                    '}';
+        }
 
         public String getCheck_date() {
             return check_date;

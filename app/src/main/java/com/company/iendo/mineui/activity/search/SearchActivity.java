@@ -10,8 +10,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.company.iendo.R;
 import com.company.iendo.action.StatusAction;
 import com.company.iendo.app.AppActivity;
+import com.company.iendo.bean.CaseManageListBean;
 import com.company.iendo.bean.SearchListBean;
+import com.company.iendo.bean.event.RefreshItemIdEvent;
+import com.company.iendo.mineui.activity.MainActivity;
+import com.company.iendo.mineui.activity.casemanage.DetailCaseActivity;
 import com.company.iendo.mineui.activity.search.adapter.SearchAdapter;
+import com.company.iendo.other.Constants;
 import com.company.iendo.other.HttpConstant;
 import com.company.iendo.utils.DateUtil;
 import com.company.iendo.utils.LogUtils;
@@ -23,6 +28,8 @@ import com.hjq.widget.layout.WrapRecyclerView;
 import com.scwang.smart.refresh.layout.SmartRefreshLayout;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -153,31 +160,20 @@ public class SearchActivity extends AppActivity implements StatusAction, BaseAda
      */
     @Override
     public void onItemClick(RecyclerView recyclerView, View itemView, int position) {
-//        SearchListBean.DataDTO item = mAdapter.getItem(position);
-//        toast(item.getCheckDate());
+        SearchListBean.DataDTO item = mAdapter.getItem(position);
+        LogUtils.e("======GetPictureActivity=====搜索结果界面跳转====item==" + item.toString());
+        mMMKVInstace.encode(Constants.KEY_CurrentCaseID, item.getID() + "");
+        Intent intent = new Intent(getActivity(), DetailCaseActivity.class);
+//        ((MainActivity) getActivity()).setCurrentItemID(item.getID() + "");
+        RefreshItemIdEvent refreshItemIdEvent = new RefreshItemIdEvent(true);
+        refreshItemIdEvent.setId(item.getID()+"");
+        EventBus.getDefault().post(refreshItemIdEvent);
+        LogUtils.e("itemID==" + item.getID() + "");
+        intent.putExtra("Name", item.getName() + "");
+        intent.putExtra("itemID", item.getID() + "");
+        intent.putExtra("itemUserName", item.getUserName() + "");
+        startActivity(intent);
     }
-
-//    /**
-//     * {@link OnRefreshLoadMoreListener}
-//     */
-//
-//    @Override
-//    public void onRefresh(@NonNull RefreshLayout refreshLayout) {
-//        postDelayed(() -> {
-//            mAdapter.clearData();
-//            mAdapter.setData(mDataLest);
-//            mRefreshLayout.finishRefresh();
-//        }, 1000);
-//    }
-//
-//    @Override
-//    public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
-//        postDelayed(() -> {
-//            mRefreshLayout.finishLoadMore();
-//            mAdapter.setLastPage(true);
-//            mRefreshLayout.setNoMoreData(mAdapter.isLastPage());
-//        }, 1000);
-//    }
 
 
     @NonNull

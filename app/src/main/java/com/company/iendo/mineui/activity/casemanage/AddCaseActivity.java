@@ -270,6 +270,10 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
 //        String LastCheckUserID = et_03_tel.getText().toString().trim();       //最后一个来查房的医生  ???
 //        String DOB = et_.getText().toString().trim();       //生日                                  ???
         String PatientAge = et_01_age.getText().toString().trim();       //患者年龄
+        if (Integer.parseInt(PatientAge)>=255){
+            toast("年龄不能超过255");
+            return;
+        }
         String AgeUnit = tv_01_age_type.getText().toString().trim();       //年龄单位 （岁，月，天）
 //        String ReturnVisit = et_03_tel.getText().toString().trim();       //初复诊 （0-初诊 1-复诊）  ???
         String BedID = et_03_case_bed_num.getText().toString().trim();       //病床号
@@ -332,7 +336,7 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
         mParamsMap.put("Advice", Advice);
         mParamsMap.put("InpatientID", InpatientID);
         mParamsMap.put("OutpatientID", OutpatientID);
-        mParamsMap.put("Biopsy", Biopsy);
+        mParamsMap.put("Biopsy", Biopsy);  //活检
         mParamsMap.put("Ctology", Ctology);
         mParamsMap.put("Pathology", Pathology);
         mParamsMap.put("ExaminingPhysician", ExaminingPhysician);
