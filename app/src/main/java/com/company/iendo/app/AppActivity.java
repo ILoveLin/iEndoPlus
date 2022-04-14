@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 
+import com.company.iendo.bean.event.SocketRefreshEvent;
 import com.company.iendo.other.Constants;
 import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.SharePreferenceUtil;
@@ -27,6 +28,9 @@ import com.company.iendo.ui.dialog.WaitDialog;
 import com.hjq.gson.factory.GsonFactory;
 import com.hjq.http.listener.OnHttpListener;
 import com.tencent.mmkv.MMKV;
+
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import okhttp3.Call;
 
@@ -123,6 +127,14 @@ public abstract class AppActivity extends BaseActivity
         }
 
         mDialog.dismiss();
+    }
+
+    /**
+     * 解决:its super classes have no public methods with the @Subscribe annotation的BUG
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void SocketRefreshEvent(SocketRefreshEvent event) {
+
     }
 
     /**

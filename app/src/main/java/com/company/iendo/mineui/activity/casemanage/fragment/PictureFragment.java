@@ -209,7 +209,6 @@ public class PictureFragment extends TitleBarFragment<MainActivity> implements S
     @Override
     public void onResume() {
         super.onResume();
-        sendRequest(currentItemCaseID);
     }
 
     //    /**

@@ -109,14 +109,14 @@ public class HandService extends AbsWorkService {
 
     private void start60STask() {
         sDisposable60s = Observable
-                .interval(15, TimeUnit.SECONDS)//定时器操作符，这里三秒打印一个log
+                .interval(60, TimeUnit.SECONDS)//定时器操作符，这里三秒打印一个log
                 //取消任务时取消定时唤醒
                 .doOnDispose(() -> {
-                    LogUtils.e("保活服务开启HandService==---取消了--每 10 秒采集一次数据--===doOnDispose=取消了");
+                    LogUtils.e("保活服务开启HandService==---取消了--每 60 秒采集一次数据--===doOnDispose=取消了");
 //                    cancelJobAlarmSub();
                 })
                 .subscribe(count -> {
-                    LogUtils.e("保活服务开启HandService==------每 10 秒采集一次数据... count = " + count + "==UDP_HAND_TAG==" + UDP_HAND_GLOBAL_TAG);
+                    LogUtils.e("保活服务开启HandService==------每 60 秒采集一次数据... count = " + count + "==UDP_HAND_TAG==" + UDP_HAND_GLOBAL_TAG);
                     sendHandLinkMessage();
                     sendCount = count;
                     long tag = sendCount - currentIndex;
@@ -150,15 +150,15 @@ public class HandService extends AbsWorkService {
 //        observeOn是来设定我们的观察者的操作是在哪个线程执行   AndroidSchedulers.mainThread()
 
         sDisposable10s = Observable
-                .interval(6, TimeUnit.SECONDS)//定时器操作符，这里三秒打印一个log
+                .interval(10, TimeUnit.SECONDS)//定时器操作符，这里三秒打印一个log
                 //取消任务时取消定时唤醒
                 .doOnDispose(() -> {
-                    LogUtils.e("保活服务开启HandService==---取消了--每 3 秒采集一次数据--===doOnDispose=取消了");
+                    LogUtils.e("保活服务开启HandService==---取消了--每 10 秒采集一次数据--===doOnDispose=取消了");
 //                    cancelJobAlarmSub();
                 }).subscribeOn(Schedulers.io())
                 .subscribe(count -> {
                     sendCount = count;
-                    LogUtils.e("保活服务开启HandService==------每 3 秒采集一次数据... count = " + count + "==UDP_HAND_TAG==" + UDP_HAND_GLOBAL_TAG);
+                    LogUtils.e("保活服务开启HandService==------每 10 秒采集一次数据... count = " + count + "==UDP_HAND_TAG==" + UDP_HAND_GLOBAL_TAG);
                     sendHandLinkMessage();
                     long tag = sendCount - currentIndex;
                     if (tag == 5 && !UDP_HAND_GLOBAL_TAG) {

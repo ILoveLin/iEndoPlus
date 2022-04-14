@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.company.iendo.bean.event.SocketRefreshEvent;
 import com.company.iendo.other.Constants;
 import com.company.iendo.utils.SharePreferenceUtil;
 import com.google.gson.Gson;
@@ -21,6 +22,8 @@ import com.hjq.gson.factory.GsonFactory;
 import com.tencent.mmkv.MMKV;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 /**
  *    author : Android 轮子哥
@@ -87,6 +90,13 @@ public abstract class TitleBarFragment<A extends AppActivity> extends AppFragmen
 
     }
 
+    /**
+     *解决:its super classes have no public methods with the @Subscribe annotation的BUG
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void SocketRefreshEvent(SocketRefreshEvent event) {
+
+    }
     @Override
     public void onDestroy() {
         super.onDestroy();
