@@ -9,6 +9,8 @@ import com.company.iendo.action.StatusAction;
 import com.company.iendo.app.TitleBarFragment;
 import com.company.iendo.green.db.downcase.CaseVideoListBean;
 import com.company.iendo.mineui.activity.MainActivity;
+import com.company.iendo.mineui.activity.casemanage.DetailCaseActivity;
+import com.company.iendo.mineui.offline.activity.DetailCaseOfflineActivity;
 import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.SharePreferenceUtil;
 import com.company.iendo.widget.MyItemDecoration;
@@ -59,9 +61,13 @@ public class VideoOfflineFragment extends TitleBarFragment<MainActivity> impleme
                     CaseVideoListBean bean = videoList.get(i);
                     mDataLest.add(bean.getVideoPath());
                 }
+                DetailCaseOfflineActivity.mTabAdapter.setItem(2, "视频(" + mDataLest.size() + ")");
+            }else {
+                DetailCaseOfflineActivity.mTabAdapter.setItem(2, "视频(" + 0 + ")");
             }
         } else {
             showEmpty();
+            DetailCaseOfflineActivity.mTabAdapter.setItem(2, "视频(" + 0 + ")");
         }
 
 

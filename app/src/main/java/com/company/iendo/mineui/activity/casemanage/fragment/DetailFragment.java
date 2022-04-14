@@ -526,7 +526,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                             // 标题可以不用填写
                             .setTitle("提示")
                             // 内容必须要填写
-                            .setMessage("本地已下载过该病例信息和图片,确认是否从新下载?")
+                            .setMessage("本地已下载过该病例信息和图片,确认是否重新下载?")
                             // 确定按钮文本
                             .setConfirm(getString(R.string.common_confirm))
                             // 设置 null 表示不显示取消按钮

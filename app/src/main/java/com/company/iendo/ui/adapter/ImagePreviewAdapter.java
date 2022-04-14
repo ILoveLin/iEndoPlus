@@ -5,6 +5,11 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.MultiTransformation;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.signature.ObjectKey;
 import com.github.chrisbanes.photoview.PhotoView;
 import com.company.iendo.R;
 import com.company.iendo.app.AppAdapter;
@@ -39,8 +44,13 @@ public final class ImagePreviewAdapter extends AppAdapter<String> {
 
         @Override
         public void onBindView(int position) {
-            GlideApp.with(getContext())
+
+
+            Glide.with(getContext())
                     .load(getItem(position))
+                    .placeholder(R.mipmap.bg_splash_des) //占位符 也就是加载中的图片，可放个gif
+                    .error(R.mipmap.bg_splash_des)
+                    .signature(new ObjectKey(System.currentTimeMillis()))//不使用缓存
                     .into(mPhotoView);
         }
     }

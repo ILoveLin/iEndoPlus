@@ -10,6 +10,8 @@ import com.company.iendo.action.StatusAction;
 import com.company.iendo.app.TitleBarFragment;
 import com.company.iendo.green.db.downcase.CaseImageListBean;
 import com.company.iendo.mineui.activity.MainActivity;
+import com.company.iendo.mineui.activity.casemanage.DetailCaseActivity;
+import com.company.iendo.mineui.offline.activity.DetailCaseOfflineActivity;
 import com.company.iendo.other.GridSpaceDecoration;
 import com.company.iendo.ui.activity.ImagePreviewActivity;
 import com.company.iendo.widget.StatusLayout;
@@ -53,7 +55,6 @@ public class PictureOfflineFragment extends TitleBarFragment<MainActivity> imple
         mRecyclerView.setLayoutManager(gridLayoutManager);
         mRecyclerView.addItemDecoration(new GridSpaceDecoration(30));
         mRecyclerView.setAdapter(mAdapter);
-
         imageList = CaseManageOfflineFragment.currentItemClickDBBean.getImageList();
         if (imageList != null) {
             if (imageList.size() > 0) {
@@ -62,10 +63,16 @@ public class PictureOfflineFragment extends TitleBarFragment<MainActivity> imple
                     CaseImageListBean bean = imageList.get(i);
                     mDataLest.add(bean.getImagePath());
                 }
+                DetailCaseOfflineActivity.mTabAdapter.setItem(1, "图片(" + imageList.size() + ")");
+            } else {
+                DetailCaseOfflineActivity.mTabAdapter.setItem(1, "图片(" + 0 + ")");
             }
         } else {
             showEmpty();
+            DetailCaseOfflineActivity.mTabAdapter.setItem(1, "图片(" + 0 + ")");
+
         }
+
 
         mAdapter.setData(mDataLest);
 
@@ -81,7 +88,7 @@ public class PictureOfflineFragment extends TitleBarFragment<MainActivity> imple
 
     @Override
     public void onItemClick(RecyclerView recyclerView, View itemView, int position) {
-        ImagePreviewActivity.start(getAttachActivity(), mDataLest, mDataLest.size() - 1);
+        ImagePreviewActivity.start(getAttachActivity(), mDataLest, position);
 
 
     }

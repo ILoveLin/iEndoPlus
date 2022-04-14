@@ -32,8 +32,6 @@ import com.company.iendo.R;
 import com.company.iendo.aop.Log;
 import com.company.iendo.aop.SingleClick;
 import com.company.iendo.app.AppActivity;
-import com.company.iendo.service.HandService;
-import com.company.iendo.service.ReceiveSocketService;
 import com.company.iendo.bean.LoginBean;
 import com.company.iendo.bean.RefreshEvent;
 import com.company.iendo.bean.UserListBean;
@@ -48,6 +46,8 @@ import com.company.iendo.mineui.offline.fragment.CaseManageOfflineFragment;
 import com.company.iendo.other.Constants;
 import com.company.iendo.other.HttpConstant;
 import com.company.iendo.other.KeyboardWatcher;
+import com.company.iendo.service.HandService;
+import com.company.iendo.service.ReceiveSocketService;
 import com.company.iendo.ui.dialog.SelectDialog;
 import com.company.iendo.ui.dialog.TipsDialog;
 import com.company.iendo.ui.dialog.WaitDialog;
@@ -654,21 +654,33 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
-                        LogUtils.e("登录===" + e);
+                        LogUtils.e("登录==onError=" + e);
                         mPasswordView.setText("");
                         mPhoneView.setText("");
+                        showComplete();
+                        if (null != mUserListData) {
+                            boolean currentUsername = mUserListData.contains(mPasswordView.getText().toString());
+                            if (!currentUsername) {
+                                toast("账户不存在");
+                            } else {
+                                toast("服务器链接异常");
+                            }
+                        } else {
+                            toast("服务器链接异常");
+
+                        }
+
 
                     }
 
                     @Override
                     public void onResponse(String response, int id) {
                         showComplete();
-                        LogUtils.e("登录=成功==" + response);
+                        LogUtils.e("登录=response==" + response);
                         if (!"".equals(response)) {
                             LoginBean mBean = mGson.fromJson(response, LoginBean.class);
                             if (0 == mBean.getCode()) {
                                 mUserListData.clear();
-
                                 LogUtils.e("登录==role==" + mBean.getData().getRole());
                                 LogUtils.e("登录==userid==" + mBean.getData().getUserID());
                                 SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Current_Login_Role, mBean.getData().getRole() + "");
@@ -692,7 +704,6 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                                 kv.encode(Constants.KEY_UnPrinted, purviewBean.isUnPrinted()); //未打印病历
                                 kv.encode(Constants.KEY_OnlySelf, purviewBean.isOnlySelf());//本人病历
                                 kv.encode(Constants.KEY_HospitalInfo, purviewBean.isHospitalInfo());//医院信息(不能进入医院信息界面)
-
 
                                 //存入用户表
                                 saveRememberPassword(mBean);
@@ -718,7 +729,7 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                                 initHandService();
                                 finish();
                             } else {
-                                toast("密码错误");
+
                             }
 
                         } else {
@@ -729,6 +740,7 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                     }
                 });
     }
+
     /**
      * 开启保活握手服务
      */
@@ -742,6 +754,7 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
         DaemonEnv.startServiceMayBind(HandService.class);
 
     }
+
     /**
      * 获取权限存入当前app
      */

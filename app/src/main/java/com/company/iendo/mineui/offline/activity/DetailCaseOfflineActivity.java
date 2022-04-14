@@ -38,7 +38,7 @@ import org.greenrobot.eventbus.EventBus;
 public class DetailCaseOfflineActivity extends AppActivity implements TabAdapter.OnTabListener, ViewPager.OnPageChangeListener {
     private NestedViewPager mViewPager;
     private RecyclerView mTabView;
-    private TabAdapter mTabAdapter;
+    public static TabAdapter mTabAdapter;
     private TitleBar mTitlebar;
     private Boolean mFatherExit;   //父类Activity 是否主动退出的标识,主动退出需要请求保存fragment的更新数据
     private String currentItemID;

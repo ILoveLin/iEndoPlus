@@ -116,7 +116,6 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
                                 DetailCaseActivity.mTabAdapter.setItem(1, "图片(" + imageCounts + ")");
                                 DetailCaseActivity.mTabAdapter.setItem(2, "视频(" + videosCounts + ")");
 
-
                             } else {
                                 toast("请求错误");
                             }
