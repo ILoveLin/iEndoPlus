@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.ImageView;
@@ -54,7 +56,6 @@ import com.hjq.permissions.OnPermissionCallback;
 import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
 import com.hjq.widget.view.ClearEditText;
-import com.tencent.mmkv.MMKV;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.FileCallBack;
 import com.zhy.http.okhttp.callback.StringCallback;
@@ -118,32 +119,42 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
     private ClearEditText edit_01_i_bad_tell;
     private CaseDetailBean.DataDTO mDataBean;
     private String mUserName;
-    private static final int UDP_Hand = 126;   //握手
-    private static boolean Details_Reault_Ok = false; //握手成功表示  true 成功
+    private static final int IMAGE_DOWN = 126;   //握手
+    private static boolean Details_Reault_Ok = false;
     private String itemID;
-    private String mCurrentDonwTime;
-    private ImageView iv_01_age_type;
-    private ImageView iv_01_jop;
-    private ImageView tv_01_get_check_doctor;
-    private ImageView iv_01_i_tell_you;
-    private ImageView iv_01_bad_tell;
-    private ImageView iv_02_mirror_see;
-    private ImageView iv_02_mirror_result;
-    private ImageView iv_02_live_check;
-    private ImageView iv_02_cytology;
-    private ImageView iv_02_test;
-    private ImageView iv_02_pathology;
-    private ImageView iv_02_advice;
-    private ImageView iv_02_check_doctor;
-    private ImageView iv_03_section;
-    private ImageView iv_03_device;
-    private ImageView iv_03_ming_zu;
-    private ImageView iv_03_is_married;
     private ArrayList<ImageView> mImageViewList;
-    private ImageView iv_01_sex_type;
+    private String mCurrentDonwTime;
+    private ImageView iv_01_age_type, iv_01_sex_type, iv_01_jop, tv_01_get_check_doctor, iv_01_i_tell_you, iv_01_bad_tell;
+    private ImageView iv_02_mirror_see, iv_02_mirror_result, iv_02_live_check, iv_02_cytology, iv_02_test, iv_02_pathology, iv_02_advice, iv_02_check_doctor;
+    private ImageView iv_03_section, iv_03_device, iv_03_ming_zu, iv_03_is_married;
     private String videosCounts;
     private String imageCounts;
+    private int mCurrentDownImageCount = 0;
+    private int mImageCountNum = 0;
 
+    @SuppressLint("HandlerLeak")
+    private Handler mHandler = new Handler() {
+        @SuppressLint("NewApi")
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            SocketRefreshEvent event = new SocketRefreshEvent();
+            event.setUdpCmd(Constants.UDP_CUSTOM_DOWN_OVER);
+            switch (msg.what) {
+                case IMAGE_DOWN:
+                    if (mImageCountNum == mCurrentDownImageCount) {
+                        toast("下载完毕");
+                        mCurrentDownImageCount = 0;
+                        mImageCountNum = 0;
+                        event.setData("true");
+                    } else {
+                        event.setData("false");
+                    }
+                    EventBus.getDefault().post(event);
+                    break;
+            }
+        }
+    };
 
     public static DetailFragment newInstance() {
         return new DetailFragment();
@@ -166,9 +177,11 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         initLayoutViewDate();
         setEditStatus();
         responseListener();
-
         //请求界面数据
         sendRequest(currentItemCaseID);
+        //判断该病例信息是否下载过
+        checkCaseIsDown();
+
     }
 
 
@@ -218,6 +231,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                                         mPathMap.put(imageName, url);
 
                                     }
+
                                 } else {
                                     showEmpty();
                                 }
@@ -497,6 +511,30 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 
     }
 
+    /**
+     * 判断当前病例是否下载过
+     */
+    private void checkCaseIsDown() {
+        /**
+         * 本地文件夹命名规则:文件夹（设备ID_病例ID）
+         */
+        //创建本地的/MyDownImages/mID文件夹  再把图片下载到这个文件夹下  文件夹（设备ID-病例ID）
+        String dirName = Environment.getExternalStorageDirectory() + "/MyDownImages/" + mDeviceCode + "_" + currentItemCaseID;
+        File toLocalFile = new File(dirName);
+        //此处做校验,本文件夹创建过,并且里面的图片数量和请求结果数量一直,表示下载过
+        boolean FileExists = toLocalFile.exists();
+        if (FileExists) {//本地存在,并且上位机请求成功
+
+            SocketRefreshEvent event = new SocketRefreshEvent();
+            event.setUdpCmd(Constants.UDP_CUSTOM_DOWN_OVER);
+            event.setData("true");
+            EventBus.getDefault().post(event);
+
+        }
+
+    }
+
+
     private void startDownPicture() {
 
         /**
@@ -526,7 +564,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                             // 标题可以不用填写
                             .setTitle("提示")
                             // 内容必须要填写
-                            .setMessage("本地已下载过该病例信息和图片,确认是否重新下载?")
+                            .setMessage("该病历已经下载,是否需要更新?")
                             // 确定按钮文本
                             .setConfirm(getString(R.string.common_confirm))
                             // 设置 null 表示不显示取消按钮
@@ -594,9 +632,8 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
     }
 
 
-    private int mDownImageCount = 0;
-
     /**
+     * 图片下载
      * 开始下载病例信息和图片到本地
      *
      * @param toLocalFile
@@ -610,8 +647,8 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                 //001.jpg     http://192.168.131.43:7001/1154/001.jpg
                 LogUtils.e("文件下载===01==entry.getKey()===" + key);
                 LogUtils.e("文件下载===01==entry.getValue()===" + mPathMap.get(key));
-                int size = mPathMap.keySet().size();
-                LogUtils.e("文件下载===01==mPathMap.keySet().size()==" + size);
+                mImageCountNum = mPathMap.keySet().size();
+                LogUtils.e("文件下载===01==mPathMap.keySet().size()==" + mImageCountNum);
 
                 sendPictureRequest(toLocalFile, mPathMap.get(key), key, false);
             }
@@ -649,6 +686,10 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                     public void onResponse(File response, int id) {
                         LogUtils.e("下载图片==onResponse==" + response.toString());
                         LogUtils.e("下载图片==更新相册图片==" + toLocalFile.getAbsolutePath() + "/" + pictureName);
+
+                        mCurrentDownImageCount++;
+                        LogUtils.e("下载图片==当前下载第几张图片==" + mCurrentDownImageCount);
+                        mHandler.sendEmptyMessage(IMAGE_DOWN);
                         //=====/storage/emulated/0/MyDownImages/2_3/004.jpg
                         //刷新相册 必须下载完了才能退出不然容易出现bug ,所以我们放在每次进入该界面的时候刷新
                         try {

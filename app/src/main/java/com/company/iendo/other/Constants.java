@@ -107,10 +107,6 @@ public class Constants {
     public static final String UDP_12 = "12";                    //新增病历
     public static final String UDP_13 = "13";                    //更新病历     本地监听,到这个消息病例列表需要重新请求数据,病例详情界面如果当前的回调的caseid==当前操作id,这个界面也需要刷新
     public static final String UDP_14 = "14";                    //删除病历
-    public static final String UDP_CUSTOM14 = "UDP_CUSTOM14";    //自定义命令     在图像采集界面,接受到删除病例,需要退到病例列表界面而不是回退病例详情界面
-    public static final String UDP_CUSTOM_FINISH = "UDP_CUSTOM_FINISH";    //自定义命令     结束DetailCaseActivity界面
-    public static final String UDP_CUSTOM_TOAST = "UDP_CUSTOM_TOAST";    //自定义命令     toast
-    public static final String UDP_CUSTOM_RESTART = "UDP_CUSTOM_RESTART";    //自定义命令     监听线程异常需要重启
     public static final String UDP_15 = "15";                    //新增图片（采图）
     public static final String UDP_F1 = "F1";                    //预览报告
     public static final String UDP_F2 = "F2";                    //打印报告
@@ -122,6 +118,12 @@ public class Constants {
     public static final String UDP_F7 = "F7";                    //通知权限变动    //相同用户名的时候 重新刷新权限
     public static final String UDP_FE = "FE";                    //程序退出命令  -->退出登录的时候发消息
     public static final String UDP_40 = "40";                    //刷新医院信息  -->从新请求数据库刷新界面
+
+    public static final String UDP_CUSTOM14 = "UDP_CUSTOM14";                    //自定义命令     在图像采集界面,接受到删除病例,需要退到病例列表界面而不是回退病例详情界面
+    public static final String UDP_CUSTOM_FINISH = "UDP_CUSTOM_FINISH";          //自定义命令     结束DetailCaseActivity界面
+    public static final String UDP_CUSTOM_TOAST = "UDP_CUSTOM_TOAST";            //自定义命令     toast
+    public static final String UDP_CUSTOM_RESTART = "UDP_CUSTOM_RESTART";        //自定义命令     监听线程异常需要重启
+    public static final String UDP_CUSTOM_DOWN_OVER = "UDP_CUSTOM_DOWN_OVER";    //自定义命令     图片下载完成
 
 
     /**

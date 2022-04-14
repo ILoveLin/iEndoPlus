@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
+import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
@@ -33,6 +34,7 @@ import com.company.iendo.other.Constants;
 import com.company.iendo.other.HttpConstant;
 import com.company.iendo.service.HandService;
 import com.company.iendo.ui.adapter.TabAdapter;
+import com.company.iendo.ui.dialog.MessageDialog;
 import com.company.iendo.ui.dialog.SelectDialog;
 import com.company.iendo.utils.CalculateUtils;
 import com.company.iendo.utils.LogUtils;
@@ -65,9 +67,8 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
     private RecyclerView mTabView;
     public static TabAdapter mTabAdapter;
     public static TitleBar mTitlebar;
-    private TextView mDown;
     private TextView mDelete;
-    private TextView mPicture;
+    private TextView mPicture, mCaseDown;
     private Boolean mFatherExit;   //父类Activity 是否主动退出的标识,主动退出需要请求保存fragment的更新数据
     private String currentItemID;
     private Boolean FLAG_PICTURE_EXIST = false;  //查询服务端是否已经生成报告
@@ -82,6 +83,7 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
     private String currentCaseName;
     private String videosCounts;
     private String imageCounts;
+    private MessageDialog.Builder existBuilder;
 
     @Override
     protected int getLayoutId() {
@@ -138,6 +140,7 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
         mReportImageView = findViewById(R.id.iv_anim_report);
         mTitlebar = findViewById(R.id.titlebar);
         mPicture = findViewById(R.id.case_picture);
+        mCaseDown = findViewById(R.id.case_down);
         mDelete = findViewById(R.id.case_delete);
         mFatherExit = false;
         FragmentPagerAdapter mPagerAdapter = new FragmentPagerAdapter<>(this);
@@ -162,6 +165,33 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
         mTitlebar.setOnTitleBarListener(new OnTitleBarListener() {
             @Override
             public void onLeftClick(View view) {
+                //如果下载病历中,退出界面提示用户
+                if (mCaseDown.getText().equals("下载中..")) {
+                    // 消息对话框
+                    existBuilder = new MessageDialog.Builder(getActivity());
+                    existBuilder.setTitle("是否返回")
+                            .setMessage("当前正在下载病历信息,返回可能导致下载的病例图片不全")
+                            .setConfirm("取消")
+                            // 设置 null 表示不显示取消按钮
+                            .setCancel("立即返回")
+                            .setCanceledOnTouchOutside(false)
+                            // 设置点击按钮后不关闭对话框
+                            //.setAutoDismiss(false)
+                            .setListener(new MessageDialog.OnListener() {
+
+                                @Override
+                                public void onConfirm(BaseDialog dialog) {
+                                    dialog.dismiss();
+                                }
+
+                                @Override
+                                public void onCancel(BaseDialog dialog) {
+
+                                }
+                            })
+                            .show();
+                }
+
                 if (mMMKVInstace.decodeBool(Constants.KEY_CanEdit)) {
                     //退出界面的时候必须保存数据
                     if (null != mOnEditStatusListener) {
@@ -186,6 +216,7 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
 
             @Override
             public void onRightClick(View view) {
+
 
                 //勾选了几个判断几个
                 //是否能编辑遍历
@@ -223,6 +254,8 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
                 }
 
             }
+
+
         });
 
 
@@ -420,10 +453,24 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
     public void SocketRefreshEvent(SocketRefreshEvent event) {
         String data = event.getData();
         switch (event.getUdpCmd()) {
+            case Constants.UDP_CUSTOM_DOWN_OVER://图片下载的提示
+                if ("true".equals(data)) {//下载完毕,显示:已下载  未下载的话显示:下载病历,下载中显示:下载中..
+                    mCaseDown.setText("已下载");
+                    if (null!=existBuilder){
+                        existBuilder.dismiss();
+                    }
+                } else {
+                    mCaseDown.setText("下载中..");
+                }
+                break;
             case Constants.UDP_CUSTOM_TOAST://吐司
                 toast("" + data);
                 break;
             case Constants.UDP_CUSTOM_FINISH://自定义信息,结束当前界面
+                if (mCaseDown.getText().equals("下载中..")) {
+                    //此处如果正在下载,直接返回,停留在这个界面
+                    return;
+                }
                 postDelayed(() -> {
                     finish();
                 }, 100);
