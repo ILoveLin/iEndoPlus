@@ -928,6 +928,8 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
         mEditList.add(edit_03_case_history);
         mEditList.add(edit_03_family_case_history);
         mEditList.add(edit_01_i_tell_you);
+        mEditList.add(et_01_get_check_doctor);
+        mEditList.add(et_01_jop);
         mEditList.add(et_01_name);
 
 

@@ -161,7 +161,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         mBaseUrl = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_BaseUrl, "192.168.132.102");
         mDeviceCode = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_DeviceCode, "");
         mUserID = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_Login_UserID, "");
-        mUserName =mLoginUserName;
+        mUserName = mLoginUserName;
         currentItemCaseID = MainActivity.getCurrentItemID();
         initLayoutViewDate();
         setEditStatus();
@@ -408,11 +408,11 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         }
         if (isFatherExit) {//父类界面主动退出,保存当前数据
             CharSequence rightTitle = DetailCaseActivity.mTitlebar.getRightTitle();
-            if ("编辑".equals(rightTitle)){
+            if ("编辑".equals(rightTitle)) {
                 SocketRefreshEvent event = new SocketRefreshEvent();
                 event.setUdpCmd(Constants.UDP_CUSTOM_FINISH);
                 EventBus.getDefault().post(event);
-            }else {
+            } else {
                 // 消息对话框
                 new MessageDialog.Builder(getActivity())
                         // 标题可以不用填写
@@ -594,6 +594,8 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
     }
 
 
+    private int mDownImageCount = 0;
+
     /**
      * 开始下载病例信息和图片到本地
      *
@@ -617,6 +619,49 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         }
         //下载病例和图片信息---到本地sd卡里面
         downLocalCaseUserData(toLocalFile);
+    }
+
+    /**
+     * 下载图片
+     *
+     * @param toLocalFile
+     * @param path
+     * @param pictureName
+     * @param lastPicture
+     */
+    private void sendPictureRequest(File toLocalFile, String path, String pictureName, Boolean lastPicture) {
+//        String url = "http://images.csdn.net/20150817/1.jpg";
+        if (!toLocalFile.exists()) {
+            toLocalFile.mkdir();
+        }
+        OkHttpUtils.get()
+                .url(path)
+                .build()
+                .execute(new FileCallBack(toLocalFile.getAbsolutePath(), pictureName) {
+
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        LogUtils.e("下载图片==onError==" + e);
+                        //下载失败
+                    }
+
+                    @Override
+                    public void onResponse(File response, int id) {
+                        LogUtils.e("下载图片==onResponse==" + response.toString());
+                        LogUtils.e("下载图片==更新相册图片==" + toLocalFile.getAbsolutePath() + "/" + pictureName);
+                        //=====/storage/emulated/0/MyDownImages/2_3/004.jpg
+                        //刷新相册 必须下载完了才能退出不然容易出现bug ,所以我们放在每次进入该界面的时候刷新
+                        try {
+                            MediaStore.Images.Media.insertImage(getActivity().getApplication().getContentResolver(), toLocalFile.getAbsolutePath() + "/" + pictureName, pictureName, "");
+                            // 最后通知图库更新
+                            getActivity().getApplication().sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
+                                    Uri.fromFile(new File(toLocalFile.getPath()))));
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                });
     }
 
     /**
@@ -888,41 +933,6 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 
     }
 
-    //下载图片
-    private void sendPictureRequest(File toLocalFile, String path, String pictureName, Boolean lastPicture) {
-//        String url = "http://images.csdn.net/20150817/1.jpg";
-        if (!toLocalFile.exists()) {
-            toLocalFile.mkdir();
-        }
-        OkHttpUtils.get()
-                .url(path)
-                .build()
-                .execute(new FileCallBack(toLocalFile.getAbsolutePath(), pictureName) {
-
-                    @Override
-                    public void onError(Call call, Exception e, int id) {
-                        LogUtils.e("下载图片==onError==" + e);
-                        //下载失败
-                    }
-
-                    @Override
-                    public void onResponse(File response, int id) {
-                        LogUtils.e("下载图片==onResponse==" + response.toString());
-                        LogUtils.e("下载图片==更新相册图片==" + toLocalFile.getAbsolutePath() + "/" + pictureName);
-                        //=====/storage/emulated/0/MyDownImages/2_3/004.jpg
-                        //刷新相册 必须下载完了才能退出不然容易出现bug ,所以我们放在每次进入该界面的时候刷新
-                        try {
-                            MediaStore.Images.Media.insertImage(getActivity().getApplication().getContentResolver(), toLocalFile.getAbsolutePath() + "/" + pictureName, pictureName, "");
-                            // 最后通知图库更新
-                            getActivity().getApplication().sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
-                                    Uri.fromFile(new File(toLocalFile.getPath()))));
-                        } catch (FileNotFoundException e) {
-                            e.printStackTrace();
-                        }
-
-                    }
-                });
-    }
 
     private void requestPermission() {
         XXPermissions.with(this)
@@ -1716,7 +1726,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
             mParamsMap.put("Occupatior", Occupatior);
         }
         String InsuranceID = et_03_protection_num.getText().toString().trim();       //社保卡ID
-        String SubmitDoctor = et_01_get_check_doctor.getText().toString().trim();       //社保卡ID
+        String SubmitDoctor = et_01_get_check_doctor.getText().toString().trim();       //送检医生
         String NativePlace = et_03_native_place.getText().toString().trim();       //籍贯
 //        String IsInHospital = et_03_in_hospital_num.getText().toString().trim();       //是否还在医院住院  ???
 //        String LastCheckUserID = et_03_tel.getText().toString().trim();       //最后一个来查房的医生  ???
@@ -1747,7 +1757,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         String Biopsy = etlines_02_live_check.getContentText().toString().trim();       //活检
         String Ctology = etlines_02_cytology.getContentText().toString().trim();       //细胞学
         String Pathology = etlines_02_pathology.getContentText().toString().trim();       //病理学
-        String ExaminingPhysician = etlines_02_live_check.getContentText().toString().trim();       //检查医生
+        String ExaminingPhysician = et_02_check_doctor.getText().toString().trim();       //检查医生
         String ClinicalDiagnosis = lines_01_bad_tell.getContentText().toString().trim();       //临床诊断
         String CheckContent = etlines_02_mirror_see.getContentText().toString().trim();       //检查内容（镜检所见）
         String CheckDiagnosis = etlines_02_mirror_result.getContentText().toString().trim();       //镜检诊断
@@ -1839,6 +1849,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 
 
     }
+
     //获取病例图片数目
     private void sendImageRequest(String mCaseID) {
         OkHttpUtils.get()
@@ -1865,8 +1876,8 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                                 imageCounts = mBean.getData().getImagesCount() + "";
                                 videosCounts = mBean.getData().getVideosCount() + "";
                                 LogUtils.e("详情界面---截图界面===病例详情response==imageCount=" + imageCounts);
-                                DetailCaseActivity.mTabAdapter.setItem(1,"图片("+ imageCounts +")");
-                                DetailCaseActivity.mTabAdapter.setItem(2,"视频("+ videosCounts +")");
+                                DetailCaseActivity.mTabAdapter.setItem(1, "图片(" + imageCounts + ")");
+                                DetailCaseActivity.mTabAdapter.setItem(2, "视频(" + videosCounts + ")");
 
                             } else {
                                 showError(listener -> {
@@ -1927,8 +1938,6 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         }
 
     }
-
-
 
 
     /**
@@ -2068,9 +2077,9 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         super.onResume();
         isFatherExit = false;
         sendListDictsRequest();
-        LogUtils.e("onResume===DetailFragment===开始建立握手链接!"+ HandService.UDP_HAND_GLOBAL_TAG);
-        LogUtils.e("onResume===DetailFragment===开始建立握手链接222!"+ HandService.UDP_HAND_GLOBAL_TAG);
-        LogUtils.e("onResume===DetailFragment===开始建立握手链接333!"+ HandService.UDP_HAND_GLOBAL_TAG);
+        LogUtils.e("onResume===DetailFragment===开始建立握手链接!" + HandService.UDP_HAND_GLOBAL_TAG);
+        LogUtils.e("onResume===DetailFragment===开始建立握手链接222!" + HandService.UDP_HAND_GLOBAL_TAG);
+        LogUtils.e("onResume===DetailFragment===开始建立握手链接333!" + HandService.UDP_HAND_GLOBAL_TAG);
     }
 
     @Override
