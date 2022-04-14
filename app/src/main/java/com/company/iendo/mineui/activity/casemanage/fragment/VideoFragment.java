@@ -119,6 +119,10 @@ public class VideoFragment extends TitleBarFragment<MainActivity> implements Sta
                     public void onResponse(String response, int id) {
                         if ("" != response) {
                             DetailVideoBean mBean = mGson.fromJson(response, DetailVideoBean.class);
+                            LogUtils.e("视频界面=== response==mCaseID=" + currentItemID);
+                            LogUtils.e("视频界面=== response===" + response);
+                            LogUtils.e("视频界面=== size===" + mBean.getData().size());
+
                             List<DetailVideoBean.DataDTO> data = mBean.getData();
                             if (0 == mBean.getCode()) {  //成功
                                 showComplete();

@@ -303,7 +303,7 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
         LogUtils.e("======GetPictureActivity=====Handler接受====item==" + item.toString());
         mMMKVInstace.encode(Constants.KEY_CurrentCaseID, item.getID() + "");
         Intent intent = new Intent(getActivity(), DetailCaseActivity.class);
-//        ((MainActivity) getActivity()).setCurrentItemID(item.getID() + "");
+        ((MainActivity) getActivity()).setCurrentItemID(item.getID() + "");
         LogUtils.e("itemID==" + item.getID() + "");
         intent.putExtra("Name", item.getName() + "");
         intent.putExtra("itemID", item.getID() + "");

@@ -164,7 +164,6 @@ public class SearchActivity extends AppActivity implements StatusAction, BaseAda
         LogUtils.e("======GetPictureActivity=====搜索结果界面跳转====item==" + item.toString());
         mMMKVInstace.encode(Constants.KEY_CurrentCaseID, item.getID() + "");
         Intent intent = new Intent(getActivity(), DetailCaseActivity.class);
-//        ((MainActivity) getActivity()).setCurrentItemID(item.getID() + "");
         RefreshItemIdEvent refreshItemIdEvent = new RefreshItemIdEvent(true);
         refreshItemIdEvent.setId(item.getID()+"");
         EventBus.getDefault().post(refreshItemIdEvent);

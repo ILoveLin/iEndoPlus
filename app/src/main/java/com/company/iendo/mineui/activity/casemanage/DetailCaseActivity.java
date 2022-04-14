@@ -97,8 +97,6 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
                 .addParams("ID", mCaseID)
                 .build()
                 .execute(new StringCallback() {
-
-
                     @Override
                     public void onError(Call call, Exception e, int id) {
                         toast("请求错误" + e);
@@ -114,7 +112,9 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
                             if (0 == mBean.getCode()) {  //成功
                                 imageCounts = mBean.getData().getImagesCount() + "";
                                 videosCounts = mBean.getData().getVideosCount() + "";
+                                LogUtils.e("详情界面---截图界面===病例详情response==mCaseID=" + mCaseID);
                                 LogUtils.e("详情界面---截图界面===病例详情response==imageCount=" + imageCounts);
+                                LogUtils.e("详情界面---截图界面===病例详情response==videosCounts=" + videosCounts);
                                 DetailCaseActivity.mTabAdapter.setItem(1, "图片(" + imageCounts + ")");
                                 DetailCaseActivity.mTabAdapter.setItem(2, "视频(" + videosCounts + ")");
 
