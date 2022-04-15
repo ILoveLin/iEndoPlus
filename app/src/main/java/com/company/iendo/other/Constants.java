@@ -108,6 +108,8 @@ public class Constants {
     public static final String UDP_13 = "13";                    //更新病历     本地监听,到这个消息病例列表需要重新请求数据,病例详情界面如果当前的回调的caseid==当前操作id,这个界面也需要刷新
     public static final String UDP_14 = "14";                    //删除病历
     public static final String UDP_15 = "15";                    //新增图片（采图）
+    public static final String UDP_16 = "16";                    //删除图片
+    public static final String UDP_20 = "20";                    //删除视频
     public static final String UDP_F1 = "F1";                    //预览报告
     public static final String UDP_F2 = "F2";                    //打印报告
     public static final String UDP_17 = "17";                    //编辑图片

@@ -278,6 +278,19 @@ dependencies {
 //    implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
     //圆形进度条
     implementation 'com.king.view:circleprogressview:1.1.2'
+
+//    Dokit
+    debugImplementation 'io.github.didi.dokit:dokitx:3.5.0.1'
+    releaseImplementation 'io.github.didi.dokit:dokitx-no-op:3.5.0.1'
+
+
+
+
+
+
+
+
+
     //adapter 多选 全选等等
     // 多语种：https://github.com/getActivity/MultiLanguages
     // 悬浮窗：https://github.com/getActivity/XToast

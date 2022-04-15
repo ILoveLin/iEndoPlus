@@ -68,7 +68,7 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
     public static TabAdapter mTabAdapter;
     public static TitleBar mTitlebar;
     private TextView mDelete;
-    private TextView mPicture, mCaseDown;
+    public static TextView mPicture, mCaseDown;
     private Boolean mFatherExit;   //父类Activity 是否主动退出的标识,主动退出需要请求保存fragment的更新数据
     private String currentItemID;
     private Boolean FLAG_PICTURE_EXIST = false;  //查询服务端是否已经生成报告

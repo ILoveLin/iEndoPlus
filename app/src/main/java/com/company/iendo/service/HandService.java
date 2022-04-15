@@ -213,21 +213,31 @@ public class HandService extends AbsWorkService {
         String mCurrentReceiveDeviceCode = mmkv.decodeString(Constants.KEY_DeviceCode);
         String mSocketPort = mmkv.decodeString(Constants.KEY_Device_SocketPort);
         String mSocketOrLiveIP = mmkv.decodeString(Constants.KEY_Device_Ip);
-        if (mLoginTag) {
+
+        LogUtils.e("SocketUtils==HandService===发送消息==点对点==detailCaseActivity==mCurrentTypeNum==" + mCurrentTypeNum);
+        LogUtils.e("SocketUtils==HandService===发送消息==点对点==detailCaseActivity==mLoginTag==" + mLoginTag);
+        LogUtils.e("SocketUtils==HandService===发送消息==点对点==detailCaseActivity==mCurrentReceiveDeviceCode==" + mCurrentReceiveDeviceCode);
+        LogUtils.e("SocketUtils==HandService===发送消息==点对点==detailCaseActivity==mSocketPort==" + mSocketPort);
+        LogUtils.e("SocketUtils==HandService===发送消息==点对点==detailCaseActivity==mSocketOrLiveIP==" + mSocketOrLiveIP);
+
+        if (mLoginTag && null != mLoginTag) {
             HandBean handBean = new HandBean();
             handBean.setHelloPc("");
             handBean.setComeFrom("");
-            byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(handBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
-                    Constants.UDP_HAND);
-
-            if (("".equals(mSocketPort))) {
+            if (!"".equals(mCurrentTypeNum) && !"".equals(mCurrentReceiveDeviceCode)) {
+                byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(handBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
+                        Constants.UDP_HAND);
+                if (("".equals(mSocketPort))) {
 //            toast("通讯端口不能为空");
-                return;
+                    return;
+                }
+                LogUtils.e("SocketUtils==HandService===发送消息==点对点==detailCaseActivity==sendByteData==" + sendByteData);
+                LogUtils.e("SocketUtils==HandService===发送消息==点对点==detailCaseActivity==mSocketPort==" + mSocketPort);
+                startTime = System.currentTimeMillis();
+                SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), this);
             }
-            LogUtils.e("SocketUtils==HandService===发送消息==点对点==detailCaseActivity==sendByteData==" + sendByteData);
-            LogUtils.e("SocketUtils==HandService===发送消息==点对点==detailCaseActivity==mSocketPort==" + mSocketPort);
-            startTime = System.currentTimeMillis();
-            SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), this);
+
+
         }
     }
 

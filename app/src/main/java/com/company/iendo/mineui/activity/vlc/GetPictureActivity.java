@@ -302,18 +302,27 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                 //url
                 micUrl = event.getData();
                 String onLine = event.getIp();//(0：离线 1:上线)
+                Log.e("TAG", "RtmpOnlyAudio===onDisconnectRtmp==micUrl===" + micUrl);
+
                 if ("1".equals(onLine)) {
                     if (!"".equals(micUrl) && rtmpOnlyAudio.prepareAudio()) {
                         //获取当前UI tag
                         String tag = (String) mTvMicStatus.getTag();
                         //此时是关闭状态,请求推流的回调
                         if ("stopStream".equals(tag)) {
+                            setMicStatus("startStream", "状态:已连接");
                             rtmpOnlyAudio.startStream(micUrl);
-                            setMicStatus("startStream", "通话中..");
+                            toast("开始推流");
+                            Log.e("TAG", "RtmpOnlyAudio===onDisconnectRtmp==开始推流===");
+//                            setMicStatus("startStream", "通话中..");
                             //此时是开启状态,请求关闭推流的回调
                         } else if ("startStream".equals(tag)) {
                             rtmpOnlyAudio.stopStream();
+                            toast("关闭推流");
                             setMicStatus("stopStream", "语音通话");
+                            Log.e("TAG", "RtmpOnlyAudio===onDisconnectRtmp==关闭推流===");
+
+//                            setMicStatus("stopStream", "语音通话");
                         }
                     }
                 } else {
@@ -321,6 +330,126 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                 }
                 break;
         }
+
+    }
+
+    /**
+     * 获取麦克风权限
+     */
+    private void getMicPermission() {
+        XXPermissions.with(this)
+                .permission(Permission.RECORD_AUDIO)
+                .request(new OnPermissionCallback() {
+                    @Override
+                    public void onGranted(List<String> permissions, boolean all) {
+                        if (all) {
+                            LogUtils.e("RtmpOnlyAudio==pusherStart====Permission==isStreaming==" + rtmpOnlyAudio.isStreaming());    //true   断开的时候
+                            LogUtils.e("RtmpOnlyAudio==pusherStart====Permission==prepareAudio==" + rtmpOnlyAudio.prepareAudio());   //true
+                            LogUtils.e("RtmpOnlyAudio==pusherStart==============================");   //true
+                            //flase 表示未开启推流
+
+                            if (HandService.UDP_HAND_GLOBAL_TAG) {//握手成功
+                                if (!rtmpOnlyAudio.isStreaming()) {//false 表示还未开启推流
+                                    if (rtmpOnlyAudio.prepareAudio()) {
+                                        //握手成功,
+                                        if (HandService.UDP_HAND_GLOBAL_TAG) {
+                                            //tag为关闭状态(默认是关闭状态)点击的时候如果关闭状态就开启推流
+                                            if ("stopStream".equals(mTvMicStatus.getTag())) {
+                                                sendSocketPointMicMessage("1");
+                                                mTvMicStatus.setText("状态:连接中");
+                                            } else if ("startStream".equals(mTvMicStatus.getTag())) {
+                                                mTvMicStatus.setText("语音通话");
+                                                sendSocketPointMicMessage("0");
+                                            }
+                                        } else {
+                                            toast(Constants.HAVE_HAND_FAIL_OFFLINE);
+                                        }
+
+
+                                    } else {
+                                        toast("未获取到麦克风权限");
+
+                                    }
+                                } else {
+                                    if (rtmpOnlyAudio.prepareAudio()) {
+                                        //握手成功,
+                                        if (HandService.UDP_HAND_GLOBAL_TAG) {
+                                            //tag为关闭状态(默认是关闭状态)点击的时候如果关闭状态就开启推流
+                                            if ("stopStream".equals(mTvMicStatus.getTag())) {
+                                                sendSocketPointMicMessage("1");
+                                                mTvMicStatus.setText("状态:连接中");
+                                            } else if ("startStream".equals(mTvMicStatus.getTag())) {
+                                                mTvMicStatus.setText("语音通话");
+                                                sendSocketPointMicMessage("0");
+                                            }
+                                        } else {
+                                            toast(Constants.HAVE_HAND_FAIL_OFFLINE);
+                                        }
+
+
+                                    } else {
+                                        toast("未获取到麦克风权限");
+
+                                    }
+                                }
+
+
+                            } else {
+                                toast(Constants.HAVE_HAND_FAIL_OFFLINE);
+                            }
+
+//                            if (!rtmpOnlyAudio.isStreaming()) {
+//                                if (rtmpOnlyAudio.prepareAudio()) {
+//                                    //握手成功,
+//                                    if (HandService.UDP_HAND_GLOBAL_TAG) {
+//                                        //tag为关闭状态(默认是关闭状态)点击的时候如果关闭状态就开启推流
+//                                        if ("stopStream".equals(mTvMicStatus.getTag())) {
+//                                            sendSocketPointMicMessage("1");
+//                                            mTvMicStatus.setText("状态:连接中");
+//                                        } else if ("startStream".equals(mTvMicStatus.getTag())) {
+//                                            mTvMicStatus.setText("语音通话");
+//                                            sendSocketPointMicMessage("0");
+//                                        }
+//                                    } else {
+//                                        toast(Constants.HAVE_HAND_FAIL_OFFLINE);
+//                                    }
+//
+//
+//                                } else {
+//
+//                                }
+//                            } else {
+//                                if (rtmpOnlyAudio.prepareAudio()) {
+//                                    if (HandService.UDP_HAND_GLOBAL_TAG) {
+//                                        //tag为开启状态,此时需要关闭推流
+//                                        //tag为关闭状态(默认是关闭状态)点击的时候如果关闭状态就开启推流
+//                                        if ("stopStream".equals(mTvMicStatus.getTag())) {
+//                                            sendSocketPointMicMessage("1");
+//                                            mTvMicStatus.setText("状态:连接中");
+//                                        } else if ("startStream".equals(mTvMicStatus.getTag())) {
+//                                            mTvMicStatus.setText("语音通话");
+//                                            sendSocketPointMicMessage("0");
+//                                        }
+//                                    } else {
+//                                        toast(Constants.HAVE_HAND_FAIL_OFFLINE);
+//                                    }
+//                                }
+//                            }
+                        }
+                    }
+
+                    @Override
+                    public void onDenied(List<String> permissions, boolean never) {
+                        if (never) {
+                            toast("被永久拒绝授权，请手动授予存储权限");
+                            // 如果是被永久拒绝就跳转到应用权限系统设置页面
+                            XXPermissions.startPermissionActivity(getApplicationContext(), permissions);
+                        } else {
+                            toast("获取麦克风权限失败");
+                        }
+                    }
+                });
+
 
     }
 
@@ -630,65 +759,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
 
     }
 
-    /**
-     * 获取麦克风权限
-     */
-    private void getMicPermission() {
-        XXPermissions.with(this)
-                .permission(Permission.RECORD_AUDIO)
-                .request(new OnPermissionCallback() {
-                    @Override
-                    public void onGranted(List<String> permissions, boolean all) {
-                        if (all) {
 
-                            LogUtils.e("pusherStart====Permission==isStreaming==" + rtmpOnlyAudio.isStreaming());    //true   断开的时候
-                            LogUtils.e("pusherStart====Permission==prepareAudio==" + rtmpOnlyAudio.prepareAudio());   //true
-                            //flase 表示未开启推流
-                            if (!rtmpOnlyAudio.isStreaming()) {
-                                if (rtmpOnlyAudio.prepareAudio()) {
-                                    //握手成功,
-                                    if (HandService.UDP_HAND_GLOBAL_TAG) {
-                                        //tag为关闭状态(默认是关闭状态)点击的时候如果关闭状态就开启推流
-                                        if ("stopStream".equals(mTvMicStatus.getTag())) {
-                                            sendSocketPointMicMessage("1");
-                                        }
-                                    } else {
-                                        toast(Constants.HAVE_HAND_FAIL_OFFLINE);
-                                        toast(Constants.HAVE_HAND_FAIL_OFFLINE);
-                                    }
-
-
-                                } else {
-
-                                }
-                            } else {
-                                if (HandService.UDP_HAND_GLOBAL_TAG) {
-                                    //tag为开启状态,此时需要关闭推流
-                                    if ("startStream".equals(mTvMicStatus.getTag())) {
-                                        sendSocketPointMicMessage("0");
-                                    }
-                                } else {
-
-                                    toast(Constants.HAVE_HAND_FAIL_OFFLINE);
-                                }
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onDenied(List<String> permissions, boolean never) {
-                        if (never) {
-                            toast("被永久拒绝授权，请手动授予存储权限");
-                            // 如果是被永久拒绝就跳转到应用权限系统设置页面
-                            XXPermissions.startPermissionActivity(getApplicationContext(), permissions);
-                        } else {
-                            toast("获取麦克风权限失败");
-                        }
-                    }
-                });
-
-
-    }
     /**
      * ***************************************************************************通讯模块**************************************************************************
      */
@@ -1269,9 +1340,9 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         isFirstIn = true;
         startLive(path);
         //握手通讯
-        LogUtils.e("onResume===GetPictureActivity===开始建立握手链接!"+ HandService.UDP_HAND_GLOBAL_TAG);
-        LogUtils.e("onResume===GetPictureActivity===开始建立握手链接222!"+ HandService.UDP_HAND_GLOBAL_TAG);
-        LogUtils.e("onResume===GetPictureActivity===开始建立握手链接333!"+ HandService.UDP_HAND_GLOBAL_TAG);
+        LogUtils.e("onResume===GetPictureActivity===开始建立握手链接!" + HandService.UDP_HAND_GLOBAL_TAG);
+        LogUtils.e("onResume===GetPictureActivity===开始建立握手链接222!" + HandService.UDP_HAND_GLOBAL_TAG);
+        LogUtils.e("onResume===GetPictureActivity===开始建立握手链接333!" + HandService.UDP_HAND_GLOBAL_TAG);
 
 
         sendRequest(mCaseID);
@@ -1609,7 +1680,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             @Override
             public void run() {
                 toast("语音链接成功");
-                setMicStatus("startStream", "通话中..");
+//                setMicStatus("startStream", "通话中..");
 
             }
         });
@@ -1621,11 +1692,12 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             @SuppressLint("NewApi")
             @Override
             public void run() {
-                Log.e("TAG", "RtmpOnlyAudio===onConnectionFailedRtmp==");
+                Log.e("TAG", "RtmpOnlyAudio===onConnectionFailedRtmp==" + reason);
 
                 Log.e("TAG", "RtmpOnlyAudio=====" + reason);
                 toast("语音链接失败: " + reason);
-                rtmpOnlyAudio.stopStream();
+                mTvMicStatus.setText("状态:未连接");
+//                rtmpOnlyAudio.stopStream();
 
 
             }
@@ -1646,8 +1718,8 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             public void run() {
                 Log.e("TAG", "RtmpOnlyAudio===onConnectionFailedRtmp==");
                 toast("语音断开链接 ");
-                setMicStatus("stopStream", "语音通话");
-                sendSocketPointMicMessage("0");
+//                setMicStatus("stopStream", "语音通话");
+//                sendSocketPointMicMessage("0");
             }
         });
 //        runOnUiThread(new Runnable() {
@@ -1664,7 +1736,15 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
     @Override
     public void onAuthErrorRtmp() {
         Log.e("TAG", "RtmpOnlyAudio===onAuthErrorRtmp==");
+        runOnUiThread(new Runnable() {
+            @SuppressLint("NewApi")
+            @Override
+            public void run() {
+                Log.e("TAG", "RtmpOnlyAudio===onConnectionFailedRtmp==");
+                toast("语音断开链接 ");
 
+            }
+        });
     }
 
     @Override

@@ -252,7 +252,17 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 
         showLoading();
         LogUtils.e("Socket回调==DetailFragment==当前UDP命令==event.====相等====开始请求界面=");
+        sendCaseInfoRequest(currentItemID, false, null);
 
+    }
+
+    /**
+     * 获取病例详情
+     *
+     * @param currentItemID
+     * @param isUpdateDown  在下载过病例的前提下,编辑了病例,再更新DB
+     */
+    private void sendCaseInfoRequest(String currentItemID, Boolean isUpdateDown, File toLocalFile) {
         OkHttpUtils.get()
                 .url(mBaseUrl + HttpConstant.CaseManager_CaseInfo)
                 .addParams("ID", currentItemID)
@@ -275,6 +285,10 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                                 showComplete();
                                 Details_Reault_Ok = true;
                                 setLayoutData(mBean);
+                                if (isUpdateDown) {
+                                    //下载病例和图片信息---到本地sd卡里面
+                                    downLocalCaseUserData(toLocalFile);
+                                }
 
                             } else {
                                 showError(listener -> {
@@ -288,8 +302,6 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                         }
                     }
                 });
-
-
     }
 
     /**
@@ -428,24 +440,15 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                 event.setUdpCmd(Constants.UDP_CUSTOM_FINISH);
                 EventBus.getDefault().post(event);
             } else {
-                // 消息对话框
                 new MessageDialog.Builder(getActivity())
-                        // 标题可以不用填写
                         .setTitle("是否返回")
-                        // 内容必须要填写
                         .setMessage("当前正在编辑病历信息,是否返回")
-                        // 确定按钮文本
                         .setConfirm("继续编辑")
-                        // 设置 null 表示不显示取消按钮
                         .setCancel("立即返回")
-                        // 设置点击按钮后不关闭对话框
-                        //.setAutoDismiss(false)
                         .setListener(new MessageDialog.OnListener() {
 
                             @Override
                             public void onConfirm(BaseDialog dialog) {
-//                                showComplete();
-//                                checkDataAndRequest();
 
                             }
 
@@ -479,37 +482,32 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 
     @Override
     public void onDown(boolean userInfo, boolean userPicture) {
-
-
         //下载的时候就去请求,获取Video视频数目和标题
         sendGetVideoPathListRequest(currentItemCaseID);
-        // 消息对话框
-        new MessageDialog.Builder(getActivity())
-                // 标题可以不用填写
-                .setTitle("提示")
-                // 内容必须要填写
-                .setMessage("确定下载吗?")
-                // 确定按钮文本
-                .setConfirm(getString(R.string.common_confirm))
-                // 设置 null 表示不显示取消按钮
-                .setCancel(getString(R.string.common_cancel))
-                // 设置点击按钮后不关闭对话框
-                //.setAutoDismiss(false)
-                .setListener(new MessageDialog.OnListener() {
-                    @Override
-                    public void onConfirm(BaseDialog dialog) {
-                        //下载图片
+        String mCaseDownStr = DetailCaseActivity.mCaseDown.getText().toString();
+        if (("已下载").equals(mCaseDownStr)) {
+            //下载图片
+            requestPermission();
+        } else {
+            new MessageDialog.Builder(getActivity())
+                    .setTitle("提示")
+                    // 内容必须要填写
+                    .setMessage("确定下载吗?")
+                    .setConfirm(getString(R.string.common_confirm))
+                    .setCancel(getString(R.string.common_cancel))
+                    .setListener(new MessageDialog.OnListener() {
+                        @Override
+                        public void onConfirm(BaseDialog dialog) {
+                            //下载图片
+                            requestPermission();
+                        }
 
-                        requestPermission();
-                    }
-
-                    @Override
-                    public void onCancel(BaseDialog dialog) {
-                    }
-                })
-                .show();
-
-
+                        @Override
+                        public void onCancel(BaseDialog dialog) {
+                        }
+                    })
+                    .show();
+        }
     }
 
     /**
@@ -557,37 +555,49 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
             LogUtils.e("文件下载===01==toLocalFile.exists()===" + toLocalFile.listFiles().length);
             int length = toLocalFile.listFiles().length;  //本地下载的图片数量
             if (null != mPathMap && !mPathMap.isEmpty()) {
-                int size = mPathMap.keySet().size();
-                //下载的图片数量和请求的图片数量一样
-                if (length == size) {
-                    // 消息对话框
-                    new MessageDialog.Builder(getActivity())
-                            // 标题可以不用填写
-                            .setTitle("提示")
-                            // 内容必须要填写
-                            .setMessage("该病历已经下载,是否需要更新?")
-                            // 确定按钮文本
-                            .setConfirm(getString(R.string.common_confirm))
-                            // 设置 null 表示不显示取消按钮
-                            .setCancel(getString(R.string.common_cancel))
-                            // 设置点击按钮后不关闭对话框
-                            //.setAutoDismiss(false)
-                            .setListener(new MessageDialog.OnListener() {
+                new MessageDialog.Builder(getActivity())
+                        .setTitle("提示")
+                        .setMessage("该病历已经下载,是否需要更新?")
+                        .setConfirm(getString(R.string.common_confirm))
+                        .setCancel(getString(R.string.common_cancel))
+                        //.setAutoDismiss(false)
+                        .setListener(new MessageDialog.OnListener() {
 
-                                @Override
-                                public void onConfirm(BaseDialog dialog) {
-                                    downCaseMsgPictureData(toLocalFile);
-                                }
+                            @Override
+                            public void onConfirm(BaseDialog dialog) {
+                                downCaseMsgPictureData(toLocalFile);
+                            }
 
-                                @Override
-                                public void onCancel(BaseDialog dialog) {
-                                }
-                            })
-                            .show();
-                } else {
-                    //图片数目不等,直接更新
-                    downCaseMsgPictureData(toLocalFile);
-                }
+                            @Override
+                            public void onCancel(BaseDialog dialog) {
+                            }
+                        })
+                        .show();
+//                int size = mPathMap.keySet().size();
+//                //下载的图片数量和请求的图片数量一样
+//                if (length == size) {
+//                    new MessageDialog.Builder(getActivity())
+//                            .setTitle("提示")
+//                            .setMessage("该病历已经下载,是否需要更新?")
+//                            .setConfirm(getString(R.string.common_confirm))
+//                            .setCancel(getString(R.string.common_cancel))
+//                            //.setAutoDismiss(false)
+//                            .setListener(new MessageDialog.OnListener() {
+//
+//                                @Override
+//                                public void onConfirm(BaseDialog dialog) {
+//                                    downCaseMsgPictureData(toLocalFile);
+//                                }
+//
+//                                @Override
+//                                public void onCancel(BaseDialog dialog) {
+//                                }
+//                            })
+//                            .show();
+//                } else {
+//                    //图片数目不等,直接更新
+//                    downCaseMsgPictureData(toLocalFile);
+//                }
             }
         } else if (!toLocalFile.exists()) {
             toLocalFile.mkdir();
@@ -655,8 +665,9 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
             }
 
         }
-        //下载病例和图片信息---到本地sd卡里面
-        downLocalCaseUserData(toLocalFile);
+        sendCaseInfoRequest(currentItemCaseID, true, toLocalFile);
+
+
     }
 
     /**
@@ -1960,6 +1971,24 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                 LogUtils.e("======LiveServiceImpl==回调=event==采图==" + event.getData());
                 if (mCaseID.equals(event.getData())) {
                     sendImageRequest(mCaseID);
+                }
+                break;
+            case Constants.UDP_16://删除图片
+                sendImageRequest(mCaseID);
+                break;
+            case Constants.UDP_20://删除视频
+                sendImageRequest(mCaseID);
+                break;
+            case Constants.UDP_18://新增录像:---->录像--->0：查询录像状态 1：开始录像，2：停止录像，3：正在录像  4：未录像,在停止录像的视频
+                //获取当前上位机操作的病例ID
+
+                String mUpCaseID = event.getIp();
+                if (mUpCaseID.equals(mCaseID)) {
+                    String tag = (String) event.getData();
+                    if ("2".equals(tag) || "4".equals(tag)) {
+                        sendImageRequest(mCaseID);
+                    }
+
                 }
                 break;
             case Constants.UDP_13://有病例,并且当前病例id==回调病例id则更新界面数据

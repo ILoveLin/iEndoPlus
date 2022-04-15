@@ -19,6 +19,7 @@ import com.company.iendo.other.Constants;
 import com.company.iendo.service.ReceiveSocketService;
 import com.company.iendo.utils.db.DBManager;
 import com.company.iendo.utils.db.MyOpenHelper;
+import com.didichuxing.doraemonkit.DoKit;
 import com.hjq.bar.TitleBar;
 import com.company.iendo.R;
 import com.company.iendo.aop.Log;
@@ -83,6 +84,9 @@ public final class AppApplication extends Application {
     public void onCreate() {
         super.onCreate();
         initSdk(this);
+
+        new DoKit.Builder(this)
+                .build();
         initLiveService();
 
         initOkHttp();
@@ -168,6 +172,8 @@ public final class AppApplication extends Application {
      * 初始化一些第三方框架
      */
     public static void initSdk(Application application) {
+
+
         // 设置标题栏初始化器
         TitleBar.setDefaultStyle(new TitleBarStyle());
 

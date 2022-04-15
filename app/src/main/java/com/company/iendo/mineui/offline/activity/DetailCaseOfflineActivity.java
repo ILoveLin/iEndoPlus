@@ -137,7 +137,8 @@ public class DetailCaseOfflineActivity extends AppActivity implements TabAdapter
         mTabAdapter.addItem("图片");
         mTabAdapter.addItem("视频");
         mTabAdapter.setOnTabListener(this);
-
+        String currentCaseName = getIntent().getStringExtra("Name");
+        mTitlebar.setTitle(currentCaseName + "");
 
     }
 

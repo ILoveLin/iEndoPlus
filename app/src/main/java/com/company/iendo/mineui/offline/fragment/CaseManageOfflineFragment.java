@@ -1,5 +1,6 @@
 package com.company.iendo.mineui.offline.fragment;
 
+import android.content.Intent;
 import android.os.Build;
 
 import androidx.annotation.RequiresApi;
@@ -13,6 +14,7 @@ import com.company.iendo.bean.event.SocketRefreshEvent;
 import com.company.iendo.green.db.CaseDBUtils;
 import com.company.iendo.green.db.downcase.CaseDBBean;
 import com.company.iendo.mineui.activity.MainActivity;
+import com.company.iendo.mineui.activity.casemanage.DetailCaseActivity;
 import com.company.iendo.mineui.offline.activity.DetailCaseOfflineActivity;
 import com.company.iendo.mineui.offline.entitydb.GroupEntity;
 import com.company.iendo.utils.LogUtils;
@@ -94,20 +96,11 @@ public class CaseManageOfflineFragment extends TitleBarFragment<MainActivity> im
                 ArrayList<CaseDBBean> caseDBBeans = mListHashMap.get(s);
 
                 currentItemClickDBBean = caseDBBeans.get(childPosition);
+                Intent intent = new Intent(getActivity(), DetailCaseOfflineActivity.class);
 
-
-                startActivity(DetailCaseOfflineActivity.class);
-//                Intent intent = new Intent(context, OffLineDetailCaseActivity.class);
-//                intent.putExtra("CaseDBBean", (Serializable) caseDBBean);
-//                context.startActivity(intent);
-
-//                CaseDBBean=(List<UVedioBean>) getIntent().getSerializableExtra("CaseDBBean");
-
-                LogUtils.e("initView====子项=caseDBBean==" + currentItemClickDBBean.getName());
-                LogUtils.e("initView====子项=caseDBBean==" + currentItemClickDBBean.toString());
-
-
-//                List<CaseDBBean> dataList = CaseDBUtils.getQueryBeanByTow(getActivity(), mCurrentReceiveDeviceCode, tag);
+                intent.putExtra("Name", currentItemClickDBBean.getName() + "");
+                intent.putExtra("itemID", currentItemClickDBBean.getId() + "");
+                startActivity(intent);
 
 
             }

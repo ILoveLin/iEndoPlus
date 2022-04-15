@@ -189,7 +189,6 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
                         //程序退出命令
                         sendProgramExitMessage();
                         SharePreferenceUtil.put(getActivity(), Constants.Is_Logined, false);
-                        mMMKVInstace.encode(Constants.KEY_Login_Tag, false);
                         startActivity(LoginActivity.class);
                         //开启默认监听端口
                         ReceiveSocketService receiveSocketService = new ReceiveSocketService();
@@ -223,6 +222,8 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
                         kv.encode(Constants.KEY_HospitalInfo, false);//医院信息(不能进入医院信息界面)
                         HandService.UDP_HAND_GLOBAL_TAG = false;
                         HandService.stopService();
+                        mMMKVInstace.encode(Constants.KEY_Login_Tag, false);
+
                         finish();
                     }
                 }).show();

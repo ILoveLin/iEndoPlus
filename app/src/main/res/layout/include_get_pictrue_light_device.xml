@@ -27,7 +27,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="光源"
-                android:textSize="@dimen/sp_14" />
+                android:textSize="@dimen/sp_13" />
 
             <TextView
                 android:id="@+id/view_light"
@@ -52,7 +52,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="摄像机"
-                android:textSize="@dimen/sp_14" />
+                android:textSize="@dimen/sp_13" />
 
             <TextView
                 android:id="@+id/view_device"

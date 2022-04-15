@@ -177,7 +177,7 @@
                     <!--采图 -->
                     <LinearLayout
                         android:id="@+id/linear_picture"
-                        android:layout_width="@dimen/dp_72"
+                        android:layout_width="@dimen/dp_80"
                         android:layout_height="@dimen/dp_72"
                         android:layout_centerInParent="true"
                         android:background="@drawable/selector_item_shot"
@@ -203,7 +203,7 @@
                             android:layout_marginBottom="@dimen/dp_6"
                             android:text="采图"
                             android:textColor="@color/white"
-                            android:textSize="@dimen/sp_15" />
+                            android:textSize="@dimen/sp_14" />
 
 
                     </LinearLayout>
@@ -212,7 +212,7 @@
                     <LinearLayout
                         android:layout_marginRight="@dimen/dp_25"
                         android:id="@+id/linear_record"
-                        android:layout_width="@dimen/dp_72"
+                        android:layout_width="@dimen/dp_80"
                         android:layout_height="@dimen/dp_72"
                         android:layout_toLeftOf="@+id/linear_picture"
                         android:background="@drawable/selector_item_recode"
@@ -239,7 +239,7 @@
                             android:tag="录像中"
                             android:text="录像"
                             android:textColor="@color/white"
-                            android:textSize="@dimen/sp_15" />
+                            android:textSize="@dimen/sp_14" />
 
 
                     </LinearLayout>
@@ -247,7 +247,7 @@
 
                     <LinearLayout
                         android:id="@+id/linear_mic"
-                        android:layout_width="@dimen/dp_72"
+                        android:layout_width="@dimen/dp_80"
                         android:layout_height="@dimen/dp_72"
                         android:layout_marginLeft="@dimen/dp_25"
                         android:layout_toRightOf="@+id/linear_picture"
@@ -276,7 +276,7 @@
                             android:text="语音通话"
                             android:tag="stopStream"
                             android:textColor="@color/white"
-                            android:textSize="@dimen/sp_15" />
+                            android:textSize="@dimen/sp_14" />
                     </LinearLayout>
 
                     <!--                        <LinearLayout-->
