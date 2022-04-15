@@ -45,6 +45,15 @@ public class LoginBean {
     @SerializedName("msg")
     private String msg;
 
+    @Override
+    public String toString() {
+        return "LoginBean{" +
+                "data=" + data +
+                ", code=" + code +
+                ", msg='" + msg + '\'' +
+                '}';
+    }
+
     public DataDTO getData() {
         return data;
     }
@@ -67,15 +76,6 @@ public class LoginBean {
 
     public void setMsg(String msg) {
         this.msg = msg;
-    }
-
-    @Override
-    public String toString() {
-        return "LoginBean{" +
-                "data=" + data +
-                ", code=" + code +
-                ", msg='" + msg + '\'' +
-                '}';
     }
 
     public static class DataDTO {

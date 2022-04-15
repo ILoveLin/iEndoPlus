@@ -103,18 +103,18 @@ public class ReceiveSocketService extends AbsWorkService {
             mAppIP = getIpString(wifiInfo.getIpAddress());
         }
         LogUtils.e("保活服务开启----AAA--" + Thread.currentThread().getName());
-        sDisposable = Observable
-                .interval(3, TimeUnit.SECONDS)//定时器操作符，这里三秒打印一个log
-                //取消任务时取消定时唤醒
-                .doOnDispose(() -> {
-                    LogUtils.e("保活服务开启--接收线程----===doOnDispose");
-                    cancelJobAlarmSub();
-                })
-                .subscribe(count -> {
-                    LogUtils.e("保活服务开启--接收线程---每 3 秒采集一次数据... count = " + count);
-                    if (count > 0 && count % 18 == 0)
-                        LogUtils.e("保活服务开启--接收线程----保存数据到磁盘。 saveCount = " + (count / 18 - 1));
-                });
+//        sDisposable = Observable
+//                .interval(3, TimeUnit.SECONDS)//定时器操作符，这里三秒打印一个log
+//                //取消任务时取消定时唤醒
+//                .doOnDispose(() -> {
+//                    LogUtils.e("保活服务开启--接收线程----===doOnDispose");
+//                    cancelJobAlarmSub();
+//                })
+//                .subscribe(count -> {
+//                    LogUtils.e("保活服务开启--接收线程---每 3 秒采集一次数据... count = " + count);
+//                    if (count > 0 && count % 18 == 0)
+//                        LogUtils.e("保活服务开启--接收线程----保存数据到磁盘。 saveCount = " + (count / 18 - 1));
+//                });
 
         /**
          * App启动的时候初始化第一次默认端口线程
@@ -265,7 +265,7 @@ public class ReceiveSocketService extends AbsWorkService {
                                                 event.setReceivePort(settingReceivePort + "");
                                                 event.setUdpCmd(Constants.UDP_HAND);
                                                 EventBus.getDefault().post(event);
-                                                HandService.UDP_HAND_GLOBAL_TAG = true;
+//                                                HandService.UDP_HAND_GLOBAL_TAG = true;
                                                 break;
 
                                             case Constants.UDP_FD: //广播
@@ -503,8 +503,6 @@ public class ReceiveSocketService extends AbsWorkService {
                                 HandService.UDP_HAND_GLOBAL_TAG = false;
                                 event.setData("错误码==00===监听port端口不一致,退出监听线程!!");
                                 EventBus.getDefault().post(event);
-
-
                                 SocketRefreshEvent event1 = new SocketRefreshEvent();
                                 event1.setUdpCmd(Constants.UDP_CUSTOM_RESTART);
                                 EventBus.getDefault().post(event1);

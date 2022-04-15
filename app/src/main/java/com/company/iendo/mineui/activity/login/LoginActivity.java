@@ -707,7 +707,6 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
 
                                 //存入用户表
                                 saveRememberPassword(mBean);
-
                                 /**
                                  * 登入成功的时候切换成监听 当前设备授权登入的socket端口--->Constants.KEY_RECEIVE_PORT
                                  * 退出登入的时候切换成监听 当前广播发送端口(或者设置设备搜索界面设置成功赋值)----->Constants.KEY_RECEIVE_PORT_BY_SEARCH
@@ -718,18 +717,26 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                                     WifiInfo wifiInfo = wifiManager.getConnectionInfo();
                                     mAppIP = getIpString(wifiInfo.getIpAddress());
                                 }
-                                if ("".equals(mSocketPort)) {
-                                    toast("本地广播发送端口不能为空");
+                                mSocketPort = (String) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Current_SocketPort, "7006");
+                                LogUtils.e("登录==mSocketPort==" +mSocketPort);
+                                LogUtils.e("登录==mSocketPort==" +mSocketPort);
+
+                                if ("".equals(mSocketPort) || null == mSocketPort) {
+                                    toast("通讯接收端口不能为空");
+                                    LogUtils.e("登录==mSocketPort==11111111");
+
                                     return;
                                 } else {
-                                    receiveSocketService.setSettingReceiveThread(mAppIP, Integer.parseInt(mSocketPort), LoginActivity.this);
+                                    LogUtils.e("登录==mSocketPort==222222222");
 
+                                    receiveSocketService.setSettingReceiveThread(mAppIP, Integer.parseInt(mSocketPort), LoginActivity.this);
                                 }
                                 MainActivity.start(getContext(), CaseManageFragment.class);
+                                //初始化握手保活服务
                                 initHandService();
                                 finish();
                             } else {
-
+                                toast( "密码错误");
                             }
 
                         } else {

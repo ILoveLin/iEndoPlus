@@ -214,27 +214,28 @@ public class HandService extends AbsWorkService {
         String mSocketPort = mmkv.decodeString(Constants.KEY_Device_SocketPort);
         String mSocketOrLiveIP = mmkv.decodeString(Constants.KEY_Device_Ip);
 
-        LogUtils.e("SocketUtils==HandService===发送消息==点对点==detailCaseActivity==mCurrentTypeNum==" + mCurrentTypeNum);
-        LogUtils.e("SocketUtils==HandService===发送消息==点对点==detailCaseActivity==mLoginTag==" + mLoginTag);
-        LogUtils.e("SocketUtils==HandService===发送消息==点对点==detailCaseActivity==mCurrentReceiveDeviceCode==" + mCurrentReceiveDeviceCode);
-        LogUtils.e("SocketUtils==HandService===发送消息==点对点==detailCaseActivity==mSocketPort==" + mSocketPort);
-        LogUtils.e("SocketUtils==HandService===发送消息==点对点==detailCaseActivity==mSocketOrLiveIP==" + mSocketOrLiveIP);
+        LogUtils.e("SocketUtils==HandService===发送消息==点对点==HandService==mCurrentTypeNum==" + mCurrentTypeNum);
+        LogUtils.e("SocketUtils==HandService===发送消息==点对点==HandService==mLoginTag==" + mLoginTag);
+        LogUtils.e("SocketUtils==HandService===发送消息==点对点==HandService==mCurrentReceiveDeviceCode==" + mCurrentReceiveDeviceCode);
+        LogUtils.e("SocketUtils==HandService===发送消息==点对点==HandService==mSocketPort==" + mSocketPort);
+        LogUtils.e("SocketUtils==HandService===发送消息==点对点==HandService==mSocketOrLiveIP==" + mSocketOrLiveIP);
 
         if (mLoginTag && null != mLoginTag) {
             HandBean handBean = new HandBean();
             handBean.setHelloPc("");
             handBean.setComeFrom("");
-            if (!"".equals(mCurrentTypeNum) && !"".equals(mCurrentReceiveDeviceCode)) {
+            if (!"".equals(mCurrentTypeNum) && !"".equals(mCurrentReceiveDeviceCode) && !("".equals(mSocketPort))) {
                 byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(handBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
                         Constants.UDP_HAND);
-                if (("".equals(mSocketPort))) {
-//            toast("通讯端口不能为空");
-                    return;
-                }
-                LogUtils.e("SocketUtils==HandService===发送消息==点对点==detailCaseActivity==sendByteData==" + sendByteData);
-                LogUtils.e("SocketUtils==HandService===发送消息==点对点==detailCaseActivity==mSocketPort==" + mSocketPort);
+                LogUtils.e("SocketUtils==HandService===发送消息==点对点==HandService==sendByteData==" + sendByteData);
+                LogUtils.e("SocketUtils==HandService===发送消息==点对点==HandService==mSocketPort==" + mSocketPort);
                 startTime = System.currentTimeMillis();
-                SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), this);
+                if (null != sendByteData) {
+                    SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), this);
+                } else {
+                    LogUtils.e("SocketUtils==HandService===发送消息==点对点==HandService==握手数据为null==" + sendByteData);
+
+                }
             }
 
 
