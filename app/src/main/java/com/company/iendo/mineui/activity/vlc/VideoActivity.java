@@ -4,11 +4,9 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
-import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -23,7 +21,6 @@ import com.company.iendo.action.StatusAction;
 import com.company.iendo.app.AppActivity;
 import com.company.iendo.utils.CommonUtil;
 import com.company.iendo.utils.LogUtils;
-import com.company.iendo.utils.ScreenSizeUtil;
 import com.company.iendo.widget.StatusLayout;
 import com.company.iendo.widget.vlc.ENDownloadView;
 import com.company.iendo.widget.vlc.ENPlayView;
@@ -59,6 +56,7 @@ public final class VideoActivity extends AppActivity implements StatusAction, Se
     private AppCompatSeekBar mProgress;
     private RelativeLayout mBottomControl;
     private int currentProgressData;
+    private int progressData;
 
     @Override
     protected int getLayoutId() {
@@ -173,12 +171,21 @@ public final class VideoActivity extends AppActivity implements StatusAction, Se
             @Override
             public void eventPlayInit(boolean openClose) {
                 mStartView.setVisibility(View.INVISIBLE);
+
 //                error_text.setVisibility(View.INVISIBLE);
             }
 
             @Override
             public void eventPlay(boolean isPlaying) {
-
+                //此处保持每次进来都是之前退出界面播放的时间段
+                if (isExitWhenPause){//播放的时候退出了,需要重新回到播放位置
+                    if (null != mVLCView) {
+                        mVLCView.seekTo(onPauseTime);
+                    }
+                    if (null != mProgress) {
+                        mProgress.setProgress(progressData);
+                    }
+                }
             }
 
             @Override
@@ -210,13 +217,6 @@ public final class VideoActivity extends AppActivity implements StatusAction, Se
     }
 
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        startLive(path);
-    }
-
-
     private void startLive(String path) {
 //        mVLCView.setPath("http://9890.vod.myqcloud.com/9890_4e292f9a3dd011e6b4078980237cc3d3.f20.mp4");
         mVLCView.setPath(path);
@@ -229,11 +229,32 @@ public final class VideoActivity extends AppActivity implements StatusAction, Se
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        boolean playing = mVLCView.isPlaying();
+        startLive(path);
+
+
+    }
+
+    private int onPauseTime = 0;
+    /**
+     * 是否播放的时候onPause了界面
+     */
+    private boolean isExitWhenPause = false;
+
+    @Override
     protected void onPause() {
         super.onPause();
         //直接调用stop 不然回ANR
-        mVLCView.onStop();
         mLoadingView.release();
+        boolean playing = mVLCView.isPlaying();
+        progressData = mProgress.getProgress();
+        if (playing) {//在播放
+            onPauseTime = Integer.parseInt(currentTime);
+            isExitWhenPause = true;
+        }
+        mVLCView.onStop();
         mLoadingView.setVisibility(View.INVISIBLE);
     }
 
@@ -251,6 +272,8 @@ public final class VideoActivity extends AppActivity implements StatusAction, Se
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        onPauseTime = 0;
+        isExitWhenPause=false;
 //        mVLCView.setMediaListenerEvent(null);
         mVLCView.onStop();
         mVLCView.onDestroy();
@@ -269,7 +292,7 @@ public final class VideoActivity extends AppActivity implements StatusAction, Se
                     String stringAll = CommonUtil.stringForTime(mVLCView.getDuration());
                     mTime.setText("" + string);
                     mTimeAll.setText(stringAll + "");
-                    if (!isTouch){
+                    if (!isTouch) {
                         if (mVLCView.getDuration() != 0) {
                             double v = Double.parseDouble(currentTime);
                             double duration = (double) mVLCView.getDuration();
@@ -317,6 +340,7 @@ public final class VideoActivity extends AppActivity implements StatusAction, Se
      * 是否在拖动进度条,默认没有
      */
     private boolean isTouch = false;
+
 
     /**
      * 该方法拖动进度条进度改变的时候调用
