@@ -59,17 +59,13 @@ public class ReceiveSocketService extends AbsWorkService {
 
 
     public void stopService() {
-        LogUtils.e("保活服务开启------===关闭了");
-        LogUtils.e("保活服务开启------===线程=interrupt=");
+        LogUtils.e("ReceiveSocketService--数据监听服务--stopService--关闭了");
         //我们现在不再需要服务运行了, 将标志位置为 true
         sShouldStopService = true;
         //取消对任务的订阅
         if (sDisposable != null) sDisposable.dispose();
         //取消 Job / Alarm / Subscription
         cancelJobAlarmSub();
-
-        LogUtils.e("保活服务开启stopService------ + stopService... stopService = ");
-
 
     }
 
@@ -93,7 +89,7 @@ public class ReceiveSocketService extends AbsWorkService {
 
     @Override
     public void startWork(Intent intent, int flags, int startId) {
-        LogUtils.e("保活服务开启====startWork=====startWork");
+        LogUtils.e("ReceiveSocketService--数据监听服务--startWork--打开了");
         //Wifi状态判断
         WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         lock = wifiManager.createMulticastLock("test wifi");
@@ -102,18 +98,17 @@ public class ReceiveSocketService extends AbsWorkService {
             WifiInfo wifiInfo = wifiManager.getConnectionInfo();
             mAppIP = getIpString(wifiInfo.getIpAddress());
         }
-        LogUtils.e("保活服务开启----AAA--" + Thread.currentThread().getName());
 //        sDisposable = Observable
 //                .interval(3, TimeUnit.SECONDS)//定时器操作符，这里三秒打印一个log
 //                //取消任务时取消定时唤醒
 //                .doOnDispose(() -> {
-//                    LogUtils.e("保活服务开启--接收线程----===doOnDispose");
+//                    LogUtils.e("ReceiveSocketService--数据监听服务--接收线程--doOnDispose");
 //                    cancelJobAlarmSub();
 //                })
 //                .subscribe(count -> {
-//                    LogUtils.e("保活服务开启--接收线程---每 3 秒采集一次数据... count = " + count);
+//                    LogUtils.e("ReceiveSocketService--数据监听服务--接收线程--每 3 秒采集一次数据... count = " + count);
 //                    if (count > 0 && count % 18 == 0)
-//                        LogUtils.e("保活服务开启--接收线程----保存数据到磁盘。 saveCount = " + (count / 18 - 1));
+//                        LogUtils.e("ReceiveSocketService--数据监听服务--接收线程--保存数据到磁盘。 saveCount = " + (count / 18 - 1));
 //                });
 
         /**
@@ -124,7 +119,7 @@ public class ReceiveSocketService extends AbsWorkService {
     }
 
     /**
-     * eventbus 刷新数据
+     * eventbus 刷新数据--重启监听线程
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void SocketRefreshEvent(SocketRefreshEvent event) {
@@ -141,9 +136,9 @@ public class ReceiveSocketService extends AbsWorkService {
                     ReceiveSocketService receiveSocketService = new ReceiveSocketService();
                     receiveSocketService.initFirstThread(mAppIP);
                 }
-                LogUtils.e("保活服务开启HandService==------SocketRefreshEvent... 监听线程异常,重启完毕 = ");
-                LogUtils.e("保活服务开启HandService==------SocketRefreshEvent... 监听线程异常,重启完毕 = b=" + b);
-                LogUtils.e("保活服务开启HandService==------SocketRefreshEvent... 监听线程异常,重启完毕 = mSocketPort=" + mSocketPort);
+                LogUtils.e("ReceiveSocketService--数据监听服务--HandService==------重启监听线程..监听线程异常,重启完毕 = ");
+                LogUtils.e("ReceiveSocketService--数据监听服务--HandService==------重启监听线程..监听线程异常,重启完毕 = b=" + b);
+                LogUtils.e("ReceiveSocketService--数据监听服务--HandService==------重启监听线程..监听线程异常,重启完毕 = mSocketPort=" + mSocketPort);
                 break;
         }
 
@@ -170,7 +165,7 @@ public class ReceiveSocketService extends AbsWorkService {
         }
 
         public void run() {
-            LogUtils.e("正在执行Runnable任务,线程名=：%s" + Thread.currentThread().getName());
+            LogUtils.e("ReceiveSocketService--线程名=：%s" + Thread.currentThread().getName());
             byte[] receiveData = new byte[1024];
             mSettingDataPacket = new DatagramPacket(receiveData, receiveData.length);
             try {
@@ -184,59 +179,57 @@ public class ReceiveSocketService extends AbsWorkService {
                 SocketRefreshEvent event1 = new SocketRefreshEvent();
                 event1.setUdpCmd(Constants.UDP_CUSTOM_RESTART);
                 EventBus.getDefault().post(event1);
-                LogUtils.e("保活服务开启=====退出线程==Exception==new DatagramPacket的时候异常" + e);
+                LogUtils.e("ReceiveSocketService--数据监听服务--=====退出线程==Exception==new DatagramPacket的时候异常" + e);
 
             }
             while (true) {
                 if (isRuning) {
                     try {
-                        LogUtils.e("保活服务开启======LiveServiceImpl==回调==Thread监听的===开始====");
+                        LogUtils.e("ReceiveSocketService--数据监听服务--========回调==Thread监听的===开始====");
                         //不是自己的IP不接受
                         if (!AppIP.equals(mSettingDataPacket.getAddress())) {
                             //申请开启
 //                            lock.acquire();
                             mSettingDataSocket.receive(mSettingDataPacket);
-                            LogUtils.e("======LiveServiceImpl=====mReceivePacket==AppIP==" + AppIP);
+                            LogUtils.e("===========mReceivePacket==AppIP==" + AppIP);
                             int localPort = mSettingDataSocket.getLocalPort();
-                            LogUtils.e("======LiveServiceImpl=====mReceivePacket==localPort==" + localPort);
-                            LogUtils.e("======LiveServiceImpl=====mReceivePacket.getLength()==" + mSettingDataPacket.getLength());
-                            LogUtils.e("======LiveServiceImpl=====mReceivePacket.getLength()==" + mSettingDataPacket.getLength());
-                            LogUtils.e("======LiveServiceImpl=====mReceivePacket.getAddress()==" + mSettingDataPacket.getAddress());
-                            LogUtils.e("======LiveServiceImpl=====mReceivePacket.getHostAddress()==" + mSettingDataPacket.getAddress().getHostAddress());
-                            LogUtils.e("======LiveServiceImpl=====mReceivePacket.getPort()==" + mSettingDataPacket.getPort());
-                            LogUtils.e("保活服务开启======LiveServiceImpl==回调==Thread监听的=port==本地监听的端口====" + settingReceivePort);
-                            LogUtils.e("保活服务开启======LiveServiceImpl==回调==Thread监听的=port==后台通讯的端口====" + mSettingDataPacket.getPort());
-                            LogUtils.e("保活服务开启======LiveServiceImpl==回调==Thread监听的====AppIP" + AppIP);
+                            LogUtils.e("===========mReceivePacket==localPort==" + localPort);
+                            LogUtils.e("===========mReceivePacket.getLength()==" + mSettingDataPacket.getLength());
+                            LogUtils.e("===========mReceivePacket.getLength()==" + mSettingDataPacket.getLength());
+                            LogUtils.e("===========mReceivePacket.getAddress()==" + mSettingDataPacket.getAddress());
+                            LogUtils.e("===========mReceivePacket.getHostAddress()==" + mSettingDataPacket.getAddress().getHostAddress());
+                            LogUtils.e("===========mReceivePacket.getPort()==" + mSettingDataPacket.getPort());
+                            LogUtils.e("ReceiveSocketService--数据监听服务--========回调==Thread监听的=port==本地监听的端口====" + settingReceivePort);
+                            LogUtils.e("ReceiveSocketService--数据监听服务--========回调==Thread监听的=port==后台通讯的端口====" + mSettingDataPacket.getPort());
+                            LogUtils.e("ReceiveSocketService--数据监听服务--========回调==Thread监听的====AppIP" + AppIP);
                             /**
                              * 此处做处理
                              * 实时获取当前本地设置的(搜索)监听端口和服务器端口是否一致,不一致关闭多余线程,优化性能
                              */
                             if (settingReceivePort == mSettingDataPacket.getPort()) {
-                                LogUtils.e("保活服务开启======LiveServiceImpl==回调==Thread监听的====相等" + mSettingDataPacket.getData());
+                                LogUtils.e("ReceiveSocketService--数据监听服务--========回调==Thread监听的====相等" + mSettingDataPacket.getData());
                                 String rec = CalculateUtils.byteArrayToHexString(mSettingDataPacket.getData()).trim();
 
-                                LogUtils.e("保活服务开启======LiveServiceImpl==回调==Thread监听的==2==相等");
+                                LogUtils.e("ReceiveSocketService--数据监听服务--========回调==Thread监听的==2==相等");
 
                                 //过滤不是发送给我的消息全部不接受
                                 int length = mSettingDataPacket.getLength() * 2;
                                 String resultData = rec.substring(0, length);
-                                LogUtils.e("======LiveServiceImpl=====获取长度==length==" + length);
-                                LogUtils.e("======LiveServiceImpl=====获取长度数据==substring==" + resultData);
-                                LogUtils.e("======LiveServiceImpl=====接受到数据==原始数据====mReceivePacket.getData()=" + mSettingDataPacket.getData());
-                                LogUtils.e("======LiveServiceImpl=====3333==" + mSettingDataPacket.getData());
-                                LogUtils.e("======LiveServiceImpl=====3333==" + mSettingDataPacket.getData());
+                                LogUtils.e("===========获取长度==length==" + length);
+                                LogUtils.e("===========获取长度数据==substring==" + resultData);
+                                LogUtils.e("===========接受到数据==原始数据====mReceivePacket.getData()=" + mSettingDataPacket.getData());
 
                                 if (mSettingDataPacket != null) {
                                     String hostAddressIP = mSettingDataPacket.getAddress().getHostAddress();
-                                    LogUtils.e("======LiveServiceImpl=====mReceivePacket!= flag==" + hostAddressIP);
+                                    LogUtils.e("===========mReceivePacket!= flag==" + hostAddressIP);
                                     String mRun2End4 = CalculateUtils.getReceiveRun2End4String(resultData);//随机数之后到data结尾的String
                                     String deviceType = CalculateUtils.getSendDeviceType(resultData);
                                     String deviceOnlyCode = CalculateUtils.getSendDeviceOnlyCode(resultData);
                                     String currentCMD = CalculateUtils.getCMD(resultData);
-                                    LogUtils.e("======LiveServiceImpl==回调===随机数之后到data结尾的String=mRun2End4==" + mRun2End4);
-                                    LogUtils.e("======LiveServiceImpl==回调===设备类型deviceType==" + deviceType);
-                                    LogUtils.e("======LiveServiceImpl==回调===设备ID=deviceOnlyCode==" + deviceOnlyCode);
-                                    LogUtils.e("======LiveServiceImpl==回调===CMD=currentCMD==" + currentCMD);
+                                    LogUtils.e("========回调===随机数之后到data结尾的String=mRun2End4==" + mRun2End4);
+                                    LogUtils.e("========回调===设备类型deviceType==" + deviceType);
+                                    LogUtils.e("========回调===设备ID=deviceOnlyCode==" + deviceOnlyCode);
+                                    LogUtils.e("========回调===CMD=currentCMD==" + currentCMD);
                                     SocketRefreshEvent event = new SocketRefreshEvent();
                                     //设置接收端口
                                     event.setReceivePort(settingReceivePort + "");
@@ -245,18 +238,17 @@ public class ReceiveSocketService extends AbsWorkService {
                                     //7B227265636F72646964223A2233354530227D
                                     //07B227265636F72646964223A2233354530227D
                                     //16进制直接转换成为字符串
-                                    LogUtils.e("======LiveServiceImpl==回调===握手==0===" + dataString);
-                                    LogUtils.e("======LiveServiceImpl==回调===握手==0===" + dataIfForMe);
-
+                                    LogUtils.e("========回调===握手==0===" + dataString);
+                                    LogUtils.e("========回调===握手==1===" + dataIfForMe);
                                     String str = CalculateUtils.hexStr2Str(dataString);
-                                    LogUtils.e("======LiveServiceImpl==回调===握手==1===" + dataIfForMe);
+                                    LogUtils.e("========回调===握手==2===" + dataIfForMe);
 
                                     if (dataIfForMe) {
                                         switch (currentCMD) {
                                             case Constants.UDP_HAND://握手
-                                                LogUtils.e("======LiveServiceImpl==回调===握手==OK");
+                                                LogUtils.e("========回调===握手==OK");
                                                 //判断数据是否是发个自己的
-                                                LogUtils.e("======LiveServiceImpl=====dataIfForMe==" + dataIfForMe);
+                                                LogUtils.e("===========dataIfForMe==" + dataIfForMe);
                                                 Long startTime = System.currentTimeMillis();
                                                 //设备在线握手成功
                                                 event.setTga(true);
@@ -269,7 +261,7 @@ public class ReceiveSocketService extends AbsWorkService {
                                                 break;
 
                                             case Constants.UDP_FD: //广播
-                                                LogUtils.e("======LiveServiceImpl==回调===广播==");
+                                                LogUtils.e("========回调===广播==");
                                                 event.setTga(true);
                                                 event.setData(resultData);
                                                 event.setIp(hostAddressIP);
@@ -278,7 +270,7 @@ public class ReceiveSocketService extends AbsWorkService {
 
                                                 break;
                                             case Constants.UDP_FC://授权接入
-                                                LogUtils.e("======LiveServiceImpl==回调===授权接入==");
+                                                LogUtils.e("========回调===授权接入==");
                                                 //获取到病例的ID是十六进制的,需要转成十进制
                                                 event.setTga(true);
                                                 event.setData(resultData);
@@ -288,7 +280,7 @@ public class ReceiveSocketService extends AbsWorkService {
 
                                                 break;
                                             case Constants.UDP_F0://获取当前病例
-                                                LogUtils.e("======LiveServiceImpl==回调===获取当前病例==");
+                                                LogUtils.e("========回调===获取当前病例==");
                                                 //获取到病例的ID是十六进制的,需要转成十进制
 
                                                 LogUtils.e("======GetPictureActivity==回调===CMD=getReceiveDataString==" + dataString);
@@ -313,7 +305,7 @@ public class ReceiveSocketService extends AbsWorkService {
                                                 EventBus.getDefault().post(event);
                                                 break;
                                             case Constants.UDP_F3://冻结与解冻:00冻结，01解冻,未调试
-                                                LogUtils.e("======LiveServiceImpl==回调===冻结与解冻==");
+                                                LogUtils.e("========回调===冻结与解冻==");
                                                 ColdPictureBean mColdBean = mGson.fromJson(str, ColdPictureBean.class);
                                                 String jsonString = CalculateUtils.hex16To10(mColdBean.getFreeze()) + "";
                                                 event.setTga(true);
@@ -323,9 +315,9 @@ public class ReceiveSocketService extends AbsWorkService {
                                                 EventBus.getDefault().post(event);
                                                 break;
                                             case Constants.UDP_F1://预览报告
-                                                LogUtils.e("======LiveServiceImpl==回调===预览报告==" + str);
+                                                LogUtils.e("========回调===预览报告==" + str);
                                                 LookReportBean lookBean = mGson.fromJson(str, LookReportBean.class);
-                                                LogUtils.e("======LiveServiceImpl==回调===预览报告==" + lookBean.toString());
+                                                LogUtils.e("========回调===预览报告==" + lookBean.toString());
 
                                                 event.setTga(true);
                                                 event.setData(lookBean.getReporturl());
@@ -334,7 +326,7 @@ public class ReceiveSocketService extends AbsWorkService {
                                                 EventBus.getDefault().post(event);
                                                 break;
                                             case Constants.UDP_F2://打印报告
-                                                LogUtils.e("======LiveServiceImpl==回调===打印报告==");
+                                                LogUtils.e("========回调===打印报告==");
                                                 PrintReportBean portBean = mGson.fromJson(str, PrintReportBean.class);
                                                 event.setTga(true);
                                                 event.setData(portBean.getPrintcode());
@@ -343,7 +335,7 @@ public class ReceiveSocketService extends AbsWorkService {
                                                 EventBus.getDefault().post(event);
                                                 break;
                                             case Constants.UDP_18://录像
-                                                LogUtils.e("======LiveServiceImpl==回调===录像==");
+                                                LogUtils.e("========回调===录像==");
                                                 RecodeBean recodeBean = mGson.fromJson(str, RecodeBean.class);
                                                 event.setTga(true);
                                                 event.setData(recodeBean.getQrycode());
@@ -352,7 +344,7 @@ public class ReceiveSocketService extends AbsWorkService {
                                                 EventBus.getDefault().post(event);
                                                 break;
                                             case Constants.UDP_13://更新病例
-                                                LogUtils.e("======LiveServiceImpl==回调===更新病例==");
+                                                LogUtils.e("========回调===更新病例==");
                                                 UpdateCaseBean updateBean = mGson.fromJson(str, UpdateCaseBean.class);
                                                 //hex转成十进制
                                                 String caseID = CalculateUtils.hex16To10(updateBean.getRecordid()) + "";
@@ -363,13 +355,13 @@ public class ReceiveSocketService extends AbsWorkService {
                                                 EventBus.getDefault().post(event);
                                                 break;
                                             case Constants.UDP_15://采图
-                                                LogUtils.e("======LiveServiceImpl==回调===采图==");
+                                                LogUtils.e("========回调===采图==");
                                                 ShotPictureCallBlackBean pictureCallBlackBean = mGson.fromJson(str, ShotPictureCallBlackBean.class);
                                                 //hex转成十进制
                                                 String picCaseID = CalculateUtils.hex16To10(pictureCallBlackBean.getRecordid()) + "";
                                                 String imageID = CalculateUtils.hex16To10(pictureCallBlackBean.getImageid()) + "";
-                                                LogUtils.e("======LiveServiceImpl==回调===采图==picCaseID==" + picCaseID);
-                                                LogUtils.e("======LiveServiceImpl==回调===采图==imageID==" + imageID);
+                                                LogUtils.e("========回调===采图==picCaseID==" + picCaseID);
+                                                LogUtils.e("========回调===采图==imageID==" + imageID);
                                                 event.setTga(true);
                                                 event.setData(picCaseID);//只回调病例ID,回调的病例ID和当前App操作的病例ID 不同的时候不作处理
                                                 event.setIp(hostAddressIP);
@@ -377,12 +369,12 @@ public class ReceiveSocketService extends AbsWorkService {
                                                 EventBus.getDefault().post(event);
                                                 break;
                                             case Constants.UDP_16://删除图片
-                                                LogUtils.e("======LiveServiceImpl==回调===删除图片==");
+                                                LogUtils.e("========回调===删除图片==");
 
                                                 DeletedPictureBean deletePictureBean = mGson.fromJson(str, DeletedPictureBean.class);
                                                 //hex转成十进制
                                                 String deleteBeanID = CalculateUtils.hex16To10(deletePictureBean.getRecordid()) + "";
-                                                LogUtils.e("======LiveServiceImpl==回调===删除图片==picCaseID==" + deleteBeanID);
+                                                LogUtils.e("========回调===删除图片==picCaseID==" + deleteBeanID);
                                                 //必须从新取数据不然会错乱
                                                 String mkCurrentID = MMKV.defaultMMKV().decodeString(Constants.KEY_CurrentCaseID);
                                                 LogUtils.e("======GetPictureActivity==回调===删除图片=spCaseID=" + mkCurrentID);
@@ -396,11 +388,11 @@ public class ReceiveSocketService extends AbsWorkService {
                                                 }
                                                 break;
                                             case Constants.UDP_20://删除视频
-                                                LogUtils.e("======LiveServiceImpl==回调===删除视频==");
+                                                LogUtils.e("========回调===删除视频==");
                                                 DeletedVideoBean videoBean = mGson.fromJson(str, DeletedVideoBean.class);
                                                 //hex转成十进制
                                                 String deleteVideoBeanID = CalculateUtils.hex16To10(videoBean.getRecordid()) + "";
-                                                LogUtils.e("======LiveServiceImpl==回调===删除视频==picCaseID==" + deleteVideoBeanID);
+                                                LogUtils.e("========回调===删除视频==picCaseID==" + deleteVideoBeanID);
                                                 //必须从新取数据不然会错乱
                                                 String mkCurrentVideoID = MMKV.defaultMMKV().decodeString(Constants.KEY_CurrentCaseID);
                                                 LogUtils.e("======GetPictureActivity==回调===删除视频=spCaseID=" + mkCurrentVideoID);
@@ -414,13 +406,13 @@ public class ReceiveSocketService extends AbsWorkService {
                                                 }
                                                 break;
                                             case Constants.UDP_17://编辑图片
-                                                LogUtils.e("======LiveServiceImpl==回调===编辑图片==");
+                                                LogUtils.e("========回调===编辑图片==");
                                                 EditPictureBean editBean = mGson.fromJson(str, EditPictureBean.class);
                                                 //hex转成十进制
                                                 String editCaseID = CalculateUtils.hex16To10(editBean.getRecordid()) + "";
                                                 String editCaseImageID = CalculateUtils.hex16To10(editBean.getImageid()) + "";
-                                                LogUtils.e("======LiveServiceImpl==回调===编辑图片==picCaseID==" + editCaseID);
-                                                LogUtils.e("======LiveServiceImpl==回调===编辑图片==imageID==" + editCaseImageID);
+                                                LogUtils.e("========回调===编辑图片==picCaseID==" + editCaseID);
+                                                LogUtils.e("========回调===编辑图片==imageID==" + editCaseImageID);
                                                 event.setTga(true);
                                                 event.setData(editCaseID);//只回调病例ID,回调的病例ID和当前App操作的病例ID 不同的时候不作处理
                                                 event.setIp(editCaseImageID);  //此处设置为图片ID
@@ -428,11 +420,11 @@ public class ReceiveSocketService extends AbsWorkService {
                                                 EventBus.getDefault().post(event);
                                                 break;
                                             case Constants.UDP_14://删除病例
-                                                LogUtils.e("======LiveServiceImpl==回调===删除病例==");
+                                                LogUtils.e("========回调===删除病例==");
                                                 DeleteUserBean deleteBean = mGson.fromJson(str, DeleteUserBean.class);
                                                 //hex转成十进制
                                                 String deleteCaseID = CalculateUtils.hex16To10(deleteBean.getRecordid()) + "";
-                                                LogUtils.e("======LiveServiceImpl==回调===删除病例==deleteCaseID==" + deleteCaseID);
+                                                LogUtils.e("========回调===删除病例==deleteCaseID==" + deleteCaseID);
                                                 event.setTga(true);
                                                 event.setData(deleteCaseID);//只回调病例ID,回调的病例ID和当前App操作的病例ID 不同的时候不作处理
                                                 event.setIp(hostAddressIP);  //此处设置为图片ID
@@ -440,11 +432,11 @@ public class ReceiveSocketService extends AbsWorkService {
                                                 EventBus.getDefault().post(event);
                                                 break;
                                             case Constants.UDP_12://新增病例
-                                                LogUtils.e("======LiveServiceImpl==回调===新增病例==");
+                                                LogUtils.e("========回调===新增病例==");
                                                 DeleteUserBean addBean = mGson.fromJson(str, DeleteUserBean.class);
                                                 //hex转成十进制
                                                 String addBeanCaseID = CalculateUtils.hex16To10(addBean.getRecordid()) + "";
-                                                LogUtils.e("======LiveServiceImpl==回调===删除病例==deleteCaseID==" + addBeanCaseID);
+                                                LogUtils.e("========回调===删除病例==deleteCaseID==" + addBeanCaseID);
                                                 event.setTga(true);
                                                 event.setData(addBeanCaseID);//只回调病例ID,回调的病例ID和当前App操作的病例ID 不同的时候不作处理
                                                 event.setIp(hostAddressIP);
@@ -452,7 +444,7 @@ public class ReceiveSocketService extends AbsWorkService {
                                                 EventBus.getDefault().post(event);
                                                 break;
                                             case Constants.UDP_F4://语音接入
-                                                LogUtils.e("======LiveServiceImpl==回调===语音接入==");
+                                                LogUtils.e("========回调===语音接入==");
                                                 MicResponseBean micResponseBean = mGson.fromJson(str, MicResponseBean.class);
                                                 event.setTga(true);
                                                 event.setData(micResponseBean.getUrl());//传递url
@@ -461,7 +453,7 @@ public class ReceiveSocketService extends AbsWorkService {
                                                 EventBus.getDefault().post(event);
                                                 break;
                                             case Constants.UDP_F5://查询设备参数
-                                                LogUtils.e("======LiveServiceImpl==回调===设备参数下发==" + str);
+                                                LogUtils.e("========回调===设备参数下发==" + str);
                                                 event.setTga(true);
                                                 event.setData(str);//此处直接把数据bean的string回传到GetPictureActivity界面
                                                 event.setIp(hostAddressIP);
@@ -469,7 +461,7 @@ public class ReceiveSocketService extends AbsWorkService {
                                                 EventBus.getDefault().post(event);
                                                 break;
                                             case Constants.UDP_F7://通知权限变动
-                                                LogUtils.e("======LiveServiceImpl==回调===通知权限变动==");
+                                                LogUtils.e("========回调===通知权限变动==");
                                                 String mLoginUserName = MMKV.defaultMMKV().decodeString(Constants.KEY_CurrentLoginUserName);
                                                 UserReloChanged reloBean = mGson.fromJson(str, UserReloChanged.class);
                                                 if (mLoginUserName.equals(reloBean.getUsername())) {
@@ -483,7 +475,7 @@ public class ReceiveSocketService extends AbsWorkService {
                                                 EventBus.getDefault().post(event);
                                                 break;
                                             case Constants.UDP_40://刷新医院信息
-                                                LogUtils.e("======LiveServiceImpl==回调===刷新医院信息==");
+                                                LogUtils.e("========回调===刷新医院信息==");
                                                 event.setTga(true);
                                                 event.setData(str);//此处直接把数据bean的string回传到GetPictureActivity界面
                                                 event.setIp(hostAddressIP);
@@ -520,8 +512,8 @@ public class ReceiveSocketService extends AbsWorkService {
                                 setSettingReceiveThread(IP, Integer.parseInt(port), context);
                                 HandService.UDP_HAND_GLOBAL_TAG = false;
 
-                                LogUtils.e("保活服务开启======LiveServiceImpl==回调==Thread监听的==不!==相等port" + port);
-                                LogUtils.e("保活服务开启======LiveServiceImpl==回调==Thread监听的==不!==相等==线程名=：%s" + Thread.currentThread().getName() + ",关闭线程");
+                                LogUtils.e("ReceiveSocketService--数据监听服务--========回调==Thread监听的==不!==相等port" + port);
+                                LogUtils.e("ReceiveSocketService--数据监听服务--========回调==Thread监听的==不!==相等==线程名=：%s" + Thread.currentThread().getName() + ",关闭线程");
                                 break;//不相等的直接跳出接收,关闭线程
                             }
 
@@ -531,18 +523,17 @@ public class ReceiveSocketService extends AbsWorkService {
                         SocketRefreshEvent event1 = new SocketRefreshEvent();
                         event1.setUdpCmd(Constants.UDP_CUSTOM_RESTART);
                         EventBus.getDefault().post(event1);
-
                         SocketRefreshEvent event = new SocketRefreshEvent();
                         event.setUdpCmd(Constants.UDP_CUSTOM_TOAST);
                         event.setData("错误码==11===循环监听错误,退出监听线程!!");
                         EventBus.getDefault().post(event);
-                        LogUtils.e("保活服务开启=====退出线程==Exception==while循环处理消息的时候异常" + e);
+                        LogUtils.e("ReceiveSocketService--数据监听服务--=====退出线程==Exception==while循环处理消息的时候异常" + e);
                         MMKV mmkv = MMKV.defaultMMKV();
                         HandService.UDP_HAND_GLOBAL_TAG = false;
                         String port = mmkv.decodeString(Constants.KEY_RECEIVE_PORT, "7006");
                         String IP = mmkv.decodeString(Constants.KEY_Device_Ip);
-                        LogUtils.e("保活服务开启=====退出线程==Exception==while循环处理消息的时候异常" + port);
-                        LogUtils.e("保活服务开启=====退出线程==Exception==while循环处理消息的时候异常" + IP);
+                        LogUtils.e("ReceiveSocketService--数据监听服务--=====退出线程==Exception==while循环处理消息的时候异常" + port);
+                        LogUtils.e("ReceiveSocketService--数据监听服务--=====退出线程==Exception==while循环处理消息的时候异常" + IP);
                         e.printStackTrace();
                         break;//捕获到异常之后，执行break跳出循环
                     }
@@ -551,7 +542,7 @@ public class ReceiveSocketService extends AbsWorkService {
 //                        event.setUdpCmd(Constants.UDP_CUSTOM_TOAST);
 //                        event.setData("错误码==11===循环超过15次,退出监听线程!!,并且重启");
 //                        EventBus.getDefault().post(event);
-//                        LogUtils.e("保活服务开启=====退出线程==Exception==while循环处理消息的时候异常" );
+//                        LogUtils.e("ReceiveSocketService--数据监听服务--=====退出线程==Exception==while循环处理消息的时候异常" );
 //                        MMKV mmkv = MMKV.defaultMMKV();
 //                        String port = mmkv.decodeString(Constants.KEY_RECEIVE_PORT, "7006");
 //                        String IP = mmkv.decodeString(Constants.KEY_Device_Ip);
@@ -578,10 +569,12 @@ public class ReceiveSocketService extends AbsWorkService {
         int mDefaultCastSendPort = kv.decodeInt(Constants.KEY_BROADCAST_PORT);
         //是否开启过接收线程,开启过为true,避免初始化的时候创建三个接受线程
         boolean b = kv.decodeBool(Constants.KEY_SOCKET_RECEIVE_FIRST_IN);
+        LogUtils.e("ReceiveSocketService--数据监听服务--initFirstThread---关闭了");
 
-        LogUtils.e("保活服务开启-startWork--原本port---===i===" + mDefaultReceivePort);
-        LogUtils.e("保活服务开启-startWork--原本广播port---===i===" + mDefaultCastSendPort);
-        LogUtils.e("保活服务开启-startWork---b---===mReceivePort===" + mReceivePort);
+        LogUtils.e("ReceiveSocketService--数据监听服务--initFirstThread--" + Thread.currentThread().getName());
+        LogUtils.e("ReceiveSocketService--数据监听服务---startWork--原本port---===i===" + mDefaultReceivePort);
+        LogUtils.e("ReceiveSocketService--数据监听服务---startWork--原本广播port---===i===" + mDefaultCastSendPort);
+        LogUtils.e("ReceiveSocketService--数据监听服务---startWork---b---===mReceivePort===" + mReceivePort);
 
 
         if (!b) {
@@ -605,8 +598,8 @@ public class ReceiveSocketService extends AbsWorkService {
      */
     public void setSettingReceiveThread(String currentIP, int settingReceivePort, Context context) {
         //获取当前开启的接收端口
-        LogUtils.e("保活服务开启-My-startWork---bbAA---===bbAA=00==");
-        LogUtils.e("保活服务开启-My-startWork---bbAA---===bbAA=00==" + settingReceivePort);
+        LogUtils.e("ReceiveSocketService--数据监听服务---My-startWork---bbAA---===bbAA=00==");
+        LogUtils.e("ReceiveSocketService--数据监听服务---My-startWork---bbAA---===bbAA=00==" + settingReceivePort);
         ReceiveThread receiveThread = new ReceiveThread(currentIP, settingReceivePort, context);
         receiveThread.start();
 
@@ -614,7 +607,7 @@ public class ReceiveSocketService extends AbsWorkService {
         kv.encode(Constants.KEY_SOCKET_RECEIVE_FIRST_IN, true);
         kv.encode(Constants.KEY_RECEIVE_PORT, settingReceivePort); //设置的,本地监听端口
         int i = kv.decodeInt(Constants.KEY_RECEIVE_PORT);
-        LogUtils.e("保活服务开启-My-startWork---bbAA---===bbAA=i==" + i);
+        LogUtils.e("ReceiveSocketService--数据监听服务---My-startWork---bbAA---===bbAA=i==" + i);
 
 
     }
@@ -626,7 +619,7 @@ public class ReceiveSocketService extends AbsWorkService {
 
     @Override
     public void stopWork(Intent intent, int flags, int startId) {
-        LogUtils.e("保活服务开启===关闭了====stopWork。");
+        LogUtils.e("ReceiveSocketService--数据监听服务--===关闭了====stopWork。");
         stopService();
     }
 
