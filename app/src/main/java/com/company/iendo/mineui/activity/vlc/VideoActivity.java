@@ -48,15 +48,48 @@ public final class VideoActivity extends AppActivity implements StatusAction, Se
     private ImageView mLockScreen;
     private String currentTime = "0";
     public boolean isFullscreen = false;
-
-
+    private int onPauseTime = 0;
+    /**
+     * 是否播放的时候onPause了界面
+     */
+    private boolean isExitWhenPause = false;
     private TextView mTime;
     private TitleBar mTilteBar;
     private TextView mTimeAll;
     private AppCompatSeekBar mProgress;
     private RelativeLayout mBottomControl;
-    private int currentProgressData;
     private int progressData;
+    private static final int Time = 104;
+    @SuppressLint("HandlerLeak")
+    private Handler mHandler = new Handler() {
+        @SuppressLint("NewApi")
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case Time:
+                    String string = CommonUtil.stringForTime(Integer.parseInt(currentTime));
+                    String stringAll = CommonUtil.stringForTime(mVLCView.getDuration());
+                    mTime.setText("" + string);
+                    mTimeAll.setText(stringAll + "");
+                    if (!isTouch) {
+                        if (mVLCView.getDuration() != 0) {
+                            double v = Double.parseDouble(currentTime);
+                            double duration = (double) mVLCView.getDuration();
+                            double v1 = v / (duration);
+                            LogUtils.e("VideoActivity==currentTime==" + currentTime);
+                            LogUtils.e("VideoActivity==getDuration==" + mVLCView.getDuration());
+                            LogUtils.e("VideoActivity==v1==" + v1);//  0.4611   0.4906  0.4932  0.4946
+                            int intData = getIntData(v1 + "");
+                            mProgress.setProgress(intData);
+                        } else {
+                            mProgress.setProgress(1);
+                        }
+                    }
+                    break;
+            }
+        }
+    };
 
     @Override
     protected int getLayoutId() {
@@ -178,7 +211,7 @@ public final class VideoActivity extends AppActivity implements StatusAction, Se
             @Override
             public void eventPlay(boolean isPlaying) {
                 //此处保持每次进来都是之前退出界面播放的时间段
-                if (isExitWhenPause){//播放的时候退出了,需要重新回到播放位置
+                if (isExitWhenPause) {//播放的时候退出了,需要重新回到播放位置
                     if (null != mVLCView) {
                         mVLCView.seekTo(onPauseTime);
                     }
@@ -218,8 +251,8 @@ public final class VideoActivity extends AppActivity implements StatusAction, Se
 
 
     private void startLive(String path) {
-//        mVLCView.setPath("http://9890.vod.myqcloud.com/9890_4e292f9a3dd011e6b4078980237cc3d3.f20.mp4");
-        mVLCView.setPath(path);
+        mVLCView.setPath("http://9890.vod.myqcloud.com/9890_4e292f9a3dd011e6b4078980237cc3d3.f20.mp4");
+//        mVLCView.setPath(path);
         mVLCView.startPlay();
         if (null != mProgress) {
             mProgress.setProgress(0);
@@ -231,17 +264,10 @@ public final class VideoActivity extends AppActivity implements StatusAction, Se
     @Override
     protected void onResume() {
         super.onResume();
-        boolean playing = mVLCView.isPlaying();
         startLive(path);
 
 
     }
-
-    private int onPauseTime = 0;
-    /**
-     * 是否播放的时候onPause了界面
-     */
-    private boolean isExitWhenPause = false;
 
     @Override
     protected void onPause() {
@@ -273,65 +299,23 @@ public final class VideoActivity extends AppActivity implements StatusAction, Se
     protected void onDestroy() {
         super.onDestroy();
         onPauseTime = 0;
-        isExitWhenPause=false;
+        isExitWhenPause = false;
 //        mVLCView.setMediaListenerEvent(null);
         mVLCView.onStop();
         mVLCView.onDestroy();
     }
 
-    private static final int Time = 104;
-    @SuppressLint("HandlerLeak")
-    private Handler mHandler = new Handler() {
-        @SuppressLint("NewApi")
-        @Override
-        public void handleMessage(@NonNull Message msg) {
-            super.handleMessage(msg);
-            switch (msg.what) {
-                case Time:
-                    String string = CommonUtil.stringForTime(Integer.parseInt(currentTime));
-                    String stringAll = CommonUtil.stringForTime(mVLCView.getDuration());
-                    mTime.setText("" + string);
-                    mTimeAll.setText(stringAll + "");
-                    if (!isTouch) {
-                        if (mVLCView.getDuration() != 0) {
-                            double v = Double.parseDouble(currentTime);
-                            double duration = (double) mVLCView.getDuration();
-                            double v1 = v / (duration);
-                            LogUtils.e("VideoActivity==currentTime==" + currentTime);
-                            LogUtils.e("VideoActivity==getDuration==" + mVLCView.getDuration());
-                            LogUtils.e("VideoActivity==v1==" + v1);//  0.4611   0.4906  0.4932  0.4946
-                            int intData = getIntData(v1 + "");
-                            mProgress.setProgress(intData);
-                        } else {
-                            mProgress.setProgress(1);
-                        }
-                    }
-                    break;
-            }
-        }
-    };
 
     private int getIntData(String data) {
         int i = data.indexOf(".");
-        LogUtils.e("VideoActivity==传入的长度==" + data);
-
-//        data.length()
         String substring = data.substring(i + 1, i + 3);
-        LogUtils.e("VideoActivity==截取后==" + substring);
-
         if ("00".equals(substring)) {
-            LogUtils.e("VideoActivity==00==" + 1);
-
             return 1;
         } else if (substring.startsWith("0")) {
             String replace = substring.replace("0", "");
             int i1 = Integer.parseInt(replace);
-            LogUtils.e("VideoActivity==0x==" + i1);
-
             return i1;
         } else {
-            LogUtils.e("VideoActivity==数字==" + substring);
-
             return Integer.parseInt(substring);
         }
     }
