@@ -216,8 +216,8 @@ public final class VideoActivity extends AppActivity implements StatusAction, Se
     }
 
     private void startLive(String path) {
-        mVLCView.setPath("http://9890.vod.myqcloud.com/9890_4e292f9a3dd011e6b4078980237cc3d3.f20.mp4");
-//        mVLCView.setPath(path);
+//        mVLCView.setPath("http://9890.vod.myqcloud.com/9890_4e292f9a3dd011e6b4078980237cc3d3.f20.mp4");
+        mVLCView.setPath(path);
         mVLCView.startPlay();
         if (null != mProgress) {
             mProgress.setProgress(0);
