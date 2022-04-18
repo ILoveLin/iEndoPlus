@@ -169,8 +169,8 @@ public class VideoFragment extends TitleBarFragment<MainActivity> implements Sta
         String mUrl = mBaseUrl + "/" + item.getRecordID() + "/" + item.getFilePath();
 
         LogUtils.e("当前播放URL" + item.toString());
-        LogUtils.e("当前播放URL" + mUrl);
-//        intent.putExtra("mUrl","http://9890.vod.myqcloud.com/9890_4e292f9a3dd011e6b4078980237cc3d3.f20.mp4");
+//        LogUtils.e("当前播放URL" + mUrl);
+        intent.putExtra("mUrl","http://9890.vod.myqcloud.com/9890_4e292f9a3dd011e6b4078980237cc3d3.f20.mp4");
         intent.putExtra("mUrl", mUrl);
         startActivity(intent);
     }

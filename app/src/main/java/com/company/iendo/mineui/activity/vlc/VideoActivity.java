@@ -12,9 +12,11 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatSeekBar;
 
 import com.company.iendo.R;
 import com.company.iendo.action.StatusAction;
@@ -37,7 +39,7 @@ import com.vlc.lib.listener.MediaListenerEvent;
  * time   : 2018/10/18
  * desc   : 视频界面
  */
-public final class VideoActivity extends AppActivity implements StatusAction {
+public final class VideoActivity extends AppActivity implements StatusAction, SeekBar.OnSeekBarChangeListener {
     public static String path = "http://9890.vod.myqcloud.com/9890_4e292f9a3dd011e6b4078980237cc3d3.f20.mp4";
     //    public static final String path = "http://192.168.64.28:7001/ID/FilePath";
     private MyVlcVideoView mPlayer;
@@ -50,22 +52,13 @@ public final class VideoActivity extends AppActivity implements StatusAction {
     private String currentTime = "0";
     public boolean isFullscreen = false;
 
-    private static final int Time = 104;
-    private Handler mHandler = new Handler() {
-        @SuppressLint("NewApi")
-        @Override
-        public void handleMessage(@NonNull Message msg) {
-            super.handleMessage(msg);
-            switch (msg.what) {
-                case Time:
-                    String string = CommonUtil.stringForTime(Integer.parseInt(currentTime));
-                    mTime.setText("" + string);
-                    break;
-            }
-        }
-    };
+
     private TextView mTime;
     private TitleBar mTilteBar;
+    private TextView mTimeAll;
+    private AppCompatSeekBar mProgress;
+    private RelativeLayout mBottomControl;
+    private int currentProgressData;
 
     @Override
     protected int getLayoutId() {
@@ -77,23 +70,38 @@ public final class VideoActivity extends AppActivity implements StatusAction {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         mStatusLayout = findViewById(R.id.status_hint);
         mRelativePlayerAll = findViewById(R.id.ff_player_all);
+        mBottomControl = findViewById(R.id.relative_bottom_control);
         mPlayer = findViewById(R.id.player);
         mVLCView = mPlayer.findViewById(R.id.vlc_video_view);
 //        mLockScreen = findViewById(R.id.lock_screen);
         mTime = findViewById(R.id.tv_time);
+        mTimeAll = findViewById(R.id.tv_time_all);
+        mProgress = findViewById(R.id.sb_player_view_progress);
         mLoadingView = findViewById(R.id.control_load_view);
         mStartView = findViewById(R.id.control_start_view);
         mTilteBar = findViewById(R.id.video_titlebar);
-
+        mProgress.setOnSeekBarChangeListener(this);
         setOnClickListener(R.id.full_change, R.id.control_start_view);
         Intent intent = getIntent();
         path = intent.getStringExtra("mUrl");
         startLive(path);
     }
 
+    private boolean lockType = true;   //点击界面,显示或者隐藏 控制面板的-标识
+
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.root_layout_vlc:       //控制界面的显示和隐藏
+                if (lockType) {
+                    lockType = false;
+                    mBottomControl.setVisibility(View.INVISIBLE);
+                } else {
+                    lockType = true;
+                    mBottomControl.setVisibility(View.VISIBLE);
+                }
+
+                break;
             case R.id.control_start_view:       //重新开始链接直播
                 startLive(path);
                 break;
@@ -136,7 +144,7 @@ public final class VideoActivity extends AppActivity implements StatusAction {
 
     @Override
     protected void initData() {
-        setOnClickListener(R.id.control_start_view);
+        setOnClickListener(R.id.control_start_view, R.id.root_layout_vlc);
         mVLCView.setMediaListenerEvent(new MediaListenerEvent() {
             @Override
             public void eventBuffing(int event, float buffing) {
@@ -205,12 +213,15 @@ public final class VideoActivity extends AppActivity implements StatusAction {
     @Override
     protected void onResume() {
         super.onResume();
-        startLive(path);
     }
 
     private void startLive(String path) {
-        mVLCView.setPath(path);
+        mVLCView.setPath("http://9890.vod.myqcloud.com/9890_4e292f9a3dd011e6b4078980237cc3d3.f20.mp4");
+//        mVLCView.setPath(path);
         mVLCView.startPlay();
+        if (null != mProgress) {
+            mProgress.setProgress(0);
+        }
         mLoadingView.setVisibility(View.VISIBLE);
         mLoadingView.start();
     }
@@ -243,5 +254,101 @@ public final class VideoActivity extends AppActivity implements StatusAction {
         mVLCView.onDestroy();
     }
 
+    private static final int Time = 104;
+    @SuppressLint("HandlerLeak")
+    private Handler mHandler = new Handler() {
+        @SuppressLint("NewApi")
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case Time:
+                    String string = CommonUtil.stringForTime(Integer.parseInt(currentTime));
+                    String stringAll = CommonUtil.stringForTime(mVLCView.getDuration());
+                    mTime.setText("" + string);
+                    mTimeAll.setText(stringAll + "");
+                    if (!isTouch){
+                        if (mVLCView.getDuration() != 0) {
+                            double v = Double.parseDouble(currentTime);
+                            double duration = (double) mVLCView.getDuration();
+                            double v1 = v / (duration);
+                            LogUtils.e("VideoActivity==currentTime==" + currentTime);
+                            LogUtils.e("VideoActivity==getDuration==" + mVLCView.getDuration());
+                            LogUtils.e("VideoActivity==v1==" + v1);//  0.4611   0.4906  0.4932  0.4946
+                            int intData = getIntData(v1 + "");
+                            mProgress.setProgress(intData);
+                        } else {
+                            mProgress.setProgress(1);
+                        }
+                    }
+                    break;
+            }
+        }
+    };
 
+    private int getIntData(String data) {
+        int i = data.indexOf(".");
+        LogUtils.e("VideoActivity==传入的长度==" + data);
+
+//        data.length()
+        String substring = data.substring(i + 1, i + 3);
+        LogUtils.e("VideoActivity==截取后==" + substring);
+
+        if ("00".equals(substring)) {
+            LogUtils.e("VideoActivity==00==" + 1);
+
+            return 1;
+        } else if (substring.startsWith("0")) {
+            String replace = substring.replace("0", "");
+            int i1 = Integer.parseInt(replace);
+            LogUtils.e("VideoActivity==0x==" + i1);
+
+            return i1;
+        } else {
+            LogUtils.e("VideoActivity==数字==" + substring);
+
+            return Integer.parseInt(substring);
+        }
+    }
+
+    /**
+     * 是否在拖动进度条,默认没有
+     */
+    private boolean isTouch = false;
+
+    /**
+     * 该方法拖动进度条进度改变的时候调用
+     */
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        LogUtils.e("VideoActivity==progress==" + progress);
+
+    }
+
+    /**
+     * 该方法拖动进度条开始拖动的时候调用。
+     *
+     * @param seekBar
+     */
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+        isTouch = true;
+    }
+
+    /**
+     * 该方法拖动进度条停止拖动的时候调用
+     *
+     * @param seekBar
+     */
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+        LogUtils.e("VideoActivity==onStart==" + seekBar.getProgress());
+        isTouch = false;
+        float v = (float) (seekBar.getProgress() / 100f);  //获取当前拖动到的百分比
+        float v1 = v * mVLCView.getDuration();//设置当前拖动到的时间
+        int round = Math.round(v1);//取整
+        mVLCView.seekTo(round); //设置
+        // 设置选择的播放进度
+        setProgress(seekBar.getProgress());
+    }
 }
