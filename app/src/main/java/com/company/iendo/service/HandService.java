@@ -165,7 +165,7 @@ public class HandService extends AbsWorkService {
                         sDisposable10s.dispose();
                         start60STask();
 
-                    } else if (tag == 0 && !UDP_HAND_GLOBAL_TAG) {
+                    } else if (tag == 1 && !UDP_HAND_GLOBAL_TAG) {//第二次就握手失败 我就重启下监听线程
                         MMKV mmkv = MMKV.defaultMMKV();
                         boolean b = mmkv.decodeBool(Constants.KEY_Login_Tag);
                         String mSocketPort = mmkv.decodeString(Constants.KEY_Device_SocketPort);

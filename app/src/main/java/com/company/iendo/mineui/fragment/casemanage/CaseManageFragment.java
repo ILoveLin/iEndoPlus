@@ -71,6 +71,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import io.reactivex.internal.operators.flowable.FlowableOnErrorReturn;
 import okhttp3.Call;
 
 /**
@@ -341,11 +342,16 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
         } else {
             sendRequest(currentChoseDate);
         }
+
         sendHandLinkMessage();
+
+
     }
 
     /**
      * 发送握手消息
+     *
+     * @param
      */
     public void sendHandLinkMessage() {
         HandBean handBean = new HandBean();
@@ -359,8 +365,8 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
 //            toast("通讯端口不能为空");
             return;
         }
-        LogUtils.e("SocketUtils==HandService===发送消息==点对点==detailCaseActivity==sendByteData==" + sendByteData);
-        LogUtils.e("SocketUtils==HandService===发送消息==点对点==detailCaseActivity==mSocketPort==" + mSocketPort);
+        LogUtils.e("SocketUtils==HandService===发送消息==点对点==detailCaseActivity==sendByteData=i=" + sendByteData);
+        LogUtils.e("SocketUtils==HandService===发送消息==点对点==detailCaseActivity==mSocketPort===i=" + mSocketPort);
         SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), getAttachActivity());
 //        SocketManage.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort));
     }

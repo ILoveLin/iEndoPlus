@@ -704,8 +704,24 @@ public class CalculateUtils {
         for (int i = 0; i < dateArr.length; i++) {
             code = xor(code, dateArr[i]);
         }
+        /**
+         * 此处,出现了是以为十六进制数字的时候,后续获取byte数组错误问题,
+         * 在这里,个位显示的十六进制转换成两位的即可解决此bug
+         */
+        String result =code;
+        if (result.length()==1){
+            LogUtils.e("UDP==命令===最后发送的String===异或的CSString==长度=1==错误数据"+code);
 
-        return code;
+            result = "0" + code;
+            LogUtils.e("UDP==命令===最后发送的String===异或的CSString==长度=1==修正数据"+result);
+
+        }else {
+            result =code;
+            LogUtils.e("UDP==命令===最后发送的String===异或的CSString==长度=2==计算数据"+code);
+
+        }
+        return result;
+//        return code;
     }
 
     private static String xor(String strHex_X, String strHex_Y) {

@@ -242,7 +242,6 @@ public class ReceiveSocketService extends AbsWorkService {
                                     LogUtils.e("========回调===握手==1===" + dataIfForMe);
                                     String str = CalculateUtils.hexStr2Str(dataString);
                                     LogUtils.e("========回调===握手==2===" + dataIfForMe);
-
                                     if (dataIfForMe) {
                                         switch (currentCMD) {
                                             case Constants.UDP_HAND://握手
@@ -493,26 +492,29 @@ public class ReceiveSocketService extends AbsWorkService {
                                 SocketRefreshEvent event = new SocketRefreshEvent();
                                 event.setUdpCmd(Constants.UDP_CUSTOM_TOAST);
                                 HandService.UDP_HAND_GLOBAL_TAG = false;
-                                event.setData("错误码==00===监听port端口不一致,退出监听线程!!");
+                                event.setData("");
+                                event.setData("code==00===监听port端口不一致,退出--多余的--监听线程!!");
                                 EventBus.getDefault().post(event);
-                                SocketRefreshEvent event1 = new SocketRefreshEvent();
-                                event1.setUdpCmd(Constants.UDP_CUSTOM_RESTART);
-                                EventBus.getDefault().post(event1);
+//                                SocketRefreshEvent event1 = new SocketRefreshEvent();
+//                                event1.setUdpCmd(Constants.UDP_CUSTOM_RESTART);
+//                                EventBus.getDefault().post(event1);
 
-                                /**
-                                 * 用户设置可广播端口开启的接收线程
-                                 *
-                                 * @param currentIP          本地app的ip
-                                 * @param settingReceivePort 设置的发送接收端口
-                                 * @param context            上下文
-                                 */
-                                MMKV mmkv = MMKV.defaultMMKV();
-                                String port = mmkv.decodeString(Constants.KEY_Device_SocketPort, "7006");
-                                String IP = mmkv.decodeString(Constants.KEY_Device_Ip);
-                                setSettingReceiveThread(IP, Integer.parseInt(port), context);
-                                HandService.UDP_HAND_GLOBAL_TAG = false;
 
-                                LogUtils.e("ReceiveSocketService--数据监听服务--========回调==Thread监听的==不!==相等port" + port);
+
+//                                /**
+//                                 * 用户设置可广播端口开启的接收线程
+//                                 *
+//                                 * @param currentIP          本地app的ip
+//                                 * @param settingReceivePort 设置的发送接收端口
+//                                 * @param context            上下文
+//                                 */
+//                                MMKV mmkv = MMKV.defaultMMKV();
+//                                String port = mmkv.decodeString(Constants.KEY_Device_SocketPort, "7006");
+//                                String IP = mmkv.decodeString(Constants.KEY_Device_Ip);
+//                                setSettingReceiveThread(IP, Integer.parseInt(port), context);
+//                                HandService.UDP_HAND_GLOBAL_TAG = false;
+
+//                                LogUtils.e("ReceiveSocketService--数据监听服务--========回调==Thread监听的==不!==相等port" + port);
                                 LogUtils.e("ReceiveSocketService--数据监听服务--========回调==Thread监听的==不!==相等==线程名=：%s" + Thread.currentThread().getName() + ",关闭线程");
                                 break;//不相等的直接跳出接收,关闭线程
                             }
@@ -525,7 +527,8 @@ public class ReceiveSocketService extends AbsWorkService {
                         EventBus.getDefault().post(event1);
                         SocketRefreshEvent event = new SocketRefreshEvent();
                         event.setUdpCmd(Constants.UDP_CUSTOM_TOAST);
-                        event.setData("错误码==11===循环监听错误,退出监听线程!!");
+                        event.setData("");
+                        event.setData("code==11===循环监听异常,错误,退出监听线程!!");
                         EventBus.getDefault().post(event);
                         LogUtils.e("ReceiveSocketService--数据监听服务--=====退出线程==Exception==while循环处理消息的时候异常" + e);
                         MMKV mmkv = MMKV.defaultMMKV();
