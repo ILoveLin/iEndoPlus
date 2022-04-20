@@ -172,6 +172,35 @@
                                 android:textSize="@dimen/sp_12" />
                         </LinearLayout>
 
+                        <LinearLayout
+                            android:id="@+id/linear_down_video"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginLeft="@dimen/dp_5"
+                            android:layout_marginRight="@dimen/dp_10"
+                            android:layout_weight="1"
+                            android:background="@drawable/shape_detail_bg_04"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:layout_width="@dimen/dp_40"
+                                android:layout_height="@dimen/dp_40"
+                                android:paddingTop="@dimen/dp_10"
+                                android:src="@drawable/ic_icon_detail_down_cases" />
+
+                            <TextView
+                                android:id="@+id/case_down_video"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/dp_6"
+                                android:layout_marginBottom="@dimen/dp_5"
+                                android:gravity="center"
+                                android:text="下载视频"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/sp_12" />
+                        </LinearLayout>
+
                     </LinearLayout>
 
                     <View

@@ -119,7 +119,8 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
     private ClearEditText edit_01_i_bad_tell;
     private CaseDetailBean.DataDTO mDataBean;
     private String mUserName;
-    private static final int IMAGE_DOWN = 126;   //握手
+    private static final int IMAGE_DOWN = 126;   //下载图片
+    private static final int IMAGE_DOWN_UPDATE = 127;   //更新图片
     private static boolean Details_Reault_Ok = false;
     private String itemID;
     private ArrayList<ImageView> mImageViewList;
@@ -129,8 +130,9 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
     private ImageView iv_03_section, iv_03_device, iv_03_ming_zu, iv_03_is_married;
     private String videosCounts;
     private String imageCounts;
-    private int mCurrentDownImageCount = 0;
-    private int mImageCountNum = 0;
+    private int mCurrentDownImageCount = 0;   //第一次下载的时候,当前下载第一张的标识
+    private int mImageCountNum = 0;           //上位机总图片数目
+    private int mCurrentUpdateDownImageCount = 0;   //更新下载的时候,当前下载第一张的标识
 
     @SuppressLint("HandlerLeak")
     private Handler mHandler = new Handler() {
@@ -141,7 +143,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
             SocketRefreshEvent event = new SocketRefreshEvent();
             event.setUdpCmd(Constants.UDP_CUSTOM_DOWN_OVER);
             switch (msg.what) {
-                case IMAGE_DOWN:
+                case IMAGE_DOWN: //下载图片
                     if (mImageCountNum == mCurrentDownImageCount) {
                         toast("下载完毕");
                         mCurrentDownImageCount = 0;
@@ -152,9 +154,21 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                     }
                     EventBus.getDefault().post(event);
                     break;
+                case IMAGE_DOWN_UPDATE://更新图片
+                    if (mImageUpdateCountNum == mCurrentUpdateDownImageCount) {
+                        toast("下载完毕");
+                        mCurrentUpdateDownImageCount = 0;
+                        mImageUpdateCountNum = 0;
+                        event.setData("true");
+                    } else {
+                        event.setData("false");
+                    }
+                    EventBus.getDefault().post(event);
+                    break;
             }
         }
     };
+    private int mImageUpdateCountNum;  //需要更新上位机总数
 
     public static DetailFragment newInstance() {
         return new DetailFragment();
@@ -534,20 +548,18 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
     }
 
 
-    private void startDownPicture() {
+    private void startDownPictureCase() {
 
         /**
          * 本地文件夹命名规则:文件夹（设备ID_病例ID）
          */
         //创建本地的/MyDownImages/mID文件夹  再把图片下载到这个文件夹下  文件夹（设备ID-病例ID）
         String dirName = Environment.getExternalStorageDirectory() + "/MyDownImages/" + mDeviceCode + "_" + currentItemCaseID;
-        LogUtils.e("文件下载===01==文件夹名字===" + dirName);// /storage/emulated/0/MyDownImages/0000000000000000546017FE6BC28949_1154
-        LogUtils.e("文件下载===01==mDeviceCode===" + mDeviceCode);//0000000000000000546017FE6BC28949
-        LogUtils.e("文件下载===01==currentItemCaseID===" + currentItemCaseID);//1154
-        LogUtils.e("文件下载===01==mUserID===" + mUserID);//1154
+        LogUtils.e("文件下载===01==文件夹名字===" + dirName);// /storage/emulated/0/MyDownImages/31376335613463353432626432363561_9
+        LogUtils.e("文件下载===01==mDeviceCode===" + mDeviceCode);//31376335613463353432626432363561
+        LogUtils.e("文件下载===01==currentItemCaseID===" + currentItemCaseID);//9
+        LogUtils.e("文件下载===01==mUserID===" + mUserID);//1
         File toLocalFile = new File(dirName);
-
-
         //此处做校验,本文件夹创建过,并且里面的图片数量和请求结果数量一直,表示下载过
         boolean FileExists = toLocalFile.exists();
         if (FileExists) {
@@ -555,55 +567,99 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
             LogUtils.e("文件下载===01==toLocalFile.exists()===" + toLocalFile.listFiles().length);
             int length = toLocalFile.listFiles().length;  //本地下载的图片数量
             if (null != mPathMap && !mPathMap.isEmpty()) {
-                new MessageDialog.Builder(getActivity())
-                        .setTitle("提示")
-                        .setMessage("该病历已经下载,是否需要更新?")
-                        .setConfirm(getString(R.string.common_confirm))
-                        .setCancel(getString(R.string.common_cancel))
-                        //.setAutoDismiss(false)
-                        .setListener(new MessageDialog.OnListener() {
+                int size = mPathMap.keySet().size();  //当前上位机该病例图片数量
+                //下载的图片数量和请求的图片数量不一样
+                if (length == size || length <= size || length == 0) {
+                    new MessageDialog.Builder(getActivity())
+                            .setTitle("提示")
+                            .setMessage("该病历已经下载,是否需要更新?")
+                            .setConfirm(getString(R.string.common_confirm))
+                            .setCancel(getString(R.string.common_cancel))
+                            //.setAutoDismiss(false)
+                            .setListener(new MessageDialog.OnListener() {
 
-                            @Override
-                            public void onConfirm(BaseDialog dialog) {
-                                downCaseMsgPictureData(toLocalFile);
-                            }
+                                @Override
+                                public void onConfirm(BaseDialog dialog) {
+                                    updatePictureCaseData(toLocalFile);
+                                }
 
-                            @Override
-                            public void onCancel(BaseDialog dialog) {
-                            }
-                        })
-                        .show();
-//                int size = mPathMap.keySet().size();
-//                //下载的图片数量和请求的图片数量一样
-//                if (length == size) {
-//                    new MessageDialog.Builder(getActivity())
-//                            .setTitle("提示")
-//                            .setMessage("该病历已经下载,是否需要更新?")
-//                            .setConfirm(getString(R.string.common_confirm))
-//                            .setCancel(getString(R.string.common_cancel))
-//                            //.setAutoDismiss(false)
-//                            .setListener(new MessageDialog.OnListener() {
-//
-//                                @Override
-//                                public void onConfirm(BaseDialog dialog) {
-//                                    downCaseMsgPictureData(toLocalFile);
-//                                }
-//
-//                                @Override
-//                                public void onCancel(BaseDialog dialog) {
-//                                }
-//                            })
-//                            .show();
-//                } else {
-//                    //图片数目不等,直接更新
-//                    downCaseMsgPictureData(toLocalFile);
-//                }
+                                @Override
+                                public void onCancel(BaseDialog dialog) {
+                                }
+                            })
+                            .show();
+                }
             }
         } else if (!toLocalFile.exists()) {
             toLocalFile.mkdir();
-            downCaseMsgPictureData(toLocalFile);
+            //没有下载过,下载
+            downPictureCaseData(toLocalFile);
 
         }
+
+    }
+
+    /**
+     * 更新图片
+     * 下载过,更新图片,比较上位机图片和本地图片名字,不相等的就下载
+     *
+     * @param toLocalFile
+     */
+    private void updatePictureCaseData(File toLocalFile) {
+        File[] files = toLocalFile.listFiles();
+        ArrayList<String> mFileList = new ArrayList<>();
+        HashMap<String, String> mFilesHashMap = new HashMap<String, String>(); //例如imageName=001.jpg  url=http://192.168.64.56:7001/1_3/001.jpg
+
+        //1,存入当前本地所有图片的名字
+        for (int i = 0; i < files.length; i++) {
+            mFileList.add(files[i].getName());
+        }
+
+        //2,获取和上位机不相同的图片名字和url
+        if (null != mPathMap && !mPathMap.isEmpty()) {   //说明有图片
+            for (String key : mPathMap.keySet()) {
+                //001.jpg     http://192.168.131.43:7001/1154/001.jpg
+                //001.jpg     http://192.168.131.43:7001/1154/001.jpg
+                LogUtils.e("文件下载===数目不相等==entry.getKey()===" + key);   //004.jpg
+                LogUtils.e("文件下载===数目不相等==entry.getValue()===" + mPathMap.get(key));//http://192.168.31.249:7001/9/004.jpg
+                mImageCountNum = mPathMap.keySet().size();//5
+                LogUtils.e("文件下载===数目不相等1==mPathMap.keySet().size()==" + mImageCountNum);
+                //此处循环遍历上位机map,和本地文件夹图片作比较,没有包含,直接更新下载使用
+
+                boolean contains = mFileList.contains(key);//包含返回true
+                if (!contains) {//没有包含,存入当前上位机多出来的图片名字和url,提供更新使用
+                    mFilesHashMap.put(key, mPathMap.get(key));
+                }
+            }
+        }
+
+        //3,开始更新下载
+        if (null != mFilesHashMap && !mFilesHashMap.isEmpty()) {   //说明有图片
+            for (String key : mFilesHashMap.keySet()) {
+                //001.jpg     http://192.168.131.43:7001/1154/001.jpg
+                //001.jpg     http://192.168.131.43:7001/1154/001.jpg
+                LogUtils.e("文件下载===01==entry.getKey()===" + key);   //004.jpg
+                LogUtils.e("文件下载===01==entry.getValue()===" + mPathMap.get(key));//http://192.168.31.249:7001/9/004.jpg
+                //5
+                mImageUpdateCountNum = mFilesHashMap.keySet().size();
+                LogUtils.e("文件下载===01==mPathMap.keySet().size()==" + mImageCountNum);
+                sendUpdatePictureRequest(toLocalFile, mPathMap.get(key), key);
+            }
+
+        } else {
+            //图片数量和名字都相等的时候,直接提示,下载完毕
+            toast("下载完毕");
+        }
+
+        //4,开始下载最新的用户和病例信息
+        /**
+         * 更新病例和用户存入数据库
+         * true表示 当前下载病例的时候,编辑了病例,需要获取最新的bean
+         * 再次请求数据获取最新更改的UserBean和CaseBean,再存入数据库,避免bug
+         */
+
+        sendCaseInfoRequest(currentItemCaseID, true, toLocalFile);
+
 
     }
 
@@ -649,25 +705,92 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
      *
      * @param toLocalFile
      */
-    private void downCaseMsgPictureData(File toLocalFile) {
+    private void downPictureCaseData(File toLocalFile) {
         //mPathMap===例如imageName=001.jpg  url=http://192.168.64.56:7001/1_3/001.jpg
-        LogUtils.e("文件下载===01==详情界面---mPathMap===" + mPathMap.isEmpty());
+        LogUtils.e("文件下载===01==详情界面---mPathMap==mPathMap.isEmpty()=" + mPathMap.isEmpty());
+        LogUtils.e("文件下载===01==详情界面---toLocalFile===" + toLocalFile.listFiles().length);
         if (null != mPathMap && !mPathMap.isEmpty()) {   //说明有图片
             for (String key : mPathMap.keySet()) {
                 //001.jpg     http://192.168.131.43:7001/1154/001.jpg
                 //001.jpg     http://192.168.131.43:7001/1154/001.jpg
-                LogUtils.e("文件下载===01==entry.getKey()===" + key);
-                LogUtils.e("文件下载===01==entry.getValue()===" + mPathMap.get(key));
-                mImageCountNum = mPathMap.keySet().size();
+                LogUtils.e("文件下载===01==entry.getKey()===" + key);   //004.jpg
+                LogUtils.e("文件下载===01==entry.getValue()===" + mPathMap.get(key));//http://192.168.31.249:7001/9/004.jpg
+                mImageCountNum = mPathMap.keySet().size();//5
                 LogUtils.e("文件下载===01==mPathMap.keySet().size()==" + mImageCountNum);
 
-                sendPictureRequest(toLocalFile, mPathMap.get(key), key, false);
+                sendPictureRequest(toLocalFile, mPathMap.get(key), key);
             }
 
         }
+        /**
+         * 下载病例和用户存入数据库
+         * true表示 当前下载病例的时候,编辑了病例,需要获取最新的bean
+         * 再次请求数据获取最新更改的UserBean和CaseBean,再存入数据库,避免bug
+         */
+
         sendCaseInfoRequest(currentItemCaseID, true, toLocalFile);
 
 
+    }
+
+    /**
+     * 更新图片
+     *
+     * @param toLocalFile
+     * @param path
+     * @param pictureName
+     */
+    private void sendUpdatePictureRequest(File toLocalFile, String path, String pictureName) {
+//        String url = "http://images.csdn.net/20150817/1.jpg";
+        if (!toLocalFile.exists()) {
+            toLocalFile.mkdir();
+        }
+        OkHttpUtils.get()
+                .url(path)
+                .build()
+                .execute(new FileCallBack(toLocalFile.getAbsolutePath(), pictureName) {
+
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        LogUtils.e("文件下载=更新=onError==" + e);
+                        //下载失败
+                    }
+
+                    @Override
+                    public void onResponse(File response, int id) {
+                        LogUtils.e("文件下载=更新=onResponse==" + response.toString());
+                        LogUtils.e("文件下载=更新=更新相册图片==" + toLocalFile.getAbsolutePath() + "/" + pictureName);
+
+                        mCurrentUpdateDownImageCount++;
+                        LogUtils.e("文件下载=更新=当前下载第几张图片==" + mCurrentUpdateDownImageCount);
+                        mHandler.sendEmptyMessage(IMAGE_DOWN_UPDATE);
+                        //=====/storage/emulated/0/MyDownImages/2_3/004.jpg
+                        //刷新相册 必须下载完了才能退出不然容易出现bug ,所以我们放在每次进入该界面的时候刷新
+                        try {
+                            MediaStore.Images.Media.insertImage(getActivity().getApplication().getContentResolver(), toLocalFile.getAbsolutePath() + "/" + pictureName, pictureName, "");
+                            // 最后通知图库更新
+                            getActivity().getApplication().sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
+                                    Uri.fromFile(new File(toLocalFile.getPath()))));
+
+
+//                             视频下载,刷新图库
+//                            //说明第一个参数上下文，第二个参数是文件路径例如
+//                            ///storage/emulated/0/1621832516463_1181875151.mp4 第三个参数是文件类型，传空代表自行根据文件后缀判断刷新到相册
+//                            MediaScannerConnection.scanFile(getApplicationContext(), new String[]{fileNamePath}, null, new MediaScannerConnection.OnScanCompletedListener() {
+//                                @Override
+//                                public void onScanCompleted(String path, Uri uri) {
+//                                    //刷新成功的回调方法
+//                                    LogUtils.e("OkHttpUtils======资源刷新成功路径为===" + path);
+//                                    LogUtils.e("OkHttpUtils======资源刷新成功路径为===" + uri);
+//
+//                                }
+//                            });
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                });
     }
 
     /**
@@ -676,9 +799,8 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
      * @param toLocalFile
      * @param path
      * @param pictureName
-     * @param lastPicture
      */
-    private void sendPictureRequest(File toLocalFile, String path, String pictureName, Boolean lastPicture) {
+    private void sendPictureRequest(File toLocalFile, String path, String pictureName) {
 //        String url = "http://images.csdn.net/20150817/1.jpg";
         if (!toLocalFile.exists()) {
             toLocalFile.mkdir();
@@ -709,6 +831,20 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                             // 最后通知图库更新
                             getActivity().getApplication().sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
                                     Uri.fromFile(new File(toLocalFile.getPath()))));
+
+
+//                             视频下载,刷新图库
+//                            //说明第一个参数上下文，第二个参数是文件路径例如
+//                            ///storage/emulated/0/1621832516463_1181875151.mp4 第三个参数是文件类型，传空代表自行根据文件后缀判断刷新到相册
+//                            MediaScannerConnection.scanFile(getApplicationContext(), new String[]{fileNamePath}, null, new MediaScannerConnection.OnScanCompletedListener() {
+//                                @Override
+//                                public void onScanCompleted(String path, Uri uri) {
+//                                    //刷新成功的回调方法
+//                                    LogUtils.e("OkHttpUtils======资源刷新成功路径为===" + path);
+//                                    LogUtils.e("OkHttpUtils======资源刷新成功路径为===" + uri);
+//
+//                                }
+//                            });
                         } catch (FileNotFoundException e) {
                             e.printStackTrace();
                         }
@@ -1000,7 +1136,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                     @Override
                     public void onGranted(List<String> permissions, boolean all) {
                         if (all) {
-                            startDownPicture();
+                            startDownPictureCase();
                         }
                     }
 

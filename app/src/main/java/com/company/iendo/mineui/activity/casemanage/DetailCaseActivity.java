@@ -84,6 +84,7 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
     private String videosCounts;
     private String imageCounts;
     private MessageDialog.Builder existBuilder;
+    private TextView mCaseDownVideo;
 
     @Override
     protected int getLayoutId() {
@@ -141,6 +142,7 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
         mTitlebar = findViewById(R.id.titlebar);
         mPicture = findViewById(R.id.case_picture);
         mCaseDown = findViewById(R.id.case_down);
+        mCaseDownVideo = findViewById(R.id.case_down_video);
         mDelete = findViewById(R.id.case_delete);
         mFatherExit = false;
         FragmentPagerAdapter mPagerAdapter = new FragmentPagerAdapter<>(this);
@@ -161,7 +163,7 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
 
     private void responseListener() {
         sendGetEditStatueRequest();
-        setOnClickListener(R.id.linear_get_picture, R.id.linear_get_report, R.id.linear_delete, R.id.linear_down);
+        setOnClickListener(R.id.linear_get_picture, R.id.linear_get_report, R.id.linear_delete, R.id.linear_down, R.id.linear_down_video);
         mTitlebar.setOnTitleBarListener(new OnTitleBarListener() {
             @Override
             public void onLeftClick(View view) {
@@ -457,7 +459,7 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
             case Constants.UDP_CUSTOM_DOWN_OVER://图片下载的提示
                 if ("true".equals(data)) {//下载完毕,显示:已下载  未下载的话显示:下载病历,下载中显示:下载中..
                     mCaseDown.setText("已下载");
-                    if (null!=existBuilder){
+                    if (null != existBuilder) {
                         existBuilder.dismiss();
                     }
                 } else {
@@ -737,8 +739,11 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
                     mOnEditStatusListener.onDelete();
 
                     break;
-                case R.id.linear_down://下载
+                case R.id.linear_down://下载图片和病例
                     mOnEditStatusListener.onDown(true, true);
+                    break;
+                case R.id.linear_down_video://下载视频
+//                    mOnEditStatusListener.onDown(true, true);
                     break;
             }
         }
