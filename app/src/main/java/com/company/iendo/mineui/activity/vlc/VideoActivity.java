@@ -91,6 +91,8 @@ public final class VideoActivity extends AppActivity implements StatusAction, Se
             }
         }
     };
+    private String mTitle;
+    private TextView mTitleName;
 
     @Override
     protected int getLayoutId() {
@@ -107,6 +109,7 @@ public final class VideoActivity extends AppActivity implements StatusAction, Se
         mVLCView = mPlayer.findViewById(R.id.vlc_video_view);
 //        mLockScreen = findViewById(R.id.lock_screen);
         mTime = findViewById(R.id.tv_time);
+        mTitleName = findViewById(R.id.title_name);
         mTimeAll = findViewById(R.id.tv_time_all);
         mProgress = findViewById(R.id.sb_player_view_progress);
         mLoadingView = findViewById(R.id.control_load_view);
@@ -116,6 +119,8 @@ public final class VideoActivity extends AppActivity implements StatusAction, Se
         setOnClickListener(R.id.full_change, R.id.control_start_view);
         Intent intent = getIntent();
         path = intent.getStringExtra("mUrl");
+        mTitle = intent.getStringExtra("mTitle");
+        mTitleName.setText(mTitle + "");
         startLive(path);
     }
 
@@ -128,9 +133,11 @@ public final class VideoActivity extends AppActivity implements StatusAction, Se
                 if (lockType) {
                     lockType = false;
                     mBottomControl.setVisibility(View.INVISIBLE);
+                    mTitleName.setVisibility(View.INVISIBLE);
                 } else {
                     lockType = true;
                     mBottomControl.setVisibility(View.VISIBLE);
+                    mTitleName.setVisibility(View.VISIBLE);
                 }
 
                 break;

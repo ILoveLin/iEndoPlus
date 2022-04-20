@@ -29,16 +29,32 @@
         android:layout_height="match_parent">
 
         <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/tv_title_name"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_38"
+            android:layout_centerHorizontal="true"
+            android:background="@color/white"
+            android:gravity="center"
+            android:text="1111"
+            android:textColor="@color/black"
+            android:textSize="@dimen/sp_14" />
+        <RelativeLayout
+            android:layout_below="@+id/tv_title_name"
             android:id="@+id/relative_all"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-
 
             <RelativeLayout
                 android:id="@+id/ff_player_all"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dp_200"
                 android:background="@color/black">
+
+
 
                 <!--视频界面-->
                 <com.company.iendo.widget.vlc.MyVlcVideoView
@@ -74,7 +90,7 @@
                         android:gravity="center"
                         android:text="神州直播"
                         android:textColor="@color/white"
-                        android:textSize="@dimen/sp_15"
+                        android:textSize="@dimen/sp_14"
                         android:visibility="visible" />
 
 
@@ -143,7 +159,7 @@
                         android:gravity="bottom"
                         android:paddingLeft="@dimen/dp_10"
                         android:text="00:00"
-                        android:textColor="@color/red" />
+                        android:textColor="@color/white" />
 
                     <TextView
                         android:id="@+id/full_change"
@@ -210,10 +226,10 @@
 
                     <!--录像 -->
                     <LinearLayout
-                        android:layout_marginRight="@dimen/dp_25"
                         android:id="@+id/linear_record"
                         android:layout_width="@dimen/dp_80"
                         android:layout_height="@dimen/dp_72"
+                        android:layout_marginRight="@dimen/dp_25"
                         android:layout_toLeftOf="@+id/linear_picture"
                         android:background="@drawable/selector_item_recode"
                         android:gravity="center"
@@ -273,8 +289,8 @@
                             android:layout_marginTop="@dimen/dp_6"
                             android:layout_marginBottom="@dimen/dp_6"
                             android:gravity="center"
-                            android:text="语音通话"
                             android:tag="stopStream"
+                            android:text="语音通话"
                             android:textColor="@color/white"
                             android:textSize="@dimen/sp_14" />
                     </LinearLayout>
@@ -365,6 +381,7 @@
             <!--app:srlEnableLoadMore="true"-->
 
 
+        </RelativeLayout>
         </RelativeLayout>
 
 

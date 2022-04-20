@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/root_layout_vlc"
+    android:clickable="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 <!--    此处RelativeLayout的点击事件响应整体控制的显示或者隐藏,不用做任何其他操作就能响应左右上下滑动控制亮度和声音-->
@@ -43,6 +44,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="5dp"
+            android:layout_marginBottom="@dimen/dp_5"
             android:adjustViewBounds="true"
             android:ellipsize="marquee"
             android:marqueeRepeatLimit="0"

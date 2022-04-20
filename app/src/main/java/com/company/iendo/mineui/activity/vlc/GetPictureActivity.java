@@ -230,6 +230,9 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
     private String micUrl;
     private TextView mTvMicStatus;
     private boolean isFirstInitData;
+    private TextView mTitleName;
+    private String mName;
+    private String mCaseNo;
 
     /**
      * eventbus 刷新socket数据
@@ -677,10 +680,12 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                     getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
                     setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE); //横屏动态转换
                     setVideoViewFull(R.drawable.nur_ic_fangxiao, "横屏");
+
                 } else {
                     getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
                     setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);//竖屏动态转换
                     setVideoViewFull(R.drawable.nur_ic_fangda, "竖屏");
+
                 }
                 break;
         }
@@ -718,6 +723,8 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
 
     @Override
     protected void initView() {
+        //永远不息屏
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         EventBus.getDefault().register(this);
         initLayoutView();
     }
@@ -1155,8 +1162,8 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
      * 不管是锁屏,还是解锁状态下,点击改变控制View的状态显示
      */
     private void changeControlStatus() {
-        if (mLockScreen.getTag().equals("lock")) {   //当前为-锁屏-状态,需要解锁
-            if (lockType) {
+        if (mLockScreen.getTag().equals("lock")) {   //当前为-锁屏-状态,需要解锁,默认unlock
+            if (lockType) { ////点击界面,显示或者隐藏 控制面板的-标识,默认显示
                 lockType = false;
                 mLockScreen.setVisibility(View.INVISIBLE);
             } else {
@@ -1202,17 +1209,22 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             mRelativePlayerAll.setLayoutParams(layoutParams);
             mPlayer.setLayoutParams(layoutParams);
             mImageBack.setVisibility(View.VISIBLE);
+            mTitleName.setVisibility(View.GONE);
+
         } else {//放大
             LogUtils.e("全屏设置==开始==" + "竖---屏");
             Drawable record_end = getResources().getDrawable(mID);
             mChangeFull.setCompoundDrawablesWithIntrinsicBounds(record_end, null, null, null);
             mTitleBar.setVisibility(View.VISIBLE);
             mLinearBottom.setVisibility(View.VISIBLE);
+            mTitleName.setVisibility(View.VISIBLE);
+            mImageBack.setVisibility(View.INVISIBLE);
+
             RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                     ScreenSizeUtil.dp2px(GetPictureActivity.this, getResources().getDimension(R.dimen.dp_80)));//工具类哦
             mRelativePlayerAll.setLayoutParams(layoutParams);
             mPlayer.setLayoutParams(layoutParams);
-            mImageBack.setVisibility(View.INVISIBLE);
+
         }
     }
 
@@ -1227,6 +1239,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         mTvMicStatus = findViewById(R.id.tv_mic_status); //语音
         mTime = findViewById(R.id.tv_time);
         mLinearBottom = findViewById(R.id.linear_bottom);
+        mTitleName = findViewById(R.id.tv_title_name);
         mTopControl = findViewById(R.id.relative_top_control);
         mBottomControl = findViewById(R.id.relative_bottom_control);
         mRelativePlayerAll = findViewById(R.id.ff_player_all);
@@ -1381,6 +1394,10 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                                 CaseDetailBean.DataDTO data = mBean.getData();
                                 LogUtils.e("详情界面---截图界面===病例详情response==imageCount=" + imageCount);
                                 mPictureDes.setText("采图(" + imageCount + ")");
+                                mCaseNo = mBean.getData().getCaseNo();
+                                mName = mBean.getData().getName();
+                                mTitleName.setText(mName+"-"+mCaseNo);
+
 
                             } else {
                                 showError(listener -> {

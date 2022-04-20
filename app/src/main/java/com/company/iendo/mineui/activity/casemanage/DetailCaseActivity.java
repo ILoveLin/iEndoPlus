@@ -323,6 +323,7 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
                             LogUtils.e("详情界面---8病例详情response===" + response);
                             CaseDetailBean mBean = mGson.fromJson(response, CaseDetailBean.class);
                             mCreatedByWho = mBean.getData().getUserName();
+
                             isPrinted = mBean.getData().isPrinted();
                         } else {
 

@@ -30,6 +30,7 @@
                 android:layout_height="match_parent"
                 android:background="@color/black">
 
+
                 <!--视频界面-->
                 <com.company.iendo.widget.vlc.MyVlcVideoView
                     android:id="@+id/player"
@@ -63,6 +64,16 @@
                     android:layout_centerVertical="true"
                     android:visibility="visible" />
 
+                <TextView
+                    android:id="@+id/title_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/dp_38"
+                    android:layout_centerHorizontal="true"
+                    android:gravity="center"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/sp_14"
+                    android:visibility="visible" />
+
                 <com.company.iendo.widget.vlc.ENPlayView
                     android:id="@+id/control_start_view"
                     android:layout_width="60dp"
@@ -77,17 +88,18 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/dp_40"
                     android:layout_alignParentBottom="true">
+
                     <LinearLayout
-                        android:gravity="center_vertical"
                         android:layout_width="match_parent"
-                        android:orientation="horizontal"
-                        android:layout_height="match_parent">
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
 
                         <TextView
-                            android:gravity="center_vertical"
                             android:id="@+id/tv_time"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
+                            android:gravity="center_vertical"
                             android:paddingLeft="@dimen/dp_10"
                             android:text="00:00"
                             android:textColor="@color/white" />
@@ -107,13 +119,15 @@
                             tools:progress="50"
                             tools:secondaryProgress="80"
                             tools:targetApi="m" />
+
                         <TextView
-                            android:gravity="center_vertical"
                             android:id="@+id/tv_time_all"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
+                            android:gravity="center_vertical"
                             android:text="00:00"
                             android:textColor="@color/white" />
+
                         <TextView
                             android:id="@+id/full_change"
                             android:layout_width="wrap_content"
@@ -126,7 +140,6 @@
                             android:paddingRight="@dimen/dp_10" />
 
                     </LinearLayout>
-
 
 
                 </RelativeLayout>
