@@ -1,4 +1,4 @@
-package com.company.iendo.mineui.activity.casemanage;
+package com.company.iendo.mineui.activity.casemanage.dowvideo;
 
 import android.content.Context;
 import android.view.View;

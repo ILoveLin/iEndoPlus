@@ -1,4 +1,4 @@
-package com.company.iendo.bean.downvideo;
+package com.company.iendo.bean.event.downevent;
 
 import com.airbnb.lottie.L;
 

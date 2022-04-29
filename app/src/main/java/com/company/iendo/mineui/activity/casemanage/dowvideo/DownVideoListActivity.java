@@ -1,4 +1,4 @@
-package com.company.iendo.mineui.activity.casemanage;
+package com.company.iendo.mineui.activity.casemanage.dowvideo;
 
 import android.content.Intent;
 import android.view.View;
@@ -11,8 +11,8 @@ import com.company.iendo.R;
 import com.company.iendo.action.StatusAction;
 import com.company.iendo.app.AppActivity;
 import com.company.iendo.bean.DetailDownVideoBean;
-import com.company.iendo.bean.downvideo.DownEndEvent;
-import com.company.iendo.bean.downvideo.DownProcessStatueEvent;
+import com.company.iendo.bean.event.downevent.DownEndEvent;
+import com.company.iendo.bean.event.downevent.DownProcessStatueEvent;
 import com.company.iendo.green.db.DownVideoMsgDBUtils;
 import com.company.iendo.green.db.TaskDBBean;
 import com.company.iendo.green.db.TaskDBBeanUtils;

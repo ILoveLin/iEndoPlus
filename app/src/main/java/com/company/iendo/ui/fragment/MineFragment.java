@@ -9,7 +9,6 @@ import android.view.View;
 import com.company.iendo.R;
 import com.company.iendo.aop.SingleClick;
 import com.company.iendo.app.TitleBarFragment;
-import com.company.iendo.mineui.activity.choice.ProgramActivity;
 import com.company.iendo.ui.activity.AboutActivity;
 import com.company.iendo.ui.activity.BrowserActivity;
 import com.company.iendo.ui.activity.DialogActivity;
@@ -24,6 +23,7 @@ import com.company.iendo.ui.activity.PersonalDataActivity;
 import com.company.iendo.ui.activity.PhoneResetActivity;
 import com.company.iendo.ui.activity.RegisterActivity;
 import com.company.iendo.ui.activity.SettingActivity;
+import com.company.iendo.ui.activity.StatusActivity;
 import com.company.iendo.ui.activity.VideoPlayActivity;
 import com.company.iendo.ui.activity.VideoSelectActivity;
 import com.company.iendo.ui.dialog.InputDialog;
@@ -74,8 +74,7 @@ public final class MineFragment extends TitleBarFragment<HomeActivity> {
         } else if (viewId == R.id.btn_mine_hint) {
 //            测试方案选择
 
-            startActivity(ProgramActivity.class);
-//            startActivity(StatusActivity.class);
+            startActivity(StatusActivity.class);
 
         } else if (viewId == R.id.btn_mine_login) {
 

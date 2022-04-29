@@ -2,19 +2,16 @@ package com.company.iendo.service;
 
 import android.content.Context;
 import android.content.Intent;
-import android.media.MediaScannerConnection;
-import android.net.Uri;
-import android.os.Environment;
 import android.os.IBinder;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.company.iendo.bean.DetailDownVideoBean;
-import com.company.iendo.bean.downvideo.DownEndEvent;
-import com.company.iendo.bean.downvideo.DownProcessStatueEvent;
-import com.company.iendo.bean.downvideo.DownQueueEndEvent;
-import com.company.iendo.bean.downvideo.DownStartEvent;
+import com.company.iendo.bean.event.downevent.DownEndEvent;
+import com.company.iendo.bean.event.downevent.DownProcessStatueEvent;
+import com.company.iendo.bean.event.downevent.DownQueueEndEvent;
+import com.company.iendo.bean.event.downevent.DownStartEvent;
 import com.company.iendo.green.db.TaskDBBean;
 import com.company.iendo.green.db.TaskDBBeanUtils;
 import com.company.iendo.other.Constants;
@@ -50,7 +47,7 @@ import io.reactivex.disposables.Disposable;
  * 视频下载服务
  */
 
-public class DownVideoService02 extends AbsWorkService {
+public class DownVideoService extends AbsWorkService {
     //是否 任务完成, 不再需要服务运行?
     public static boolean sShouldStopService;
     public static boolean isFirstIn = false;
@@ -58,7 +55,7 @@ public class DownVideoService02 extends AbsWorkService {
     private DownloadContext.Builder mDownBuilder;
     private MMKV mmkv;
     private static DownloadContext mDownContext;
-    private static DownVideoService02 mDownVideoService;
+    private static DownVideoService mDownVideoService;
 //    private DownloadContext.Builder mDownBuilderQueue;
 
 

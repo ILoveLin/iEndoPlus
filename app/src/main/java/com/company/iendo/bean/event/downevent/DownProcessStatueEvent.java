@@ -1,4 +1,4 @@
-package com.company.iendo.bean.downvideo;
+package com.company.iendo.bean.event.downevent;
 
 /**
  * company：江西神州医疗设备有限公司

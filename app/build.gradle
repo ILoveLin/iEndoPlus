@@ -287,8 +287,7 @@ dependencies {
 //// provide sqlite to store breakpoints
     implementation 'com.liulishuo.okdownload:sqlite:1.0.7'
 
-    implementation 'io.github.jeremyliao:live-event-bus-x:1.8.0'
-    //adapter 多选 全选等等
+
     // 多语种：https://github.com/getActivity/MultiLanguages
     // 悬浮窗：https://github.com/getActivity/XToast
 //     日志输出：https://github.com/getActivity/Logcat

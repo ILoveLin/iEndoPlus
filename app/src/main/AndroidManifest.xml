@@ -103,21 +103,13 @@
         <!-- 永久保活Socket服务 -->
         <service android:name=".service.HandService" />
         <!-- 永久保活Socket服务 -->
-        <service android:name=".service.DownVideoService02" />
+        <service android:name=".service.DownVideoService" />
         <!-- 方案界面 -->
-        <activity
-            android:name=".mineui.activity.choice.ProgramActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.CopyActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         <!-- 方案选择界面 未使用-->
-        <activity
-            android:name=".mineui.activity.choice.ChoiceProgramActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait" />
         <!-- 设备选择界面 未使用-->
         <activity
             android:name=".mineui.activity.login.DeviceChoiceActivity"
@@ -206,12 +198,12 @@
             android:screenOrientation="portrait" />
         <!-- 视频下载选择界面 -->
         <activity
-            android:name=".mineui.activity.casemanage.DownVideoSelectedActivity"
+            android:name=".mineui.activity.casemanage.dowvideo.DownVideoSelectedActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         <!-- 视频下载进度界面 -->
         <activity
-            android:name=".mineui.activity.casemanage.DownVideoListActivity"
+            android:name=".mineui.activity.casemanage.dowvideo.DownVideoListActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         <!--医院信息-->

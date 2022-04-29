@@ -1,4 +1,4 @@
-package com.company.iendo.mineui.activity.casemanage;
+package com.company.iendo.mineui.activity.casemanage.dowvideo;
 
 import android.content.Context;
 import android.os.Build;
@@ -9,15 +9,11 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
-import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
 
 import com.company.iendo.R;
 import com.company.iendo.app.AppAdapter;
-import com.company.iendo.bean.DetailDownVideoBean;
 import com.company.iendo.green.db.downcase.dwonmsg.DownVideoMessage;
-import com.company.iendo.other.Constants;
 import com.company.iendo.utils.FileUtil;
-import com.company.iendo.utils.LogUtils;
 
 import java.util.ArrayList;
 

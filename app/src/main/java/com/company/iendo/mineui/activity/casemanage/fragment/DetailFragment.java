@@ -39,7 +39,7 @@ import com.company.iendo.manager.ActivityManager;
 import com.company.iendo.mineui.activity.MainActivity;
 import com.company.iendo.mineui.activity.casemanage.AddCaseActivity;
 import com.company.iendo.mineui.activity.casemanage.DetailCaseActivity;
-import com.company.iendo.mineui.activity.casemanage.DownVideoSelectedActivity;
+import com.company.iendo.mineui.activity.casemanage.dowvideo.DownVideoSelectedActivity;
 import com.company.iendo.other.Constants;
 import com.company.iendo.other.HttpConstant;
 import com.company.iendo.service.HandService;

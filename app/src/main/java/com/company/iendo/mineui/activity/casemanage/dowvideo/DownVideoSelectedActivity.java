@@ -1,4 +1,4 @@
-package com.company.iendo.mineui.activity.casemanage;
+package com.company.iendo.mineui.activity.casemanage.dowvideo;
 
 import android.content.Intent;
 import android.media.MediaScannerConnection;
@@ -14,16 +14,16 @@ import com.company.iendo.R;
 import com.company.iendo.action.StatusAction;
 import com.company.iendo.app.AppActivity;
 import com.company.iendo.bean.DetailDownVideoBean;
-import com.company.iendo.bean.downvideo.DownEndEvent;
-import com.company.iendo.bean.downvideo.DownProcessStatueEvent;
-import com.company.iendo.bean.downvideo.DownStartEvent;
+import com.company.iendo.bean.event.downevent.DownEndEvent;
+import com.company.iendo.bean.event.downevent.DownProcessStatueEvent;
+import com.company.iendo.bean.event.downevent.DownStartEvent;
 import com.company.iendo.green.db.DownVideoMsgDBUtils;
 import com.company.iendo.green.db.TaskDBBean;
 import com.company.iendo.green.db.TaskDBBeanUtils;
 import com.company.iendo.green.db.downcase.dwonmsg.DownVideoMessage;
 import com.company.iendo.other.Constants;
 import com.company.iendo.other.HttpConstant;
-import com.company.iendo.service.DownVideoService02;
+import com.company.iendo.service.DownVideoService;
 import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.SharePreferenceUtil;
 import com.company.iendo.widget.MyItemDecoration;
@@ -86,11 +86,11 @@ public final class DownVideoSelectedActivity extends AppActivity implements Stat
 
         //开启下载任务
         //初始化
-        DaemonEnv.initialize(this, DownVideoService02.class, DaemonEnv.DEFAULT_WAKE_UP_INTERVAL);
+        DaemonEnv.initialize(this, DownVideoService.class, DaemonEnv.DEFAULT_WAKE_UP_INTERVAL);
         //是否 任务完成, 不再需要服务运行?
-        DownVideoService02.sShouldStopService = true;
+        DownVideoService.sShouldStopService = true;
         //开启服务
-        DaemonEnv.startServiceMayBind(DownVideoService02.class);
+        DaemonEnv.startServiceMayBind(DownVideoService.class);
 
     }
 
@@ -158,8 +158,8 @@ public final class DownVideoSelectedActivity extends AppActivity implements Stat
                                 if (selected) {
                                     LogUtils.e("DownloadListener===下载任务的path====选择界面=确认下载=mDeviceCode==="+mDeviceCode);
                                     LogUtils.e("DownloadListener===下载任务的path====选择界面=确认下载=currentItemCaseID=="+currentItemCaseID);
-                                    DownVideoService02 downVideoService02 = new DownVideoService02();
-                                    downVideoService02.startDownVideoThread(dataDTO, DownVideoSelectedActivity.this, localFolderName, mDeviceCode, currentItemCaseID);
+                                    DownVideoService downVideoService = new DownVideoService();
+                                    downVideoService.startDownVideoThread(dataDTO, DownVideoSelectedActivity.this, localFolderName, mDeviceCode, currentItemCaseID);
                                 }
                             }
                         }
