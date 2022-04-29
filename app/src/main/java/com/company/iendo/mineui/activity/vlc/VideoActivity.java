@@ -93,6 +93,7 @@ public final class VideoActivity extends AppActivity implements StatusAction, Se
     };
     private String mTitle;
     private TextView mTitleName;
+    private String loginType;
 
     @Override
     protected int getLayoutId() {
@@ -120,6 +121,7 @@ public final class VideoActivity extends AppActivity implements StatusAction, Se
         Intent intent = getIntent();
         path = intent.getStringExtra("mUrl");
         mTitle = intent.getStringExtra("mTitle");
+        loginType = intent.getStringExtra("loginType");
         mTitleName.setText(mTitle + "");
         startLive(path);
     }
@@ -201,12 +203,16 @@ public final class VideoActivity extends AppActivity implements StatusAction, Se
             public void eventStop(boolean isPlayError) {
                 mLoadingView.setVisibility(View.INVISIBLE);
                 mStartView.setVisibility(View.VISIBLE);
+
             }
 
             @Override
             public void eventError(int event, boolean show) {
                 mStartView.setVisibility(View.VISIBLE);
                 mLoadingView.setVisibility(View.INVISIBLE);
+                if ("offline".equals(loginType)){
+                    toast("下载的视频,已经被删除了,无法播放");
+                }
             }
 
             @Override

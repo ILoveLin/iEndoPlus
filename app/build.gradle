@@ -135,7 +135,7 @@ android {
 
 
     greendao {
-        schemaVersion 12 //数据库版本号
+        schemaVersion 16 //数据库版本号
         daoPackage 'com.company.iendo.green.db'
 // 设置DaoMaster、DaoSession、Dao 包名
         targetGenDir 'src/main/java'//设置DaoMaster、DaoSession、Dao目录,请注意，这里路径用/不要用.
@@ -282,15 +282,12 @@ dependencies {
 //    Dokit
     debugImplementation 'io.github.didi.dokit:dokitx:3.5.0.1'
     releaseImplementation 'io.github.didi.dokit:dokitx-no-op:3.5.0.1'
+//  下载视频专用工具
+    implementation 'com.liulishuo.okdownload:okdownload:1.0.7'
+//// provide sqlite to store breakpoints
+    implementation 'com.liulishuo.okdownload:sqlite:1.0.7'
 
-
-
-
-
-
-
-
-
+    implementation 'io.github.jeremyliao:live-event-bus-x:1.8.0'
     //adapter 多选 全选等等
     // 多语种：https://github.com/getActivity/MultiLanguages
     // 悬浮窗：https://github.com/getActivity/XToast

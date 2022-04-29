@@ -9,6 +9,7 @@ package com.company.iendo.green.db.downcase;
 public class CaseImageListBean {
     private String ImagePath;
 
+
     public String getImagePath() {
         return ImagePath;
     }

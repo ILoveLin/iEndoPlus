@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.company.iendo.ui.activity.CopyActivity">
+
+    <com.hjq.bar.TitleBar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:title="请选择需要下载的视频,可以多选" />
+
+    <com.company.iendo.widget.StatusLayout
+        android:id="@+id/status_hint"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.hjq.widget.layout.WrapRecyclerView
+                android:id="@+id/rv_video_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbars="vertical"
+                tools:listCount="10"
+                tools:listitem="@layout/picker_item" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_40"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="@dimen/dp_10">
+
+                <Button
+                    android:layout_marginLeft="@dimen/dp_40"
+                    android:id="@+id/btn_look_downed"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/selector_item_shot"
+                    android:foreground="@null"
+                    android:paddingLeft="@dimen/dp_7"
+                    android:paddingRight="@dimen/dp_7"
+                    android:text="查看下载"
+                    android:textColor="@color/white90"
+                    android:textSize="@dimen/sp_14" />
+
+                <Button
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="@dimen/dp_40"
+                    android:id="@+id/btn_start_down"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/selector_item_shot"
+                    android:foreground="@null"
+                    android:paddingLeft="@dimen/dp_7"
+                    android:paddingRight="@dimen/dp_7"
+                    android:text="确认下载"
+                    android:textColor="@color/white90"
+                    android:textSize="@dimen/sp_14" />
+
+            </RelativeLayout>
+        </RelativeLayout>
+
+
+    </com.company.iendo.widget.StatusLayout>
+</LinearLayout>

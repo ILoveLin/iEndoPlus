@@ -55,7 +55,7 @@
     <!-- Application 节点详解：https://developer.android.google.cn/guide/topics/manifest/application-element -->
     <!-- Activity 节点详解：https://developer.android.google.cn/guide/topics/manifest/activity-element -->
     <application xmlns:tools="http://schemas.android.com/tools"
-        android:name="com.company.iendo.app.AppApplication"
+        android:name=".app.AppApplication"
         android:allowBackup="false"
         android:icon="@mipmap/logo_iendo"
         android:label="${app_name}"
@@ -102,6 +102,8 @@
         <service android:name=".service.ReceiveSocketService" />
         <!-- 永久保活Socket服务 -->
         <service android:name=".service.HandService" />
+        <!-- 永久保活Socket服务 -->
+        <service android:name=".service.DownVideoService02" />
         <!-- 方案界面 -->
         <activity
             android:name=".mineui.activity.choice.ProgramActivity"
@@ -200,6 +202,16 @@
         <!-- 报告界面 -->
         <activity
             android:name=".mineui.activity.casemanage.ReportActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <!-- 视频下载选择界面 -->
+        <activity
+            android:name=".mineui.activity.casemanage.DownVideoSelectedActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <!-- 视频下载进度界面 -->
+        <activity
+            android:name=".mineui.activity.casemanage.DownVideoListActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         <!--医院信息-->

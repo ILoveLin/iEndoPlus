@@ -35,11 +35,11 @@ import com.company.iendo.green.db.UserDBBean;
 import com.company.iendo.green.db.UserDBUtils;
 import com.company.iendo.green.db.downcase.CaseDBBean;
 import com.company.iendo.green.db.downcase.CaseImageListBean;
-import com.company.iendo.green.db.downcase.CaseVideoListBean;
 import com.company.iendo.manager.ActivityManager;
 import com.company.iendo.mineui.activity.MainActivity;
 import com.company.iendo.mineui.activity.casemanage.AddCaseActivity;
 import com.company.iendo.mineui.activity.casemanage.DetailCaseActivity;
+import com.company.iendo.mineui.activity.casemanage.DownVideoSelectedActivity;
 import com.company.iendo.other.Constants;
 import com.company.iendo.other.HttpConstant;
 import com.company.iendo.service.HandService;
@@ -525,6 +525,27 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
     }
 
     /**
+     * 下载视频  DetailCaseActivity 点击下载视频的时候下载视频
+     * 1,如果没有下载病例和图片,弹出对话框告知,必须先现在病例和图片
+     * 2,下载过了病例和图片,才弹出视频选择界面
+     */
+    @Override
+    public void onDownVideo() {
+        checkCaseIsDown();
+        String mCaseDownStr = DetailCaseActivity.mCaseDown.getText().toString();
+        if (("已下载").equals(mCaseDownStr)) {
+            //跳转下载界面
+            Intent intent = new Intent(getAttachActivity(), DownVideoSelectedActivity.class);
+//            Intent intent = new Intent(getAttachActivity(), DownSelectedVideoActivity.class);
+            intent.putExtra("currentItemCaseID", currentItemCaseID);
+            intent.putExtra("mDeviceCode", mDeviceCode);
+            startActivity(intent);
+        } else {
+            toast("请先下载病历和图片");
+        }
+    }
+
+    /**
      * 判断当前病例是否下载过
      */
     private void checkCaseIsDown() {
@@ -537,7 +558,6 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         //此处做校验,本文件夹创建过,并且里面的图片数量和请求结果数量一直,表示下载过
         boolean FileExists = toLocalFile.exists();
         if (FileExists) {//本地存在,并且上位机请求成功
-
             SocketRefreshEvent event = new SocketRefreshEvent();
             event.setUdpCmd(Constants.UDP_CUSTOM_DOWN_OVER);
             event.setData("true");
@@ -689,7 +709,10 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                                     mVideoPathList.clear();
                                     for (int i = 0; i < mBean.getData().size(); i++) {
                                         DetailVideoBean.DataDTO dataDTO = mBean.getData().get(i);
-                                        mVideoPathList.add(dataDTO.getFilePath());
+                                        //        mBaseUrl=http://192.168.132.102:7001
+                                        String mUrl = mBaseUrl + "/" + dataDTO.getRecordID() + "/" + dataDTO.getFilePath();
+                                        //存完整的url
+                                        mVideoPathList.add(mUrl);
                                     }
                                 }
                             }
@@ -865,9 +888,11 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         CaseDBBean caseDBBean = new CaseDBBean();
         //避免多次创建,需要区别赋值
 
-        //查询当前设备码下绑定的所有病例数据
-        List<CaseDBBean> caseList = CaseDBUtils.getQueryBeanByCode(getApplication(), mDeviceCode);
+        //查询当前设备码下,当前病例详情ID(mDataBean.getID()),之下的病例,有就是下载过,没有就是没下载过,数字长度0或者1
         List<CaseDBBean> myList = CaseDBUtils.getQueryBeanByTow02(getApplication(), mDeviceCode, mDataBean.getID() + "");
+
+        LogUtils.e("DownloadListener==queue====详情界面mDeviceCode====: " + mDeviceCode);//0000000000000000546017FE6BC28949
+        LogUtils.e("DownloadListener==queue====详情界面mDataBean.getID()====: " + mDataBean.getID());//1195
 
         /**
          *   病例不存在,就存入
@@ -909,17 +934,23 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
             }
 
             //存入视频 标题
-            ArrayList<CaseVideoListBean> VideoList = new ArrayList<CaseVideoListBean>();
-            if (null != mVideoPathList && mVideoPathList.size() > 0) {
-                for (int i = 0; i < mVideoPathList.size(); i++) {
-                    CaseVideoListBean caseVideoListBean = new CaseVideoListBean();
-                    caseVideoListBean.setVideoPath(mVideoPathList.get(i));
-                    VideoList.add(caseVideoListBean);
-                    LogUtils.e("文件下载===02==视频存储==VideoPath===" + mVideoPathList.get(i));
-
-                }
-                caseDBBean.setVideoList(VideoList);
-            }
+//            ArrayList<CaseVideoListBean> VideoList = new ArrayList<CaseVideoListBean>();
+//            if (null != mVideoPathList && mVideoPathList.size() > 0) {
+//                for (int i = 0; i < mVideoPathList.size(); i++) {
+//                    CaseVideoListBean caseVideoListBean = new CaseVideoListBean();
+//                    String str = mVideoPathList.get(i);
+//                    //http://192.168.67.219:7001/1196/88820220424081936912.mp4
+//                    caseVideoListBean.setVideoPath(str);
+//                    int index = str.lastIndexOf("/");
+//                    String substring = str.substring(index + 1, str.length());
+////                    caseVideoListBean.setFileName();
+//                    caseVideoListBean.setDown(false);
+//                    VideoList.add(caseVideoListBean);
+//                    LogUtils.e("文件下载===02==视频存储==VideoPath===" + str);
+//                    LogUtils.e("文件下载===02==视频存储==setFileName===" + substring);
+//                }
+//                caseDBBean.setVideoList(VideoList);
+//            }
 
             caseDBBean.setBiopsy(mDataBean.getBiopsy() + "");    //活检
             caseDBBean.setPathology(mDataBean.getPathology() + "");    //病理学
@@ -1010,18 +1041,91 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                 caseDBBean.setImageList(caseImageList);    //图片路径集合--文件夹（设备ID-病例ID）
             }
 
-            //存入视频 标题
-            ArrayList<CaseVideoListBean> VideoList = new ArrayList<CaseVideoListBean>();
-            if (null != mVideoPathList && mVideoPathList.size() > 0) {
-                for (int i = 0; i < mVideoPathList.size(); i++) {
-                    CaseVideoListBean caseVideoListBean = new CaseVideoListBean();
-                    caseVideoListBean.setVideoPath(mVideoPathList.get(i));
-                    VideoList.add(caseVideoListBean);
-                    LogUtils.e("文件下载===02==视频存储==VideoPath===" + mVideoPathList.get(i));
-
-                }
-                caseDBBean.setVideoList(VideoList);
-            }
+//            //此数据currentBean,下载过,这里我们需要校验
+//            //1,标题相同的数据bean,我们直接past
+//            //2,标题不同的数据我们做新增,离线模式的时候最对是否下载过的字段来进行赛选
+//            ArrayList<String> list01 = new ArrayList<String>();
+//            ArrayList<String> list02 = new ArrayList<String>();
+//            if (null != mVideoPathList && mVideoPathList.size() > 0) {//1 2 3  4
+//                for (int i = 0; i < mVideoPathList.size(); i++) {
+//                    String downString = mVideoPathList.get(i);
+//                    int index = downString.lastIndexOf("/");
+//                    String downName = downString.substring(index + 1, downString.length());
+//                    list01.add(downName);
+//                }
+//            }
+//            List<CaseVideoListBean> DBVideoList = caseDBBean.getVideoList();
+//            int size1 = caseDBBean.getVideoList().size();
+//            if (size1 > 0) {//1 2
+//                for (int i = 0; i < size1; i++) {
+//                    CaseVideoListBean caseVideoListBean = caseDBBean.getVideoList().get(i);
+//                    list01.add(caseVideoListBean.getFileName());
+//                }
+//            }
+//
+//            //补集是新增数据
+//            //两个集合交集的补集 1234   123  ==> 4
+//            List<String> disjunction = (List<String>) CollectionUtils.disjunction(list01, list02);
+//
+//            for (int i = 0; i < disjunction.size(); i++) {
+//                if (null != mVideoPathList && mVideoPathList.size() > 0) {//1 2 3  4
+//                    for (int y = 0; y < mVideoPathList.size(); y++) {
+//
+//                        String downString = mVideoPathList.get(y);
+//                        int index = downString.lastIndexOf("/");
+//                        String downName = downString.substring(index + 1, downString.length());
+//
+//
+//                        if (disjunction.equals(downName)) {
+//                            CaseVideoListBean caseVideoListBean = new CaseVideoListBean();
+//                            //http://192.168.67.219:7001/1196/88820220424081936912.mp4
+//                            caseVideoListBean.setVideoPath(downString);
+//                            //caseVideoListBean.setFileName();
+//                            caseVideoListBean.setDown(false);
+//                            DBVideoList.add(caseVideoListBean);
+//                        }
+//                    }
+//                }
+//
+//            }
+//            //存入数据库,此时数据更新了上位机新增的视频数量
+//            caseDBBean.setVideoList(DBVideoList);
+//            if (null != mVideoPathList && mVideoPathList.size() > 0) {//1 2 3  4
+//                for (int i = 0; i < mVideoPathList.size(); i++) {
+//
+//                    String downString = mVideoPathList.get(i);
+//                    int index = downString.lastIndexOf("/");
+//                    String downName = downString.substring(index + 1, downString.length());
+//
+//                    int size = caseDBBean.getVideoList().size();
+//
+////                    if (size > 0) {
+//                    for (int y = 0; y < size; y++) { //1 2 3
+//                        CaseVideoListBean dbVideoBean = caseDBBean.getVideoList().get(i);
+//
+//                        //不相等的时候新增
+//                        if (!dbVideoBean.getFileName().equals(downName)) {
+//                            CaseVideoListBean caseVideoListBean = new CaseVideoListBean();
+//                            //http://192.168.67.219:7001/1196/88820220424081936912.mp4
+//                            caseVideoListBean.setVideoPath(downString);
+//                            //caseVideoListBean.setFileName();
+//                            caseVideoListBean.setDown(false);
+//                            SaveVideoList.add(caseVideoListBean);
+//                            LogUtils.e("文件下载===02==视频存储==VideoPath===" + downString);
+//                            LogUtils.e("文件下载===02==视频存储==setFileName===" + downName);
+//
+//                        } else {//相等的时候,不作处理
+//                            SaveVideoList.add(dbVideoBean);
+//                        }
+//
+//
+//                    }
+////                    }
+//
+//
+//                }
+//                caseDBBean.setVideoList(SaveVideoList);
+//            }
 
             caseDBBean.setBiopsy(mDataBean.getBiopsy() + "");    //活检
             caseDBBean.setPathology(mDataBean.getPathology() + "");    //病理学

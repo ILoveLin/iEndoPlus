@@ -39,7 +39,7 @@ import io.reactivex.schedulers.Schedulers;
 /**
  * 保活的Service通讯服务
  * <p>
- * 一直开启这监听线程,监听Socket
+ * 一直开启这握手,
  */
 
 public class HandService extends AbsWorkService {

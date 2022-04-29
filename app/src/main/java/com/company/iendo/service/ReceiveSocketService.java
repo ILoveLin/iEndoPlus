@@ -125,6 +125,16 @@ public class ReceiveSocketService extends AbsWorkService {
     public void SocketRefreshEvent(SocketRefreshEvent event) {
         switch (event.getUdpCmd()) {
             case Constants.UDP_CUSTOM_RESTART://重启监听线程
+
+                //Wifi状态判断
+                WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+                lock = wifiManager.createMulticastLock("test wifi");
+                //用完之后及时调用lock.release()释放资源，否决多次调用lock.acquire()方法，程序可能会崩
+                if (wifiManager.isWifiEnabled()) {
+                    WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+                    mAppIP = getIpString(wifiInfo.getIpAddress());
+                }
+
                 //此处重启监听线程
                 MMKV mmkv = MMKV.defaultMMKV();
                 boolean b = mmkv.decodeBool(Constants.KEY_Login_Tag);
@@ -528,6 +538,8 @@ public class ReceiveSocketService extends AbsWorkService {
                         SocketRefreshEvent event = new SocketRefreshEvent();
                         event.setUdpCmd(Constants.UDP_CUSTOM_TOAST);
                         event.setData("");
+                        //java.lang.NullPointerException:
+                        // Attempt to invoke virtual method 'boolean java.lang.String.equals(java.lang.Object)' on a null object reference
                         event.setData("code==11===循环监听异常,错误,退出监听线程!!");
                         EventBus.getDefault().post(event);
                         LogUtils.e("ReceiveSocketService--数据监听服务--=====退出线程==Exception==while循环处理消息的时候异常" + e);

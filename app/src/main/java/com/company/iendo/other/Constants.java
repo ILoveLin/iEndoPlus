@@ -92,7 +92,7 @@ public class Constants {
 
     public static final String UDP_CASE_ID_DIFFERENT = "两设备之间选择病历不一致，请重新确认";                 //当前病例ID和操作病例ID不相等,不能操作!
     public static final String HAVE_NO_PERMISSION = "暂无权限";
-//    public static final String HAVE_HAND_FAIL = "暂无权限";
+    //    public static final String HAVE_HAND_FAIL = "暂无权限";
     public static final String HAVE_HAND_FAIL_OFFLINE = "远程设备连接失败,信息可能无法同步";
 
 
@@ -126,6 +126,35 @@ public class Constants {
     public static final String UDP_CUSTOM_TOAST = "UDP_CUSTOM_TOAST";            //自定义命令     toast
     public static final String UDP_CUSTOM_RESTART = "UDP_CUSTOM_RESTART";        //自定义命令     监听线程异常需要重启
     public static final String UDP_CUSTOM_DOWN_OVER = "UDP_CUSTOM_DOWN_OVER";    //自定义命令     图片下载完成
+
+
+    /**
+     * 视频下载状态值标识
+     * statue; //状态值:成功或者失败   COMPLETED:成功, ERROR:失败,  START:开始,  DOWNING:下载中
+     * 顺序如下:准备-->开始-->下载中-->成功|失败
+     */
+    public static final String STATUE_COMPLETED = "COMPLETED";                     //成功
+    public static final String STATUE_ERROR = "ERROR";                               //失败
+    public static final String STATUE_START = "START";                             //开始
+    public static final String STATUE_READY = "READY";                             //准备
+    public static final String STATUE_DOWNING = "DOWNING";                         //下载中
+    public static final String STATUE_CANCELED = "CANCELED";                        //暂停
+    public static final String TAG_DOWNING = "TAG_DOWNING";                         //线程当前下载队列是否下载中的标识,true表示正在下载,false 表示下载完毕,可以开启新的队列
+    public static final String TAG_QUEUE_OVER = "TAG_QUEUE_OVER";                   //当前下载队列,true表示下载完毕,false 表示下载中
+
+
+
+    public static final String STATUE_COMPLETED_DES = "已下载";                     //成功
+    public static final String STATUE_ERROR_DES = "失败";                               //失败
+    public static final String STATUE_START_DES = "开始";                             //开始
+    public static final String STATUE_READY_DES = "准备中";                             //准备
+    public static final String STATUE_DOWNING_DES = "下载中";                         //下载中
+    public static final String STATUE_CANCELED_DES = "暂停";                        //暂停
+
+
+
+    public static final String STATUE_CANCELED_TAG = "STATUE_CANCELED_TAG";         //当前暂停的tag 标题
+
 
 
     /**

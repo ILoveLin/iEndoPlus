@@ -693,17 +693,20 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                                 //此次需要存入当前登入用户具有的操作权限
                                 MMKV kv = MMKV.defaultMMKV();
                                 LoginBean.DataDTO.PurviewDTO purviewBean = mBean.getData().getPurview();
-                                kv.encode(Constants.KEY_Login_Tag, true);//是否登入成功
-                                kv.encode(Constants.KEY_UserMan, purviewBean.isUserMan());//用户管理(用户管理界面能不能进)
-                                kv.encode(Constants.KEY_CanPsw, purviewBean.isCanPsw());//设置口令(修改别人密码)
-                                kv.encode(Constants.KEY_SnapVideoRecord, purviewBean.isSnapVideoRecord());//拍照录像
-                                kv.encode(Constants.KEY_CanNew, purviewBean.isCanNew());  //登记病人(新增病人)
-                                kv.encode(Constants.KEY_CanEdit, purviewBean.isCanEdit());//修改病历
-                                kv.encode(Constants.KEY_CanDelete, purviewBean.isCanDelete());//删除病历
-                                kv.encode(Constants.KEY_CanPrint, purviewBean.isCanPrint()); //打印病历
-                                kv.encode(Constants.KEY_UnPrinted, purviewBean.isUnPrinted()); //未打印病历
-                                kv.encode(Constants.KEY_OnlySelf, purviewBean.isOnlySelf());//本人病历
-                                kv.encode(Constants.KEY_HospitalInfo, purviewBean.isHospitalInfo());//医院信息(不能进入医院信息界面)
+                                if (null!=purviewBean){
+                                    kv.encode(Constants.KEY_Login_Tag, true);//是否登入成功
+                                    kv.encode(Constants.KEY_UserMan, purviewBean.isUserMan());//用户管理(用户管理界面能不能进)
+                                    kv.encode(Constants.KEY_CanPsw, purviewBean.isCanPsw());//设置口令(修改别人密码)
+                                    kv.encode(Constants.KEY_SnapVideoRecord, purviewBean.isSnapVideoRecord());//拍照录像
+                                    kv.encode(Constants.KEY_CanNew, purviewBean.isCanNew());  //登记病人(新增病人)
+                                    kv.encode(Constants.KEY_CanEdit, purviewBean.isCanEdit());//修改病历
+                                    kv.encode(Constants.KEY_CanDelete, purviewBean.isCanDelete());//删除病历
+                                    kv.encode(Constants.KEY_CanPrint, purviewBean.isCanPrint()); //打印病历
+                                    kv.encode(Constants.KEY_UnPrinted, purviewBean.isUnPrinted()); //未打印病历
+                                    kv.encode(Constants.KEY_OnlySelf, purviewBean.isOnlySelf());//本人病历
+                                    kv.encode(Constants.KEY_HospitalInfo, purviewBean.isHospitalInfo());//医院信息(不能进入医院信息界面)
+
+                                }
 
                                 //存入用户表
                                 saveRememberPassword(mBean);

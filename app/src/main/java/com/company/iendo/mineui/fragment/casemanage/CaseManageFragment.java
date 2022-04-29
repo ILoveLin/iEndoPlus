@@ -342,7 +342,7 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
         } else {
             sendRequest(currentChoseDate);
         }
-
+        sendRequest("2022-04-24");
         sendHandLinkMessage();
 
 

@@ -22,7 +22,7 @@ public class UserDBBean {
     /**
      * 设备ID
      * 这个用户是在哪个设备上的     用户和病例都是和设备绑定的
-     * 当前选中设备的主键id,因为离线模式下就能通过这个主键id查找这个设备下的所有用户
+     * 当前选中设备的deviceID,因为离线模式下就能通过这个deviceID查找这个设备下的所有用户
      */
     private String deviceID;     //把设备表的deviceCode赋值给deviceID(相当于他是查询标识)
 

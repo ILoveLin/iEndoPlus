@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.company.iendo.ui.activity.CopyActivity">
+
+    <com.hjq.bar.TitleBar
+        android:id="@+id/titlebar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:title="下载进度界面" />
+    <TextView
+        android:id="@+id/tv_click"
+        android:layout_width="match_parent"
+        android:gravity="center"
+        android:textColor="@color/red"
+        android:text="点击"
+        android:layout_height="@dimen/dp_40"/>
+    <com.company.iendo.widget.StatusLayout
+        android:id="@+id/status_hint"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <TextView
+                android:id="@+id/view_downing"
+                android:layout_width="match_parent"
+                android:background="@color/color_9A9A9A"
+                android:text="缓存中的列表"
+                android:gravity="center_vertical"
+                android:layout_height="@dimen/dp_40"/>
+
+            <com.hjq.widget.layout.WrapRecyclerView
+                android:layout_below="@+id/view_downing"
+                android:id="@+id/rv_video_statue_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scrollbars="vertical"
+                tools:listitem="@layout/picker_item" />
+            <TextView
+                android:gravity="center_vertical"
+                android:id="@+id/view_view"
+                android:layout_width="match_parent"
+                android:background="@color/color_9A9A9A"
+                android:layout_below="@+id/rv_video_statue_list"
+                android:text="已缓存中的列表"
+                android:layout_height="@dimen/dp_40"/>
+
+            <com.hjq.widget.layout.WrapRecyclerView
+                android:layout_below="@+id/view_view"
+                android:id="@+id/rv_video_db_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scrollbars="vertical"
+                tools:listitem="@layout/picker_item" />
+
+        </RelativeLayout>
+
+
+    </com.company.iendo.widget.StatusLayout>
+</LinearLayout>

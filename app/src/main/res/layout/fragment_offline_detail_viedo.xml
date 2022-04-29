@@ -25,6 +25,7 @@
 
             <com.hjq.shape.view.ShapeTextView
                 android:id="@+id/stv"
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dp_40"
                 android:layout_marginTop="@dimen/dp_1"

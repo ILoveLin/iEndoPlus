@@ -743,7 +743,7 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
                     mOnEditStatusListener.onDown(true, true);
                     break;
                 case R.id.linear_down_video://下载视频
-//                    mOnEditStatusListener.onDown(true, true);
+                    mOnEditStatusListener.onDownVideo();
                     break;
             }
         }
@@ -820,6 +820,8 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
 
         //图像采集
         void onGetPicture();
+
+        void onDownVideo();
 
     }
 
