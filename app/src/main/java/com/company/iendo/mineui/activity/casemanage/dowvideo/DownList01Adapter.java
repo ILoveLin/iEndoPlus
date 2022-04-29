@@ -23,10 +23,10 @@ import java.util.ArrayList;
  * time：2021/11/3 15:40
  * desc：视频下载列表进度adapter
  */
-public class DownStatueAdapter extends AppAdapter<DetailDownVideoBean.DataDTO> {
+public class DownList01Adapter extends AppAdapter<DetailDownVideoBean.DataDTO> {
     private ArrayList<DetailDownVideoBean.DataDTO> mDataLest;
 
-    public DownStatueAdapter(Context context, ArrayList<DetailDownVideoBean.DataDTO> mDataLest) {
+    public DownList01Adapter(Context context, ArrayList<DetailDownVideoBean.DataDTO> mDataLest) {
         super(context);
         this.mDataLest = mDataLest;
 
@@ -34,8 +34,8 @@ public class DownStatueAdapter extends AppAdapter<DetailDownVideoBean.DataDTO> {
 
     @NonNull
     @Override
-    public DownStatueAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new DownStatueAdapter.ViewHolder();
+    public DownList01Adapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        return new DownList01Adapter.ViewHolder();
     }
 
 
@@ -101,6 +101,8 @@ public class DownStatueAdapter extends AppAdapter<DetailDownVideoBean.DataDTO> {
                     case Constants.STATUE_DOWNING://下载中
                         String formatOffsetLength = FileUtil.formatFileSizeMethod((int) item.getProcessOffset());
                         String formatOffMaxLength = FileUtil.formatFileSizeMethod((int) item.getProcessMax());
+                        LogUtils.e("DownStatueActivity下载中Adapter==formatOffMaxLength==formatOffMaxLength== " +formatOffMaxLength);
+                        LogUtils.e("DownStatueActivity下载中Adapter==formatOffMaxLength==formatOffMaxLength== " +formatOffMaxLength);
 
                         mProgressBar.setMax((int) item.getProcessMax());
                         mProgressBar.setProgress((int) item.getProcessOffset());

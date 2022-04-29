@@ -2,6 +2,9 @@ package com.company.iendo.service;
 
 import android.content.Context;
 import android.content.Intent;
+import android.media.MediaScannerConnection;
+import android.net.Uri;
+import android.os.Environment;
 import android.os.IBinder;
 
 import androidx.annotation.NonNull;
@@ -9,11 +12,13 @@ import androidx.annotation.Nullable;
 
 import com.company.iendo.bean.DetailDownVideoBean;
 import com.company.iendo.bean.event.downevent.DownEndEvent;
-import com.company.iendo.bean.event.downevent.DownProcessStatueEvent;
-import com.company.iendo.bean.event.downevent.DownQueueEndEvent;
+import com.company.iendo.bean.event.downevent.DownLoadingEvent;
 import com.company.iendo.bean.event.downevent.DownStartEvent;
+import com.company.iendo.green.db.DownVideoMsgDBUtils;
 import com.company.iendo.green.db.TaskDBBean;
 import com.company.iendo.green.db.TaskDBBeanUtils;
+import com.company.iendo.green.db.downcase.dwonmsg.DownVideoMessage;
+import com.company.iendo.mineui.activity.casemanage.dowvideo.DownVideoListActivity;
 import com.company.iendo.other.Constants;
 import com.company.iendo.utils.FileUtil;
 import com.company.iendo.utils.LogUtils;
@@ -56,19 +61,7 @@ public class DownVideoService extends AbsWorkService {
     private MMKV mmkv;
     private static DownloadContext mDownContext;
     private static DownVideoService mDownVideoService;
-//    private DownloadContext.Builder mDownBuilderQueue;
 
-
-//    public static DownVideoService02 getSingleDownVideoService() {
-//        if (null == mDownVideoService) {
-//            synchronized (DownVideoService02.class) {
-//                if (null == mDownVideoService) {
-//                    mDownVideoService = new DownVideoService02();
-//                }
-//            }
-//        }
-//        return mDownVideoService;
-//    }
 
     public static void stopService() {
 
@@ -112,61 +105,13 @@ public class DownVideoService extends AbsWorkService {
 
     }
 
-    private static DownloadListener4WithSpeed listener;
+
+    private Context mContext = null;
 
 
-    public static ArrayList<DetailDownVideoBean.DataDTO> getDownList() {
-        LogUtils.e("DownloadListener==AAAAAAAAAAAAAAAAAA: " + mDataList.size());
-
-        return mDataList;
-    }
-
-    public static ArrayList<DetailDownVideoBean.DataDTO> getDownInitList() {
-        LogUtils.e("DownloadListener==BBBBBBBBBBBBBBBBBB: " + mInitDataList.size());
-
-        return mInitDataList;
-    }
-
-    /**
-     * 此list存入一开始传进来的下载列表数据,下载成功一次,删除列表中的数据
-     */
-    private static ArrayList<DetailDownVideoBean.DataDTO> mDataList;
-    /**
-     * 此list存入一开始传进来的下载列表数据,数据不会变,只有在startDownVideoThread的时候会从新装入新的列表
-     */
-    private static ArrayList<DetailDownVideoBean.DataDTO> mInitDataList;
-
-    /**
-     * eventbus 下载任务==开始,初始化一开始最大值进度条
-     */
-    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
-    public void DownQueueEndEvent(DownQueueEndEvent event) {
-        LogUtils.e("DownloadListener==queue====queueEnd=======================DownQueueEndEvent");
-
-        if (event.isQueueOver()) {
-            startCount = 0;
-            LogUtils.e("DownloadListener==queue====queueEnd=======================DownQueueEndEvent====重置了");
-
-
-        }
-
-    }
-
-    private static Boolean QueueEnd = false;
-    /**
-     * 是否可以开启下载队列的标识
-     * 0 可以开启
-     * 不是0就直接return;
-     */
-    private static int startCount = 0;
-
-    /**
-     * 开启下载视频线程
-     */
-    private String str = "";
-
-    public void startDownVideoThread(DetailDownVideoBean.DataDTO DataDTOBean,Context mContext, String commonFolderName,
+    public void startDownVideoThread(DetailDownVideoBean.DataDTO DataDTOBean, Context mContext, String commonFolderName,
                                      String mDeviceCode, String currentItemCaseID) {
+        this.mContext = mContext;
         DownloadListener4WithSpeed listener04 = new DownloadListener4WithSpeed() {
             @Override
             public void taskStart(@NonNull DownloadTask task) {
@@ -196,15 +141,6 @@ public class DownVideoService extends AbsWorkService {
 ////                LogUtils.e("DownloadListener==fetchStart: " + contentLength);
 //                LogUtils.e("DownloadListener==fetchStart==contentLength== long -String KB/MB==: " + FileUtil.formatFileSizeMethod(contentLength));//字符串转换 long -String KB/MB
 //
-                if ("".equals(str)) {
-                    str = (String) task.getTag();
-                } else {
-                    str = str + "==" + (String) task.getTag();
-                }
-
-
-                LogUtils.e("DownloadListener==fetchStart==str=str=str=str==: " + str); //02
-
 
 
             }
@@ -246,7 +182,7 @@ public class DownVideoService extends AbsWorkService {
                 LogUtils.e("DownloadListener==progressBlock==currentBlockOffset: " + currentBlockOffset);
 
                 String formatOffsetLength = FileUtil.formatFileSizeMethod(currentBlockOffset);
-                DownProcessStatueEvent event = new DownProcessStatueEvent();
+                DownLoadingEvent event = new DownLoadingEvent();
                 event.setProcessMax(task.getInfo().getTotalLength());
                 event.setTag((String) task.getTag());
                 event.setStatue(Constants.STATUE_DOWNING);
@@ -308,6 +244,8 @@ public class DownVideoService extends AbsWorkService {
                     event.setTotalLength(totalLength);
                     event.setSpeed(taskSpeed.speed());
                     event.setTotalOffsetLength(task.getInfo().getTotalOffset());
+                    event.setDeviceCode(mDeviceCode);
+                    event.setCurrentItemCaseID(currentItemCaseID);
                     EventBus.getDefault().postSticky(event);
 
                     /**
@@ -329,6 +267,8 @@ public class DownVideoService extends AbsWorkService {
                     long totalLength = task.getInfo().getTotalLength();
                     event.setTotalLength(totalLength);
                     event.setSpeed(taskSpeed.speed());
+                    event.setDeviceCode(mDeviceCode);
+                    event.setCurrentItemCaseID(currentItemCaseID);
                     event.setTotalOffsetLength(task.getInfo().getTotalOffset());
                     EventBus.getDefault().postSticky(event);
                     /**
@@ -361,10 +301,12 @@ public class DownVideoService extends AbsWorkService {
                     long totalLength = task.getInfo().getTotalLength();
                     event.setTotalLength(totalLength);
                     event.setDownStatueDes("下载错误");
+                    event.setDeviceCode(mDeviceCode);
+                    event.setCurrentItemCaseID(currentItemCaseID);
                     EventBus.getDefault().postSticky(event);
 
 
-                }else if (cause.name().equals("SAME_TASK_BUSY")){
+                } else if (cause.name().equals("SAME_TASK_BUSY")) {
                     //正在下载不能发消息 不能就删除了记录
                 }
             }
@@ -406,10 +348,10 @@ public class DownVideoService extends AbsWorkService {
             }
         });
 
-        LogUtils.e("DownloadListener===下载任务的path=="+DataDTOBean.getAllUrl());
+        LogUtils.e("DownloadListener===下载任务的path==" + DataDTOBean.getAllUrl());
         ///storage/emulated/0/MyDownVideos/null_null
-        LogUtils.e("DownloadListener下载任务的本地文件路径=="+DataDTOBean.getLocalFolderName());
-        LogUtils.e("DownloadListener下载任务的path=="+DataDTOBean.getFileName());
+        LogUtils.e("DownloadListener下载任务的本地文件路径==" + DataDTOBean.getLocalFolderName());
+        LogUtils.e("DownloadListener下载任务的path==" + DataDTOBean.getFileName());
         //同一个任务在运行的时候,会显示taskEnd回调===cause.name()==SAME_TASK_BUSY
         DownloadTask task = new DownloadTask.Builder(DataDTOBean.getAllUrl(), DataDTOBean.getLocalFolderName(), DataDTOBean.getFileName())
                 .setConnectionCount(1)
@@ -429,18 +371,81 @@ public class DownVideoService extends AbsWorkService {
     }
 
 
-    public static DownloadContext getQueueController() {
-        if (null != mDownContext) {
-            return mDownContext;
+    /**
+     * eventbus 下载任务==结束,添加数据库刷新相册,避免选择界面或者下载界面 关闭了,不能及时添加到数据库导致下载成功了下次进来显示未下载的bug
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    public void DownEndEvent(DownEndEvent event) {
+        LogUtils.e("DownloadListener==服务==监听==下载任务==结束=== " + event.getTag());
+        String tag = event.getTag();
+        String mDeviceCode = event.getDeviceCode();
+        String currentItemCaseID = event.getCurrentItemCaseID();
+        List<TaskDBBean> mDBDownList = TaskDBBeanUtils.getQueryBeanBySingleCode(getApplicationContext(), mDeviceCode + "_" + currentItemCaseID + "-" + tag);
+        //下载接收,不管失败还是错误,都需要删除下载队列任务
+        if (mDBDownList.size() != 0) {
+            TaskDBBean taskDBBean = mDBDownList.get(0);
+            //删除具体某天数据
+            TaskDBBeanUtils.delete(getApplicationContext(), taskDBBean);
         }
-        return null;
+        //存入数据库
+        addDataInGreenDao(event, mDeviceCode, currentItemCaseID);
+
+        //刷新相册
+        // /storage/emulated/0/MyDownVideos/0000000000000000546017FE6BC28949_1195/720220424151314404.mp4
+        //localFolderName==/storage/emulated/0/MyDownVideos/0000000000000000546017FE6BC28949_1195
+        //event.getRefreshLocalFileName()  ==720220424151314404.mp4
+        String  localFolderName = Environment.getExternalStorageDirectory() + "/MyDownVideos/" + mDeviceCode + "_" + currentItemCaseID;
+        MediaScannerConnection.scanFile(getApplicationContext(), new String[]{localFolderName + "/" + event.getRefreshLocalFileName()}, null,
+                new MediaScannerConnection.OnScanCompletedListener() {
+                    @Override
+                    public void onScanCompleted(String path, Uri uri) {
+                        //刷新成功的回调方法
+                        LogUtils.e("DownSelectedVideoActivity02======下载任务==结束==相册刷新成功==" + tag);
+
+                    }
+                });
+
     }
 
-    public static DownloadListener4WithSpeed getQueueListener() {
-        if (null != listener) {
-            return listener;
+    private void addDataInGreenDao(DownEndEvent event, String mDeviceCode, String currentItemCaseID) {
+        //1,判断是否下载过
+        List<DownVideoMessage> mList = DownVideoMsgDBUtils.getQueryBeanByThree(mContext,
+                mDeviceCode, currentItemCaseID, event.getTag());
+        //下载成功
+        if (event.getStatue().equals(Constants.STATUE_COMPLETED)) {
+            //数据库存在
+            if (mList.size() > 0) {
+                LogUtils.e("DownStatueActivity====下载任务==结束====数据库存在这条数据==存在了===");
+                DownVideoMessage dbBean = mList.get(0);
+                String localUrl = event.getLocalUrl();
+                dbBean.setId(dbBean.getId());
+                dbBean.setDeviceCode(mDeviceCode);
+                dbBean.setSaveCaseID(currentItemCaseID);
+                dbBean.setIsDown(true);
+                dbBean.setMaxProcess(event.getTotalLength());
+                dbBean.setTag(event.getTag());
+                dbBean.setUrl(localUrl);
+                DownVideoMsgDBUtils.insertOrReplaceInTx(mContext, dbBean);
+
+            } else {
+                DownVideoMessage downVideoMessage = new DownVideoMessage();
+                String localUrl = event.getLocalUrl();
+                downVideoMessage.setDeviceCode(mDeviceCode);
+                downVideoMessage.setSaveCaseID(currentItemCaseID);
+                downVideoMessage.setIsDown(true);
+                downVideoMessage.setMaxProcess(event.getTotalLength());
+                downVideoMessage.setTag(event.getTag());
+                downVideoMessage.setUrl(localUrl);
+                DownVideoMsgDBUtils.insertOrReplaceInTx(mContext, downVideoMessage);
+            }
+
+        } else if (event.getStatue().equals(Constants.STATUE_ERROR)) {//下载失败
+            //数据库存在
+            if (mList.size() > 0) {
+                DownVideoMessage dbBean = mList.get(0);
+                DownVideoMsgDBUtils.delete(mContext, dbBean);
+            }
         }
-        return null;
     }
 
     @Override

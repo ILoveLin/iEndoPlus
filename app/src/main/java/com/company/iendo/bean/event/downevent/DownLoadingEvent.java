@@ -6,7 +6,7 @@ package com.company.iendo.bean.event.downevent;
  * time：2022/4/22 10:35
  * desc：视频下载状态的实时更新的event
  */
-public class DownProcessStatueEvent {
+public class DownLoadingEvent {
 
     private String speed;  //下载速度  2M/m
     private String statue; //状态值:成功或者失败   COMPLETED:成功, ERROR:失败,  START:开始,  DOWNING:下载中    英文

@@ -1,6 +1,9 @@
 package com.company.iendo.mineui.activity.casemanage.dowvideo;
 
 import android.content.Intent;
+import android.media.MediaScannerConnection;
+import android.net.Uri;
+import android.os.Environment;
 import android.view.View;
 import android.widget.TextView;
 
@@ -12,7 +15,7 @@ import com.company.iendo.action.StatusAction;
 import com.company.iendo.app.AppActivity;
 import com.company.iendo.bean.DetailDownVideoBean;
 import com.company.iendo.bean.event.downevent.DownEndEvent;
-import com.company.iendo.bean.event.downevent.DownProcessStatueEvent;
+import com.company.iendo.bean.event.downevent.DownLoadingEvent;
 import com.company.iendo.green.db.DownVideoMsgDBUtils;
 import com.company.iendo.green.db.TaskDBBean;
 import com.company.iendo.green.db.TaskDBBeanUtils;
@@ -48,7 +51,7 @@ public final class DownVideoListActivity extends AppActivity implements StatusAc
     ;
     private StatusLayout mStatusLayout;
     private RecyclerView mRecyclerView;
-    private DownStatueAdapter mAdapter;
+    private DownList01Adapter mAdapter;
     private String commonFolderName;
     private TextView tv_click;
     private String currentItemCaseID;
@@ -57,7 +60,7 @@ public final class DownVideoListActivity extends AppActivity implements StatusAc
     private RecyclerView mDBRecyclerView;
     private List<DownVideoMessage> mDBDataLest;
     private MMKV mmkv;
-    private DownStatueDBDataAdapter mDBAdapter;
+    private DownList02DBDataAdapter mDBAdapter;
     private DownloadContext mQueueController;
     private DownloadListener4WithSpeed mQueueListener;
     private ArrayList<DetailDownVideoBean.DataDTO> currentDownList;
@@ -143,7 +146,7 @@ public final class DownVideoListActivity extends AppActivity implements StatusAc
     }
 
     private void initDBRecycleViewData() {
-        mDBAdapter = new DownStatueDBDataAdapter(DownVideoListActivity.this, (ArrayList<DownVideoMessage>) mDBDataLest);
+        mDBAdapter = new DownList02DBDataAdapter(DownVideoListActivity.this, (ArrayList<DownVideoMessage>) mDBDataLest);
         mDBAdapter.setOnItemClickListener(this);
         mDBAdapter.setOnItemClickListener(new BaseAdapter.OnItemClickListener() {
             @Override
@@ -164,7 +167,7 @@ public final class DownVideoListActivity extends AppActivity implements StatusAc
 
     @Override
     protected void initData() {
-        mAdapter = new DownStatueAdapter(DownVideoListActivity.this, mDataLest);
+        mAdapter = new DownList01Adapter(DownVideoListActivity.this, mDataLest);
         mAdapter.setOnItemClickListener(this);
         mAdapter.setOnChildClickListener(R.id.iv_down_statue, this);
         mRecyclerView.setAdapter(mAdapter);
@@ -183,80 +186,40 @@ public final class DownVideoListActivity extends AppActivity implements StatusAc
     public void DownEndEvent(DownEndEvent event) {
         LogUtils.e("DownStatueActivity====下载任务==结束=== " + event.getTag());
         String tag = event.getTag();
-//        if (null != mDataLest && mDataLest.size() != 0) {
-//            //更新列表
-//            for (int i = 0; i < mDataLest.size(); i++) {
-//                DetailDownVideoBean.DataDTO mItemBean = mDataLest.get(i);
-//                String fileName = mItemBean.getFileName();
-//                //同一个数据,更新
-//                if (tag.equals(fileName)) {
-//                    DetailDownVideoBean.DataDTO bean = new DetailDownVideoBean.DataDTO();
-//                    bean.setProcessMax(event.getTotalLength());
-//                    bean.setFileName(event.getTag());
-//                    bean.setDownStatue(event.getStatue());
-//                    bean.setDownStatueDes(event.getDownStatueDes());
-//                    bean.setSpeed(event.getSpeed());
-//                    bean.setProcessOffset(event.getTotalOffsetLength());
-//                    bean.setAllUrl(event.getLocalUrl());
-//                    mAdapter.setItem(i, bean);
-//                    MediaScannerConnection.scanFile(getApplicationContext(), new String[]{commonFolderName + "/" + event.getRefreshLocalFileName()}, null,
-//                            new MediaScannerConnection.OnScanCompletedListener() {
-//                                @Override
-//                                public void onScanCompleted(String path, Uri uri) {
-//                                    //刷新成功的回调方法
-//                                    LogUtils.e("OkHttpUtils======下载任务==结束==相册刷新成功==" + tag);
-//
-//                                }
-//                            });
-//                    addDataInGreenDao(i, event);
-//                }
-//            }
-//            //删除下载成功的列表
-//            for (int i = 0; i < mDataLest.size(); i++) {
-//                DetailDownVideoBean.DataDTO mItemBean = mDataLest.get(i);
-//                String fileName = mItemBean.getFileName();
-//                //同一个数据,更新
-//                if (tag.equals(fileName)) {
-//                    DetailDownVideoBean.DataDTO bean = new DetailDownVideoBean.DataDTO();
-//                    bean.setProcessMax(event.getTotalLength());
-//                    bean.setFileName(event.getTag());
-//                    bean.setDownStatue(event.getStatue());
-//                    bean.setDownStatueDes(event.getDownStatueDes());
-//                    bean.setSpeed(event.getSpeed());
-//                    bean.setProcessOffset(event.getTotalOffsetLength());
-//                    bean.setAllUrl(event.getLocalUrl());
-//                    mAdapter.removeItem(bean);
-//                }
-//            }
-//
-//        }
-
+        String mDeviceCode = event.getDeviceCode();
+        String currentItemCaseID = event.getCurrentItemCaseID();
+        //删除下载队列任务
         List<TaskDBBean> mDBDownList = TaskDBBeanUtils.getQueryBeanBySingleCode(getApplicationContext(), mDeviceCode + "_" + currentItemCaseID + "-" + tag);
         if (mDBDownList.size() != 0) {
-
             TaskDBBean taskDBBean = mDBDownList.get(0);
             //删除具体某天数据
             TaskDBBeanUtils.delete(getApplicationContext(), taskDBBean);
         }
 
+        String localFolderName = Environment.getExternalStorageDirectory() + "/MyDownVideos/" + mDeviceCode + "_" + currentItemCaseID;
+
         getCurrentDownListToSetAdapter();
         addDataInGreenDao(event);
+        MediaScannerConnection.scanFile(getApplicationContext(), new String[]{localFolderName + "/" + event.getRefreshLocalFileName()}, null,
+                new MediaScannerConnection.OnScanCompletedListener() {
+                    @Override
+                    public void onScanCompleted(String path, Uri uri) {
+                        //刷新成功的回调方法
+                        LogUtils.e("DownSelectedVideoActivity02======下载任务==结束==相册刷新成功==" + tag);
 
+                    }
+                });
         mDBDataLest = DownVideoMsgDBUtils.getQueryBeanByTow(DownVideoListActivity.this, mDeviceCode, currentItemCaseID);
-        LogUtils.e("DownStatueActivity====下载任务==结束==mDBDataLest= " + mDBDataLest.size());
-
         mDBAdapter.setData(mDBDataLest);
 
     }
 
     private void addDataInGreenDao(DownEndEvent event) {
-
-
+        //1,判断是否下载过
+        List<DownVideoMessage> mList = DownVideoMsgDBUtils.getQueryBeanByThree(DownVideoListActivity.this,
+                mDeviceCode, currentItemCaseID, event.getTag());
         //下载成功
         if (event.getStatue().equals(Constants.STATUE_COMPLETED)) {
-            //1,判断是否下载过
-            List<DownVideoMessage> mList = DownVideoMsgDBUtils.getQueryBeanByThree(DownVideoListActivity.this,
-                    mDeviceCode, currentItemCaseID, event.getTag());
             //数据库存在
             if (mList.size() > 0) {
                 LogUtils.e("DownStatueActivity====下载任务==结束====数据库存在这条数据==存在了===");
@@ -270,14 +233,8 @@ public final class DownVideoListActivity extends AppActivity implements StatusAc
                 dbBean.setTag(event.getTag());
                 dbBean.setUrl(localUrl);
                 DownVideoMsgDBUtils.insertOrReplaceInTx(DownVideoListActivity.this, dbBean);
-                List<DownVideoMessage> queryBeanByTag = DownVideoMsgDBUtils.getQueryBeanByTag(DownVideoListActivity.this, event.getTag());
-                DownVideoMessage downVideoMessage = queryBeanByTag.get(0);
-                LogUtils.e("DownStatueActivity====下载任务==结束=数据库数据====数据库====存在=更新===size==" + queryBeanByTag.size());
-                LogUtils.e("DownStatueActivity====下载任务==结束=数据库数据====数据库====存在=更新===downVideoMessage==" + downVideoMessage.toString());
 
             } else {
-                LogUtils.e("DownStatueActivity====下载任务==结束=数据库数据====数据库没有下载过====不存在=====");
-
                 DownVideoMessage downVideoMessage = new DownVideoMessage();
                 String localUrl = event.getLocalUrl();
                 downVideoMessage.setDeviceCode(mDeviceCode);
@@ -287,26 +244,13 @@ public final class DownVideoListActivity extends AppActivity implements StatusAc
                 downVideoMessage.setTag(event.getTag());
                 downVideoMessage.setUrl(localUrl);
                 DownVideoMsgDBUtils.insertOrReplaceInTx(DownVideoListActivity.this, downVideoMessage);
-
-
-                List<DownVideoMessage> queryBeanByTag = DownVideoMsgDBUtils.getQueryBeanByTag(DownVideoListActivity.this, event.getTag());
-                DownVideoMessage downVideoMessage11 = queryBeanByTag.get(0);
-                LogUtils.e("DownStatueActivity====下载任务==结束=数据库数据====数据库====不存在===size==" + queryBeanByTag.size());
-                LogUtils.e("DownStatueActivity====下载任务==结束=数据库数据====数据库====不存在===downVideoMessage11==" + downVideoMessage11.toString());
             }
 
         } else if (event.getStatue().equals(Constants.STATUE_ERROR)) {//下载失败
-            //1,判断是否下载过
-            List<DownVideoMessage> mList = DownVideoMsgDBUtils.getQueryBeanByThree(DownVideoListActivity.this,
-                    mDeviceCode, currentItemCaseID, event.getTag());
-            LogUtils.e("DownStatueActivity====下载任务==结束=数据库数据====下载失败====下载失败===size==" + mList.size());
-
             //数据库存在
             if (mList.size() > 0) {
-                LogUtils.e("DownStatueActivity====下载任务==结束=数据库数据====下载失败====下载失败===size==" + mList.size());
-
                 DownVideoMessage dbBean = mList.get(0);
-                DownVideoMsgDBUtils.delete(DownVideoListActivity.this,dbBean);
+                DownVideoMsgDBUtils.delete(DownVideoListActivity.this, dbBean);
             }
         }
     }
@@ -316,7 +260,7 @@ public final class DownVideoListActivity extends AppActivity implements StatusAc
      * eventbus 下载任务==下载中..
      */
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
-    public void DownProcessStatueEvent(DownProcessStatueEvent event) {
+    public void DownProcessStatueEvent(DownLoadingEvent event) {
         LogUtils.e("DownStatueActivity====下载任务==下载中...==== " + event.getTag());
         String tag = event.getTag();
         if (null != mDataLest && mDataLest.size() != 0) {

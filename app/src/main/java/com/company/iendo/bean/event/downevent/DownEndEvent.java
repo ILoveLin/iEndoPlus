@@ -22,6 +22,24 @@ public class DownEndEvent {
 
     private Long TotalOffsetLength; //在那个下载偏移量
     private String speed; //下载速度
+    private String deviceCode; //  当前设备code
+    private String currentItemCaseID; //当前病例id
+
+    public String getDeviceCode() {
+        return deviceCode;
+    }
+
+    public void setDeviceCode(String deviceCode) {
+        this.deviceCode = deviceCode;
+    }
+
+    public String getCurrentItemCaseID() {
+        return currentItemCaseID;
+    }
+
+    public void setCurrentItemCaseID(String currentItemCaseID) {
+        this.currentItemCaseID = currentItemCaseID;
+    }
 
     public String getSpeed() {
         return speed;

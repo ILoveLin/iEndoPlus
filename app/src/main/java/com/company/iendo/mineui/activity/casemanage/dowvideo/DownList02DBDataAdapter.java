@@ -23,10 +23,10 @@ import java.util.ArrayList;
  * time：2021/11/3 15:40
  * desc：视频列表进度adapter
  */
-public class DownStatueDBDataAdapter extends AppAdapter<DownVideoMessage> {
+public class DownList02DBDataAdapter extends AppAdapter<DownVideoMessage> {
     private ArrayList<DownVideoMessage> mDataLest;
 
-    public DownStatueDBDataAdapter(Context context, ArrayList<DownVideoMessage> mDataLest) {
+    public DownList02DBDataAdapter(Context context, ArrayList<DownVideoMessage> mDataLest) {
         super(context);
         this.mDataLest = mDataLest;
 
@@ -34,8 +34,8 @@ public class DownStatueDBDataAdapter extends AppAdapter<DownVideoMessage> {
 
     @NonNull
     @Override
-    public DownStatueDBDataAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new DownStatueDBDataAdapter.ViewHolder();
+    public DownList02DBDataAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        return new DownList02DBDataAdapter.ViewHolder();
     }
 
 

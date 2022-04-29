@@ -21,10 +21,10 @@ import java.util.ArrayList;
  * time：2021/11/3 15:40
  * desc：视频列表
  */
-public class DownVideoAdapter extends AppAdapter<DetailDownVideoBean.DataDTO> {
+public class DownVideoSelectedAdapter extends AppAdapter<DetailDownVideoBean.DataDTO> {
 
 
-    public DownVideoAdapter(Context context) {
+    public DownVideoSelectedAdapter(Context context) {
         super(context);
 
 
@@ -49,8 +49,8 @@ public class DownVideoAdapter extends AppAdapter<DetailDownVideoBean.DataDTO> {
 
     @NonNull
     @Override
-    public DownVideoAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new DownVideoAdapter.ViewHolder();
+    public DownVideoSelectedAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        return new DownVideoSelectedAdapter.ViewHolder();
     }
 
     private final class ViewHolder extends AppAdapter<?>.ViewHolder {
