@@ -43,6 +43,7 @@ public class FileUtil {
         return availMemStr;
 
     }
+
     /**
      * 转换文件大小
      */
@@ -96,7 +97,7 @@ public class FileUtil {
         return fileSizeLong;
     }
 
-    static final int ERROR = -1;
+
 
     /**
      * 外部存储是否可用
@@ -145,7 +146,7 @@ public class FileUtil {
             StatFs stat = new StatFs(path.getPath());
             long blockSize = stat.getBlockSize();
             long availableBlocks = stat.getAvailableBlocks();
-            return formateFileSize(context,availableBlocks * blockSize);
+            return formateFileSize(context, availableBlocks * blockSize);
         } else {
             return "ERROR";
         }

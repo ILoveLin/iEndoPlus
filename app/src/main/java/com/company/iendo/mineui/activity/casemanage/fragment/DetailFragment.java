@@ -46,6 +46,7 @@ import com.company.iendo.service.HandService;
 import com.company.iendo.ui.dialog.MenuDialog;
 import com.company.iendo.ui.dialog.MessageDialog;
 import com.company.iendo.utils.CalculateUtils;
+import com.company.iendo.utils.FileUtil;
 import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.SharePreferenceUtil;
 import com.company.iendo.utils.SocketUtils;
@@ -1289,7 +1290,43 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 
     }
 
-    //删除用户请求
+    /**
+     * 病例被删除,删除当前下载过的记录
+     */
+    private void deleteCurrentDownMsg() {
+        // /storage/emulated/0/MyDownVideos/0000000000000000546017FE6BC28949_1195/720220424151314404.mp4
+        //查询当前设备码下,当前病例详情ID(mDataBean.getID()),之下的病例,有就是下载过,没有就是没下载过,数字长度0或者1
+        List<CaseDBBean> myList = CaseDBUtils.getQueryBeanByTow02(getApplication(), mDeviceCode, mDataBean.getID() + "");
+        if (myList.size() != 0) {
+            //删除数据库中的这条病例
+            CaseDBUtils.delete(getAttachActivity(), myList.get(0));
+        }
+        /**
+         * 再删除本地图片
+         * 本地文件夹命名规则:文件夹（设备ID_病例ID）
+         */
+        //创建本地的/MyDownImages/mID文件夹  再把图片下载到这个文件夹下  文件夹（设备ID-病例ID）
+        String dirNameImages = Environment.getExternalStorageDirectory() + "/MyDownImages/" + mDeviceCode + "_" + currentItemCaseID;
+        String dirNameVideos = Environment.getExternalStorageDirectory() + "/MyDownVideos/" + mDeviceCode + "_" + currentItemCaseID;
+        LogUtils.e("===========dirname========="+dirNameImages);
+        //删除本地图片文件夹以及图片
+        File mImagesFile = new File(dirNameImages);
+        if (mImagesFile.exists()) {
+           FileUtil.deleteSDFile(dirNameImages,true);
+        }
+        //删除本地视频文件夹以及视频
+        File mVideoFile = new File(dirNameImages);
+        if (mVideoFile.exists()) {
+            FileUtil.deleteSDFile(dirNameVideos,true);
+        }
+
+    }
+    /**
+     * 删除用户请求
+     * 成功回调之后,需要删除,数据库表中病例表,和已缓存的图片和视频(删除-MyDownImages和MyDownVideos两个文件夹下的code_caseID)
+     * /storage/emulated/0/MyDownImages/0000000000000000546017FE6BC28949_1195/ 视频文件夹
+     * /storage/emulated/0/MyDownVideos/0000000000000000546017FE6BC28949_1195/ 图片文件夹
+     */
     private void sendDeleteRequest() {
         mLoginUserName = mMMKVInstace.decodeString(Constants.KEY_CurrentLoginUserName);
         if (Details_Reault_Ok) {
@@ -1319,6 +1356,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                                 if (0 == mBean.getCode()) {  //成功
                                     showComplete();
                                     sendSocketPointMessage(Constants.UDP_14);
+                                    deleteCurrentDownMsg();
                                     mActivity.finish();
 
                                 } else {
@@ -1338,6 +1376,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         }
 
     }
+
 
     private void responseListener() {
 
