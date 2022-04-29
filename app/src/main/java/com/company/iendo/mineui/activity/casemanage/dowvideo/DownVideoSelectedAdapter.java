@@ -30,22 +30,6 @@ public class DownVideoSelectedAdapter extends AppAdapter<DetailDownVideoBean.Dat
 
     }
 
-    /**
-     * 获取当前 数据bean在当前recycleview的position
-     *
-     * @param tag
-     * @return
-     */
-    public int getCurrentRefreshBeanPosition(ArrayList<DetailDownVideoBean.DataDTO> mDataLest, String tag) {
-        for (int i = 0; i < mDataLest.size(); i++) {
-            DetailDownVideoBean.DataDTO dataDTO = mDataLest.get(i);
-            if (tag.equals(dataDTO.getFileName())) {
-                return i;
-            }
-        }
-        return 100;
-
-    }
 
     @NonNull
     @Override

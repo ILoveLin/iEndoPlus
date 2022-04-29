@@ -14,12 +14,14 @@ import com.company.iendo.R;
 import com.company.iendo.action.StatusAction;
 import com.company.iendo.app.AppActivity;
 import com.company.iendo.bean.DetailDownVideoBean;
+import com.company.iendo.bean.OfflineVideoBean;
 import com.company.iendo.bean.event.downevent.DownEndEvent;
 import com.company.iendo.bean.event.downevent.DownLoadingEvent;
 import com.company.iendo.green.db.DownVideoMsgDBUtils;
 import com.company.iendo.green.db.TaskDBBean;
 import com.company.iendo.green.db.TaskDBBeanUtils;
 import com.company.iendo.green.db.downcase.dwonmsg.DownVideoMessage;
+import com.company.iendo.mineui.activity.vlc.VideoActivity;
 import com.company.iendo.other.Constants;
 import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.SharePreferenceUtil;
@@ -152,7 +154,19 @@ public final class DownVideoListActivity extends AppActivity implements StatusAc
             @Override
             public void onItemClick(RecyclerView recyclerView, View itemView, int position) {
 
-                LogUtils.e("DownStatueActivity====onItemClick==position...=mDBAdapter=== " + position);
+                DownVideoMessage item = mDBAdapter.getItem(position);
+                Intent intent = new Intent(getActivity(), VideoActivity.class);
+                //http://192.168.31.249:7001/4/2022-04-19-17-54-07.mp4
+                LogUtils.e("当前播放URL" + item.toString());
+                LogUtils.e("DownStatueActivity====onItemClick=mDBAdapter===" + item.getUrl());
+                //LogUtils.e("当前播放URL" + mUrl);
+                //intent.putExtra("mUrl","http://9890.vod.myqcloud.com/9890_4e292f9a3dd011e6b4078980237cc3d3.f20.mp4");
+                intent.putExtra("mTitle", item.getTag());
+                intent.putExtra("mUrl", item.getUrl());
+                intent.putExtra("loginType", "offline");
+                startActivity(intent);
+                LogUtils.e("DownStatueActivity====onItemClick=mDBAdapter=position...==== " + position);
+                LogUtils.e("DownStatueActivity====onItemClick=mDBAdapter=getTag...==== " + item.getTag());
             }
         });
         mDBRecyclerView.setAdapter(mDBAdapter);
@@ -288,13 +302,9 @@ public final class DownVideoListActivity extends AppActivity implements StatusAc
         }
     }
 
+    //下载进度的list
     @Override
     public void onItemClick(RecyclerView recyclerView, View itemView, int position) {
-
-        DetailDownVideoBean.DataDTO item = mAdapter.getItem(position);
-
-        LogUtils.e("DownStatueActivity====onItemClick==position...==== " + position);
-        LogUtils.e("DownStatueActivity====onItemClick==getFileName...==== " + item.getFileName());
 
 
     }

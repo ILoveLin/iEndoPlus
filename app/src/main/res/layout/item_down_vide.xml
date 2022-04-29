@@ -16,7 +16,7 @@
             android:layout_height="@dimen/dp_40"
             android:layout_centerInParent="true"
             android:gravity="center"
-            android:paddingLeft="@dimen/dp_5" />
+            android:paddingLeft="@dimen/dp_20" />
 
     </LinearLayout>
 
