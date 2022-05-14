@@ -286,7 +286,8 @@ dependencies {
     implementation 'com.liulishuo.okdownload:okdownload:1.0.7'
 //// provide sqlite to store breakpoints
     implementation 'com.liulishuo.okdownload:sqlite:1.0.7'
-
+    //嵌套滚动容器
+    implementation 'com.github.donkingliang:ConsecutiveScroller:4.6.1'
 
     // 多语种：https://github.com/getActivity/MultiLanguages
     // 悬浮窗：https://github.com/getActivity/XToast

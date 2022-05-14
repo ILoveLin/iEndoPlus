@@ -48,7 +48,11 @@ public class FileUtil {
      * 转换文件大小
      */
     public static String formatFileSizeMethod(long fileS) {
+        //1876570496.00B
         DecimalFormat df = new DecimalFormat("#.00");
+        LogUtils.e("DownStatueActivity下载中Adapter==大小==fileS== " +fileS);
+        LogUtils.e("DownStatueActivity下载中Adapter==大小==df== " +df);
+
         String fileSizeString = "";
         String wrongSize = "0B";
         if (fileS == 0) {
@@ -56,12 +60,20 @@ public class FileUtil {
         }
         if (fileS < 1024) {
             fileSizeString = df.format((double) fileS) + "B";
+            LogUtils.e("DownStatueActivity下载中Adapter==大小==B== " );
+
         } else if (fileS < 1048576) {
             fileSizeString = df.format((double) fileS / 1024) + "KB";
+            LogUtils.e("DownStatueActivity下载中Adapter==大小==KB== " );
+
         } else if (fileS < 1073741824) {
             fileSizeString = df.format((double) fileS / 1048576) + "MB";
+            LogUtils.e("DownStatueActivity下载中Adapter==大小==MB== " );
+
         } else {
             fileSizeString = df.format((double) fileS / 1073741824) + "GB";
+            LogUtils.e("DownStatueActivity下载中Adapter==大小==GB== " );
+
         }
         return fileSizeString;
     }

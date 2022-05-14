@@ -27,6 +27,7 @@ import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.SharePreferenceUtil;
 import com.company.iendo.widget.MyItemDecoration;
 import com.company.iendo.widget.StatusLayout;
+import com.donkingliang.consecutivescroller.ConsecutiveScrollerLayout;
 import com.gyf.immersionbar.ImmersionBar;
 import com.hjq.bar.OnTitleBarListener;
 import com.hjq.bar.TitleBar;
@@ -40,7 +41,9 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * author : Android 轮子哥
@@ -66,6 +69,8 @@ public final class DownVideoListActivity extends AppActivity implements StatusAc
     private DownloadContext mQueueController;
     private DownloadListener4WithSpeed mQueueListener;
     private ArrayList<DetailDownVideoBean.DataDTO> currentDownList;
+    private ConsecutiveScrollerLayout mScrollerLayout;
+    private TextView mDowningView;
 
     @Override
     protected int getLayoutId() {
@@ -78,14 +83,36 @@ public final class DownVideoListActivity extends AppActivity implements StatusAc
         mmkv = MMKV.defaultMMKV();
         mBaseUrl = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_BaseUrl, "111");
         TitleBar mTitleBar = findViewById(R.id.titlebar);
+        mScrollerLayout = findViewById(R.id.scrollerLayout);
         //第一个列表是下载进度的列表
         mRecyclerView = findViewById(R.id.rv_video_statue_list);
+        mDowningView = findViewById(R.id.view_downing);
+
         mRecyclerView.setVisibility(View.VISIBLE);
+        mDowningView.setVisibility(View.VISIBLE);
+
         //第二个列表是当前设备当下下载过的视频
         mDBRecyclerView = findViewById(R.id.rv_video_db_list);
+//        mStatusLayout = findViewById(R.id.status_hint);
 
-        mStatusLayout = findViewById(R.id.status_hint);
         TextView tv_click = findViewById(R.id.tv_click);
+
+        int i = tv_click.getHeight();
+        // 监听滑动
+        mScrollerLayout.setOnVerticalScrollChangeListener(new ConsecutiveScrollerLayout.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(View v, int scrollY, int oldScrollY, int scrollState) {
+                if (scrollY > i){
+                    mScrollerLayout.setStickyOffset(0); // 恢复吸顶偏移量
+                } else {
+                    // 通过设置吸顶便宜量，实现flSink滑动隐藏时的向上移动效果
+                    mScrollerLayout.setStickyOffset(-scrollY / 2);
+                }
+            }
+        });
+
+
+
         tv_click.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -128,6 +155,7 @@ public final class DownVideoListActivity extends AppActivity implements StatusAc
         LogUtils.e("DownStatueActivity====下载任务==结束==conmmoncode= " + mDeviceCode + "_" + currentItemCaseID);
         List<TaskDBBean> mDBDownList = TaskDBBeanUtils.getQueryBeanByCommonCode(getApplicationContext(), mDeviceCode + "_" + currentItemCaseID);
         mDataLest.clear();
+        mDowningView.setVisibility(View.VISIBLE);
         mRecyclerView.setVisibility(View.VISIBLE);
 
         if (mDBDownList.size() != 0) {
@@ -142,6 +170,7 @@ public final class DownVideoListActivity extends AppActivity implements StatusAc
         } else {
 //            mAdapter.setData(mDataLest);
             mRecyclerView.setVisibility(View.GONE);
+            mDowningView.setVisibility(View.GONE);
 
         }
 
@@ -171,12 +200,23 @@ public final class DownVideoListActivity extends AppActivity implements StatusAc
         });
         mDBRecyclerView.setAdapter(mDBAdapter);
         mDBRecyclerView.addItemDecoration(new MyItemDecoration(getActivity(), 1, R.drawable.shape_divideritem_decoration));
-        mDBDataLest = DownVideoMsgDBUtils.getQueryBeanByTow(DownVideoListActivity.this, mDeviceCode, currentItemCaseID);
+        mDBDataLest = DownVideoMsgDBUtils.getQueryBeanByCode(DownVideoListActivity.this, mDeviceCode);  //当前设备下的下载视频数目
+//        mDBDataLest = DownVideoMsgDBUtils.getQueryBeanByTow(DownVideoListActivity.this, mDeviceCode, currentItemCaseID);  //当前病例下的下载视频数目
+        removeDuplicate();
         mDBAdapter.setData(mDBDataLest);
 
         LogUtils.e("DownloadListener==queue==true==DDD==标题不为空====已下载列表==: " + mDBDataLest.size());
 
 
+    }
+
+    /**
+     * 多个病例下载可能会存入多条相同的数据,这里手动去重复
+     */
+    public  void removeDuplicate(){
+        HashSet hashSet = new HashSet(mDBDataLest);
+        mDBDataLest.clear();
+        mDBDataLest.addAll(hashSet);
     }
 
     @Override
@@ -223,7 +263,9 @@ public final class DownVideoListActivity extends AppActivity implements StatusAc
 
                     }
                 });
-        mDBDataLest = DownVideoMsgDBUtils.getQueryBeanByTow(DownVideoListActivity.this, mDeviceCode, currentItemCaseID);
+//        mDBDataLest = DownVideoMsgDBUtils.getQueryBeanByTow(DownVideoListActivity.this, mDeviceCode, currentItemCaseID);
+        mDBDataLest = DownVideoMsgDBUtils.getQueryBeanByCode(DownVideoListActivity.this, mDeviceCode);
+        removeDuplicate();
         mDBAdapter.setData(mDBDataLest);
 
     }

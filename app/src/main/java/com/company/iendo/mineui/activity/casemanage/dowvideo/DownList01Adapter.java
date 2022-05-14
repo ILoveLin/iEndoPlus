@@ -101,6 +101,7 @@ public class DownList01Adapter extends AppAdapter<DetailDownVideoBean.DataDTO> {
                     case Constants.STATUE_DOWNING://下载中
                         String formatOffsetLength = FileUtil.formatFileSizeMethod((int) item.getProcessOffset());
                         String formatOffMaxLength = FileUtil.formatFileSizeMethod((int) item.getProcessMax());
+                        //1876570496.00B
                         LogUtils.e("DownStatueActivity下载中Adapter==formatOffMaxLength==formatOffMaxLength== " +formatOffMaxLength);
                         LogUtils.e("DownStatueActivity下载中Adapter==formatOffMaxLength==formatOffMaxLength== " +formatOffMaxLength);
 

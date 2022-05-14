@@ -147,9 +147,7 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
                 }
                 break;
             case R.id.ib_right:
-
                 startActivity(SearchSelectedActivity.class);
-//                startActivity(SearchActivity.class);
                 break;
         }
     }

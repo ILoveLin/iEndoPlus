@@ -259,21 +259,16 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
             case Constants.UDP_FD://广播
                 //判断是否包含指定的key:设备码+设备类型
                 boolean flag = mReceiveBroadMap.containsKey(deviceOnlyCode + deviceType);
-
-
                 Iterator<Map.Entry<String, String>> entries = mReceiveBroadMap.entrySet().iterator();
                 while (entries.hasNext()) {
                     Map.Entry<String, String> entry = entries.next();
                     LogUtils.e("Key = " + entry.getKey() + ", Value = " + entry.getValue());
                 }
-
-
                 LogUtils.e("Socket回调==广播===flag===" + flag);
                 LogUtils.e("Socket回调==广播===getReceivePort===" + event.getReceivePort());
                 if (!flag) {
                     mReceiveBroadMap.put(deviceOnlyCode + deviceType, mRun2End4 + "==" + event.getIp());
                 }
-
 
                 break;
             case Constants.UDP_FC://授权接入
@@ -310,7 +305,6 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
         GridLayoutManager gridLayoutManager = new GridLayoutManager(DeviceSearchActivity.this, 2);
         mRecyclerView.setLayoutManager(gridLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
-
     }
 
     @SingleClick
@@ -342,6 +336,7 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
 
     @Override
     protected void initData() {
+
         mReceiveBroadMap.clear();
         mReceiveBroadCastList.clear();
         mReceivePointList.clear();

@@ -479,52 +479,6 @@ public class CalculateUtils {
     }
 
 
-    public void isUserAbleData() {
-
-
-    }
-
-//
-//
-//    public static byte[] getSendByteData(Context mContext, BroadCastDataBean bean, String Received_Type,
-//                                         String Received_ID, String CMD) {
-//
-////      BroadCastDataBean bean = new BroadCastDataBean();
-////      bean.setBroadcaster("szcme");                              //设备名字
-////      bean.setRamdom(CalculateUtils.getCurrentTimeString());
-////      广播发起随机时间戳:20220127104645
-//        String mSend_IDBy32 = MD5ChangeUtil.Md5_32(DeviceIdUtil.getDeviceId(mContext).toUpperCase());
-//        String mBean = mGson.toJson(bean);
-//        String mData = CalculateUtils.str2HexStr(mBean);                   //data  json字符串转16进制
-//        String mHead = "AAC5";                                             //帧头    ---2字节
-//        String mVer = "01";                                                //版本号  ---1字节
-//        String mLength = CalculateUtils.getLength(mData);                  //长度   ---2字节   40加data的长度 字符串的长度转成hex进制
-//        String mRandom = CalculateUtils.getRandomHexString(2);         // //随机数  ---1字节
-//        String mCMD_ID = "FF";                                              //命令ID   ---2字节-暂时规定,主动发起方为FF 接收方为随机值,PS--移动端目前交互写死值=FF
-//        String mSend_Type = "A1";                                           //发送方设备类型。--1字节-Android=A1  FF为所有设备
-//        String mSend_ID = mSend_IDBy32;                                     //发送方设备唯一标识。   --16字节
-//        String mReceived_Type = Received_Type;                              //接收方设备类型。   --FF是是所有设备
-//        String mReceived_ID = Received_ID;                                  //接收方设备唯一标识。   --16字节--目前暂时给32个0,模拟后台给的数据
-//        String mCMD = CMD;                                                  //UDP广播   --一个字节
-//        // 校验和，0xAA 依次与“Length、Random、CMD_ID、Send_Type、Send_ID、Received_Type、Received_ID、CMD、Data” 异或运算后的结果
-//        String CSString = "AA" + mLength + mRandom + mCMD_ID + mSend_Type + mSend_ID + mReceived_Type + mReceived_ID + mCMD + mData;
-//        String mCheck_Sum = CalculateUtils.get16HexXORData(CSString).toUpperCase();
-//
-//        sendCommandString = mHead + mVer + mLength + mRandom + mCMD_ID + mSend_Type + mSend_ID + mReceived_Type +
-//                mReceived_ID + mCMD + mData + mCheck_Sum + "DD";
-//        LogUtils.e("UDP==命令===mBeanString===" + mBean);
-//        LogUtils.e("UDP==命令===mBeanHex----===" + CalculateUtils.str2HexStr(mBean));
-//        LogUtils.e("UDP==命令===mRandom===" + mRandom);
-//        LogUtils.e("UDP==命令===异或的CSString===" + CSString);
-//        LogUtils.e("UDP==命令===异或的结果===" + mCheck_Sum);
-//        LogUtils.e("UDP==命令===最后发送的String===" + sendCommandString);
-//        byte[] bytes = CalculateUtils.hexString2Bytes(sendCommandString);
-//        //AAC5 01 0059 EE22 FF A1 f9432b11b93e8bb4ae34539b7472c20e FF 00000000000000000000000000000000
-//        //FD 7B2262726F6164636173746572223A22737A636D65222C2272616D646F6D223A223230323230313237313132373535227D
-//        // F8 DD
-//        return bytes;
-//    }
-
     /**
      * 获取接收data的数据--data
      *
@@ -689,7 +643,8 @@ public class CalculateUtils {
      * //10  to 16
      * int a = Integer.parseInt("A", 16);
      *
-     * @param para
+     * @param para     修改了校验和异或结果有些时候是一位数表示十六进制的错误 get16HexXORData()
+     *
      * @return 获取异或值  校验结果
      */
 //    校验和，0xAA 依次与“Length、Random、CMD_ID、Send_Type、Send_ID、Received_Type、Received_ID、CMD、Data” 异或运算后的结果
