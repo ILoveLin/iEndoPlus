@@ -212,11 +212,14 @@ public class ReceiveSocketService extends AbsWorkService {
                             LogUtils.e("ReceiveSocketService--数据监听服务--========回调==Thread监听的=port==本地监听的端口====" + settingReceivePort);
                             LogUtils.e("ReceiveSocketService--数据监听服务--========回调==Thread监听的=port==后台通讯的端口====" + mSettingDataPacket.getPort());
                             LogUtils.e("ReceiveSocketService--数据监听服务--========回调==Thread监听的====AppIP" + AppIP);
+                            MMKV mmkv = MMKV.defaultMMKV();
+                            int stringint = mmkv.decodeInt(Constants.KEY_RECEIVE_PORT_BY_SEARCH);
+                            LogUtils.e("ReceiveSocketService--数据监听服务--========回调=端口==当前需要的监听端口==" + stringint);
                             /**
                              * 此处做处理
                              * 实时获取当前本地设置的(搜索)监听端口和服务器端口是否一致,不一致关闭多余线程,优化性能
                              */
-                            if (settingReceivePort == mSettingDataPacket.getPort()) {
+                            if (stringint == mSettingDataPacket.getPort()) {
                                 LogUtils.e("ReceiveSocketService--数据监听服务--========回调==Thread监听的====相等" + mSettingDataPacket.getData());
                                 String rec = CalculateUtils.byteArrayToHexString(mSettingDataPacket.getData()).trim();
 
