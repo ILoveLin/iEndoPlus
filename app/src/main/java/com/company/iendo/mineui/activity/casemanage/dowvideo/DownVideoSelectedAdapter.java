@@ -66,19 +66,19 @@ public class DownVideoSelectedAdapter extends AppAdapter<DetailDownVideoBean.Dat
             //数据库存在
             if (item.isDowned()) {
                 mDownDes.setText("已下载");
-                mCheckBox.setVisibility(View.INVISIBLE);
+                mCheckBox.setVisibility(View.GONE);
 
             } else {
                 //downStatue; //状态值:成功或者失败   COMPLETED:成功, ERROR:失败,  START:开始,  DOWNING:下载中
                 if ("DOWNING".equals(item.getDownStatue())) {
                     mDownDes.setText("下载中");
-                    mCheckBox.setVisibility(View.INVISIBLE);
+                    mCheckBox.setVisibility(View.GONE);
                 } else if ("COMPLETED".equals(item.getDownStatue())) {
                     mDownDes.setText("已下载");
-                    mCheckBox.setVisibility(View.INVISIBLE);
+                    mCheckBox.setVisibility(View.GONE);
                 } else if ("START".equals(item.getDownStatue())) {
                     mDownDes.setText("等待中");
-                    mCheckBox.setVisibility(View.INVISIBLE);
+                    mCheckBox.setVisibility(View.GONE);
                 } else if ("ERROR".equals(item.getDownStatue())) {
                     mDownDes.setText("下载失败");
                     mCheckBox.setVisibility(View.VISIBLE);

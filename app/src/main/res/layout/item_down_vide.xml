@@ -20,25 +20,36 @@
 
     </LinearLayout>
 
-    <androidx.appcompat.widget.AppCompatCheckBox
-        android:id="@+id/checkbox_down"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:background="@null"
-        android:paddingRight="@dimen/dp_10"
-        app:buttonCompat="@drawable/checkbox_selector" />
+    <LinearLayout
 
-    <TextView
-        android:id="@+id/tv_isdown"
+        android:paddingRight="@dimen/dp_10"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/dp_40"
-        android:layout_marginLeft="@dimen/sp_20"
-        android:layout_marginRight="@dimen/dp_20"
-        android:layout_toLeftOf="@+id/checkbox_down"
-        android:gravity="center"
-        android:paddingLeft="@dimen/dp_5"
-        android:text="" />
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_isdown"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/dp_40"
+            android:layout_marginLeft="@dimen/dp_10"
+            android:layout_marginRight="@dimen/dp_10"
+            android:layout_toLeftOf="@+id/checkbox_down"
+            android:gravity="center"
+            android:paddingLeft="@dimen/dp_5"
+            android:text="" />
+
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:id="@+id/checkbox_down"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/dp_40"
+            android:background="@null"
+            app:buttonCompat="@drawable/checkbox_selector" />
+
+
+
+    </LinearLayout>
+
 
 </RelativeLayout>

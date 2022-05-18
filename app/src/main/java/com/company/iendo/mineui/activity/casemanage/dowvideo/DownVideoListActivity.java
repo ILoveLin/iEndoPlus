@@ -14,7 +14,7 @@ import com.company.iendo.R;
 import com.company.iendo.action.StatusAction;
 import com.company.iendo.app.AppActivity;
 import com.company.iendo.bean.DetailDownVideoBean;
-import com.company.iendo.bean.OfflineVideoBean;
+import com.company.iendo.bean.RefreshEvent;
 import com.company.iendo.bean.event.downevent.DownEndEvent;
 import com.company.iendo.bean.event.downevent.DownLoadingEvent;
 import com.company.iendo.green.db.DownVideoMsgDBUtils;
@@ -43,7 +43,6 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * author : Android 轮子哥
@@ -56,7 +55,7 @@ public final class DownVideoListActivity extends AppActivity implements StatusAc
     ;
     private StatusLayout mStatusLayout;
     private RecyclerView mRecyclerView;
-    private DownList01Adapter mAdapter;
+    private DownList01Adapter m01Adapter;
     private String commonFolderName;
     private TextView tv_click;
     private String currentItemCaseID;
@@ -86,7 +85,7 @@ public final class DownVideoListActivity extends AppActivity implements StatusAc
         mScrollerLayout = findViewById(R.id.scrollerLayout);
         //第一个列表是下载进度的列表
         mRecyclerView = findViewById(R.id.rv_video_statue_list);
-        mDowningView = findViewById(R.id.view_downing);
+        mDowningView = findViewById(R.id.view_downing);  //缓存中显示的textview
 
         mRecyclerView.setVisibility(View.VISIBLE);
         mDowningView.setVisibility(View.VISIBLE);
@@ -157,7 +156,7 @@ public final class DownVideoListActivity extends AppActivity implements StatusAc
         mDataLest.clear();
         mDowningView.setVisibility(View.VISIBLE);
         mRecyclerView.setVisibility(View.VISIBLE);
-
+        //数据库表有下载过视频的数据
         if (mDBDownList.size() != 0) {
             LogUtils.e("DownStatueActivity====下载任务==结束==mDBDownList.size()= " + mDBDownList.size());
             for (int i = 0; i < mDBDownList.size(); i++) {
@@ -166,7 +165,7 @@ public final class DownVideoListActivity extends AppActivity implements StatusAc
                 DetailDownVideoBean.DataDTO adapterBean = mGson.fromJson(taskString, DetailDownVideoBean.DataDTO.class);
                 mDataLest.add(adapterBean);
             }
-            mAdapter.setData(mDataLest);
+            m01Adapter.setData(mDataLest);
         } else {
 //            mAdapter.setData(mDataLest);
             mRecyclerView.setVisibility(View.GONE);
@@ -202,9 +201,10 @@ public final class DownVideoListActivity extends AppActivity implements StatusAc
         mDBRecyclerView.addItemDecoration(new MyItemDecoration(getActivity(), 1, R.drawable.shape_divideritem_decoration));
         mDBDataLest = DownVideoMsgDBUtils.getQueryBeanByCode(DownVideoListActivity.this, mDeviceCode);  //当前设备下的下载视频数目
 //        mDBDataLest = DownVideoMsgDBUtils.getQueryBeanByTow(DownVideoListActivity.this, mDeviceCode, currentItemCaseID);  //当前病例下的下载视频数目
+        //多个病例下载可能会存入多条相同的数据,这里手动去重复
         removeDuplicate();
+        //设置第二个列表的数据
         mDBAdapter.setData(mDBDataLest);
-
         LogUtils.e("DownloadListener==queue==true==DDD==标题不为空====已下载列表==: " + mDBDataLest.size());
 
 
@@ -221,10 +221,10 @@ public final class DownVideoListActivity extends AppActivity implements StatusAc
 
     @Override
     protected void initData() {
-        mAdapter = new DownList01Adapter(DownVideoListActivity.this, mDataLest);
-        mAdapter.setOnItemClickListener(this);
-        mAdapter.setOnChildClickListener(R.id.iv_down_statue, this);
-        mRecyclerView.setAdapter(mAdapter);
+        m01Adapter = new DownList01Adapter(DownVideoListActivity.this, mDataLest);
+        m01Adapter.setOnItemClickListener(this);
+        m01Adapter.setOnChildClickListener(R.id.iv_down_statue, this);
+        mRecyclerView.setAdapter(m01Adapter);
         mRecyclerView.addItemDecoration(new MyItemDecoration(getActivity(), 1, R.drawable.shape_divideritem_decoration));
         mDataLest.clear();
         getCurrentDownListToSetAdapter();
@@ -242,7 +242,7 @@ public final class DownVideoListActivity extends AppActivity implements StatusAc
         String tag = event.getTag();
         String mDeviceCode = event.getDeviceCode();
         String currentItemCaseID = event.getCurrentItemCaseID();
-        //删除下载队列任务
+        //删除正在下载队列任务
         List<TaskDBBean> mDBDownList = TaskDBBeanUtils.getQueryBeanBySingleCode(getApplicationContext(), mDeviceCode + "_" + currentItemCaseID + "-" + tag);
         if (mDBDownList.size() != 0) {
             TaskDBBean taskDBBean = mDBDownList.get(0);
@@ -250,10 +250,13 @@ public final class DownVideoListActivity extends AppActivity implements StatusAc
             TaskDBBeanUtils.delete(getApplicationContext(), taskDBBean);
         }
 
+        //文件本地地址
         String localFolderName = Environment.getExternalStorageDirectory() + "/MyDownVideos/" + mDeviceCode + "_" + currentItemCaseID;
-
+        ///获取当前正在下载的列表,并且设置adapter
         getCurrentDownListToSetAdapter();
+        //添加到数据库
         addDataInGreenDao(event);
+        //刷新相册
         MediaScannerConnection.scanFile(getApplicationContext(), new String[]{localFolderName + "/" + event.getRefreshLocalFileName()}, null,
                 new MediaScannerConnection.OnScanCompletedListener() {
                     @Override
@@ -265,8 +268,10 @@ public final class DownVideoListActivity extends AppActivity implements StatusAc
                 });
 //        mDBDataLest = DownVideoMsgDBUtils.getQueryBeanByTow(DownVideoListActivity.this, mDeviceCode, currentItemCaseID);
         mDBDataLest = DownVideoMsgDBUtils.getQueryBeanByCode(DownVideoListActivity.this, mDeviceCode);
+        //多个病例下载可能会存入多条相同的数据,这里手动去重复
         removeDuplicate();
         mDBAdapter.setData(mDBDataLest);
+
 
     }
 
@@ -336,7 +341,7 @@ public final class DownVideoListActivity extends AppActivity implements StatusAc
                     bean.setProcessOffset(event.getCurrentOffset());
                     bean.setProcessformatOffset(event.getFormatCurrentOffset());
                     bean.setAllUrl(event.getUrl());
-                    mAdapter.setItem(i, bean);
+                    m01Adapter.setItem(i, bean);
 
                 }
             }

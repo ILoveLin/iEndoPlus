@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.company.iendo.bean.DetailDownVideoBean;
+import com.company.iendo.bean.RefreshEvent;
 import com.company.iendo.bean.event.downevent.DownEndEvent;
 import com.company.iendo.bean.event.downevent.DownLoadingEvent;
 import com.company.iendo.bean.event.downevent.DownStartEvent;
@@ -115,7 +116,6 @@ public class DownVideoService extends AbsWorkService {
         DownloadListener4WithSpeed listener04 = new DownloadListener4WithSpeed() {
             @Override
             public void taskStart(@NonNull DownloadTask task) {
-
                 //队列只有一个的时候,只会发一次
                 DownStartEvent event = new DownStartEvent();
                 event.setTag((String) task.getTag());
@@ -333,7 +333,7 @@ public class DownVideoService extends AbsWorkService {
             public void queueEnd(@NonNull DownloadContext context) {
 
                 /**
-                 * 不管成功还是失败,都需要删除全部下载记录
+                 * 不管成功还是失败,都需要删除全部正在下载的视频条目记录
                  */
                 for (int i = 0; i < context.getTasks().length; i++) {
                     DownloadTask task = context.getTasks()[i];

@@ -45,6 +45,14 @@ import io.reactivex.disposables.Disposable;
  * 保活的Service通讯服务
  * <p>
  * 一直开启这监听线程,监听Socket
+ *
+ * 监听线程有两种模式
+ *
+ * 登入成功之后,监听线程的port 是授权接入成功之后当前设备返回的port
+ *
+ * 广播是默认的端口,或者自己配置的端口
+ *
+ *
  */
 
 public class ReceiveSocketService extends AbsWorkService {

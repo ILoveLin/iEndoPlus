@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 
+import com.company.iendo.bean.RefreshEvent;
 import com.company.iendo.bean.event.SocketRefreshEvent;
 import com.company.iendo.other.Constants;
 import com.company.iendo.utils.LogUtils;
@@ -136,6 +137,32 @@ public abstract class AppActivity extends BaseActivity
     public void SocketRefreshEvent(SocketRefreshEvent event) {
 
     }
+
+
+
+
+
+    //下载队列是否正在下载的标识
+    private boolean isQueueDownOver = true;
+
+    /**
+     * eventbus 刷新数据
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onRefreshEvent(RefreshEvent event) {
+        LogUtils.e("DownloadListener===下载任务的path=====eventbus===" + event.getStr());
+
+        isQueueDownOver = true;
+
+
+
+
+    }
+
+
+
+
+
 
     /**
      * 将获取到的int型ip转成string类型

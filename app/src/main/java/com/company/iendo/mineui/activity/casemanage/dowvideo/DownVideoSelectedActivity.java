@@ -12,8 +12,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.company.iendo.R;
 import com.company.iendo.action.StatusAction;
+import com.company.iendo.aop.SingleClick;
 import com.company.iendo.app.AppActivity;
 import com.company.iendo.bean.DetailDownVideoBean;
+import com.company.iendo.bean.RefreshEvent;
 import com.company.iendo.bean.event.downevent.DownEndEvent;
 import com.company.iendo.bean.event.downevent.DownLoadingEvent;
 import com.company.iendo.bean.event.downevent.DownStartEvent;
@@ -114,6 +116,7 @@ public final class DownVideoSelectedActivity extends AppActivity implements Stat
 
     }
 
+    @SingleClick
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -127,11 +130,13 @@ public final class DownVideoSelectedActivity extends AppActivity implements Stat
                 startActivity(intent);
                 break;
             case R.id.btn_start_down:  //确认下载
+                //下载列表长度
                 ConfirmDownVideos();
                 break;
 
         }
     }
+
 
     private void ConfirmDownVideos() {
         XXPermissions.with(this)
@@ -148,13 +153,28 @@ public final class DownVideoSelectedActivity extends AppActivity implements Stat
                             for (int i = 0; i < mAdapter.getData().size(); i++) {
                                 DetailDownVideoBean.DataDTO dataDTO = mAdapter.getData().get(i);
                                 boolean selected = dataDTO.isSelected();
-                                if (selected) {
-                                    LogUtils.e("DownloadListener===下载任务的path====选择界面=确认下载=mDeviceCode==="+mDeviceCode);
-                                    LogUtils.e("DownloadListener===下载任务的path====选择界面=确认下载=currentItemCaseID=="+currentItemCaseID);
-                                    DownVideoService downVideoService = new DownVideoService();
-                                    downVideoService.startDownVideoThread(dataDTO, DownVideoSelectedActivity.this, localFolderName, mDeviceCode, currentItemCaseID);
+                                /**
+                                 * 解决,多次点击确认下载,视频下载界面,下载列表为空的bug
+                                 * 查询当前这个tag(filename的视频)是否正在下载,
+                                 * 正在下载,会返回数据库下载记录
+                                 * 反之,没有正在下载的记录
+                                 */
+                                List<TaskDBBean> mDBDownList = TaskDBBeanUtils.getQueryBeanBySingleCode(DownVideoSelectedActivity.this, mDeviceCode + "_" + currentItemCaseID + "-" + dataDTO.getFileName());
+                                if (mDBDownList.size() == 0) {
+                                    //选中需要下载的item
+                                    if (selected) {
+                                        LogUtils.e("DownloadListener===下载任务的path====选择界面=确认下载=mDeviceCode===" + mDeviceCode);
+                                        LogUtils.e("DownloadListener===下载任务的path====选择界面=确认下载=currentItemCaseID==" + currentItemCaseID);
+                                        DownVideoService downVideoService = new DownVideoService();
+                                        downVideoService.startDownVideoThread(dataDTO, DownVideoSelectedActivity.this, localFolderName, mDeviceCode, currentItemCaseID);
+                                    }
+                                }else {
+                                    toast("下载队列正在下载请勿重复开启下载");
                                 }
+
+
                             }
+
                         }
                     }
 
@@ -169,6 +189,7 @@ public final class DownVideoSelectedActivity extends AppActivity implements Stat
                     }
                 });
     }
+
 
     private void addDataInGreenDao(DownEndEvent event) {
         //1,判断是否下载过
@@ -211,11 +232,11 @@ public final class DownVideoSelectedActivity extends AppActivity implements Stat
     public void DownEndEvent(DownEndEvent event) {
         String tag = event.getTag();
         LogUtils.e("DownSelectedVideoActivity02====下载任务==结束...==== ");
-        LogUtils.e("DownVideoSelectedActivity===下载任务的path====选择界面==mDeviceCode==="+mDeviceCode);
-        LogUtils.e("DownVideoSelectedActivity===下载任务的path====选择界面==currentItemCaseID=="+currentItemCaseID);
-        LogUtils.e("DownVideoSelectedActivity===下载任务的path====选择界面==localFolderName=="+localFolderName);
-        LogUtils.e("DownVideoSelectedActivity===下载任务的path====选择界面==event.getRefreshLocalFileName()=="+event.getRefreshLocalFileName());
-        LogUtils.e("DownVideoSelectedActivity===下载任务的path====选择界面==all=="+localFolderName + "/" + event.getRefreshLocalFileName());
+        LogUtils.e("DownVideoSelectedActivity===下载任务的path====选择界面==mDeviceCode===" + mDeviceCode);
+        LogUtils.e("DownVideoSelectedActivity===下载任务的path====选择界面==currentItemCaseID==" + currentItemCaseID);
+        LogUtils.e("DownVideoSelectedActivity===下载任务的path====选择界面==localFolderName==" + localFolderName);
+        LogUtils.e("DownVideoSelectedActivity===下载任务的path====选择界面==event.getRefreshLocalFileName()==" + event.getRefreshLocalFileName());
+        LogUtils.e("DownVideoSelectedActivity===下载任务的path====选择界面==all==" + localFolderName + "/" + event.getRefreshLocalFileName());
         /**
          * 删除下载的队列记录
          */
@@ -371,7 +392,6 @@ public final class DownVideoSelectedActivity extends AppActivity implements Stat
 
 
     }
-
 
 
     /**
