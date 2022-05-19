@@ -321,7 +321,10 @@ public final class VideoActivity extends AppActivity implements StatusAction, Se
 
 
     private int getIntData(String data) {
-        int i = data.indexOf(".");
+        int i = data.indexOf(".");//0.0
+        if ("0.0".equals(data) ||"0".equals(data)){
+            return 0;
+        }
         String substring = data.substring(i + 1, i + 3);
         if ("00".equals(substring)) {
             return 1;

@@ -152,6 +152,7 @@ public final class DownVideoSelectedActivity extends AppActivity implements Stat
                         if (all) {
                             for (int i = 0; i < mAdapter.getData().size(); i++) {
                                 DetailDownVideoBean.DataDTO dataDTO = mAdapter.getData().get(i);
+                                List<TaskDBBean> mDBDownList = TaskDBBeanUtils.getQueryBeanBySingleCode(DownVideoSelectedActivity.this, mDeviceCode + "_" + currentItemCaseID + "-" + dataDTO.getFileName());
                                 boolean selected = dataDTO.isSelected();
                                 /**
                                  * 解决,多次点击确认下载,视频下载界面,下载列表为空的bug
@@ -159,7 +160,6 @@ public final class DownVideoSelectedActivity extends AppActivity implements Stat
                                  * 正在下载,会返回数据库下载记录
                                  * 反之,没有正在下载的记录
                                  */
-                                List<TaskDBBean> mDBDownList = TaskDBBeanUtils.getQueryBeanBySingleCode(DownVideoSelectedActivity.this, mDeviceCode + "_" + currentItemCaseID + "-" + dataDTO.getFileName());
                                 if (mDBDownList.size() == 0) {
                                     //选中需要下载的item
                                     if (selected) {

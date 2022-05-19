@@ -19,7 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_40"
         android:gravity="center"
-        android:text="点击"
+        android:text="测试使用,点击删除,全部下载过视频的记录"
         android:textColor="@color/red" />
 
     <com.donkingliang.consecutivescroller.ConsecutiveScrollerLayout
