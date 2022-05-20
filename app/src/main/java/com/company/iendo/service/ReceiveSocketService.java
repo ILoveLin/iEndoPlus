@@ -35,6 +35,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
+import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
@@ -149,8 +150,11 @@ public class ReceiveSocketService extends AbsWorkService {
                 String mSocketPort = mmkv.decodeString(Constants.KEY_Device_SocketPort);
                 if (b) {//如果是登录状态,重启登入时候的监听
                     ReceiveSocketService receiveSocketService = new ReceiveSocketService();
+                    LogUtils.e("ReceiveSocketService--数据监听服务--HandService==------重启监听线程..监听线程异常,重启完毕 =登录状态 ");
                     receiveSocketService.setSettingReceiveThread(mAppIP, Integer.parseInt(mSocketPort), getApplicationContext());
                 } else {//不是登录状态,重启广播搜索监听
+                    LogUtils.e("ReceiveSocketService--数据监听服务--HandService==------重启监听线程..监听线程异常,重启完毕 =没有登录状态 ");
+
                     ReceiveSocketService receiveSocketService = new ReceiveSocketService();
                     receiveSocketService.initFirstThread(mAppIP);
                 }
@@ -203,6 +207,8 @@ public class ReceiveSocketService extends AbsWorkService {
             while (true) {
                 if (isRuning) {
                     try {
+                        LogUtils.e("保活服务开启HandService==------数据监听服务线程... 回调==Thread监听的===开始");
+
                         LogUtils.e("ReceiveSocketService--数据监听服务--========回调==Thread监听的===开始====");
                         //不是自己的IP不接受
                         if (!AppIP.equals(mSettingDataPacket.getAddress())) {
@@ -221,16 +227,15 @@ public class ReceiveSocketService extends AbsWorkService {
                             LogUtils.e("ReceiveSocketService--数据监听服务--========回调==Thread监听的=port==后台通讯的端口====" + mSettingDataPacket.getPort());
                             LogUtils.e("ReceiveSocketService--数据监听服务--========回调==Thread监听的====AppIP" + AppIP);
                             MMKV mmkv = MMKV.defaultMMKV();
-                            int stringint = mmkv.decodeInt(Constants.KEY_RECEIVE_PORT_BY_SEARCH);
+                            int stringint = mmkv.decodeInt(Constants.KEY_RECEIVE_PORT);
                             LogUtils.e("ReceiveSocketService--数据监听服务--========回调=端口==当前需要的监听端口==" + stringint);
                             /**
                              * 此处做处理
-                             * 实时获取当前本地设置的(搜索)监听端口和服务器端口是否一致,不一致关闭多余线程,优化性能
+                             * 实时获取当前本地设置的监听端口和服务器端口是否一致,不一致关闭多余线程,优化性能
                              */
                             if (stringint == mSettingDataPacket.getPort()) {
                                 LogUtils.e("ReceiveSocketService--数据监听服务--========回调==Thread监听的====相等" + mSettingDataPacket.getData());
                                 String rec = CalculateUtils.byteArrayToHexString(mSettingDataPacket.getData()).trim();
-
                                 LogUtils.e("ReceiveSocketService--数据监听服务--========回调==Thread监听的==2==相等");
 
                                 //过滤不是发送给我的消息全部不接受
@@ -263,9 +268,14 @@ public class ReceiveSocketService extends AbsWorkService {
                                     LogUtils.e("========回调===握手==1===" + dataIfForMe);
                                     String str = CalculateUtils.hexStr2Str(dataString);
                                     LogUtils.e("========回调===握手==2===" + dataIfForMe);
+                                    LogUtils.e("保活服务开启HandService==------数据监听服务线程... 回调==Thread监听的===11111"+Constants.UDP_HAND);
+
                                     if (dataIfForMe) {
                                         switch (currentCMD) {
+
                                             case Constants.UDP_HAND://握手
+                                                LogUtils.e("保活服务开启HandService==------数据监听服务线程... 回调==Thread监听的===握手");
+
                                                 LogUtils.e("========回调===握手==OK");
                                                 //判断数据是否是发个自己的
                                                 LogUtils.e("===========dataIfForMe==" + dataIfForMe);
@@ -552,9 +562,9 @@ public class ReceiveSocketService extends AbsWorkService {
                         //java.lang.NullPointerException:
                         // Attempt to invoke virtual method 'boolean java.lang.String.equals(java.lang.Object)' on a null object reference
                         event.setData("code==11===循环监听异常,错误,退出监听线程!!");
+                        MMKV mmkv = MMKV.defaultMMKV();
                         EventBus.getDefault().post(event);
                         LogUtils.e("ReceiveSocketService--数据监听服务--=====退出线程==Exception==while循环处理消息的时候异常" + e);
-                        MMKV mmkv = MMKV.defaultMMKV();
                         HandService.UDP_HAND_GLOBAL_TAG = false;
                         String port = mmkv.decodeString(Constants.KEY_RECEIVE_PORT, "7006");
                         String IP = mmkv.decodeString(Constants.KEY_Device_Ip);

@@ -62,6 +62,8 @@ import org.greenrobot.greendao.annotation.Unique;
 
 /**
  * type对应中文
+ *
+ *
  * type_num对应数字
  * 00-工作站， 01-HD3摄像机，02-冷光源，03-气腹机，04-冲洗机，05-4K摄像机，06-耳鼻喉控制板，
  * 07-一代一体机，8-耳鼻喉治疗台，9-妇科治疗台，10-泌尿治疗台

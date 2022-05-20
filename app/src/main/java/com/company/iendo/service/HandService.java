@@ -109,7 +109,7 @@ public class HandService extends AbsWorkService {
 
     private void start60STask() {
         sDisposable60s = Observable
-                .interval(60, TimeUnit.SECONDS)//定时器操作符，这里三秒打印一个log
+                .interval(30, TimeUnit.SECONDS)//定时器操作符，这里三秒打印一个log
                 //取消任务时取消定时唤醒
                 .doOnDispose(() -> {
                     LogUtils.e("保活服务开启HandService==---取消了--每 60 秒采集一次数据--===doOnDispose=取消了");
@@ -150,7 +150,7 @@ public class HandService extends AbsWorkService {
 //        observeOn是来设定我们的观察者的操作是在哪个线程执行   AndroidSchedulers.mainThread()
 
         sDisposable10s = Observable
-                .interval(10, TimeUnit.SECONDS)//定时器操作符，这里三秒打印一个log
+                .interval(8, TimeUnit.SECONDS)//定时器操作符，这里三秒打印一个log
                 //取消任务时取消定时唤醒
                 .doOnDispose(() -> {
                     LogUtils.e("保活服务开启HandService==---取消了--每 10 秒采集一次数据--===doOnDispose=取消了");
@@ -165,7 +165,7 @@ public class HandService extends AbsWorkService {
                         sDisposable10s.dispose();
                         start60STask();
 
-                    } else if (tag == 1 && !UDP_HAND_GLOBAL_TAG) {//第二次就握手失败 我就重启下监听线程
+                    } else if ((tag == 1 || tag == 2) && !UDP_HAND_GLOBAL_TAG) {//第二次就握手失败 我就重启下监听线程
                         MMKV mmkv = MMKV.defaultMMKV();
                         boolean b = mmkv.decodeBool(Constants.KEY_Login_Tag);
                         String mSocketPort = mmkv.decodeString(Constants.KEY_Device_SocketPort);
@@ -174,13 +174,14 @@ public class HandService extends AbsWorkService {
                         LogUtils.e("保活服务开启HandService==------第一次采集一次数据... count = 超过次数,直接重启接收线程!!!!!!!" + mSocketPort);
                         if (b) {//如果是登录状态,重启登入时候的监听
                             ReceiveSocketService receiveSocketService = new ReceiveSocketService();
+                            LogUtils.e("保活服务开启HandService==------第一次采集一次数据... count = 超过次数,直接重启接收线程===登录状态");
                             receiveSocketService.setSettingReceiveThread(mAppIP, Integer.parseInt(mSocketPort), getApplicationContext());
                         } else {//不是登录状态,重启广播搜索监听
+                            LogUtils.e("保活服务开启HandService==------第一次采集一次数据... count = 超过次数,直接重启接收线程==没有=登录状态");
                             ReceiveSocketService receiveSocketService = new ReceiveSocketService();
                             receiveSocketService.initFirstThread(mAppIP);
                         }
                     }
-
                 });
 
 

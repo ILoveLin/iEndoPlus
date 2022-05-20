@@ -115,6 +115,7 @@ public final class AppApplication extends Application {
     public void initGreenDao() {
         // 1、获取需要连接的数据库
         DaoMaster.DevOpenHelper devOpenHelper = new DaoMaster.DevOpenHelper(this, "green.db");
+        //devOpenHelper  数据库升级工具
         SQLiteDatabase db = devOpenHelper.getWritableDatabase();
         // 2、创建数据库连接
 //        DaoMaster daoMaster = new DaoMaster(db);

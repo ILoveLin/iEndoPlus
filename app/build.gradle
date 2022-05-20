@@ -279,7 +279,7 @@ dependencies {
     //圆形进度条
     implementation 'com.king.view:circleprogressview:1.1.2'
 
-//    Dokit
+//    Dokit 调试日志
     debugImplementation 'io.github.didi.dokit:dokitx:3.5.0.1'
     releaseImplementation 'io.github.didi.dokit:dokitx-no-op:3.5.0.1'
 //  下载视频专用工具

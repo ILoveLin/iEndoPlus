@@ -1,5 +1,7 @@
 package com.company.iendo.other;
 
+import com.tencent.bugly.proguard.B;
+
 /**
  * company：江西神州医疗设备有限公司
  * author： LoveLin

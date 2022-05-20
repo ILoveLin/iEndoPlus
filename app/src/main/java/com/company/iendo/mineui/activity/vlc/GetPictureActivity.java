@@ -401,43 +401,6 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                                 toast(Constants.HAVE_HAND_FAIL_OFFLINE);
                             }
 
-//                            if (!rtmpOnlyAudio.isStreaming()) {
-//                                if (rtmpOnlyAudio.prepareAudio()) {
-//                                    //握手成功,
-//                                    if (HandService.UDP_HAND_GLOBAL_TAG) {
-//                                        //tag为关闭状态(默认是关闭状态)点击的时候如果关闭状态就开启推流
-//                                        if ("stopStream".equals(mTvMicStatus.getTag())) {
-//                                            sendSocketPointMicMessage("1");
-//                                            mTvMicStatus.setText("状态:连接中");
-//                                        } else if ("startStream".equals(mTvMicStatus.getTag())) {
-//                                            mTvMicStatus.setText("语音通话");
-//                                            sendSocketPointMicMessage("0");
-//                                        }
-//                                    } else {
-//                                        toast(Constants.HAVE_HAND_FAIL_OFFLINE);
-//                                    }
-//
-//
-//                                } else {
-//
-//                                }
-//                            } else {
-//                                if (rtmpOnlyAudio.prepareAudio()) {
-//                                    if (HandService.UDP_HAND_GLOBAL_TAG) {
-//                                        //tag为开启状态,此时需要关闭推流
-//                                        //tag为关闭状态(默认是关闭状态)点击的时候如果关闭状态就开启推流
-//                                        if ("stopStream".equals(mTvMicStatus.getTag())) {
-//                                            sendSocketPointMicMessage("1");
-//                                            mTvMicStatus.setText("状态:连接中");
-//                                        } else if ("startStream".equals(mTvMicStatus.getTag())) {
-//                                            mTvMicStatus.setText("语音通话");
-//                                            sendSocketPointMicMessage("0");
-//                                        }
-//                                    } else {
-//                                        toast(Constants.HAVE_HAND_FAIL_OFFLINE);
-//                                    }
-//                                }
-//                            }
                         }
                     }
 
@@ -828,7 +791,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
     }
 
     /**
-     * 发送握手消息
+     * 发送语音链接
      *
      * @param onLineStatus 开关语音标识:(0：离线 1:上线)
      */
