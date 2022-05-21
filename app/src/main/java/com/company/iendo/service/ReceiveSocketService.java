@@ -269,7 +269,7 @@ public class ReceiveSocketService extends AbsWorkService {
                                     String str = CalculateUtils.hexStr2Str(dataString);
                                     LogUtils.e("========回调===握手==2===" + dataIfForMe);
                                     LogUtils.e("保活服务开启HandService==------数据监听服务线程... 回调==Thread监听的===11111"+Constants.UDP_HAND);
-
+                                    LogUtils.e("========回调===设备参数下发==" + currentCMD);
                                     if (dataIfForMe) {
                                         switch (currentCMD) {
 
@@ -529,23 +529,6 @@ public class ReceiveSocketService extends AbsWorkService {
 //                                SocketRefreshEvent event1 = new SocketRefreshEvent();
 //                                event1.setUdpCmd(Constants.UDP_CUSTOM_RESTART);
 //                                EventBus.getDefault().post(event1);
-
-
-
-//                                /**
-//                                 * 用户设置可广播端口开启的接收线程
-//                                 *
-//                                 * @param currentIP          本地app的ip
-//                                 * @param settingReceivePort 设置的发送接收端口
-//                                 * @param context            上下文
-//                                 */
-//                                MMKV mmkv = MMKV.defaultMMKV();
-//                                String port = mmkv.decodeString(Constants.KEY_Device_SocketPort, "7006");
-//                                String IP = mmkv.decodeString(Constants.KEY_Device_Ip);
-//                                setSettingReceiveThread(IP, Integer.parseInt(port), context);
-//                                HandService.UDP_HAND_GLOBAL_TAG = false;
-
-//                                LogUtils.e("ReceiveSocketService--数据监听服务--========回调==Thread监听的==不!==相等port" + port);
                                 LogUtils.e("ReceiveSocketService--数据监听服务--========回调==Thread监听的==不!==相等==线程名=：%s" + Thread.currentThread().getName() + ",关闭线程");
                                 break;//不相等的直接跳出接收,关闭线程
                             }
@@ -573,18 +556,6 @@ public class ReceiveSocketService extends AbsWorkService {
                         e.printStackTrace();
                         break;//捕获到异常之后，执行break跳出循环
                     }
-//                    }else {
-//                        SocketRefreshEvent event = new SocketRefreshEvent();
-//                        event.setUdpCmd(Constants.UDP_CUSTOM_TOAST);
-//                        event.setData("错误码==11===循环超过15次,退出监听线程!!,并且重启");
-//                        EventBus.getDefault().post(event);
-//                        LogUtils.e("ReceiveSocketService--数据监听服务--=====退出线程==Exception==while循环处理消息的时候异常" );
-//                        MMKV mmkv = MMKV.defaultMMKV();
-//                        String port = mmkv.decodeString(Constants.KEY_RECEIVE_PORT, "7006");
-//                        String IP = mmkv.decodeString(Constants.KEY_Device_Ip);
-//                        setSettingReceiveThread(IP,Integer.parseInt(port),context);
-//                        break;//捕获到异常之后，执行break跳出循环
-//                    }
 
                 }
             }

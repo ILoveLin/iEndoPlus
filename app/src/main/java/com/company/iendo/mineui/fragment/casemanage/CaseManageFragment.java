@@ -229,6 +229,8 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
     }
 
     private void sendRequest(String mChoiceDate) {
+        LogUtils.e("=病例列表=hy=mChoiceDate==" + mChoiceDate);
+
         showLoading();
         OkHttpUtils.get()
                 .url(mBaseUrl + HttpConstant.CaseManager_List)

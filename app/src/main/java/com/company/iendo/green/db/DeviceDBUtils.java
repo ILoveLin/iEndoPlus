@@ -84,54 +84,6 @@ public class DeviceDBUtils {
         }
         return null;
 
-//        List<DeviceDBBean> list = DBManager.getDaoSession(context).getDeviceDBBeanDao().queryBuilder().list();
-////        bean.getIp()+bean.getEt()+deviceOnlyCodeFromRoom+bean.getType()
-//        if (list.size() != 0) {
-//            for (int i = 0; i < list.size(); i++) {
-//                DeviceDBBean deviceDBBean = list.get(i);
-//
-//
-//                //300000000000000005618B1F96D92837C一代一体机    00000000000000005618B1F96D92837C
-//                LogUtils.e("sendByteData==onItemClick===deviceDBBean.getAcceptAndInsertDB()==" + deviceDBBean.getAcceptAndInsertDB());
-//
-//                //00000000000000005618B1F96D92837C一代一体机
-//                LogUtils.e("sendByteData==onItemClick===acceptAndInsertDB==" + acceptAndInsertDB);
-//
-//                if (acceptAndInsertDB.equals(deviceDBBean.getAcceptAndInsertDB())) {
-//                    return deviceDBBean;
-//                } else {
-//                    return null;
-//                }
-//            }
-//
-//        }
-//        return null;
-
-
-//        List<DeviceDBBean> list = DBManager.getDaoSession(context).getDeviceDBBeanDao().queryBuilder().list();
-////        bean.getIp()+bean.getEt()+deviceOnlyCodeFromRoom+bean.getType()
-//        if (list.size() != 0) {
-//            for (int i = 0; i < list.size(); i++) {
-//                DeviceDBBean deviceDBBean = list.get(i);
-//
-//
-//                //192.168.64.13300000000000000005618B1F96D92837C一代一体机
-//
-//
-//                String s = putBean.getIp() + deviceOnlyCodeFromRoom + putBean.getType();
-//                LogUtils.e("sendByteData==onItemClick===deviceDBBean.getAcceptAndInsertDB()==" + deviceDBBean.getAcceptAndInsertDB());
-//
-//                LogUtils.e("sendByteData==onItemClick===acceptAndInsertDB==" + s);
-//
-////                if (acceptAndInsertDB.equals(deviceDBBean.getAcceptAndInsertDB())) {
-////                    return deviceDBBean;
-////                } else {
-////                    return null;
-////                }
-//            }
-//
-//        }
-//        return null;
     }
 
     //条件查询

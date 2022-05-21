@@ -1422,9 +1422,9 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
      */
     @Override
     public void onCheckedChanged(SwitchButton button, boolean checked) {
-        if (isFirstInitData) {
-            return;
-        }
+//        if (isFirstInitData) {
+//            return;
+//        }
         LogUtils.e("progress==switch===onCheckedChanged==");
         Type01Bean bean = new Type01Bean();
         Type01Bean.Type01 typeBean = new Type01Bean.Type01();
@@ -1492,9 +1492,9 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
 
     @Override
     public void onStopTrackingTouch(RangeSeekBar view, boolean isLeft) {
-        if (isFirstInitData) {
-            return;
-        }
+//        if (isFirstInitData) {
+//            return;
+//        }
         float progress = view.getLeftSeekBar().getProgress();
         String round = (Math.round(progress) + "").replace(".", "");
         //创建摄像机数据bean

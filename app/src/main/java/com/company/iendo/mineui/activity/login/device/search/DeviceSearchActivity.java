@@ -544,7 +544,24 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
         codeBean.setHttpPort(codeBean.getHttpPort());    //设置node js 服务端口  ===httpPort
         codeBean.setType(bean.getDeviceType());
         codeBean.setEndoType(bean.getEndotype());   //设置科室类型---endoType
-        codeBean.setAcceptAndInsertDB(codeBean.getEndoType() + codeBean.getDeviceCode() + codeBean.getType());    //存入回调数据bean,标识数据在数据库的唯一性
+
+        /**
+         *
+         *
+         *
+         *
+         * 这里需要做测试
+         *
+         *
+         * codeBean.getType()
+         * 改成
+         * bean.getDeviceType()
+         *
+         *
+         *
+         *
+         */
+        codeBean.setAcceptAndInsertDB(codeBean.getEndoType() + codeBean.getDeviceCode() + bean.getDeviceType());    //存入回调数据bean,标识数据在数据库的唯一性
         //此处修改界面adapter数据bean(BroadCastReceiveBean)状态,是否检验接入过isCheckAccess->true;是否存入数据库inDB->true
         bean.setInDB(true);
         bean.setCheckAccess(true);//授权接入过
