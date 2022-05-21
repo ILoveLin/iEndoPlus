@@ -86,10 +86,10 @@ public class DeviceSearchAdapter extends AppAdapter<BroadCastReceiveBean> {
             mIP.setText("" + mItemBean.getIp());
 
             if (mSelected) {
-                mRelativeLayout.setBackgroundResource(R.drawable.shape_search_device_insert);
+                mRelativeLayout.setBackgroundResource(R.drawable.shape_bg_device_all_nor);
                 mMsgChose.setVisibility(View.VISIBLE);
             } else {
-                mRelativeLayout.setBackgroundResource(R.drawable.shape_search_device_insert_no);
+                mRelativeLayout.setBackgroundResource(R.drawable.shape_bg_device_all_nor);
                 mMsgChose.setVisibility(View.INVISIBLE);
 
             }

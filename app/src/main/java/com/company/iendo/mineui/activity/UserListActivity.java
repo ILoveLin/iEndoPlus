@@ -65,11 +65,14 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
     private int mAddCurrentCode = 0;//管理员
     private String mAddCurrentString = "管理员";//管理员
 
+//    @Override
+//    protected int getLayoutId() {
+//        return R.layout.activity_user_add;
+//    }
     @Override
     protected int getLayoutId() {
         return R.layout.activity_user_list;
     }
-
     @Override
     protected void initView() {
         mStatusLayout = findViewById(R.id.status_hint);
@@ -91,7 +94,7 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
         responseListener();
         mRecyclerView.setAdapter(mAdapter);
         sendRequest();
-        //响应删除,修改权限,修改密码等事件
+//        响应删除,修改权限,修改密码等事件
     }
 
     private void responseListener() {
