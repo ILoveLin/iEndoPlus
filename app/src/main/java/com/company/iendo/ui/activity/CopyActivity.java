@@ -33,32 +33,7 @@ public final class CopyActivity extends AppActivity implements StatusAction {
 
     @Override
     protected void initData() {
-        RangeSeekBar sb_single6 = findViewById(R.id.sb_single6);
-        RangeSeekBar sb_range_5 = findViewById(R.id.sb_single5);
-        sb_single6.setIndicatorTextDecimalFormat("0");
-        sb_range_5.setIndicatorTextDecimalFormat("0");
-        sb_range_5.setOnRangeChangedListener(new OnRangeChangedListener() {
-            @Override
-            public void onRangeChanged(RangeSeekBar view, float leftValue, float rightValue, boolean isFromUser) {
-                //leftValue is left seekbar value, rightValue is right seekbar value
-                double round = Math.round(leftValue);
-                toast("round==="+round);
 
-            }
-
-            @Override
-            public void onStartTrackingTouch(RangeSeekBar view,  boolean isLeft) {
-                //start tracking touch
-            }
-
-            @Override
-            public void onStopTrackingTouch(RangeSeekBar view,  boolean isLeft) {
-                //stop tracking touch
-                float progress = view.getLeftSeekBar().getProgress();
-                double round = Math.round(progress);
-                LogUtils.e("progress==leftValue=="+round);
-            }
-        });
     }
 
     @Override

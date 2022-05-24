@@ -236,6 +236,7 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
     private void sendRequest() {
         OkHttpUtils.get()
                 .url(mBaseUrl + HttpConstant.UserManager_List)
+                .addParams("type","manager")
                 .build()
                 .execute(new StringCallback() {
                     @Override

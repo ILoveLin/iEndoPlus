@@ -122,6 +122,7 @@ public class HttpConstant {
     /**
      * 获取用户列表
      * get
+     * （account-登录账号列表， manager-用户列表）
      */
 
     public static final String UserManager_List = "/users/list";
@@ -157,9 +158,9 @@ public class HttpConstant {
     public static final String UserManager_ChangeRelo = "/users/changePurview";
 
     /**
-     * 修添加新用户
+     * 添加新用户
      */
-    public static final String UserManager_AddUser = "/users/createUser";
+    public static final String UserManager_AddUser = "/users/addUser";
 
 
     /**

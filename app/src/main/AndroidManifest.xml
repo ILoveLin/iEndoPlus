@@ -181,8 +181,17 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         <!-- 用户列表 -->
+        <!--        <activity-->
+        <!--            android:name=".mineui.activity.UserListActivity"-->
+        <!--            android:launchMode="singleTop"-->
+        <!--            android:screenOrientation="portrait" />      -->
         <activity
-            android:name=".mineui.activity.UserListActivity"
+            android:name=".mineui.activity.usermanage.UserManagerListActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <!-- 新增用户 -->
+        <activity
+            android:name=".mineui.activity.usermanage.AddUserActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         <!-- 选择图片界面 -->

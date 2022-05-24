@@ -229,7 +229,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
     private LinearLayout mMic;
     private String micUrl;
     private TextView mTvMicStatus;
-    private boolean isFirstInitData;
+    private boolean isFirstInitData;  //第一次初始化设备参数,避免初始化的时候,设置参数进而回调发送消息设置参数的bug
     private TextView mTitleName;
     private String mName;
     private String mCaseNo;
@@ -1412,7 +1412,9 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         mVLCView.onStop();
         mVLCView.onDestroy();
 
+
     }
+
 
     /**
      * switch 按钮的监听
@@ -1422,9 +1424,9 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
      */
     @Override
     public void onCheckedChanged(SwitchButton button, boolean checked) {
-//        if (isFirstInitData) {
-//            return;
-//        }
+        if (isFirstInitData) {
+            return;
+        }
         LogUtils.e("progress==switch===onCheckedChanged==");
         Type01Bean bean = new Type01Bean();
         Type01Bean.Type01 typeBean = new Type01Bean.Type01();
@@ -1492,9 +1494,9 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
 
     @Override
     public void onStopTrackingTouch(RangeSeekBar view, boolean isLeft) {
-//        if (isFirstInitData) {
-//            return;
-//        }
+        if (isFirstInitData) {
+            return;
+        }
         float progress = view.getLeftSeekBar().getProgress();
         String round = (Math.round(progress) + "").replace(".", "");
         //创建摄像机数据bean
@@ -1679,6 +1681,8 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                 mTvMicStatus.setText("状态:未连接");
 //                rtmpOnlyAudio.stopStream();
 
+                sendSocketPointMicMessage("0");
+
 
             }
         });
@@ -1696,9 +1700,9 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             @SuppressLint("NewApi")
             @Override
             public void run() {
-                Log.e("TAG", "RtmpOnlyAudio===onConnectionFailedRtmp==");
+                Log.e("TAG", "RtmpOnlyAudio===onDisconnectRtmp==");
                 toast("语音断开链接 ");
-//                setMicStatus("stopStream", "语音通话");
+                setMicStatus("stopStream", "语音通话");
 //                sendSocketPointMicMessage("0");
             }
         });

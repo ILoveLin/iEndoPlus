@@ -370,6 +370,7 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
         LogUtils.e("登录==url==0001=" + mUrl + HttpConstant.UserManager_List);
         OkHttpUtils.get()
                 .url(mUrl + HttpConstant.UserManager_List)
+                .addParams("type","account")
                 .build()
                 .execute(new StringCallback() {
                     @Override

@@ -77,8 +77,10 @@ public class DeviceDBBean {
     private Long id;            //这个主键ID是需要绑定用户表中的deviceID,确保是这个设备下,离线模式能通过id查询绑定用户
     //设备唯一标识
     private String deviceID;      //deviceID=deviceCode    作用一样的
-    //设备码
+    //设备码--上位机传递过来的是16字节16位的字符串,我们直接mSettingDataPacket.getData 转成16进制的字符串
+    //设备码也是被转成了32位字符串,但是展示的时候是需要展示16位的字符串,需要从新转一下
     private String deviceCode;  //  这个是智能搜索之后返回过来的设备码//  这个是智能搜索之后返回过来的设备码//  这个是智能搜索之后返回过来的设备码
+
     //设备ip
     private String ip;        //这个字段是授权接入成功之后socket获取到的通讯ip,这个字段一般情况下都是使用这个ip来socket通讯和直播都是用此ip
     //直播ip
@@ -355,4 +357,6 @@ public class DeviceDBBean {
     public void setLiveIp(String LiveIp) {
         this.LiveIp = LiveIp;
     }
+
+
 }

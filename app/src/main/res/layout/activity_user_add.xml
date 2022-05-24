@@ -13,12 +13,15 @@
         app:rightTitle="添加"
         app:rightTitleSize="@dimen/dp_16"
         app:title="用户管理" />
-
     <!--    <androidx.core.widget.NestedScrollView-->
     <!--        android:layout_width="match_parent"-->
     <!--        android:layout_height="match_parent"-->
     <!--        android:background="@color/color_line"-->
     <!--        android:scrollbars="vertical">-->
+    <com.company.iendo.widget.StatusLayout
+        android:id="@+id/status_hint"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -57,7 +60,6 @@
                     android:background="@drawable/shape_cme_login"
                     android:drawablePadding="@dimen/dp_10"
                     android:inputType="text"
-                    android:paddingLeft="@dimen/dp_50"
                     android:singleLine="true"
                     android:textColor="@color/black"
                     android:textColorHint="@color/color_999999"
@@ -89,7 +91,6 @@
                     android:digits="0123456789abcdefghigklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ@."
                     android:maxLength="20"
                     android:maxLines="1"
-                    android:paddingLeft="@dimen/dp_50"
                     android:textColor="@color/black"
                     android:textColorHint="@color/color_999999"
                     tools:ignore="DuplicateIds" />
@@ -133,8 +134,8 @@
                     android:background="@drawable/shape_cme_login"
                     android:drawablePadding="@dimen/dp_10"
                     android:inputType="text"
-                    android:paddingLeft="@dimen/dp_50"
                     android:singleLine="true"
+                    android:focusable="false"
                     android:textColor="@color/black"
                     android:textColorHint="@color/color_999999"
                     tools:ignore="DuplicateIds" />
@@ -162,7 +163,7 @@
                     android:textSize="@dimen/sp_14" />
 
                 <com.hjq.widget.view.ClearEditText
-                    android:id="@+id/user_password"
+                    android:id="@+id/user_msg"
                     style="@style/EditTextStyle"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/dp_35"
@@ -172,7 +173,6 @@
                     android:digits="0123456789abcdefghigklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ@."
                     android:maxLength="20"
                     android:maxLines="1"
-                    android:paddingLeft="@dimen/dp_50"
                     android:textColor="@color/black"
                     android:textColorHint="@color/color_999999"
                     tools:ignore="DuplicateIds" />
@@ -199,7 +199,7 @@
                 android:textSize="@dimen/sp_14" />
 
             <RadioGroup
-                android:id="@+id/radioGroup"
+                android:id="@+id/radio_add_group"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
@@ -208,7 +208,7 @@
 
 
                 <RadioButton
-                    android:id="@+id/btnMan"
+                    android:id="@+id/radio_btn_add_open"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checked="true"
@@ -216,7 +216,8 @@
                     android:textSize="@dimen/sp_12" />
 
                 <RadioButton
-                    android:id="@+id/btnWoman"
+                    android:layout_marginLeft="@dimen/dp_10"
+                    android:id="@+id/radio_btn_add_close"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="冻结"
@@ -247,6 +248,7 @@
 
     </LinearLayout>
 
+    </com.company.iendo.widget.StatusLayout>
 
     <!--    </androidx.core.widget.NestedScrollView>-->
 

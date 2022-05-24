@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="@dimen/dp_10"
+    android:layout_marginTop="@dimen/dp_10"
+    android:id="@+id/item_linear_all"
+    android:layout_marginRight="@dimen/dp_10"
+    android:background="@drawable/shape_item_user_nor"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/tv_current_flag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shape_item_user_current"
+            android:paddingLeft="@dimen/dp_5"
+            android:paddingTop="@dimen/dp_2"
+            android:paddingRight="@dimen/dp_5"
+            android:paddingBottom="@dimen/dp_2"
+            android:text="当前"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sp_11" />
+
+        <RelativeLayout
+            android:layout_centerInParent="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/iv_item_user_logo"
+                android:layout_width="@dimen/dp_25"
+                android:layout_height="@dimen/dp_35"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="@dimen/dp_10"
+                android:layout_marginTop="@dimen/dp_10"
+                android:gravity="center"
+                android:src="@drawable/ic_icon_theuser" />
+
+            <TextView
+                android:id="@+id/tv_item_name"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/dp_35"
+                android:layout_marginLeft="@dimen/dp_10"
+                android:layout_marginTop="@dimen/dp_10"
+                android:layout_toRightOf="@+id/iv_item_user_logo"
+                android:background="@color/white"
+                android:clickable="false"
+                android:ellipsize="marquee"
+                android:gravity="center_vertical"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:singleLine="true"
+                android:text="我是哈哈都放假"
+                android:textSize="@dimen/sp_14" />
+
+
+            <TextView
+                android:layout_marginTop="@dimen/dp_10"
+                android:id="@+id/tv_item_user_relo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tv_item_name"
+                android:layout_marginLeft="@dimen/dp_10"
+                android:gravity="center_vertical"
+                android:text="角色:超级管理员"
+                android:textColor="@color/color_9B9B9B"
+                android:textSize="@dimen/sp_12" />
+
+            <TextView
+                android:layout_marginBottom="@dimen/dp_10"
+                android:layout_marginTop="@dimen/dp_10"
+                android:id="@+id/tv_user_statue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tv_item_user_relo"
+                android:layout_marginLeft="@dimen/dp_10"
+                android:gravity="center_vertical"
+                android:text="状态:激活"
+                android:textColor="@color/color_9B9B9B"
+                android:textSize="@dimen/sp_12" />
+
+        </RelativeLayout>
+
+
+
+    </RelativeLayout>
+
+
+</LinearLayout>

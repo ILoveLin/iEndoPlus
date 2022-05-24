@@ -25,7 +25,7 @@
             android:orientation="horizontal">
 
             <androidx.appcompat.widget.AppCompatCheckBox
-                android:id="@+id/cb_manager"
+                android:id="@+id/cb_01_manager"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@null"
@@ -33,7 +33,7 @@
                 app:buttonCompat="@drawable/checkbox_selector" />
 
             <TextView
-                android:layout_width="58dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:lines="1"
                 android:paddingLeft="@dimen/dp_4"
@@ -51,7 +51,7 @@
             android:orientation="horizontal">
 
             <androidx.appcompat.widget.AppCompatCheckBox
-                android:id="@+id/cb_setting_kouling"
+                android:id="@+id/cb_01_setting_kouling"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@null"
@@ -78,7 +78,7 @@
             android:orientation="horizontal">
 
             <androidx.appcompat.widget.AppCompatCheckBox
-                android:id="@+id/cb_record_shot"
+                android:id="@+id/cb_01_record_shot"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@null"
@@ -119,7 +119,7 @@
             android:orientation="horizontal">
 
             <androidx.appcompat.widget.AppCompatCheckBox
-                android:id="@+id/cb_setting_pen_xi_chui"
+                android:id="@+id/cb_02_setting_pen_xi_chui"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@null"
@@ -145,7 +145,7 @@
             android:orientation="horizontal">
 
             <androidx.appcompat.widget.AppCompatCheckBox
-                android:id="@+id/cb_live"
+                android:id="@+id/cb_02_live"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@null"
@@ -170,7 +170,7 @@
             android:orientation="horizontal">
 
             <androidx.appcompat.widget.AppCompatCheckBox
-                android:id="@+id/cb_input_patient"
+                android:id="@+id/cb_02_input_patient"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@null"
@@ -211,7 +211,7 @@
             android:orientation="horizontal">
 
             <androidx.appcompat.widget.AppCompatCheckBox
-                android:id="@+id/cb_change_patient"
+                android:id="@+id/cb_03_change_patient"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@null"
@@ -237,7 +237,7 @@
             android:orientation="horizontal">
 
             <androidx.appcompat.widget.AppCompatCheckBox
-                android:id="@+id/cb_delete_patient"
+                android:id="@+id/cb_03_delete_patient"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@null"
@@ -262,7 +262,7 @@
             android:orientation="horizontal">
 
             <androidx.appcompat.widget.AppCompatCheckBox
-                android:id="@+id/cb_print_patient"
+                android:id="@+id/cb_03_print_patient"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@null"
@@ -303,7 +303,7 @@
             android:orientation="horizontal">
 
             <androidx.appcompat.widget.AppCompatCheckBox
-                android:id="@+id/cb_only_unprint_case"
+                android:id="@+id/cb_04_only_unprint_case"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@null"
@@ -329,7 +329,7 @@
             android:orientation="horizontal">
 
             <androidx.appcompat.widget.AppCompatCheckBox
-                android:id="@+id/cb_output_case"
+                android:id="@+id/cb_04_output_case"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@null"
@@ -354,7 +354,7 @@
             android:orientation="horizontal">
 
             <androidx.appcompat.widget.AppCompatCheckBox
-                android:id="@+id/cb_output_video"
+                android:id="@+id/cb_04_output_video"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@null"
@@ -394,7 +394,7 @@
             android:orientation="horizontal">
 
             <androidx.appcompat.widget.AppCompatCheckBox
-                android:id="@+id/cb_output_picture"
+                android:id="@+id/cb_05_output_picture"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@null"
@@ -420,7 +420,7 @@
             android:orientation="horizontal">
 
             <androidx.appcompat.widget.AppCompatCheckBox
-                android:id="@+id/cb_copy_data"
+                android:id="@+id/cb_05_copy_data"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@null"
@@ -445,7 +445,7 @@
             android:orientation="horizontal">
 
             <androidx.appcompat.widget.AppCompatCheckBox
-                android:id="@+id/cb_only_myself_case"
+                android:id="@+id/cb_05_only_myself_case"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@null"
@@ -484,7 +484,7 @@
             android:orientation="horizontal">
 
             <androidx.appcompat.widget.AppCompatCheckBox
-                android:id="@+id/cb_setting_video"
+                android:id="@+id/cb_06_setting_video"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@null"
@@ -510,7 +510,7 @@
             android:orientation="horizontal">
 
             <androidx.appcompat.widget.AppCompatCheckBox
-                android:id="@+id/cb_hospital_msg"
+                android:id="@+id/cb_06_hospital_msg"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@null"
@@ -535,7 +535,7 @@
             android:orientation="horizontal">
 
             <androidx.appcompat.widget.AppCompatCheckBox
-                android:id="@+id/cb_report_style"
+                android:id="@+id/cb_06_report_style"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@null"
@@ -573,7 +573,7 @@
             android:orientation="horizontal">
 
             <androidx.appcompat.widget.AppCompatCheckBox
-                android:id="@+id/cb_setting_seat"
+                android:id="@+id/cb_07_setting_seat"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@null"
