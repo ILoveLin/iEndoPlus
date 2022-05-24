@@ -60,7 +60,7 @@ public class DeviceAdapter extends AppAdapter<DeviceDBBean> {
     private final class ViewHolder extends AppAdapter<?>.ViewHolder {
         public final RelativeLayout mRelativeLayout;
         public final LinearLayout mLinearStatus;
-        public final TextView mMsgChose, mChange, mDelete, mTitle, mRemark, mIP;
+        public final TextView mMsgChose, mChange, mDelete, mTitle, mRemark, mIP,mDeviceCode;
         private final ImageView mImageChose;
 
         private ViewHolder() {
@@ -74,6 +74,7 @@ public class DeviceAdapter extends AppAdapter<DeviceDBBean> {
             mTitle = findViewById(R.id.tv_current_title_msg);
             mRemark = findViewById(R.id.tv_current_remark_msg);
             mIP = findViewById(R.id.tv_current_ip_msg);
+            mDeviceCode  = findViewById(R.id.tv_current_device_code);
         }
 
         @Override
@@ -83,6 +84,7 @@ public class DeviceAdapter extends AppAdapter<DeviceDBBean> {
             mTitle.setText("" + mDBBean.getDeviceName());
             mRemark.setText("" + mDBBean.getMsg());
             mIP.setText("" + mDBBean.getIp());
+            mDeviceCode.setText("ID:"+mDBBean.getDeviceCode());
 
             LogUtils.e("SocketManage回调==模拟数据==DeviceDBBean.toString==DeviceAdapter===" + mDBBean.toString());
 

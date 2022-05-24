@@ -241,9 +241,13 @@ public class ReceiveSocketService extends AbsWorkService {
                                 //过滤不是发送给我的消息全部不接受
                                 int length = mSettingDataPacket.getLength() * 2;
                                 String resultData = rec.substring(0, length);
+
+//                                937a5f204dc43a14                   设备码   数据库存入的
+//                                39333761356632303464633433613134   设备码   广播接收到的
                                 LogUtils.e("===========获取长度==length==" + length);
+                                LogUtils.e("===========获取长度数据==IP==" + mSettingDataPacket.getAddress().getHostAddress());
                                 LogUtils.e("===========获取长度数据==substring==" + resultData);
-                                LogUtils.e("===========接受到数据==原始数据====mReceivePacket.getData()=" + mSettingDataPacket.getData());
+                                LogUtils.e("===========获取长度-接受到数据==原始数据====mReceivePacket.getData()=" + mSettingDataPacket.getData());
 
                                 if (mSettingDataPacket != null) {
                                     String hostAddressIP = mSettingDataPacket.getAddress().getHostAddress();
@@ -261,8 +265,7 @@ public class ReceiveSocketService extends AbsWorkService {
                                     event.setReceivePort(settingReceivePort + "");
                                     Boolean dataIfForMe = CalculateUtils.getDataIfForMe(resultData, context);
                                     String dataString = CalculateUtils.getReceiveDataString(resultData);
-                                    //7B227265636F72646964223A2233354530227D
-                                    //07B227265636F72646964223A2233354530227D
+
                                     //16进制直接转换成为字符串
                                     LogUtils.e("========回调===握手==0===" + dataString);
                                     LogUtils.e("========回调===握手==1===" + dataIfForMe);

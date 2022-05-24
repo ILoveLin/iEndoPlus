@@ -29,6 +29,11 @@ public class SocketUtils {
 
     /**
      * @param data 字节数组    广播 授权,使用的是设置的端口,其他的点对点消息,按照协议data的port的走
+     *             发送数据的data中的  接收id 依照已下规定
+     *             * 存入数据库的是:16字节16位的字符串(比如:937a5f204dc43a14)
+     *             * socket通讯的是:接收和获取到的是-->16进制的32位字符串设备码(比如:39333761356632303464633433613134)
+     *             * str2HexStr()----->16位转32位
+     *             * hexStr2Str()----->32位转16位
      */
     public static void startSendBroadcastMessage(byte[] data, Context mContext) {
 //        WifiManager manager = (WifiManager) mContext.getApplicationContext().getSystemService(Context.WIFI_SERVICE);

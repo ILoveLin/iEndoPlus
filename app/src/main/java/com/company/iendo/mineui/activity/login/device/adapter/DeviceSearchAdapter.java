@@ -55,7 +55,7 @@ public class DeviceSearchAdapter extends AppAdapter<BroadCastReceiveBean> {
 
     private final class ViewHolder extends AppAdapter<?>.ViewHolder {
         public final RelativeLayout mRelativeLayout;
-        public final TextView mMsgChose, mInDB, mTitle, mRemark, mIP;
+        public final TextView mMsgChose, mInDB, mTitle, mRemark, mIP,mDeviceCode;
         private final ImageView mImageChose;
 
         private ViewHolder() {
@@ -68,6 +68,7 @@ public class DeviceSearchAdapter extends AppAdapter<BroadCastReceiveBean> {
             mTitle = findViewById(R.id.tv_current_title_msg);
             mRemark = findViewById(R.id.tv_current_remark_msg);
             mIP = findViewById(R.id.tv_current_ip_msg);
+            mDeviceCode  = findViewById(R.id.tv_current_device_code);
 //            mChange = findViewById(R.id.tv_change);
 //            mDelete = findViewById(R.id.tv_delete);
         }
@@ -84,6 +85,7 @@ public class DeviceSearchAdapter extends AppAdapter<BroadCastReceiveBean> {
             mTitle.setText("" + mItemBean.getTitle());
             mRemark.setText("" + mItemBean.getRemark());
             mIP.setText("" + mItemBean.getIp());
+            mDeviceCode.setText("ID:"+mItemBean.getDeviceCode());
 
             if (mSelected) {
                 mRelativeLayout.setBackgroundResource(R.drawable.shape_bg_device_all_nor);

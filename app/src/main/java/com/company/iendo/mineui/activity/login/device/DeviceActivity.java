@@ -79,7 +79,6 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
     private TextView tvLeft;
     private ImageView rightAdd;
 
-
     @Override
     protected int getLayoutId() {
         return R.layout.activity_device;

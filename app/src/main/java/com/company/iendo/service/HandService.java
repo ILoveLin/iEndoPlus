@@ -150,7 +150,7 @@ public class HandService extends AbsWorkService {
 //        observeOn是来设定我们的观察者的操作是在哪个线程执行   AndroidSchedulers.mainThread()
 
         sDisposable10s = Observable
-                .interval(8, TimeUnit.SECONDS)//定时器操作符，这里三秒打印一个log
+                .interval(10, TimeUnit.SECONDS)//定时器操作符，这里三秒打印一个log
                 //取消任务时取消定时唤醒
                 .doOnDispose(() -> {
                     LogUtils.e("保活服务开启HandService==---取消了--每 10 秒采集一次数据--===doOnDispose=取消了");

@@ -428,14 +428,18 @@ public class CalculateUtils {
 
     public static byte[] getSendByteData(Context mContext, String bean, String Received_Type,
                                          String Received_ID, String CMD) {
-
+//                0000000000000000     广播的
+//                30303030303030303030303030303030
+//                937a5f204dc43a14
+//                39333761356632303464633433613134
 //      BroadCastDataBean bean = new BroadCastDataBean();
 //      bean.setBroadcaster("szcme");                              //设备名字
 //      bean.setRamdom(CalculateUtils.getCurrentTimeString());
 //      广播发起随机时间戳:20220127104645
         //不转换的时候最后在CalculateUtils.hexString2Bytes(sendCommandString);回返回null,因为我那边模了不是偶数就会返回null
 
-        LogUtils.e("SocketManage回调==哇哈哈==getSendByteData====Received_Type=="+Received_Type);
+        LogUtils.e("===========获取长度==计算方法====传入进来的设备码===" + Received_ID);
+
         if ("9".equals(Received_Type)) {
             Received_Type = "09";
         }
@@ -455,7 +459,10 @@ public class CalculateUtils {
         String mSend_Type = "A1";                                           //发送方设备类型。--1字节-Android=A1  FF为所有设备
         String mSend_ID = mSend_IDBy32.toUpperCase();                       //发送方设备唯一标识。   --16字节
         String mReceived_Type = Received_Type;                              //接收方设备类型。   --FF是是所有设备
-        String mReceived_ID = Received_ID;                                  //接收方设备唯一标识。   --16字节--目前暂时给32个0,模拟后台给的数据
+        LogUtils.e("===========获取长度==计算方法====16===" + Received_ID);
+        String Received_ID32 = CalculateUtils.str2HexStr(Received_ID);
+        LogUtils.e("===========获取长度==计算方法====32===" + Received_ID32);
+        String mReceived_ID = Received_ID32;                                  //接收方设备唯一标识。   --16字节--目前暂时给32个0,模拟后台给的数据
         String mCMD = CMD;                                                  //UDP广播   --一个字节
         // 校验和，0xAA 依次与“Length、Random、CMD_ID、Send_Type、Send_ID、Received_Type、Received_ID、CMD、Data” 异或运算后的结果
         String CSString = "AA" + mLength + mRandom + mCMD_ID + mSend_Type + mSend_ID + mReceived_Type + mReceived_ID + mCMD + mData;

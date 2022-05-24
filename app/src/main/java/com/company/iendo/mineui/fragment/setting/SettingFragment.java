@@ -132,20 +132,6 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
             case R.id.about_bar:
                 showAboutDialog();
                 //字符串转成十六进制
-                String str32 = CalculateUtils.str2HexStr("00000000000000000000000000000000");
-//                0000000000000000     广播的
-//                30303030303030303030303030303030
-
-//                937a5f204dc43a14
-//                39333761356632303464633433613134
-                LogUtils.e("str转化====十六进制32字符串==="+str32);
-//                hexStr2Str
-                String str = CalculateUtils.hexStr2Str("3030303030303030303030303030303030303030303030303030303030303030");
-                LogUtils.e("str转化====2进制16位字符串==="+str);
-
-                //2进制字符串转成16进制字符串
-
-
                 break;
             case R.id.password_bar:
                 showChangePasswordDialog();

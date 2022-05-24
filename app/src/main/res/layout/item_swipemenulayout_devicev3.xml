@@ -11,7 +11,7 @@
 
     <RelativeLayout
         android:id="@+id/relative_item"
-        android:layout_width="@dimen/dp_120"
+        android:layout_width="@dimen/dp_135"
         android:layout_height="@dimen/dp_150"
         android:layout_margin="@dimen/dp_10"
         android:background="@drawable/shape_bg_device_all_nor">
@@ -85,6 +85,9 @@
                 android:paddingRight="@dimen/dp_5"
                 android:paddingBottom="@dimen/dp_2"
                 android:text="1号内镜室"
+                android:singleLine="true"
+                android:lines="1"
+                android:ellipsize="end"
                 android:textColor="@color/color_9A9A9A"
                 android:textSize="@dimen/sp_11"
                 android:visibility="visible" />
@@ -99,6 +102,19 @@
                 android:paddingRight="@dimen/dp_5"
                 android:paddingBottom="@dimen/dp_2"
                 android:text="192.168.132.1.103"
+                android:textColor="@color/color_9A9A9A"
+                android:textSize="@dimen/sp_11"
+                android:visibility="visible" />
+            <TextView
+                android:id="@+id/tv_current_device_code"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:paddingLeft="@dimen/dp_5"
+                android:paddingTop="@dimen/dp_2"
+                android:paddingRight="@dimen/dp_5"
+                android:paddingBottom="@dimen/dp_2"
+                android:text="ID:937a5f204dc43a14"
                 android:textColor="@color/color_9A9A9A"
                 android:textSize="@dimen/sp_11"
                 android:visibility="visible" />

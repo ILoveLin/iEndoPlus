@@ -1679,8 +1679,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                 Log.e("TAG", "RtmpOnlyAudio=====" + reason);
                 toast("语音链接失败: " + reason);
                 mTvMicStatus.setText("状态:未连接");
-//                rtmpOnlyAudio.stopStream();
-
+                rtmpOnlyAudio.stopStream();
                 sendSocketPointMicMessage("0");
 
 

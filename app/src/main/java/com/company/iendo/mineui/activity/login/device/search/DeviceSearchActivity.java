@@ -138,7 +138,7 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
         bean.setBroadcaster("szcme");                              //设备名字
         bean.setRamdom(CalculateUtils.getCurrentTimeString());     //时间戳
         byte[] sendByteData = CalculateUtils.getSendByteData(DeviceSearchActivity.this, mGson.toJson(bean), "FF",
-                "00000000000000000000000000000000", "FD");
+                "0000000000000000", "FD");
         LogUtils.e("sendByteData====" + sendByteData);
         //发送广播消息
         if (("".equals(Constants.BROADCAST_PORT))) {
@@ -378,6 +378,7 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
             LogUtils.e("DeviceSearchActivity回调==模拟数据==mRun2DDString==" + str);
             LogUtils.e("DeviceSearchActivity回调==模拟数据==deviceType===" + CalculateUtils.getDeviceTypeFromRoom(str));
             LogUtils.e("DeviceSearchActivity回调==模拟数据==deviceOnlyCode===" + CalculateUtils.getDeviceOnlyCodeFromRoom(str));
+            LogUtils.e("DeviceSearchActivity回调==模拟数据==getReceiveID==deviceOnlyCode===" + CalculateUtils.getReceiveID(str));
             LogUtils.e("DeviceSearchActivity回调==模拟数据==data===" + s);
             LogUtils.e("DeviceSearchActivity回调==模拟数据==data=16进制直接转换成为字符串==" + CalculateUtils.hexStr2Str(s));
             //需要先截取==之后的ip
@@ -388,12 +389,17 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
             LogUtils.e("DeviceSearchActivity回调==广播回调数据Bean==ip==" + bean.toString());
             bean.setSelected(false); //默认都是未选中
             bean.setDeviceType(CalculateUtils.getDeviceTypeFromRoom(str));
-            bean.setDeviceCode(CalculateUtils.getReceiveID(str));
+//            bean.setDeviceCode(CalculateUtils.getReceiveID(str));
+//            bean.setItemId(CalculateUtils.getDeviceOnlyCodeFromRoom(str));
+            //把32位字符串设备码转化成16位
+            String receiveID32 = CalculateUtils.getReceiveID(str);
+            String receiveID16 = CalculateUtils.hexStr2Str(receiveID32);
+            bean.setDeviceCode(receiveID16);
             bean.setItemId(CalculateUtils.getDeviceOnlyCodeFromRoom(str));
             bean.setCheckAccess(false); //默认都没校验接入过
             bean.setIp(ip + "");
             bean.setReceiveType(CalculateUtils.getReceiveType(str));    //接收方设备类型
-            bean.setReceiveID(CalculateUtils.getReceiveID(str));    //接收方设备类型
+            bean.setReceiveID(receiveID16);    //接收方设备类型
             LogUtils.e("DeviceSearchActivity回调==模拟数据==bean.toString==" + bean.toString());
             mReceiveList.add(bean);
         }
@@ -661,12 +667,12 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
 //        LogUtils.e("DeviceSearchActivity回调==模拟数据==DeviceDBBean.toString==typeBean===" + typeBean);
         //获取当前界面被点击的数据item
         BroadCastReceiveBean currentClickItem = mAdapter.getItem(currentItemPosition);
-
+        String deviceOnlyCode16 = CalculateUtils.hexStr2Str(deviceOnlyCodeFromRoom);
         if (null != codeBean) {  //数据库表存在更新数据即可,只针对主键
             Long id = codeBean.getId();
             codeBean.setId(id);
-            codeBean.setDeviceCode(deviceOnlyCodeFromRoom);  //设置设备码
-            codeBean.setDeviceID(deviceOnlyCodeFromRoom);  //设置设备id
+            codeBean.setDeviceCode(deviceOnlyCode16);  //设置设备码
+            codeBean.setDeviceID(deviceOnlyCode16);  //设置设备id
             codeBean.setUsername(bean.getId()); //设置直播账号
             codeBean.setPassword(bean.getPw()); //设置直播密码
             codeBean.setDeviceName(bean.getFrom()); //设置设备名称
@@ -680,7 +686,7 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
             codeBean.setType(bean.getType());
             codeBean.setEndoType(bean.getEt());   //设置科室类型---endoType
             codeBean.setMSelected(false);   //默认未选中
-            codeBean.setAcceptAndInsertDB(bean.getEt() + deviceOnlyCodeFromRoom + bean.getType());    //存入回调数据bean,标识数据在数据库的唯一性
+            codeBean.setAcceptAndInsertDB(bean.getEt() + deviceOnlyCode16 + bean.getType());    //存入回调数据bean,标识数据在数据库的唯一性
             //此处修改界面adapter数据bean(BroadCastReceiveBean)状态,是否检验接入过isCheckAccess->true;是否存入数据库inDB->true
             currentClickItem.setInDB(true);
             currentClickItem.setCheckAccess(true);
@@ -691,8 +697,8 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
 
         } else { //暂无数据添加到数据库
             DeviceDBBean deviceDBBean = new DeviceDBBean();
-            deviceDBBean.setDeviceCode(deviceOnlyCodeFromRoom);  //设置设备码
-            deviceDBBean.setDeviceID(deviceOnlyCodeFromRoom);  //设置设备id
+            deviceDBBean.setDeviceCode(deviceOnlyCode16);  //设置设备码
+            deviceDBBean.setDeviceID(deviceOnlyCode16);  //设置设备id
             deviceDBBean.setUsername(bean.getId()); //设置直播账号
             deviceDBBean.setPassword(bean.getPw()); //设置直播密码
             deviceDBBean.setDeviceName(bean.getFrom()); //设置设备名称
@@ -707,7 +713,7 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
             deviceDBBean.setEndoType(bean.getEt());   //设置科室类型---endoType
             deviceDBBean.setMSelected(false);   //默认未选中
             //依次存入endotype,deviceCode,deviceType
-            deviceDBBean.setAcceptAndInsertDB(bean.getEt() + deviceOnlyCodeFromRoom + bean.getType());    //存入回调数据bean,标识数据在数据库的唯一性
+            deviceDBBean.setAcceptAndInsertDB(bean.getEt() + deviceOnlyCode16 + bean.getType());    //存入回调数据bean,标识数据在数据库的唯一性
 
             LogUtils.e("DeviceSearchActivity回调==模拟数据==DeviceDBBean.bean.getIp()===" + bean.getIp());//192.168.64.13
             LogUtils.e("DeviceSearchActivity回调==模拟数据==DeviceDBBean.currentClickItem.getIp()===" + currentClickItem.getIp());//192.168.132.102
