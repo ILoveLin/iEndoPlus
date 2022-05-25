@@ -8,6 +8,7 @@
     tools:context="com.company.iendo.ui.activity.CopyActivity">
 
     <TextView
+        android:id="@+id/tv_statue_view"
         android:background="@color/white"
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_21" />
@@ -15,7 +16,7 @@
     <RelativeLayout
         android:background="@color/white"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/dp_44">
+        android:layout_height="@dimen/dp_50">
 
         <TextView
             android:id="@+id/tv_left"

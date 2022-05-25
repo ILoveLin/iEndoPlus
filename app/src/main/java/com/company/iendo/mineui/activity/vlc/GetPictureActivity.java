@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -1016,7 +1017,6 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
 
             @Override
             public void onTitleClick(View view) {
-
             }
 
             @Override
@@ -1160,6 +1160,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
 //        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         //永远不息屏
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        mTitleBar = findViewById(R.id.titlebar_get);
         mStatusLayout = findViewById(R.id.picture_status_hint);
         mChangeFull = findViewById(R.id.full_change);
         mPictureDes = findViewById(R.id.case_picture); //采图
@@ -1217,7 +1218,6 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         rootView = mPlayer.getRootView();                         //点击控制锁显示和隐藏的
         onTouchVideoListener = mPlayer.getOnTouchVideoListener();
         mVLCView = mPlayer.findViewById(R.id.vlc_video_view);
-        mTitleBar = findViewById(R.id.titlebar);
 
     }
 

@@ -9,6 +9,7 @@
 
 
     <TextView
+        android:id="@+id/tv_statue_view"
         android:background="@color/white"
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_21" />

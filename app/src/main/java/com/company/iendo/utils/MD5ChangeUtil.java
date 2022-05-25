@@ -71,9 +71,8 @@ public class MD5ChangeUtil {
                 buf.append(Integer.toHexString(i));
             }
 
-            LogUtils.e("result: " + buf.toString());// 32位的加密
-
-            LogUtils.e("result: " + buf.toString().substring(8, 24));// 16位的加密
+//            LogUtils.e("result: " + buf.toString());// 32位的加密
+//            LogUtils.e("result: " + buf.toString().substring(8, 24));// 16位的加密
 
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();

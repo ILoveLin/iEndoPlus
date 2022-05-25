@@ -578,12 +578,6 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_login_commit:
-
-                String str = "AAC501005218000931376335613463353432626432363561A1F9432B11B93E8BB4AE34539B7472C20EF07B0A0922696D616765696422203A202230222C0A09227265636F7264696422203A202232366432220A7D33DD";
-                String sendDeviceType = CalculateUtils.getSendDeviceType(str);
-                LogUtils.e("登录测试==sendDeviceType==" + sendDeviceType);
-
-
                 CharSequence text = mLoginType.getText();
                 if (text.equals("在线登录")) {  //在线登录
                     SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.OnLine_Flag, true);

@@ -26,6 +26,7 @@ import java.net.UnknownHostException;
  */
 public class SocketUtils {
 
+    private static final String TAG = "Socket发送消息===";
 
     /**
      * @param data 字节数组    广播 授权,使用的是设置的端口,其他的点对点消息,按照协议data的port的走
@@ -59,11 +60,10 @@ public class SocketUtils {
 //                    byte[] sendData = data.getBytes();
                     MMKV kv = MMKV.defaultMMKV();
                     int mCastSendPort = kv.decodeInt(Constants.KEY_BROADCAST_PORT);
-                    LogUtils.e("SocketUtils===发送消息==点对点==hand==key=mCastSendPort=" + mCastSendPort);
 
                     DatagramPacket mSendPacket = new DatagramPacket(data, data.length, finalMAddress, mCastSendPort);
                     for (int i = 0; i < 5; i++) {
-                        LogUtils.e("SocketUtils=====发送第=====" + i + "====次广播==mCastSendPort==" + mCastSendPort);
+                        LogUtils.e(TAG + "广播消息===发送第:"+ i + "次广播,端口:" + mCastSendPort);
                         Thread.sleep(500);
                         //固定端口
                         DatagramSocket mSendBroadcastSocket = new DatagramSocket(null);
@@ -109,21 +109,13 @@ public class SocketUtils {
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
-        LogUtils.e("SocketUtils===发送消息==点对点==hand==data0000==" + mAddress);
-
         InetAddress finalMAddress = mAddress;
-
-        LogUtils.e("SocketUtils===发送消息==点对点==hand==data111111==" + data);
-
         new Thread() {
             @Override
             public void run() {
                 super.run();
                 try {
-                    LogUtils.e("SocketUtils===发送消息==点对点==hand==ip==" + ip);
-                    LogUtils.e("SocketUtils===发送消息==点对点==hand==receivePort==" + receivePort);
-                    LogUtils.e("SocketUtils===发送消息==点对点==hand==data==" + data);
-
+                    LogUtils.e(TAG + "hand消息==="+"发送,ip:" + finalMAddress+",port:" + receivePort+",data:" + data);
                     DatagramPacket mSendPacket = new DatagramPacket(data, data.length, finalMAddress, receivePort);
 //                    for (int i = 0; i < 5; i++) {
                     //随机端口
@@ -141,13 +133,11 @@ public class SocketUtils {
 //                    lock.release();
 //                    }
                 } catch (Exception e) {
-                    LogUtils.e("SocketUtils===发送消息==握手消息==hand==Exception==" + e);
-
+                    LogUtils.e(TAG + "hand消息==1="+"发生Exception:"+e);
                 }
             }
         }.start();
     }
-
 
     /**
      * @param data        字节数组
@@ -175,16 +165,7 @@ public class SocketUtils {
                 super.run();
                 try {
 //                    byte[] sendData = data.getBytes();
-                    MMKV kv = MMKV.defaultMMKV();
-                    LogUtils.e("SocketUtils===发送消息==点对点==Point===00===");
-                    LogUtils.e("SocketUtils===发送消息==点对点==Point===ip===" + ip);
-                    LogUtils.e("SocketUtils===发送消息==点对点==Point===00===" + data);
-
-                    int mReceivePort = kv.decodeInt(Constants.KEY_RECEIVE_PORT);
-                    LogUtils.e("SocketUtils===发送消息==点对点==hand==key=01=" + mReceivePort);
-
-                    LogUtils.e("SocketUtils===发送消息==点对点==Point===00===receivePort" + receivePort);
-
+                    LogUtils.e(TAG + "hand消息==="+"发送,ip:" + finalMAddress+",port:" + receivePort+",data:" + data);
                     DatagramPacket mSendPacket = new DatagramPacket(data, data.length, finalMAddress, receivePort);
 //                    for (int i = 0; i < 5; i++) {
                     //随机端口
@@ -196,16 +177,13 @@ public class SocketUtils {
                     mSendSocket.setReuseAddress(true);
                     mSendSocket.bind(new InetSocketAddress(receivePort));
                     mSendSocket.send(mSendPacket);
-                    LogUtils.e("SocketUtils===发送消息==点对点==Point===01===");
                     mSendSocket.close();
-                    LogUtils.e("SocketUtils===发送消息==点对点==Point===02===");
                     //释放资源
 //                    lock.release();
-                    LogUtils.e("SocketUtils===发送消息==点对点==Point==" + receivePort);
-
 //                    }
                 } catch (Exception e) {
-                    LogUtils.e("SocketUtils===发送消息==点对点==Point===Exception===" + e);
+                    LogUtils.e(TAG + "point消息==1="+"发生Exception:"+e);
+
 
                 }
             }

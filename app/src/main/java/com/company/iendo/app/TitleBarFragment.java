@@ -1,5 +1,6 @@
 package com.company.iendo.app;
 
+import android.app.Activity;
 import android.content.Context;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
@@ -166,5 +167,13 @@ public abstract class TitleBarFragment<A extends AppActivity> extends AppFragmen
     public static String getIpString(int i) {
         return (i & 0xFF) + "." + ((i >> 8) & 0xFF) + "."
                 + ((i >> 16) & 0xFF) + "." + (i >> 24 & 0xFF);
+    }
+    //获取状态栏的高度
+    public int getStatusBarHeight(Activity activity) {
+        int resourceId = activity.getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            return activity.getResources().getDimensionPixelSize(resourceId);
+        }
+        return 0;
     }
 }

@@ -19,7 +19,7 @@ public class LogUtils {
         String componName = Thread.currentThread().getStackTrace()[3].getClassName();
         String className = componName.substring(componName.lastIndexOf(".") + 1, componName.length());
         String methodName = Thread.currentThread().getStackTrace()[3].getMethodName();
-        Log.i(TAG, TAG + " class:" + className + " called:" + methodName + " " + msg);
+//        Log.i(TAG, TAG + " class:" + className + " called:" + methodName + " " + msg);
     }
 
     public static void e(String msg) {

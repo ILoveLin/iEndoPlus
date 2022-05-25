@@ -2,32 +2,25 @@ package com.company.iendo.mineui.fragment.casemanage;
 
 import android.animation.ObjectAnimator;
 import android.content.Intent;
-import android.graphics.Rect;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.company.iendo.R;
 import com.company.iendo.action.StatusAction;
 import com.company.iendo.app.TitleBarFragment;
-import com.company.iendo.bean.CaseDetailBean;
 import com.company.iendo.bean.CaseManageListBean;
 import com.company.iendo.bean.UserReloBean;
-import com.company.iendo.bean.ZXBean;
 import com.company.iendo.bean.event.SocketRefreshEvent;
 import com.company.iendo.bean.socket.HandBean;
-import com.company.iendo.http.glide.GlideRequest;
 import com.company.iendo.mineui.activity.MainActivity;
 import com.company.iendo.mineui.activity.casemanage.AddCaseActivity;
 import com.company.iendo.mineui.activity.casemanage.DetailCaseActivity;
-import com.company.iendo.mineui.activity.login.device.DeviceActivity;
-import com.company.iendo.mineui.activity.search.SearchActivity;
 import com.company.iendo.mineui.activity.search.SearchSelectedActivity;
 import com.company.iendo.mineui.fragment.casemanage.adapter.CaseManageAdapter;
 import com.company.iendo.other.Constants;
@@ -35,42 +28,27 @@ import com.company.iendo.other.HttpConstant;
 import com.company.iendo.ui.dialog.DateDialog;
 import com.company.iendo.utils.CalculateUtils;
 import com.company.iendo.utils.DateUtil;
-import com.company.iendo.utils.ScreenSizeUtil;
 import com.company.iendo.utils.SharePreferenceUtil;
 import com.company.iendo.utils.SocketUtils;
-import com.company.iendo.widget.GridSpaceItemDecoration;
-import com.company.iendo.widget.MyItemDecoration;
 import com.company.iendo.widget.StatusLayout;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.google.gson.stream.JsonToken;
 import com.gyf.immersionbar.ImmersionBar;
 import com.hjq.base.BaseAdapter;
 import com.hjq.base.BaseDialog;
 import com.hjq.gson.factory.GsonFactory;
-import com.hjq.gson.factory.JsonCallback;
 import com.hjq.widget.layout.WrapRecyclerView;
 import com.scwang.smart.refresh.layout.SmartRefreshLayout;
-import com.scwang.smart.refresh.layout.api.RefreshLayout;
-import com.scwang.smart.refresh.layout.listener.OnRefreshLoadMoreListener;
-import com.tencent.bugly.crashreport.CrashReport;
-import com.umeng.commonsdk.debug.E;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
-
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import io.reactivex.internal.operators.flowable.FlowableOnErrorReturn;
 import okhttp3.Call;
 
 /**
@@ -94,6 +72,7 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
     private String endoType;
     private ImageView mAnim;
     private String imageCounts;
+    private TextView statusBarView;
 
     public static CaseManageFragment newInstance() {
         return new CaseManageFragment();
@@ -112,6 +91,7 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
         mRecyclerView = findViewById(R.id.rv_b_recyclerview);
         mTitle = findViewById(R.id.tv_title);
         mAnim = findViewById(R.id.iv_tag_anim);
+        statusBarView = findViewById(R.id.viewtop);
         mStatusLayout = findViewById(R.id.b_hint);
         mTitle.setText(DateUtil.getSystemDate());
         currentChoseDate = mTitle.getText().toString().trim();
@@ -119,8 +99,24 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
         ObjectAnimator animator = ObjectAnimator.ofFloat(mAnim, "rotation", 0f, 180f);
         animator.setDuration(100);
         animator.start();
+        setStatusBarHeight();
 
+    }
 
+    /**
+     * 设置状态栏高度
+     */
+    private void setStatusBarHeight() {
+        int statusBarHeight = getStatusBarHeight(getAttachActivity());
+        LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) statusBarView.getLayoutParams();
+        if (statusBarHeight == 0) {
+            float dimension = getResources().getDimension(R.dimen.dp_10);
+            statusBarHeight = (int) dimension;
+            layoutParams.height = statusBarHeight;
+        } else {
+            layoutParams.height = statusBarHeight;
+        }
+        statusBarView.setLayoutParams(layoutParams);
     }
 
     @Override
@@ -371,7 +367,7 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
     /**
      * eventbus 刷新socket数据
      */
-    @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void SocketRefreshEvent(SocketRefreshEvent event) {
         String data = event.getData();
         switch (event.getUdpCmd()) {

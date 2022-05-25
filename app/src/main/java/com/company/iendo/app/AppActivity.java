@@ -1,5 +1,6 @@
 package com.company.iendo.app;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.wifi.WifiInfo;
@@ -333,12 +334,19 @@ public abstract class AppActivity extends BaseActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
-
         if (isShowDialog()) {
             hideDialog();
         }
         mDialog = null;
 
+    }
+
+    //获取状态栏的高度
+    public int getStatusBarHeight(Activity activity) {
+        int resourceId = activity.getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            return activity.getResources().getDimensionPixelSize(resourceId);
+        }
+        return 0;
     }
 }

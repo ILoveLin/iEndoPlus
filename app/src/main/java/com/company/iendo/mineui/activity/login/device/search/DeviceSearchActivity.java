@@ -9,6 +9,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -101,6 +103,7 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
 
     private BaseDialog.Builder<BaseDialog.Builder<?>> mSearchDialog;
     private ReceiveSocketService receiveSocketService;
+    private TextView statusBarView;
 
     private void showSearchDialog() {
 
@@ -161,6 +164,7 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
         });
 
     }
+
     private static final String TAG = "Socket发送===";
 
     private void showSettingDialog() {
@@ -205,6 +209,7 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
 
                         }
                     }
+
                     @Override
                     public void onCancel(BaseDialog dialog) {
 
@@ -237,7 +242,7 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
     /**
      * eventbus 刷新socket数据
      */
-    @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void SocketRefreshEvent(SocketRefreshEvent event) {
         String mRun2End4 = CalculateUtils.getReceiveRun2End4String(event.getData());//随机数之后到data结尾的String
         String deviceType = CalculateUtils.getSendDeviceType(event.getData());
@@ -274,6 +279,7 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
         EventBus.getDefault().register(this);
         receiveSocketService = new ReceiveSocketService();
         mStatusLayout = findViewById(R.id.status_hint);
+        statusBarView = findViewById(R.id.tv_statue_view);
         mRefreshLayout = findViewById(R.id.rl_device_search_refresh);
         mRecyclerView = findViewById(R.id.rv_device_search_recyclerview);
 //        mTitleBar = findViewById(R.id.search_titlebar);
@@ -315,7 +321,7 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
 
     @Override
     protected void initData() {
-
+        setStatusBarHeight();
         mReceiveBroadMap.clear();
         mReceiveBroadCastList.clear();
         mReceivePointList.clear();
@@ -351,18 +357,13 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
             String str = mReceiveBroadCastList.get(i);
             String receiveDataStringFromRoom = CalculateUtils.getReceiveDataStringFromRoomForBroadCast(str);
             String s = receiveDataStringFromRoom.toUpperCase();
-            LogUtils.e("设备搜索界面=="+ str);
-            LogUtils.e("设备搜索界面=="+ str);
-            LogUtils.e("设备搜索界面=="+ str);
-            LogUtils.e("设备搜索界面=="+ str);
-            LogUtils.e("设备搜索界面=="+ str);
-            LogUtils.e("设备搜索界面=="+ str);
-
-            LogUtils.e("DeviceSearchActivity回调==模拟数据==deviceType===" + CalculateUtils.getDeviceTypeFromRoom(str));
-            LogUtils.e("DeviceSearchActivity回调==模拟数据==deviceOnlyCode===" + CalculateUtils.getDeviceOnlyCodeFromRoom(str));
-            LogUtils.e("DeviceSearchActivity回调==模拟数据==getReceiveID==deviceOnlyCode===" + CalculateUtils.getReceiveID(str));
-            LogUtils.e("DeviceSearchActivity回调==模拟数据==data===" + s);
-            LogUtils.e("DeviceSearchActivity回调==模拟数据==data=16进制直接转换成为字符串==" + CalculateUtils.hexStr2Str(s));
+            LogUtils.e("设备搜索界面==获取到广播hexString的数据==" + str);
+            LogUtils.e("设备搜索界面==获取到广播hexString的数据==" + str);
+            LogUtils.e("设备搜索界面==上位机,设备类型==" + CalculateUtils.getDeviceTypeFromRoom(str));
+            LogUtils.e("设备搜索界面==上位机,设备码==" + CalculateUtils.getReceiveID(str));
+            LogUtils.e("设备搜索界面==iPad ID==" + CalculateUtils.getDeviceOnlyCodeFromRoom(str));
+            LogUtils.e("设备搜索界面==data==hexString==" + s);
+            LogUtils.e("设备搜索界面==data==String==" + CalculateUtils.hexStr2Str(s));
             //需要先截取==之后的ip
             int startIndex = str.indexOf("==") + 2;
             String ip = str.substring(startIndex);
@@ -616,7 +617,7 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
         DeviceDBBean codeBean = DeviceDBUtils.getQueryBeanByAcceptAndInsertDB(DeviceSearchActivity.this, tag);
 //        DeviceDBBean codeBean = DeviceDBUtils.getQueryBeanByCode(DeviceSearchActivity.this, deviceOnlyCodeFromRoom, bean.getType());
 //        DeviceDBBean typeBean = DeviceDBUtils.getQueryBeanByType(DeviceSearchActivity.this, deviceOnlyCodeFromRoom, bean.getType());
-//        LogUtils.e("DeviceSearchActivity回调==模拟数据==DeviceDBBean.toString==typeBean===" + typeBean);
+//        LogUtils.e("设备搜索界面==模拟数据==DeviceDBBean.toString==typeBean===" + typeBean);
         //获取当前界面被点击的数据item
         BroadCastReceiveBean currentClickItem = mAdapter.getItem(currentItemPosition);
         String deviceOnlyCode16 = CalculateUtils.hexStr2Str(deviceOnlyCodeFromRoom);
@@ -817,4 +818,22 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
 //        SocketManage.startNorReceive(Constants.RECEIVE_PORT, DeviceSearchActivity.this);
 
     }
+
+
+    /**
+     * 设置状态栏高度
+     */
+    private void setStatusBarHeight() {
+        int statusBarHeight = getStatusBarHeight(DeviceSearchActivity.this);
+        LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) statusBarView.getLayoutParams();
+        if (statusBarHeight == 0) {
+            float dimension = getResources().getDimension(R.dimen.dp_10);
+            statusBarHeight = (int) dimension;
+            layoutParams.height = statusBarHeight;
+        } else {
+            layoutParams.height = statusBarHeight;
+        }
+        statusBarView.setLayoutParams(layoutParams);
+    }
+
 }

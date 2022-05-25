@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -71,6 +72,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
     private View mViewTag;
     private TextView tvLeft;
     private ImageView rightAdd;
+    private TextView statusBarView;
 
     @Override
     protected int getLayoutId() {
@@ -81,6 +83,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
     protected void initView() {
         EventBus.getDefault().register(this);
         mRefreshLayout = findViewById(R.id.rl_device_refresh);
+        statusBarView = findViewById(R.id.tv_statue_view);
         mRecyclerView = findViewById(R.id.rv_device_recyclerview);
         mStatusLayout = findViewById(R.id.device_hint);
         tvLeft = findViewById(R.id.tv_left_device);
@@ -89,6 +92,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
 
     @Override
     protected void initData() {
+        setStatusBarHeight();
         List<DeviceDBBean> deviceDBBeans = DeviceDBUtils.queryAll(DeviceActivity.this);
         mDataLest.clear();
         mDataLest.addAll(deviceDBBeans);
@@ -1072,7 +1076,21 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
 
     }
 
-
+    /**
+     * 设置状态栏高度
+     */
+    private void setStatusBarHeight() {
+        int statusBarHeight = getStatusBarHeight(DeviceActivity.this);
+        LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) statusBarView.getLayoutParams();
+        if (statusBarHeight == 0) {
+            float dimension = getResources().getDimension(R.dimen.dp_10);
+            statusBarHeight = (int) dimension;
+            layoutParams.height = statusBarHeight;
+        } else {
+            layoutParams.height = statusBarHeight;
+        }
+        statusBarView.setLayoutParams(layoutParams);
+    }
     //
 //
 //    @Override
