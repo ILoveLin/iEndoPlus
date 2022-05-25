@@ -25,7 +25,6 @@ import com.company.iendo.ui.activity.ImageCropActivity;
 import com.company.iendo.ui.activity.ImagePreviewActivity;
 import com.company.iendo.ui.activity.ImageSelectActivity;
 import com.company.iendo.utils.CalculateUtils;
-import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.PictureFileUtil;
 import com.company.iendo.utils.RegexUtils;
 import com.company.iendo.utils.SocketUtils;
@@ -107,7 +106,7 @@ public class HospitalActivity extends AppActivity implements StatusAction {
 
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
     public void SocketRefreshEvent(SocketRefreshEvent event) {
         switch (event.getUdpCmd()) {
             case Constants.UDP_40://刷新医院信息
@@ -129,7 +128,6 @@ public class HospitalActivity extends AppActivity implements StatusAction {
             HandBean handBean = new HandBean();
             handBean.setHelloPc("");
             handBean.setComeFrom("");
-            LogUtils.e("======GetPictureActivity==回调===获取当前病例==" + handBean.toString());
             byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(handBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
                     CMDCode);
             if (("".equals(mSocketPort))) {
@@ -184,8 +182,6 @@ public class HospitalActivity extends AppActivity implements StatusAction {
         boolean postCode = RegexUtils.checkPostcode(mNumber.getText().toString().trim());
         if (postCode) {
             showLoading();
-            LogUtils.e("医院信息==e=szPostCode=" + mNumber.getText().toString().trim());
-
             OkHttpUtils.post()
                     .url(mBaseUrl + HttpConstant.CaseManager_CaseUpdateHospitalInfo)
                     .addParams("ID", mID)//内部ID
@@ -204,15 +200,12 @@ public class HospitalActivity extends AppActivity implements StatusAction {
                             showError(listener -> {
                                 sendRequest();
                             });
-                            LogUtils.e("医院信息==e==" + e);
 
                         }
 
                         @Override
                         public void onResponse(String response, int id) {
                             showComplete();
-                            LogUtils.e("医院信息==e=response=" + response);
-
                             HospitalUpdateBean mBean = mGson.fromJson(response, HospitalUpdateBean.class);
                             if ("" != response && 0 == mBean.getCode()) {  //成功
                                 toast("修改成功!");
@@ -249,7 +242,6 @@ public class HospitalActivity extends AppActivity implements StatusAction {
                     public void onResponse(String response, int id) {
                         showComplete();
                         HospitalBean mBean = mGson.fromJson(response, HospitalBean.class);
-                        LogUtils.e("医院信息====" + response);
                         if ("" != response && 0 == mBean.getCode()) {  //成功
                             mID = mBean.getData().getID();
                             refreshData(mBean.getData());
@@ -276,7 +268,6 @@ public class HospitalActivity extends AppActivity implements StatusAction {
         szPostCode = data.getSzPostCode();
         //http://ip:port/DefaultLogo.jpg
         String szIconPath = mBaseUrl+ "/" + data.getSzIconPath();
-        LogUtils.e("医院信息====" + szIconPath);
 
         // 显示圆角的 ImageView
         GlideApp.with(this)
@@ -322,7 +313,6 @@ public class HospitalActivity extends AppActivity implements StatusAction {
                     // 选择头像
                     ImageSelectActivity.start(this, data -> {
                         // 裁剪头像
-                        LogUtils.e("logo====data.get(0))====" + data.get(0));
                         cropImageFile(new File(data.get(0)));
                     });
                 }
@@ -368,12 +358,8 @@ public class HospitalActivity extends AppActivity implements StatusAction {
         if (true) {
             if (file instanceof FileContentResolver) {
                 mAvatarUrl = ((FileContentResolver) file).getContentUri();
-                LogUtils.e("logo====onError==AAA==" + mAvatarUrl);
-
             } else {
                 mAvatarUrl = Uri.fromFile(file);
-                LogUtils.e("logo====onError==BBB==" + mAvatarUrl);
-
             }
 
             // 显示圆角的 ImageView
@@ -393,13 +379,10 @@ public class HospitalActivity extends AppActivity implements StatusAction {
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
-                        LogUtils.e("logo====onError====" + e);
-
                     }
 
                     @Override
                     public void onResponse(String response, int id) {
-                        LogUtils.e("logo====response====" + response);
                     }
                 });
     }

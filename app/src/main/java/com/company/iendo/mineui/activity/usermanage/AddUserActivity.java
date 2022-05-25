@@ -16,7 +16,6 @@ import com.company.iendo.bean.UserDeletedBean;
 import com.company.iendo.bean.event.RefreshUserListEvent;
 import com.company.iendo.other.HttpConstant;
 import com.company.iendo.ui.dialog.SelectDialog;
-import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.SharePreferenceUtil;
 import com.company.iendo.widget.StatusLayout;
 import com.gyf.immersionbar.ImmersionBar;
@@ -262,7 +261,6 @@ public final class AddUserActivity extends AppActivity implements StatusAction, 
 //        showLoading();
         getRequestParamsToSendRequest();
         for (String key : mParamsMap.keySet()) {
-            LogUtils.e("key= " + key + " and value= " + mParamsMap.get(key));
         }
 
 
@@ -455,7 +453,6 @@ public final class AddUserActivity extends AppActivity implements StatusAction, 
 
                         @Override
                         public void onResponse(String response, int id) {
-                            LogUtils.e("新增用户==" + response);
                             showComplete();
                             if ("" != response) {
                                 UserDeletedBean mBean = mGson.fromJson(response, UserDeletedBean.class);
@@ -514,9 +511,7 @@ public final class AddUserActivity extends AppActivity implements StatusAction, 
                             @Override
                             public void onSelected(BaseDialog dialog, HashMap<Integer, String> data) {
                                 String position = data.toString().substring(1, 2);
-                                LogUtils.e("确定了===position==" + position);
                                 String str = data.get(Integer.parseInt(position));
-                                LogUtils.e("确定了===str==" + str);
                                 Role = position;
                                 mReloType.setText(str + "");
                             }

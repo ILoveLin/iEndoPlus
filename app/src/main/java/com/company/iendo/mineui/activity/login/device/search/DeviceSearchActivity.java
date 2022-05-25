@@ -139,7 +139,6 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
         bean.setRamdom(CalculateUtils.getCurrentTimeString());     //时间戳
         byte[] sendByteData = CalculateUtils.getSendByteData(DeviceSearchActivity.this, mGson.toJson(bean), "FF",
                 "0000000000000000", "FD");
-        LogUtils.e("sendByteData====" + sendByteData);
         //发送广播消息
         if (("".equals(Constants.BROADCAST_PORT))) {
             toast("通讯端口不能为空!");
@@ -162,6 +161,7 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
         });
 
     }
+    private static final String TAG = "Socket发送===";
 
     private void showSettingDialog() {
         MMKV kv = MMKV.defaultMMKV();
@@ -174,7 +174,6 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
                 .setListener(new Input2SettingDialog.OnListener() {
                     @Override
                     public void onConfirm(BaseDialog dialog, String settingPort) {
-                        LogUtils.e("本地广播发送端口==" + settingPort);//222222222   本地广播发送端口
                         ReceiveSocketService receiveSocketService = new ReceiveSocketService();
                         WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
                         if (wifiManager.isWifiEnabled()) {
@@ -189,20 +188,15 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
 
                             MMKV kv = MMKV.defaultMMKV();
                             //获取当前开启的接收端口
-                            LogUtils.e("保活服务开启-Setting--原本广播port---===mCurrentReceivePort===" + mCurrentReceivePort);
-                            LogUtils.e("保活服务开启-Setting--设置的port---===sendPort===" + settingPort);
-
                             if (mCurrentReceivePort == Integer.parseInt(settingPort)) {//相等,此时不需要开启新的线程
                                 toast("此端口已配置,请勿重复操作!");
                             } else {
                                 //存入当前广播发送的port
-                                LogUtils.e("保活服务开启-Setting--设置的port---===i===" + settingPort);
                                 kv.encode(Constants.KEY_SOCKET_RECEIVE_FIRST_IN, true);
                                 kv.encode(Constants.KEY_RECEIVE_PORT, Integer.parseInt(settingPort)); //设置的,本地监听端口
                                 kv.encode(Constants.KEY_RECEIVE_PORT_BY_SEARCH, Integer.parseInt(settingPort)); //设置的,广播本地监听端口
                                 kv.encode(Constants.KEY_BROADCAST_PORT, Integer.parseInt(settingPort));
                                 int mDefaultCastSendPort = kv.decodeInt(Constants.KEY_BROADCAST_PORT);
-                                LogUtils.e("保活服务开启-Setting--设置的port---===i===" + mDefaultCastSendPort);
                                 receiveSocketService.setSettingReceiveThread(mAppIP, Integer.parseInt(settingPort), DeviceSearchActivity.this);
                                 //再次打开搜索动画
                                 showSearchDialog();
@@ -243,29 +237,16 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
     /**
      * eventbus 刷新socket数据
      */
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
     public void SocketRefreshEvent(SocketRefreshEvent event) {
-        LogUtils.e("Socket回调==DeviceSearchActivity==event.getData()==" + event.getData());
         String mRun2End4 = CalculateUtils.getReceiveRun2End4String(event.getData());//随机数之后到data结尾的String
         String deviceType = CalculateUtils.getSendDeviceType(event.getData());
         String deviceOnlyCode = CalculateUtils.getSendDeviceOnlyCode(event.getData());
         String currentCMD = CalculateUtils.getCMD(event.getData());
-        LogUtils.e("Socket回调==DeviceSearchActivity==随机数之后到data的Str==mRun2End4==" + mRun2End4);
-        LogUtils.e("Socket回调==DeviceSearchActivity==发送方设备类型==deviceType==" + deviceType);
-        LogUtils.e("Socket回调==DeviceSearchActivity==获取发送方设备Code==deviceOnlyCode==" + deviceOnlyCode);
-        LogUtils.e("Socket回调==DeviceSearchActivity==当前UDP命令==currentCMD==" + currentCMD);
-        LogUtils.e("Socket回调==DeviceSearchActivity==event==getReceivePort==" + event.getReceivePort());
         switch (event.getUdpCmd()) {
             case Constants.UDP_FD://广播
                 //判断是否包含指定的key:设备码+设备类型
                 boolean flag = mReceiveBroadMap.containsKey(deviceOnlyCode + deviceType);
-                Iterator<Map.Entry<String, String>> entries = mReceiveBroadMap.entrySet().iterator();
-                while (entries.hasNext()) {
-                    Map.Entry<String, String> entry = entries.next();
-                    LogUtils.e("Key = " + entry.getKey() + ", Value = " + entry.getValue());
-                }
-                LogUtils.e("Socket回调==广播===flag===" + flag);
-                LogUtils.e("Socket回调==广播===getReceivePort===" + event.getReceivePort());
                 if (!flag) {
                     mReceiveBroadMap.put(deviceOnlyCode + deviceType, mRun2End4 + "==" + event.getIp());
                 }
@@ -274,8 +255,6 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
             case Constants.UDP_FC://授权接入
                 if (!mReceivePointList.contains(mRun2End4)) {
                     mReceivePointList.add(mRun2End4 + "==" + event.getIp());
-                    LogUtils.e("Socket回调==mReceivePointList.size()===" + mReceivePointList.size());
-                    LogUtils.e("Socket回调==mRun2End4 + + ip===" + mRun2End4 + "==" + event.getIp());
                     //发消息,存入数据库,并且刷新设备搜索界面
                     mHandler.sendEmptyMessage(UDP_Point_Over);
 
@@ -292,8 +271,8 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
 
     @Override
     protected void initView() {
-        receiveSocketService = new ReceiveSocketService();
         EventBus.getDefault().register(this);
+        receiveSocketService = new ReceiveSocketService();
         mStatusLayout = findViewById(R.id.status_hint);
         mRefreshLayout = findViewById(R.id.rl_device_search_refresh);
         mRecyclerView = findViewById(R.id.rv_device_search_recyclerview);
@@ -352,8 +331,6 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
      */
     private void getAdapterBeanData() {
         //此处只做一次广播结束之后界面数据的刷新,不然会出现数据重复
-        LogUtils.e("DeviceSearchActivity回调==模拟数据==00001==" + mReceiveBroadMap.size());
-        LogUtils.e("DeviceSearchActivity回调==模拟数据==00001=Set_Data=" + Set_Data);
         if (mReceiveBroadMap.size() == 0) {
             showEmpty();
             return;
@@ -367,7 +344,6 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
         while (iterator.hasNext()) {
             Map.Entry<String, String> entry = iterator.next();
             String key = entry.getKey();
-            LogUtils.e("DeviceSearchActivity回调==测试ip==遍历key==" + key);
             String value = entry.getValue();
             mReceiveBroadCastList.add(value);
         }
@@ -375,7 +351,13 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
             String str = mReceiveBroadCastList.get(i);
             String receiveDataStringFromRoom = CalculateUtils.getReceiveDataStringFromRoomForBroadCast(str);
             String s = receiveDataStringFromRoom.toUpperCase();
-            LogUtils.e("DeviceSearchActivity回调==模拟数据==mRun2DDString==" + str);
+            LogUtils.e("设备搜索界面=="+ str);
+            LogUtils.e("设备搜索界面=="+ str);
+            LogUtils.e("设备搜索界面=="+ str);
+            LogUtils.e("设备搜索界面=="+ str);
+            LogUtils.e("设备搜索界面=="+ str);
+            LogUtils.e("设备搜索界面=="+ str);
+
             LogUtils.e("DeviceSearchActivity回调==模拟数据==deviceType===" + CalculateUtils.getDeviceTypeFromRoom(str));
             LogUtils.e("DeviceSearchActivity回调==模拟数据==deviceOnlyCode===" + CalculateUtils.getDeviceOnlyCodeFromRoom(str));
             LogUtils.e("DeviceSearchActivity回调==模拟数据==getReceiveID==deviceOnlyCode===" + CalculateUtils.getReceiveID(str));
@@ -384,9 +366,7 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
             //需要先截取==之后的ip
             int startIndex = str.indexOf("==") + 2;
             String ip = str.substring(startIndex);
-            LogUtils.e("DeviceSearchActivity回调==模拟数据==ip==" + ip);
             BroadCastReceiveBean bean = mGson.fromJson(CalculateUtils.hexStr2Str(s), BroadCastReceiveBean.class);
-            LogUtils.e("DeviceSearchActivity回调==广播回调数据Bean==ip==" + bean.toString());
             bean.setSelected(false); //默认都是未选中
             bean.setDeviceType(CalculateUtils.getDeviceTypeFromRoom(str));
 //            bean.setDeviceCode(CalculateUtils.getReceiveID(str));
@@ -400,11 +380,9 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
             bean.setIp(ip + "");
             bean.setReceiveType(CalculateUtils.getReceiveType(str));    //接收方设备类型
             bean.setReceiveID(receiveID16);    //接收方设备类型
-            LogUtils.e("DeviceSearchActivity回调==模拟数据==bean.toString==" + bean.toString());
             mReceiveList.add(bean);
         }
 
-        LogUtils.e("DeviceSearchActivity回调==模拟数据==00002==" + mReceiveList.size());
 
         if (mReceiveList.size() == 0) {
             showEmpty();
@@ -437,9 +415,6 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
         String receiveType = item.getReceiveType();
         String receiveID = item.getReceiveID();
         serverItemIP = item.getIp();
-        LogUtils.e("sendByteData==onItemClick==" + item.toString());
-        LogUtils.e("sendByteData==onItemClick==" + serverItemIP);
-
         PutInBean putBean = new PutInBean();
         //点击对话框的时候在存入pinAccess密码
         putBean.setBroadcaster(Constants.BROADCASTER);                              //设备名字
@@ -449,21 +424,12 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
         //判断是否存入过该条数据到数据库中
         DeviceDBBean codeBean = DeviceDBUtils.getQueryBeanByAcceptAndInsertDB(DeviceSearchActivity.this, tag);
         List<DeviceDBBean> deviceDBBeans = DeviceDBUtils.queryAll(DeviceSearchActivity.this);
-
-        LogUtils.e("sendByteData==onItemClick===deviceDBBeans==" + deviceDBBeans.size());
-        LogUtils.e("sendByteData==onItemClick===codeBean==" + codeBean);//数据库bean
-        LogUtils.e("sendByteData==onItemClick===item.toString()==" + item.toString());//item的bean
-        LogUtils.e("sendByteData==onItemClick===item.getCheckAccess()==" + item.getCheckAccess());
-
-
         if (null != codeBean) {
             if (tag.equals(codeBean.getAcceptAndInsertDB())) {  //数据库有该条数据
-                LogUtils.e("sendByteData==onItemClick===DB已经存在==");
                 showRefreshDBDataDialog(codeBean, item);
                 refreshCurrentUIStatus(position);
                 return;
             } else { //数据库没有有该条数据
-                LogUtils.e("sendByteData==onItemClick===NO存在==");
             }
         }
 
@@ -597,23 +563,14 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
 
         for (int i = 0; i < mReceivePointList.size(); i++) {
             String str = mReceivePointList.get(i);
-            LogUtils.e("DeviceSearchActivity回调==模拟数据==获取数据并且=1=mReceivePointList.size()==" + mReceivePointList.size());
-            LogUtils.e("DeviceSearchActivity回调==模拟数据==获取数据并且=1===" + str);
-
             String receiveDataStringFromRoom = CalculateUtils.getReceiveDataStringFromRoomForPoint(str);
             String s = receiveDataStringFromRoom.toUpperCase();
 
             //获取设备码
             String deviceOnlyCodeFromRoom = CalculateUtils.getSendID(str);
             String sendDeviceType = CalculateUtils.getSendDeviceType(str);
-
-            LogUtils.e("DeviceSearchActivity回调==模拟数据==获取数据并且=sendDeviceType===" + sendDeviceType);
-            LogUtils.e("DeviceSearchActivity回调==模拟数据==获取数据并且=deviceOnlyCodeFromRoom===" + deviceOnlyCodeFromRoom);
-            LogUtils.e("DeviceSearchActivity回调==模拟数据==获取数据并且=s===" + s);
             String s1 = CalculateUtils.hexStr2Str(s);
             PutInDeviceMsgBean bean = mGson.fromJson(s1, PutInDeviceMsgBean.class);
-
-            LogUtils.e("DeviceSearchActivity回调==模拟数据==PutInDeviceMsgBean.toString==" + bean.toString());
             String retcode = bean.getRetcode();
 
             if ("0".equals(retcode)) {
@@ -659,11 +616,6 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
         DeviceDBBean codeBean = DeviceDBUtils.getQueryBeanByAcceptAndInsertDB(DeviceSearchActivity.this, tag);
 //        DeviceDBBean codeBean = DeviceDBUtils.getQueryBeanByCode(DeviceSearchActivity.this, deviceOnlyCodeFromRoom, bean.getType());
 //        DeviceDBBean typeBean = DeviceDBUtils.getQueryBeanByType(DeviceSearchActivity.this, deviceOnlyCodeFromRoom, bean.getType());
-        LogUtils.e("DeviceSearchActivity回调==模拟数据==old=设备表长度==" + deviceDBBeans.size());
-        LogUtils.e("DeviceSearchActivity回调==模拟数据==DeviceDBBean.toString==tag===" + tag);
-        LogUtils.e("DeviceSearchActivity回调==模拟数据==DeviceDBBean.toString==codeBean===" + codeBean);
-        LogUtils.e("DeviceSearchActivity回调==模拟数据==DeviceDBBean.toString==bean.toString()===" + bean.toString());
-        LogUtils.e("DeviceSearchActivity回调==模拟数据==DeviceDBBean.toString==bean.toString()==serverItemIP=" + serverItemIP);
 //        LogUtils.e("DeviceSearchActivity回调==模拟数据==DeviceDBBean.toString==typeBean===" + typeBean);
         //获取当前界面被点击的数据item
         BroadCastReceiveBean currentClickItem = mAdapter.getItem(currentItemPosition);
@@ -693,7 +645,6 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
             DeviceDBUtils.update(DeviceSearchActivity.this, codeBean);
             mAdapter.notifyDataSetChanged();
             toast("更新=");
-            LogUtils.e("DeviceSearchActivity回调==模拟数据==DeviceDBBean.toString==更新===" + codeBean.toString());
 
         } else { //暂无数据添加到数据库
             DeviceDBBean deviceDBBean = new DeviceDBBean();
@@ -714,10 +665,6 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
             deviceDBBean.setMSelected(false);   //默认未选中
             //依次存入endotype,deviceCode,deviceType
             deviceDBBean.setAcceptAndInsertDB(bean.getEt() + deviceOnlyCode16 + bean.getType());    //存入回调数据bean,标识数据在数据库的唯一性
-
-            LogUtils.e("DeviceSearchActivity回调==模拟数据==DeviceDBBean.bean.getIp()===" + bean.getIp());//192.168.64.13
-            LogUtils.e("DeviceSearchActivity回调==模拟数据==DeviceDBBean.currentClickItem.getIp()===" + currentClickItem.getIp());//192.168.132.102
-            LogUtils.e("DeviceSearchActivity回调==模拟数据==DeviceDBBean.toString==新增===" + deviceDBBean.toString());
 
             //此处修改界面adapter数据bean(BroadCastReceiveBean)状态,是否检验接入过isCheckAccess->true;是否存入数据库inDB->true
             currentClickItem.setInDB(true);
@@ -741,10 +688,6 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
 
         byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(putBean), receiveType,
                 receiveID, Constants.UDP_FC);
-        LogUtils.e("sendByteData==点对点消息数据=数据bean=" + mGson.toJson(putBean));
-        LogUtils.e("sendByteData==点对点消息数据==" + sendByteData);
-        LogUtils.e("sendByteData==点对点消息===ip==" + ip);
-
 
         // 广播 授权,使用的是设置的端口,其他的点对点消息,按照协议data的返回的port的通讯
         MMKV kv = MMKV.defaultMMKV();

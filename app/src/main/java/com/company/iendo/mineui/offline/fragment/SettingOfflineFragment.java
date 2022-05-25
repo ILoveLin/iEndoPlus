@@ -17,7 +17,6 @@ import com.company.iendo.other.Constants;
 import com.company.iendo.ui.dialog.MessageAboutDialog;
 import com.company.iendo.ui.dialog.MessageDialog;
 import com.company.iendo.utils.FileUtil;
-import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.SharePreferenceUtil;
 import com.hjq.base.BaseDialog;
 import com.hjq.widget.layout.SettingBar;
@@ -165,8 +164,6 @@ public class SettingOfflineFragment extends TitleBarFragment<MainActivity> {
                         MMKV kv = MMKV.defaultMMKV();
                         int port = kv.decodeInt(Constants.KEY_BROADCAST_PORT);
                         int searchPort = kv.decodeInt(Constants.KEY_RECEIVE_PORT_BY_SEARCH);
-                        LogUtils.e("AppActivity=fragment==port====" + port);
-                        LogUtils.e("AppActivity=fragment==接收searchPort====" + searchPort);
 
                         if ("".equals(searchPort)) {
                             toast("本地广播发送端口不能为空");

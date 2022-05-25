@@ -15,7 +15,6 @@ import com.bumptech.glide.signature.ObjectKey;
 import com.company.iendo.R;
 import com.company.iendo.app.AppAdapter;
 import com.company.iendo.bean.PictureChoseBean;
-import com.company.iendo.utils.LogUtils;
 
 /**
  * company：江西神州医疗设备有限公司
@@ -62,8 +61,6 @@ public class ChosePictureAdapter extends AppAdapter<PictureChoseBean> {
 //            Log.e("adapter", "item==path=mBaseUrl=" + mBaseUrl + "/" + mID + "/" + item);
 //            http://192.168.64.56:7001/3/001.jpg
 //            mImageView.setText("Path:" + item.getImagePath() + "ID:" + item.getID());
-            LogUtils.e("Socket回调==PictureChoseActivity==当前UDP命令==path=adapter=" + bean.getUrl());
-
             Glide.with(getContext())
                     .load(bean.getUrl())
                     .error(R.mipmap.bg_loading_error)

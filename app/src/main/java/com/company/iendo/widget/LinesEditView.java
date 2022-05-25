@@ -15,7 +15,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.company.iendo.R;
-import com.company.iendo.utils.LogUtils;
 import com.hjq.widget.view.ClearEditText;
 
 /**
@@ -171,7 +170,6 @@ public class LinesEditView extends LinearLayout {
 //                    }
 //                }
 //            }catch (Exception e){
-//                LogUtils.e("Exception===LinesEditView字数操过异常!!! 173行");
 //            }
 
 

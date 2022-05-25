@@ -29,7 +29,6 @@ import com.company.iendo.ui.dialog.TipsDialog;
 import com.company.iendo.ui.dialog.WaitDialog;
 import com.company.iendo.utils.CalculateUtils;
 import com.company.iendo.utils.FileUtil;
-import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.MD5ChangeUtil;
 import com.company.iendo.utils.SharePreferenceUtil;
 import com.company.iendo.utils.SocketUtils;
@@ -202,8 +201,6 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
                         MMKV kv = MMKV.defaultMMKV();
                         int port = kv.decodeInt(Constants.KEY_BROADCAST_PORT);
                         int searchPort = kv.decodeInt(Constants.KEY_RECEIVE_PORT_BY_SEARCH);
-                        LogUtils.e("AppActivity=fragment==port====" + port);
-                        LogUtils.e("AppActivity=fragment==接收searchPort====" + searchPort);
                         if ("".equals(searchPort)) {
                             toast("本地广播发送端口不能为空");
                             return;
@@ -245,8 +242,6 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
             toast("通讯端口不能为空");
             return;
         }
-        LogUtils.e("SocketUtils===发送消息==点对点==detailCaseActivity==sendByteData==" + sendByteData);
-        LogUtils.e("SocketUtils===发送消息==点对点==detailCaseActivity==mSocketPort==" + mSocketPort);
 
         SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), getAttachActivity());
 //        SocketManage.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort));
@@ -265,8 +260,6 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
                 .setListener(new Input2Dialog.OnListener() {
                     @Override
                     public void onConfirm(BaseDialog dialog, String password, String newPassword) {
-                        LogUtils.e("旧密码==" + password);
-                        LogUtils.e("新密码==" + newPassword);
                         sendChangeMineRequest(MD5ChangeUtil.Md5_32(password), MD5ChangeUtil.Md5_32(newPassword));
                     }
 
@@ -300,7 +293,6 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
                         showComplete();
                         if ("" != response) {
                             UserDeletedBean mBean = mGson.fromJson(response, UserDeletedBean.class);
-                            LogUtils.e("修改自己的密码====" + mBean.getMsg());
                             toast(mBean.getMsg() + "");
 
                             if (mBean.getCode().equals("0")) {

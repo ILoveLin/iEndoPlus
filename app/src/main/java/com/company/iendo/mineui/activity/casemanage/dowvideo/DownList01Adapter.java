@@ -13,7 +13,6 @@ import com.company.iendo.app.AppAdapter;
 import com.company.iendo.bean.DetailDownVideoBean;
 import com.company.iendo.other.Constants;
 import com.company.iendo.utils.FileUtil;
-import com.company.iendo.utils.LogUtils;
 
 import java.util.ArrayList;
 
@@ -57,25 +56,18 @@ public class DownList01Adapter extends AppAdapter<DetailDownVideoBean.DataDTO> {
 
         @Override
         public void onBindView(int position) {
-
             DetailDownVideoBean.DataDTO item = getItem(position);
-            LogUtils.e("DownStatueActivity====onBindView==item==itemgetDownStatue== " + item.getDownStatue());
-
             String currentStatue = item.getDownStatue();
             if (null!=currentStatue){
                 switch (currentStatue) {
                     case Constants.STATUE_READY://准备完毕
                         long processMax01 = item.getProcessMax();
-                        LogUtils.e("DownStatueActivity====onBindView==item=准备完毕=processMax== " + processMax01);
-                        LogUtils.e("DownStatueActivity====onBindView==item=准备完毕=item.getFileName()== " + item.getFileName());
                         mProgressBar.setMax((int) processMax01);
                         mTitle.setText(item.getFileName());
                         mIconType.setImageDrawable(getResources().getDrawable(R.drawable.ic_icon_down_over));
-
                         break;
                     case Constants.STATUE_START://开始下载
                         long processMax02 = item.getProcessMax();
-                        LogUtils.e("DownStatueActivity====onBindView==item=开始下载=processMax== " + processMax02);
                         mProgressBar.setMax((int) processMax02);
                         mTitle.setText(item.getFileName());
                         break;
@@ -89,7 +81,6 @@ public class DownList01Adapter extends AppAdapter<DetailDownVideoBean.DataDTO> {
 
                         break;
                     case Constants.STATUE_COMPLETED://下载成功
-                        LogUtils.e("DownStatueActivity====onBindView==item=下载成功=processMax== " + item.getProcessMax());
                         String maxLength = FileUtil.formatFileSizeMethod((int) item.getProcessMax());
                         mDownStatueDes.setText(item.getDownStatueDes() + "");
                         mProgressBar.setMax((int) item.getProcessMax());
@@ -102,9 +93,6 @@ public class DownList01Adapter extends AppAdapter<DetailDownVideoBean.DataDTO> {
                         String formatOffsetLength = FileUtil.formatFileSizeMethod((int) item.getProcessOffset());
                         String formatOffMaxLength = FileUtil.formatFileSizeMethod((int) item.getProcessMax());
                         //1876570496.00B
-                        LogUtils.e("DownStatueActivity下载中Adapter==formatOffMaxLength==formatOffMaxLength== " +formatOffMaxLength);
-                        LogUtils.e("DownStatueActivity下载中Adapter==formatOffMaxLength==formatOffMaxLength== " +formatOffMaxLength);
-
                         mProgressBar.setMax((int) item.getProcessMax());
                         mProgressBar.setProgress((int) item.getProcessOffset());
                         mDownStatueDes.setText(item.getDownStatueDes() + "");
@@ -114,10 +102,6 @@ public class DownList01Adapter extends AppAdapter<DetailDownVideoBean.DataDTO> {
                         mSpeed.setText(speed + "");
                         mLengthDes.setText(formatOffsetLength + "/" + formatOffMaxLength);
                         mIconType.setImageDrawable(getResources().getDrawable(R.drawable.ic_icon_down_dowing));
-
-                        LogUtils.e("DownStatueActivity下载中Adapter=speed== " + speed + ",position==" + position + ",tag==" + fileName);
-
-                        LogUtils.e("DownStatueActivity====onBindView==STATUE_DOWNING==item.getSpeed()== " + item.getSpeed());
                         break;
                     case Constants.STATUE_CANCELED://暂停
                         String formatOffsetLengthStop = FileUtil.formatFileSizeMethod((int) item.getProcessOffset());
@@ -170,9 +154,6 @@ public class DownList01Adapter extends AppAdapter<DetailDownVideoBean.DataDTO> {
 //        for (int i = 0; i < mDataLest.size(); i++) {
 //            DetailDownVideoBean.DataDTO dataDTO = mDataLest.get(i);
 //            if (tag.equals(dataDTO.getFileName())) {
-//                LogUtils.e("DownStatueActivity====onBindView==item==计算tag== " + tag);
-//                LogUtils.e("DownStatueActivity====onBindView==item==计算dataDTO.getFileName()== " + dataDTO.getFileName());
-//                LogUtils.e("DownStatueActivity====onBindView==item==计算bean.getProcessMax()== " + bean.getProcessMax());
 //
 //                dataDTO.setProcessMax(bean.getProcessMax());
 //                dataDTO.setDownStatue(bean.getDownStatue());
@@ -185,10 +166,6 @@ public class DownList01Adapter extends AppAdapter<DetailDownVideoBean.DataDTO> {
         for (int i = 0; i < mDataLest.size(); i++) {
             DetailDownVideoBean.DataDTO dataDTO = mDataLest.get(i);
             if (tag.equals(dataDTO.getFileName())) {
-                LogUtils.e("DownStatueActivity====onBindView==item==计算tag== " + tag);
-                LogUtils.e("DownStatueActivity====onBindView==item==计算dataDTO.getFileName()== " + dataDTO.getFileName());
-                LogUtils.e("DownStatueActivity====onBindView==item==计算bean.getProcessMax()== " + bean.getProcessMax());
-
                 dataDTO.setProcessMax(bean.getProcessMax());
                 dataDTO.setDownStatue(bean.getDownStatue());
                 this.setItem(i, dataDTO);

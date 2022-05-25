@@ -20,7 +20,6 @@ import com.company.iendo.R;
 import com.company.iendo.action.StatusAction;
 import com.company.iendo.app.AppActivity;
 import com.company.iendo.utils.CommonUtil;
-import com.company.iendo.utils.LogUtils;
 import com.company.iendo.widget.StatusLayout;
 import com.company.iendo.widget.vlc.ENDownloadView;
 import com.company.iendo.widget.vlc.ENPlayView;
@@ -78,9 +77,6 @@ public final class VideoActivity extends AppActivity implements StatusAction, Se
                             double v = Double.parseDouble(currentTime);
                             double duration = (double) mVLCView.getDuration();
                             double v1 = v / (duration);
-                            LogUtils.e("VideoActivity==currentTime==" + currentTime);
-                            LogUtils.e("VideoActivity==getDuration==" + mVLCView.getDuration());
-                            LogUtils.e("VideoActivity==v1==" + v1);//  0.4611   0.4906  0.4932  0.4946
                             int intData = getIntData(v1 + "");
                             mProgress.setProgress(intData);
                         } else {
@@ -174,10 +170,8 @@ public final class VideoActivity extends AppActivity implements StatusAction, Se
 
     private void setVideoViewFull(int mID, String type) {
         if ("横屏".equals(type)) { //放小
-            LogUtils.e("全屏设置==开始==" + "横---屏");
             mTilteBar.setVisibility(View.GONE);
         } else {//放大
-            LogUtils.e("全屏设置==开始==" + "竖---屏");
             mTilteBar.setVisibility(View.VISIBLE);
         }
     }
@@ -348,7 +342,6 @@ public final class VideoActivity extends AppActivity implements StatusAction, Se
      */
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        LogUtils.e("VideoActivity==progress==" + progress);
 
     }
 
@@ -369,7 +362,6 @@ public final class VideoActivity extends AppActivity implements StatusAction, Se
      */
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
-        LogUtils.e("VideoActivity==onStart==" + seekBar.getProgress());
         isTouch = false;
         float v = (float) (seekBar.getProgress() / 100f);  //获取当前拖动到的百分比
         float v1 = v * mVLCView.getDuration();//设置当前拖动到的时间

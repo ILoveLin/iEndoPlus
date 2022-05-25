@@ -4,25 +4,15 @@ import android.content.Context;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.AppCompatTextView;
 
 import com.company.iendo.R;
 import com.company.iendo.action.StatusAction;
 import com.company.iendo.app.TitleBarFragment;
-import com.company.iendo.bean.CaseDetailBean;
-import com.company.iendo.bean.event.SocketRefreshEvent;
 import com.company.iendo.green.db.downcase.CaseDBBean;
 import com.company.iendo.mineui.activity.MainActivity;
-import com.company.iendo.mineui.activity.casemanage.DetailCaseActivity;
-import com.company.iendo.utils.LogUtils;
-import com.company.iendo.utils.SharePreferenceUtil;
 import com.company.iendo.widget.LinesEditView;
 import com.company.iendo.widget.StatusLayout;
 import com.hjq.widget.view.ClearEditText;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,7 +33,7 @@ public class DetailOfflineFragment extends TitleBarFragment<MainActivity> implem
     private ClearEditText et_01_check_num, et_01_name, et_01_sex_type, et_01_age, et_01_jop, et_01_fee, et_01_get_check_doctor;
     //            et_01_i_tell_you, et_01_bad_tell;
     private LinesEditView etlines_02_mirror_see, etlines_02_mirror_result, etlines_02_live_check, etlines_02_cytology, etlines_02_test,
-            etlines_02_pathology, etlines_02_advice,et_03_case_history, et_03_family_case_history;
+            etlines_02_pathology, etlines_02_advice, et_03_case_history, et_03_family_case_history;
     private ClearEditText et_02_mirror_see, et_02_mirror_result, et_02_live_check, et_02_cytology, et_02_test, et_02_pathology,
             et_02_advice, et_02_check_doctor;
     private ClearEditText et_03_door_num, et_03_protection_num, et_03_section, et_03_device, et_03_case_num, et_03_in_hospital_num,
@@ -85,8 +75,6 @@ public class DetailOfflineFragment extends TitleBarFragment<MainActivity> implem
      * @param
      */
     private void setLayoutData(CaseDBBean mDataBean) {
-
-        LogUtils.e("病例详情界面数据====" + mDataBean);
 
         et_01_check_num.setText("" + mDataBean.getCaseNo());     //病例编号
         et_01_name.setText("" + mDataBean.getName());
@@ -147,7 +135,6 @@ public class DetailOfflineFragment extends TitleBarFragment<MainActivity> implem
     public StatusLayout getStatusLayout() {
         return mStatusLayout;
     }
-
 
 
     private void initLayoutViewDate() {

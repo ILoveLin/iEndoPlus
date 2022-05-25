@@ -5,7 +5,6 @@ import androidx.annotation.NonNull;
 import com.company.iendo.R;
 import com.company.iendo.action.StatusAction;
 import com.company.iendo.app.AppActivity;
-import com.company.iendo.utils.LogUtils;
 import com.company.iendo.widget.StatusLayout;
 import com.gyf.immersionbar.ImmersionBar;
 import com.jaygoo.widget.OnRangeChangedListener;

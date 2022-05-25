@@ -23,7 +23,6 @@ import com.company.iendo.green.db.TaskDBBeanUtils;
 import com.company.iendo.green.db.downcase.dwonmsg.DownVideoMessage;
 import com.company.iendo.mineui.activity.vlc.VideoActivity;
 import com.company.iendo.other.Constants;
-import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.SharePreferenceUtil;
 import com.company.iendo.widget.MyItemDecoration;
 import com.company.iendo.widget.StatusLayout;
@@ -129,7 +128,6 @@ public final class DownVideoListActivity extends AppActivity implements StatusAc
         currentItemCaseID = intent.getStringExtra("currentItemCaseID");
         mDeviceCode = intent.getStringExtra("mDeviceCode");
         mDBDataLest = DownVideoMsgDBUtils.getQueryBeanByTow(DownVideoListActivity.this, mDeviceCode, currentItemCaseID);
-        LogUtils.e("DownStatueActivity====下载任务==结束=init=mDBDataLest= " + mDBDataLest.size());
         mTitleBar.setOnTitleBarListener(new OnTitleBarListener() {
             @Override
             public void onLeftClick(View view) {
@@ -151,14 +149,12 @@ public final class DownVideoListActivity extends AppActivity implements StatusAc
 
     //获取当前正在下载的列表,并且设置adapter
     private void getCurrentDownListToSetAdapter() {
-        LogUtils.e("DownStatueActivity====下载任务==结束==conmmoncode= " + mDeviceCode + "_" + currentItemCaseID);
         List<TaskDBBean> mDBDownList = TaskDBBeanUtils.getQueryBeanByCommonCode(getApplicationContext(), mDeviceCode + "_" + currentItemCaseID);
         mDataLest.clear();
         mDowningView.setVisibility(View.VISIBLE);
         mRecyclerView.setVisibility(View.VISIBLE);
         //数据库表有下载过视频的数据
         if (mDBDownList.size() != 0) {
-            LogUtils.e("DownStatueActivity====下载任务==结束==mDBDownList.size()= " + mDBDownList.size());
             for (int i = 0; i < mDBDownList.size(); i++) {
                 TaskDBBean taskDBBean = mDBDownList.get(i);
                 String taskString = taskDBBean.getTaskString();
@@ -185,16 +181,11 @@ public final class DownVideoListActivity extends AppActivity implements StatusAc
                 DownVideoMessage item = mDBAdapter.getItem(position);
                 Intent intent = new Intent(getActivity(), VideoActivity.class);
                 //http://192.168.31.249:7001/4/2022-04-19-17-54-07.mp4
-                LogUtils.e("当前播放URL" + item.toString());
-                LogUtils.e("DownStatueActivity====onItemClick=mDBAdapter===" + item.getUrl());
-                //LogUtils.e("当前播放URL" + mUrl);
                 //intent.putExtra("mUrl","http://9890.vod.myqcloud.com/9890_4e292f9a3dd011e6b4078980237cc3d3.f20.mp4");
                 intent.putExtra("mTitle", item.getTag());
                 intent.putExtra("mUrl", item.getUrl());
                 intent.putExtra("loginType", "offline");
                 startActivity(intent);
-                LogUtils.e("DownStatueActivity====onItemClick=mDBAdapter=position...==== " + position);
-                LogUtils.e("DownStatueActivity====onItemClick=mDBAdapter=getTag...==== " + item.getTag());
             }
         });
         mDBRecyclerView.setAdapter(mDBAdapter);
@@ -205,8 +196,6 @@ public final class DownVideoListActivity extends AppActivity implements StatusAc
         removeDuplicate();
         //设置第二个列表的数据
         mDBAdapter.setData(mDBDataLest);
-        LogUtils.e("DownloadListener==queue==true==DDD==标题不为空====已下载列表==: " + mDBDataLest.size());
-
 
     }
 
@@ -238,7 +227,6 @@ public final class DownVideoListActivity extends AppActivity implements StatusAc
      */
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void DownEndEvent(DownEndEvent event) {
-        LogUtils.e("DownStatueActivity====下载任务==结束=== " + event.getTag());
         String tag = event.getTag();
         String mDeviceCode = event.getDeviceCode();
         String currentItemCaseID = event.getCurrentItemCaseID();
@@ -262,7 +250,6 @@ public final class DownVideoListActivity extends AppActivity implements StatusAc
                     @Override
                     public void onScanCompleted(String path, Uri uri) {
                         //刷新成功的回调方法
-                        LogUtils.e("DownSelectedVideoActivity02======下载任务==结束==相册刷新成功==" + tag);
 
                     }
                 });
@@ -283,7 +270,6 @@ public final class DownVideoListActivity extends AppActivity implements StatusAc
         if (event.getStatue().equals(Constants.STATUE_COMPLETED)) {
             //数据库存在
             if (mList.size() > 0) {
-                LogUtils.e("DownStatueActivity====下载任务==结束====数据库存在这条数据==存在了===");
                 DownVideoMessage dbBean = mList.get(0);
                 String localUrl = event.getLocalUrl();
                 dbBean.setId(dbBean.getId());
@@ -322,11 +308,8 @@ public final class DownVideoListActivity extends AppActivity implements StatusAc
      */
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void DownProcessStatueEvent(DownLoadingEvent event) {
-        LogUtils.e("DownStatueActivity====下载任务==下载中...==== " + event.getTag());
         String tag = event.getTag();
         if (null != mDataLest && mDataLest.size() != 0) {
-            LogUtils.e("DownStatueActivity====下载任务==下载中...==mDataLest.size()== " + mDataLest.size());
-
             for (int i = 0; i < mDataLest.size(); i++) {
                 DetailDownVideoBean.DataDTO mItemBean = mDataLest.get(i);
                 String fileName = mItemBean.getFileName();

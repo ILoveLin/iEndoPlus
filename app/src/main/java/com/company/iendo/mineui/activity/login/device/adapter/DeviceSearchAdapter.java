@@ -15,7 +15,6 @@ import com.company.iendo.app.AppAdapter;
 import com.company.iendo.bean.socket.searchdevice.BroadCastReceiveBean;
 import com.company.iendo.green.db.DeviceDBBean;
 import com.company.iendo.green.db.DeviceDBUtils;
-import com.company.iendo.utils.LogUtils;
 
 import java.util.List;
 
@@ -42,7 +41,6 @@ public class DeviceSearchAdapter extends AppAdapter<BroadCastReceiveBean> {
         this.mContext = context;
         this.mDataLest = mDataLest;
         //找到默认选中的position
-        LogUtils.e(mDataLest.size() + "mDataLest===Adapter==" + mDataLest.size());
     }
 
     @NonNull
@@ -76,7 +74,6 @@ public class DeviceSearchAdapter extends AppAdapter<BroadCastReceiveBean> {
         @Override
         public void onBindView(int position) {
             BroadCastReceiveBean mItemBean = getItem(position);
-            LogUtils.e("SocketManage回调==模拟数据==mItemBean.mItemBean==mItemBean===" + mItemBean);
 //            {title='AIO-ENT', remark='1号内镜室', endotype='3', accept='1', mSelected=false, ip='192.168.132.102',
 //            receiveType='07', receiveID='0000000000000000ED3A93DA80A9BA8B', deviceType='一代一体机',
 //            deviceCode='0000000000000000ED3A93DA80A9BA8B', itemId='F9432B11B93E8BB4AE34539B7472C20E', inDB=null, isCheckAccess=false}
@@ -95,12 +92,9 @@ public class DeviceSearchAdapter extends AppAdapter<BroadCastReceiveBean> {
                 mMsgChose.setVisibility(View.INVISIBLE);
 
             }
-            LogUtils.e("SocketManage回调==模拟数据==DeviceDBBean.toString==SearchAdapter===" + mItemBean.toString());
             String tag = mItemBean.getEndotype() + mItemBean.getDeviceCode() + mItemBean.getDeviceType();
 
             DeviceDBBean codeBean = DeviceDBUtils.getQueryBeanByAcceptAndInsertDB(mContext, tag);
-            LogUtils.e("SocketManage回调==模拟数据==DeviceDBBean.codeBean==tag===" + tag); //192.168.132.10200000000000000005618B1F96D92837C一代一体机
-            LogUtils.e("SocketManage回调==模拟数据==DeviceDBBean.codeBean==codeBean===" + codeBean);
 //            LogUtils.e("SocketManage回调==模拟数据==DeviceDBBean.codeBean==getAcceptAndInsertDB===" + codeBean.getAcceptAndInsertDB());
 
 

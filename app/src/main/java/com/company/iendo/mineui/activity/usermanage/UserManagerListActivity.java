@@ -16,7 +16,6 @@ import com.company.iendo.bean.event.RefreshUserListEvent;
 import com.company.iendo.mineui.activity.usermanage.UserListAdapter;
 import com.company.iendo.other.Constants;
 import com.company.iendo.other.HttpConstant;
-import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.SharePreferenceUtil;
 import com.company.iendo.widget.StatusLayout;
 import com.gyf.immersionbar.ImmersionBar;
@@ -87,9 +86,8 @@ public final class UserManagerListActivity extends AppActivity implements Status
     /**
      * eventbus 刷新socket数据
      */
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
     public void RefreshItemIdEvent(RefreshUserListEvent event) {
-        LogUtils.e("eventbus RefreshUserListEvent=====event.getId()====");
         sendRequest();
     }
 
@@ -133,7 +131,6 @@ public final class UserManagerListActivity extends AppActivity implements Status
 
                     @Override
                     public void onResponse(String response, int id) {
-                        LogUtils.e("用户列表==" + response);
                         if ("" != response) {
                             showComplete();
                             UserManagerListBean mBean = mGson.fromJson(response, UserManagerListBean.class);

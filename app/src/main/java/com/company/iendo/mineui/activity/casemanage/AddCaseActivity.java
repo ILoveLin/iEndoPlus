@@ -24,11 +24,11 @@ import com.company.iendo.other.HttpConstant;
 import com.company.iendo.service.HandService;
 import com.company.iendo.ui.dialog.MenuDialog;
 import com.company.iendo.utils.CalculateUtils;
-import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.SharePreferenceUtil;
 import com.company.iendo.utils.SocketUtils;
 import com.company.iendo.widget.LinesEditView;
 import com.company.iendo.widget.StatusLayout;
+import com.didichuxing.doraemonkit.util.LogUtils;
 import com.gyf.immersionbar.ImmersionBar;
 import com.hjq.bar.OnTitleBarListener;
 import com.hjq.bar.TitleBar;
@@ -361,7 +361,6 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
-                        LogUtils.e("添加病例===onError===" + e);
                         showError(listener -> {
                             sendRequest();
                         });
@@ -370,7 +369,6 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
                     @Override
                     public void onResponse(String response, int id) {
                         if ("" != response) {
-                            LogUtils.e("添加病例===onResponse===" + response);
                             AddCaseBean mBean = mGson.fromJson(response, AddCaseBean.class);
                             if (0 == mBean.getCode()) {  //成功
                                 showComplete();
@@ -450,14 +448,12 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
-                        LogUtils.e("edit====" + e);
                         mFragClickable = false;
                     }
 
                     @SuppressLint("NewApi")
                     @Override
                     public void onResponse(String response, int id) {
-                        LogUtils.e("edit==onResponse==" + response);
                         ListDialogDateBean mBean = mGson.fromJson(response, ListDialogDateBean.class);
                         //1,按'DictName'进行分组
                         //2,按照分组中找出 'ParentId=0' 的项,作为每个分组的类别
@@ -491,18 +487,6 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
 
                         }
 
-//                        Iterator<Map.Entry<String, ArrayList<DialogItemBean>>> entries = mDialogItemMap.entrySet().iterator();
-//                        while (entries.hasNext()) {
-//                            Map.Entry<String, ArrayList<DialogItemBean>> entry = entries.next();
-//                            String key = entry.getKey();
-//                            ArrayList<DialogItemBean> value = entry.getValue();
-//                            LogUtils.e("对话框数据====key====" + key);
-//
-//                            for (int i = 0; i < value.size(); i++) {
-//                                DialogItemBean bean = value.get(i);
-//                                LogUtils.e("对话框数据====value====" + bean.getDictItem());
-//                            }
-//                        }
                     }
                 });
 
@@ -552,22 +536,17 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
             animator.addListener(new Animator.AnimatorListener() {
                 @Override
                 public void onAnimationStart(Animator animation) {
-                    LogUtils.e("========1111111======onAnimationStart===");
 
 
                 }
 
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    LogUtils.e("========1111111======onAnimationEnd===");
 
                     if (mAnimView instanceof ImageView) {
                         ImageView mView = (ImageView) mAnimView;
-                        LogUtils.e("========1111111======mView===");
                         mView.setImageDrawable(getDrawable(R.drawable.ic_case_select_down_nor));
                     } else if (mAnimView instanceof TextView) {
-                        LogUtils.e("========1111111======mAnimView===");
-
                         mAnimView.setBackground(getDrawable(R.drawable.ic_case_select_down_nor));
                     }
 
@@ -758,8 +737,6 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
                         @Override
                         public void onSelected(BaseDialog dialog, int position, String data) {
                             String s = stringList.get(position);
-                            LogUtils.e("MenuDialog====位置：" + position + "，文本：" + data);
-                            LogUtils.e("MenuDialog===s==" + s); //{0=HD3}
                             mEdit.setText(mEdit.getText().toString() + "" + s);
                             startDialogIconAnim(false, mAnimView);
 
@@ -967,7 +944,6 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
         super.onResume();
         sendListDictsRequest();
         //握手通讯
-        LogUtils.e("onResume===AddCaseActivity===开始建立握手链接!");
     }
 
 

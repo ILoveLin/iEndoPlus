@@ -17,7 +17,6 @@ import com.company.iendo.mineui.activity.MainActivity;
 import com.company.iendo.mineui.activity.casemanage.DetailCaseActivity;
 import com.company.iendo.mineui.offline.activity.DetailCaseOfflineActivity;
 import com.company.iendo.mineui.offline.entitydb.GroupEntity;
-import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.SharePreferenceUtil;
 import com.company.iendo.widget.StatusLayout;
 import com.donkingliang.groupedadapter.adapter.GroupedRecyclerViewAdapter;
@@ -77,9 +76,7 @@ public class CaseManageOfflineFragment extends TitleBarFragment<MainActivity> im
             @Override
             public void onHeaderClick(GroupedRecyclerViewAdapter adapter, BaseViewHolder holder,
                                       int groupPosition) {
-                LogUtils.e("initView====组头===" + groupPosition);
                 String s = keyList.get(groupPosition);
-                LogUtils.e("initView====组头=s==" + s);
 
             }
         });
@@ -88,13 +85,8 @@ public class CaseManageOfflineFragment extends TitleBarFragment<MainActivity> im
             @Override
             public void onChildClick(GroupedRecyclerViewAdapter adapter, BaseViewHolder holder,
                                      int groupPosition, int childPosition) {
-                LogUtils.e("initView====子项===" + childPosition);
-                LogUtils.e("initView====子项=groupPosition===" + groupPosition);
-
                 String s = keyList.get(groupPosition);
-                LogUtils.e("initView====子项=s==" + s);
                 ArrayList<CaseDBBean> caseDBBeans = mListHashMap.get(s);
-
                 currentItemClickDBBean = caseDBBeans.get(childPosition);
                 Intent intent = new Intent(getActivity(), DetailCaseOfflineActivity.class);
 
@@ -119,10 +111,7 @@ public class CaseManageOfflineFragment extends TitleBarFragment<MainActivity> im
         mGroupList = new ArrayList<>();
         //查询当前设备码的下载过的病例
         mCurrentReceiveDeviceCode = (String) SharePreferenceUtil.get(getAttachActivity(), SharePreferenceUtil.Current_DeviceCode, "00000000000000000000000000000000");
-
         List<CaseDBBean> mDBList = CaseDBUtils.getQueryBeanByCode(getActivity(), mCurrentReceiveDeviceCode);
-        LogUtils.e("离线界面=====mDBList.size====" + mDBList.size());
-
         ArrayList<String> stringsList = new ArrayList<>();
 
 
@@ -140,10 +129,8 @@ public class CaseManageOfflineFragment extends TitleBarFragment<MainActivity> im
         mListHashMap = new HashMap<>();
         keyList = new ArrayList<>();
         for (int i = 0; i < result.size(); i++) {
-            LogUtils.e("result====" + result);
 //                //获取到时间的正确值 2022-03-23
             String tag = result.get(i);
-            LogUtils.e("initView====result===" + tag);
             List<CaseDBBean> dataList = CaseDBUtils.getQueryBeanByTow(getActivity(), mCurrentReceiveDeviceCode, tag);
             GroupEntity groupEntity1 = new GroupEntity(tag, "", (ArrayList<CaseDBBean>) dataList);
             mGroupList.add(groupEntity1);
@@ -170,7 +157,7 @@ public class CaseManageOfflineFragment extends TitleBarFragment<MainActivity> im
      * eventbus 刷新socket数据
      */
     @RequiresApi(api = Build.VERSION_CODES.N)
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void RefreshOfflineCaseListEvent(RefreshOfflineCaseListEvent event) {
         if (event.isRefresh()) {
             getAdapterData();

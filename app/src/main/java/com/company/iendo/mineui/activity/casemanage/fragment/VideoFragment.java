@@ -3,13 +3,11 @@ package com.company.iendo.mineui.activity.casemanage.fragment;
 import android.content.Intent;
 import android.view.View;
 
-import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.company.iendo.R;
 import com.company.iendo.action.StatusAction;
 import com.company.iendo.app.TitleBarFragment;
-import com.company.iendo.bean.DetailPictureBean;
 import com.company.iendo.bean.DetailVideoBean;
 import com.company.iendo.bean.event.SocketRefreshEvent;
 import com.company.iendo.mineui.activity.MainActivity;
@@ -17,15 +15,12 @@ import com.company.iendo.mineui.activity.casemanage.fragment.adapter.VideoAdapte
 import com.company.iendo.mineui.activity.vlc.VideoActivity;
 import com.company.iendo.other.Constants;
 import com.company.iendo.other.HttpConstant;
-import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.SharePreferenceUtil;
 import com.company.iendo.widget.MyItemDecoration;
 import com.company.iendo.widget.StatusLayout;
 import com.hjq.base.BaseAdapter;
 import com.hjq.widget.layout.WrapRecyclerView;
 import com.scwang.smart.refresh.layout.SmartRefreshLayout;
-import com.scwang.smart.refresh.layout.api.RefreshLayout;
-import com.scwang.smart.refresh.layout.listener.OnRefreshLoadMoreListener;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -81,7 +76,7 @@ public class VideoFragment extends TitleBarFragment<MainActivity> implements Sta
     /**
      * eventbus 刷新socket数据
      */
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
     public void SocketRefreshEvent(SocketRefreshEvent event) {
         switch (event.getUdpCmd()) {
             case Constants.UDP_18://录像--->0：查询录像状态 1：开始录像，，(我的命令)2：停止录像，(我的命令)3：正在录像，(后台返回操作)  4：未录像(后台返回操作)
@@ -119,10 +114,6 @@ public class VideoFragment extends TitleBarFragment<MainActivity> implements Sta
                     public void onResponse(String response, int id) {
                         if ("" != response) {
                             DetailVideoBean mBean = mGson.fromJson(response, DetailVideoBean.class);
-                            LogUtils.e("视频界面=== response==mCaseID=" + currentItemID);
-                            LogUtils.e("视频界面=== response===" + response);
-                            LogUtils.e("视频界面=== size===" + mBean.getData().size());
-
                             List<DetailVideoBean.DataDTO> data = mBean.getData();
                             if (0 == mBean.getCode()) {  //成功
                                 showComplete();
@@ -168,8 +159,6 @@ public class VideoFragment extends TitleBarFragment<MainActivity> implements Sta
 //        mBaseUrl=http://192.168.132.102:7001
         String mUrl = mBaseUrl + "/" + item.getRecordID() + "/" + item.getFilePath();
 //        http://192.168.31.249:7001/4/2022-04-19-17-54-07.mp4
-        LogUtils.e("当前播放URL" + item.toString());
-        LogUtils.e("当前播放URL==mUrl==" + mUrl);
 //        LogUtils.e("当前播放URL" + mUrl);
 //        intent.putExtra("mUrl","http://9890.vod.myqcloud.com/9890_4e292f9a3dd011e6b4078980237cc3d3.f20.mp4");
         intent.putExtra("mTitle", item.getFilePath());

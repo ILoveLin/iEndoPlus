@@ -12,7 +12,7 @@
     <RelativeLayout
         android:id="@+id/relative_item"
         android:layout_width="@dimen/dp_135"
-        android:layout_height="@dimen/dp_150"
+        android:layout_height="@dimen/dp_160"
         android:layout_margin="@dimen/dp_10"
         android:background="@drawable/shape_bg_device_all_nor">
 
@@ -49,9 +49,10 @@
             android:paddingRight="@dimen/dp_5"
             android:paddingBottom="@dimen/dp_2"
             android:text="当前选中的设备"
+            android:visibility="invisible"
             android:textColor="@color/white"
             android:textSize="@dimen/sp_11"
-            android:visibility="invisible" />
+       />
 
         <LinearLayout
             android:layout_marginBottom="@dimen/dp_5"

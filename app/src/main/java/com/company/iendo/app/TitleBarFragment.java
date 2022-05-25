@@ -93,7 +93,7 @@ public abstract class TitleBarFragment<A extends AppActivity> extends AppFragmen
     /**
      *解决:its super classes have no public methods with the @Subscribe annotation的BUG
      */
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
     public void SocketRefreshEvent(SocketRefreshEvent event) {
 
     }

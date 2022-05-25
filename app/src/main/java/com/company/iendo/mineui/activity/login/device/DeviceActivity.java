@@ -13,12 +13,9 @@ import com.company.iendo.R;
 import com.company.iendo.action.StatusAction;
 import com.company.iendo.app.AppActivity;
 import com.company.iendo.bean.RefreshEvent;
-import com.company.iendo.bean.event.RefreshDeviceListEvent;
-import com.company.iendo.bean.event.SocketRefreshEvent;
 import com.company.iendo.green.db.DeviceDBBean;
 import com.company.iendo.green.db.DeviceDBUtils;
 import com.company.iendo.mineui.activity.ZXingActivity;
-import com.company.iendo.mineui.activity.casemanage.ImageReportActivity;
 import com.company.iendo.mineui.activity.login.device.adapter.DeviceAdapter;
 import com.company.iendo.mineui.activity.login.device.search.DeviceSearchActivity;
 import com.company.iendo.other.Constants;
@@ -27,13 +24,9 @@ import com.company.iendo.ui.dialog.MessageDialog;
 import com.company.iendo.ui.dialog.ModifyDeviceDialog;
 import com.company.iendo.ui.dialog.SelectDialog;
 import com.company.iendo.ui.dialog.SelectModifyTypeDialog;
-import com.company.iendo.ui.popup.ListPopup;
 import com.company.iendo.ui.popup.ListSearchPopup;
-import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.SharePreferenceUtil;
 import com.company.iendo.widget.StatusLayout;
-import com.hjq.bar.OnTitleBarListener;
-import com.hjq.bar.TitleBar;
 import com.hjq.base.BaseAdapter;
 import com.hjq.base.BaseDialog;
 import com.hjq.base.action.AnimAction;
@@ -255,10 +248,8 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
 
                     @Override
                     public void onSelected(BaseDialog dialog, HashMap<Integer, String> data) {
-                        LogUtils.e("showMultiDialog===" + data.toString()); //{0=妇科治疗台}
                         int start = data.toString().indexOf("=");
                         String str = data.toString().substring(start + 1, data.toString().length() - 1);
-                        LogUtils.e("showMultiDialog===str==" + str); //{0=妇科治疗台}
                         showMulti2Dialog(str);
                     }
 
@@ -565,7 +556,6 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
 
     @Override
     public void onItemClick(RecyclerView recyclerView, View itemView, int position) {
-        LogUtils.e("选中设备的String" + mAdapter.getItem(position).toString());
     }
 
     private int mSelectedPos = -1;
@@ -600,8 +590,6 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
      * @param item
      */
     private void showModifyItemDialog(DeviceDBBean item) {
-        LogUtils.e("修改设备=====getMsg=====" + item.getMsg());
-        LogUtils.e("修改设备=====getMsg=====" + item.toString());
         currentDeviceCode = item.getDeviceCode();
         currentChangeType = item.getType();
         mChangeDialog = new ModifyDeviceDialog.Builder(this);
@@ -627,8 +615,6 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                     @Override
                     public void onConfirm(BaseDialog dialog, String mDeviceName, String mDeviceCode, String mDeviceNoteMessage, String mDeviceIP, String mDeviceAccount, String mDevicePassword, String mHttpPort, String mSocketPort,
                                           String mLivePort, String mMicPort, String mDeviceType) {
-                        LogUtils.e("不管是更换还是不变都update 数据库,再次刷新界面====");
-                        LogUtils.e("不管是更换还是不变都update 数据库,再次刷新界面====");
                         //不管是更换还是不变都update 数据库,再次刷新界面
                         item.setDeviceName(mDeviceName);  //设备名
                         item.setUsername(mDeviceCode); //设备码
@@ -690,11 +676,8 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
 
                     @Override
                     public void onSelected(BaseDialog dialog, HashMap<Integer, String> data) {
-                        LogUtils.e("showMultiDialog===" + data.toString()); //{0=妇科治疗台}
                         int start = data.toString().indexOf("=");
                         String str = data.toString().substring(start + 1, data.toString().length() - 1);
-                        LogUtils.e("showMultiDialog===str==" + str); //{0=妇科治疗台}
-
                         //刷新选择类型后,的默认数据---修改类型,或者添加类型
                         post(() -> {
                             setChangeTypeData(str, type);
@@ -870,7 +853,6 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
     protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
-        LogUtils.e("========当前设备的备注信息~~~~====DeviceActivity==onDestroy===");
         //把当前选择的itembean的数据信息存到sp里面去
         List<DeviceDBBean> deviceDBBeans = DeviceDBUtils.queryAll(DeviceActivity.this);
         for (int i = 0; i < deviceDBBeans.size(); i++) {
@@ -882,14 +864,10 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
 
         }
         if (null != mDBBean) {
-            LogUtils.e("添加病例=== mDBBean.toString()===" + mDBBean.toString());   //通过此字段判断EndoType
             /**
              *mDeviceCode 这个是智能搜索之后返回过来的设备码
              * 需要再搜索完成后创建dialog的时候设置上去,不然为null
              */
-            LogUtils.e("添加病例=== mDBBean.getDeviceCode()===" + mDBBean.getDeviceCode());   ///
-            LogUtils.e("添加病例=== mDBBean.getType()===" + mDBBean.getType());   //通过此字段判断设备类型(中文)
-            LogUtils.e("添加病例=== mDBBean.getType_num()===" + mDBBean.getType_num());   //通过此字段判断设备类型(数字)
             switch (mDBBean.getType()) {
                 case Constants.Type_FuKeTable:
                     SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_EndoType, "4");//妇科
@@ -922,14 +900,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
             }
             mMMKVInstace.encode(Constants.KEY_Device_SocketPort, mDBBean.getSocketPort());
             mMMKVInstace.encode(Constants.KEY_DeviceCode, mDBBean.getDeviceCode());
-
-            LogUtils.e("添加病例=== mDBBean.getType()===" + mDBBean.getType());   //通过此字段判断EndoType
-
             String endotype = (String) SharePreferenceUtil.get(DeviceActivity.this, SharePreferenceUtil.Current_EndoType, "5");
-            LogUtils.e("选择的设备=== 存入的设备类型是===" + endotype);
-            LogUtils.e("选择的设备=== mDBBean.getEndoType()===" + mDBBean.getEndoType());
-            LogUtils.e("选择的设备=== mDBBean.getDeviceID()===" + mDBBean.getDeviceID());
-            LogUtils.e("选择的设备=== mDBBean.toString===" + mDBBean.toString());
             //这个主键ID是需要绑定用户表中的deviceID(code码),确保是这个设备下,离线模式能通过此字段查询绑定用户
             SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_DeviceID, mDBBean.getDeviceID() + "");
             /**
@@ -941,7 +912,6 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
             String deviceCode = mDBBean.getDeviceCode();//设备码
 //            SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_DeviceID, mDBBean.getId() + "");
             String o = (String) SharePreferenceUtil.get(DeviceActivity.this, SharePreferenceUtil.Current_DeviceID, "");
-            LogUtils.e("选择的设备=== 存入的设备id是===" + o);
 
             mMMKVInstace.encode(Constants.KEY_Device_Ip, mDBBean.getIp());
 
@@ -962,8 +932,6 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
             //http://192.168.66.42:8008
             SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_BaseUrl, "http://" + mDBBean.getIp() + ":" + mDBBean.getHttpPort());
             String mBaseUrl = (String) SharePreferenceUtil.get(DeviceActivity.this, SharePreferenceUtil.Current_BaseUrl, "111");
-            LogUtils.e("========当前设备的备注信息~~~~====DeviceActivity==mBaseUrl===" + mBaseUrl);
-
             EventBus.getDefault().post(new RefreshEvent("refresh"));
 
         }
@@ -1051,13 +1019,10 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
         DeviceDBUtils.insertOrReplaceInTx(DeviceActivity.this, selectedItemBean);
         List<DeviceDBBean> deviceDBBeans1 = DeviceDBUtils.queryAll(DeviceActivity.this);
         DeviceDBBean deviceDBBean1 = deviceDBBeans1.get(0);
-        LogUtils.e(deviceDBBean1.toString() + "========AAAAA===选中开始点击了===");
         String id = selectedItemBean.getId() + "";
-        LogUtils.e(id + "========id===选中开始点击了===");
         for (int i = 0; i < deviceDBBeans.size(); i++) {
             DeviceDBBean deviceDBBean = deviceDBBeans.get(i);
             String currentID = deviceDBBean.getId() + "";
-            LogUtils.e(currentID + "========currentID===选中开始点击了===");
             if (currentID.equals(id)) {
                 deviceDBBean.setMSelected(true);
                 DeviceDBUtils.insertOrReplaceInTx(DeviceActivity.this, deviceDBBean);
@@ -1088,7 +1053,6 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
         for (int i = 0; i < deviceDBBeans.size(); i++) {
             DeviceDBBean deviceDBBean = deviceDBBeans.get(i);
             String currentID = deviceDBBean.getId() + "";
-            LogUtils.e(currentID + "========currentID===选中开始点击了===");
             deviceDBBean.setUsemsg01("false");
             DeviceDBUtils.insertOrReplaceInTx(DeviceActivity.this, deviceDBBean);
 
@@ -1101,15 +1065,9 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
     protected void onResume() {
         super.onResume();
         DeviceDBBean bean = DeviceDBUtils.getQueryBeanByAcceptAndInsertDB(DeviceActivity.this, "30000000000000000546017FE6BC28949一代一体机");
-        LogUtils.e("SocketManage回调==onResume==onResume=onResume==" + bean);
         List<DeviceDBBean> deviceDBBeans = DeviceDBUtils.queryAll(DeviceActivity.this);
-        LogUtils.e("SocketManage回调==onResume==onResume=onResume==" + deviceDBBeans.size());
-
         for (int i = 0; i < deviceDBBeans.size(); i++) {
             DeviceDBBean deviceDBBean = deviceDBBeans.get(i);
-
-            LogUtils.e("SocketManage回调==onResume==onResume=getAcceptAndInsertDB==" + deviceDBBean);
-
         }
 
     }

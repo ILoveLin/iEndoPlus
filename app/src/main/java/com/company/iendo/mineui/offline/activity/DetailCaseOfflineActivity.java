@@ -19,7 +19,6 @@ import com.company.iendo.mineui.offline.fragment.PictureOfflineFragment;
 import com.company.iendo.mineui.offline.fragment.VideoOfflineFragment;
 import com.company.iendo.ui.adapter.TabAdapter;
 import com.company.iendo.ui.dialog.MessageDialog;
-import com.company.iendo.utils.LogUtils;
 import com.gyf.immersionbar.ImmersionBar;
 import com.hjq.bar.OnTitleBarListener;
 import com.hjq.bar.TitleBar;
@@ -121,7 +120,6 @@ public class DetailCaseOfflineActivity extends AppActivity implements TabAdapter
     @Override
     protected void onResume() {
         super.onResume();
-        LogUtils.e("onResume===DetailCaseActivity===开始建立握手链接!");
     }
 
     @Override

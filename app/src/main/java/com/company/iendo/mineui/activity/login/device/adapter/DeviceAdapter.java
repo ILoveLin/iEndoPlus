@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.company.iendo.R;
 import com.company.iendo.app.AppAdapter;
 import com.company.iendo.green.db.DeviceDBBean;
-import com.company.iendo.utils.LogUtils;
 
 import java.util.List;
 
@@ -46,7 +45,6 @@ public class DeviceAdapter extends AppAdapter<DeviceDBBean> {
         this.mRv = mRv;
         this.mDataLest = mDataLest;
         //找到默认选中的position
-        LogUtils.e(mDataLest.size() + "mDataLest===Adapter==" + mDataLest.size());
     }
 
     @NonNull
@@ -85,8 +83,6 @@ public class DeviceAdapter extends AppAdapter<DeviceDBBean> {
             mRemark.setText("" + mDBBean.getMsg());
             mIP.setText("" + mDBBean.getIp());
             mDeviceCode.setText("ID:"+mDBBean.getDeviceCode());
-
-            LogUtils.e("SocketManage回调==模拟数据==DeviceDBBean.toString==DeviceAdapter===" + mDBBean.toString());
 
             if (null != mDBBean.getUsemsg01()) {
                 if ("false".equals(mDBBean.getUsemsg01())) {

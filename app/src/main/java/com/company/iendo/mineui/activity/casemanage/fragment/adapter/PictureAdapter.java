@@ -16,10 +16,6 @@ import com.bumptech.glide.signature.ObjectKey;
 import com.company.iendo.R;
 import com.company.iendo.app.AppAdapter;
 import com.company.iendo.bean.DetailPictureBean;
-import com.company.iendo.bean.SearchListBean;
-import com.company.iendo.mineui.activity.casemanage.PictureChoseActivity;
-import com.company.iendo.utils.LogUtils;
-import com.tencent.bugly.proguard.B;
 
 /**
  * company：江西神州医疗设备有限公司
@@ -72,13 +68,9 @@ public class PictureAdapter extends AppAdapter<DetailPictureBean.DataDTO> {
 
             String path = mBaseUrl + "/" + mID + "/" + item.getImagePath();
             String url = "http://images.csdn.net/20150817/1.jpg";
-            Log.e("adapter", "item==path==" + "http://192.168.64.56:7001/" + mID + "/" + item.getImagePath());
-            Log.e("adapter", "item==path=mBaseUrl=" + mBaseUrl + "/" + mID + "/" + item.getImagePath());
 //            http://192.168.64.56:7001/3/001.jpg
 //            mImageView.setText("Path:" + item.getImagePath() + "ID:" + item.getID());
 
-            LogUtils.e("Socket回调==PictureFragment===回调===编辑图片=adapter=mCurrentChangeImageID==" + mCurrentChangeImageID);
-            LogUtils.e("Socket回调==PictureFragment===回调===编辑图片=adapter=item.getID()==" + item.getID());
             Glide.with(getContext())
                     .load(path)
                     .placeholder(R.mipmap.bg_splash_des) //占位符 也就是加载中的图片，可放个gif

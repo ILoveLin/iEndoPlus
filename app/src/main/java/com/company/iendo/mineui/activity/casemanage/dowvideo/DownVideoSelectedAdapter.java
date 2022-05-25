@@ -11,9 +11,6 @@ import androidx.appcompat.widget.AppCompatCheckBox;
 import com.company.iendo.R;
 import com.company.iendo.app.AppAdapter;
 import com.company.iendo.bean.DetailDownVideoBean;
-import com.company.iendo.utils.LogUtils;
-
-import java.util.ArrayList;
 
 /**
  * company：江西神州医疗设备有限公司
@@ -60,9 +57,6 @@ public class DownVideoSelectedAdapter extends AppAdapter<DetailDownVideoBean.Dat
                 mCheckBox.setChecked(false);
             }
             mCheckBox.setVisibility(View.VISIBLE);
-            LogUtils.e("=哇哈哈==mAdapter===里面=getFileName=" + item.getFileName());
-            LogUtils.e("=哇哈哈==mAdapter===里面=isDowned=" + item.isDowned());
-            LogUtils.e("=哇哈哈==mAdapter===里面=getDownStatue=" + item.getDownStatue());
             //数据库存在
             if (item.isDowned()) {
                 mDownDes.setText("已下载");

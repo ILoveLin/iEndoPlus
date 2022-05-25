@@ -38,15 +38,11 @@ public class CalculateUtils {
 
 
     public static String getSendDeviceType(String string) {
-        LogUtils.e("SocketManage回调==哇哈哈==string==" + string);//0A
 
         //字符串--48位--50位表示的是设备类型
         if (!("".equals(string)) && string.length() >= 50) {
             String str = string.substring(14, 16);
-            LogUtils.e("SocketManage回调==哇哈哈==str==" + str);//0A
             int i = hex16To10(str);
-            LogUtils.e("SocketManage回调==哇哈哈==i==" + i);//10
-//            String str = string.substring(48, 50);
             String result = null;
             if (Constants.Type_00 == i) {
                 result = "工作站";
@@ -102,9 +98,6 @@ public class CalculateUtils {
 //            } else if (Constants.Type_A1.equals(str)) {
 //                result = "Android";
 //            }
-
-            LogUtils.e("SocketManage回调==哇哈哈==result==" + result);
-
             return result;
         }
         return "传入的String有误";
@@ -121,21 +114,17 @@ public class CalculateUtils {
      * * 更多设备类型依次类推，平台最大可连接255种受控设备
      * <p>
      * 我们手动吧 8  9  改成了 08 09 所以需要在这里替换下
+     * <p>
+     * string从随机之开始到校验和处结束的String
      *
-     *  string从随机之开始到校验和处结束的String
      * @return
      */
     public static String getDeviceTypeFromRoom(String string) {
         //字符串--48位--50位表示的是设备类型
-        LogUtils.e("SocketManage回调==哇哈哈==string==" + string);
-
         if (!("".equals(string)) && string.length() >= 38) {
             String str = string.substring(2, 4);
             String result = null;
             int i = hex16To10(str);
-            LogUtils.e("SocketManage回调==哇哈哈==i==" + str);
-
-//            String str = string.substring(48, 50);
             if (Constants.Type_00 == i) {
                 result = "工作站";
             } else if (Constants.Type_01 == i) {
@@ -184,10 +173,8 @@ public class CalculateUtils {
 
             }
         } catch (Exception e) {
-            LogUtils.e("getCMD计算的时候发送了,Exception");
+            LogUtils.e("getCMD()-->Exception,str="+string);
         }
-
-
         return "";
     }
 
@@ -207,7 +194,7 @@ public class CalculateUtils {
 
             }
         } catch (Exception e) {
-            LogUtils.e("getSendDeviceOnlyCode计算的时候发送了,Exception");
+            LogUtils.e("getSendDeviceOnlyCode()-->Exception,str="+string);
         }
 
         return "";
@@ -239,10 +226,8 @@ public class CalculateUtils {
      */
     public static Boolean getDataIfForMe(String string, Context activity) {
 //        String oldstring = "AAC501007027EE0700000000000000005618B1F96D92837CA1F9432B11B93E8BB4AE34539B7472C20EFD7B227469746C65223A2241494F2D454E54222C2272656D61726B223A2231E58FB7E58685E9959CE5AEA4222C22656E646F74797065223A2233222C22616363657074223A2231227D8CDD";
-//        LogUtils.e("======ReceiveThread====判断当前信息是否发给我的==oldstring.length()==" + oldstring.length());
 //
 //        String datastring = "7B227469746C65223A2241494F2D454E54222C2272656D61726B223A2231E58FB7E58685E9959CE5AEA4222C22656E646F74797065223A2233222C22616363657074223A2231227D";
-//        LogUtils.e("======ReceiveThread====判断当前信息是否发给我的==length()==" + datastring.length());
 
         //长度不够直接不接受
         if (!(("".equals(string)) && string.length() >= 179)) {
@@ -250,18 +235,13 @@ public class CalculateUtils {
             String currentDeviceID = currentDevice.toUpperCase(); //记得大写
 
             if (string.length() < 82) {
-                LogUtils.e("======ReceiveThread==getDataIfForMe==接收到数据但是!!!数据格式长度不对 ====");
                 return false;
             }
             //获取发送给什么设备类型的
             String str = string.substring(48, 50);
             //获取发送给什么设备的id
             String substring = string.substring(50, 82);
-            LogUtils.e("======ReceiveThread====全部hexstring ====" + string);
-            LogUtils.e("======ReceiveThread====接收方设备类型====" + str);
-            LogUtils.e("======ReceiveThread====接收方设备ID====" + substring);
             String sendType = string.substring(7, 9);
-            LogUtils.e("======ReceiveThread====发送方-设备类型====" + sendType);
             //android发送给android的 直接过滤
             if (("A1".equals(sendType))) {
                 return false;
@@ -275,41 +255,21 @@ public class CalculateUtils {
                 return false;
 
             }
-            LogUtils.e("======ReceiveThread====接收方设备类型====" + str);
-            LogUtils.e("======ReceiveThread====接收方设备类型ID====" + substring);
-            //f9432b11b93e8bb4ae34539b7472c20e
-            LogUtils.e("======ReceiveThread====本机设备ID====" + currentDeviceID);
             //再次校验下校验和
             String substring1 = string.substring(6, string.length() - 4);
             String oldCSData = string.substring(string.length() - 4, string.length() - 2);
-            LogUtils.e("======ReceiveThread====substring1==原来校验和值==" + oldCSData);
-            LogUtils.e("======ReceiveThread====substring1==校验和string==" + substring1);
             String hexXORData = get16HexXORData("AA" + substring1);
-            LogUtils.e("======ReceiveThread====substring1=再次校验和值==" + hexXORData.toUpperCase());
             //获取接收的设备id 必须和本机的设备id相同
             if (oldCSData.equals(hexXORData.toUpperCase())) {
-                LogUtils.e("======ReceiveThread====校验值核对OK,接收设备ID是本机,接收类型是Android==返回true==可以解析广播数据==");
+                LogUtils.e(TAG + "接收数据校验OK,返回ture,可以,解析监听获取到的16进制String数据");
                 return true;
             }
         } else {
             return false;
         }
-
         return false;
     }
 
-    public static String getOkIp(String ip) {
-        LogUtils.e("======ReceiveThread====成功回调的ip地址=原始地址==" + ip);
-        if ("/".startsWith("/")) {
-            String substring = ip.substring(1, ip.length());
-            LogUtils.e("======ReceiveThread====成功回调的ip地址=ip==" + substring);
-            return substring;
-        } else {
-            LogUtils.e("======ReceiveThread====成功回调的ip地址=ip==" + ip);
-            return ip;
-        }
-
-    }
 
 /*************************************************************计算协议数据的个方法***********************************************************************/
     /**
@@ -319,14 +279,10 @@ public class CalculateUtils {
      */
     public static String getLength(String data) {
 //        40(固定长度)加变化data的长度然后-->字符串的长度转成hex进制
-        LogUtils.e("SocketUtils===发送消息==点对点==hexString2Bytes==getLength==" + data.length());
         byte[] bytes = hexString2Bytes(data);
-
         int i = bytes.length + 40;
         //10进制转换成16进制  --保留 4位，不足补0
         String s = hex10To16Result4(i);
-        LogUtils.e("SocketUtils===发送消息==点对点==hexString2Bytes==getLength转换后==" + s.length());
-
         return s.toUpperCase();
     }
 
@@ -395,7 +351,6 @@ public class CalculateUtils {
 
 
     /**
-     *
      * 16进制直接转换成为字符串(无需Unicode解码)
      *
      * @param hexStr 字母必须为大写
@@ -438,8 +393,6 @@ public class CalculateUtils {
 //      广播发起随机时间戳:20220127104645
         //不转换的时候最后在CalculateUtils.hexString2Bytes(sendCommandString);回返回null,因为我那边模了不是偶数就会返回null
 
-        LogUtils.e("===========获取长度==计算方法====传入进来的设备码===" + Received_ID);
-
         if ("9".equals(Received_Type)) {
             Received_Type = "09";
         }
@@ -459,9 +412,7 @@ public class CalculateUtils {
         String mSend_Type = "A1";                                           //发送方设备类型。--1字节-Android=A1  FF为所有设备
         String mSend_ID = mSend_IDBy32.toUpperCase();                       //发送方设备唯一标识。   --16字节
         String mReceived_Type = Received_Type;                              //接收方设备类型。   --FF是是所有设备
-        LogUtils.e("===========获取长度==计算方法====16===" + Received_ID);
         String Received_ID32 = CalculateUtils.str2HexStr(Received_ID);
-        LogUtils.e("===========获取长度==计算方法====32===" + Received_ID32);
         String mReceived_ID = Received_ID32;                                  //接收方设备唯一标识。   --16字节--目前暂时给32个0,模拟后台给的数据
         String mCMD = CMD;                                                  //UDP广播   --一个字节
         // 校验和，0xAA 依次与“Length、Random、CMD_ID、Send_Type、Send_ID、Received_Type、Received_ID、CMD、Data” 异或运算后的结果
@@ -470,20 +421,26 @@ public class CalculateUtils {
 
         sendCommandString = mHead + mVer + mLength + mRandom + mCMD_ID + mSend_Type + mSend_ID + mReceived_Type +
                 mReceived_ID + mCMD + mData + mCheck_Sum + "DD";
-        LogUtils.e("UDP==命令===mData===" + mData);
-        LogUtils.e("UDP==命令===mSend_IDBy32===" + mSend_IDBy32);
-        LogUtils.e("UDP==命令===mReceived_ID===" + Received_ID);
-        LogUtils.e("UDP==命令===mRandom===" + mRandom);
-        LogUtils.e("UDP==命令===异或的CSString===" + CSString);
-        LogUtils.e("UDP==命令===异或的结果===" + mCheck_Sum);
-        LogUtils.e("UDP==命令===最后发送的String===" + sendCommandString.length());
-        LogUtils.e("UDP==命令===最后发送的String===" + sendCommandString);
+
+        LogUtils.e(TAG + "随机数========" + mRandom);
+        LogUtils.e(TAG + "iPadID(32)===" + mSend_IDBy32);
+        LogUtils.e(TAG + "上位机类型====" + mReceived_Type);
+        LogUtils.e(TAG + "上位机ID(16)==" + Received_ID);
+        LogUtils.e(TAG + "上位机ID(32)==" + Received_ID32);
+        LogUtils.e(TAG + "命令CMD=======" + Received_ID32);
+        LogUtils.e(TAG + "data的16进制==" + mData);
+        LogUtils.e(TAG + "异或的结果=====" + mCheck_Sum);
+        LogUtils.e(TAG + "最后发送数据长度:" + sendCommandString.length());
+        LogUtils.e(TAG + "最后发送数据==" + sendCommandString);
+
         byte[] bytes = CalculateUtils.hexString2Bytes(sendCommandString);
         //AAC5 01 0059 EE22 FF A1 f9432b11b93e8bb4ae34539b7472c20e FF 00000000000000000000000000000000
         //FD 7B2262726F6164636173746572223A22737A636D65222C2272616D646F6D223A223230323230313237313132373535227D
         // F8 DD
         return bytes;
     }
+
+    private static final String TAG = "计算工具类===";
 
 
     /**
@@ -495,17 +452,10 @@ public class CalculateUtils {
     public static String getReceiveDataString(String str) {
 //        String str = "AAC5 01 0059 D8 FF A1f9432b11b93e8bb4ae34539b7472c20eFF00000000000000000000000000000000FD7B2262726F6164636173746572223A22737A636D65222C2272616D646F6D223A223230323230313237313133353130227DEEDD";
         if (str.length() < 82) {
-            LogUtils.e("UDP==命令===AAA==111====ReceiveThread==getReceiveDataString==接收到数据但是!!!数据格式长度不对 ====");
             return "";
         }
         String substring = str.substring(82 + 2, str.length() - 4);
-        LogUtils.e("UDP==命令===AAA==222==getReceiveDataString=====" + substring);
-        String s1 = hexStr2Str(substring);
-        LogUtils.e("UDP==命令===AAA==333==getReceiveDataString==333===" + s1);
-//        Gson gson = GsonFactory.getSingletonGson();
-//        BroadCastDataBean bean = gson.fromJson(s1, BroadCastDataBean.class);
-//        LogUtils.e("UDP==命令===bean=====" + bean.getBroadcaster());
-//        LogUtils.e("UDP==命令===bean=====" + bean.getRamdom());
+
         return substring;
 
     }
@@ -520,18 +470,7 @@ public class CalculateUtils {
 //        String str = "EE0700000000000000005618B1F96D92837Ca1f9432b11b93e8bb4ae34539b7472c20eFD7b227469746c65223a2241494f2d454e
 //        54222c2272656d61726b223a226f6e65686f6d65222c22656e646f74797065223a2233222c22616363657074223a2230227d==192.168.132.102";
         int i = str.indexOf("==");
-        LogUtils.e("UDP==命令===获取到data的HexString==str===" + str);
-        LogUtils.e("UDP==命令===获取到data的HexString==str===" + str);
-
         String substring = str.substring(72, i);
-
-        LogUtils.e("UDP==命令===获取到data的HexString==FromRoom===" + substring);
-        String s1 = hexStr2Str(substring);
-        LogUtils.e("UDP==命令===获取到data的String==FromRoom===" + s1);
-//        Gson gson = GsonFactory.getSingletonGson();
-//        BroadCastDataBean bean = gson.fromJson(s1, BroadCastDataBean.class);
-//        LogUtils.e("UDP==命令===bean=====" + bean.getBroadcaster());
-//        LogUtils.e("UDP==命令===bean=====" + bean.getRamdom());
         return substring;
 
     }
@@ -548,19 +487,7 @@ public class CalculateUtils {
 //        38303035222c22687074223a2237303031222c2272656d61726b223a2231E58FB7E58685E9959CE5AEA4222c2274797065223a223037222c226574223a2233
 //        222c22726574636f6465223a2230227dd5DD==192.168.132";
         int i = str.indexOf("==");
-        LogUtils.e("UDP==命令===获取到data的HexString==str===" + str);
-
         String substring = str.substring(72, i);
-        String substring6 = str.substring(72, i - 4);
-
-        LogUtils.e("UDP==命令===获取到data的HexString==substring===" + substring);
-        LogUtils.e("UDP==命令===获取到data的HexString==substring6===" + substring6);
-        String s1 = hexStr2Str(substring);
-        LogUtils.e("UDP==命令===获取到data的String==ForPoint===" + s1);
-//        Gson gson = GsonFactory.getSingletonGson();
-//        BroadCastDataBean bean = gson.fromJson(s1, BroadCastDataBean.class);
-//        LogUtils.e("UDP==命令===bean=====" + bean.getBroadcaster());
-//        LogUtils.e("UDP==命令===bean=====" + bean.getRamdom());
         return substring;
 
     }
@@ -575,8 +502,6 @@ public class CalculateUtils {
 //     String str = "EE0700000000000000005618B1F96D92837CA1F9432B11B93E8BB4AE34539B7472C20EFD7B227469746C65223A2241494F2D454E54222C2272656D61726B223A2231E58FB7E58685E9959CE5AEA4222C22656E646F74797065223A2233222C22616363657074223A2231227D";
 
         String substring = str.substring(2, 4);
-        LogUtils.e("UDP==命令===getReceiveType===" + substring);
-
         return substring;
 
     }
@@ -590,8 +515,6 @@ public class CalculateUtils {
     public static String getSendID(String str) {
 //      String str = "EE0700000000000000005618B1F96D92837CA1F9432B11B93E8BB4AE34539B7472C20EFD7B227469746C65223A2241494F2D454E54222C2272656D61726B223A2231E58FB7E58685E9959CE5AEA4222C22656E646F74797065223A2233222C22616363657074223A2231227D";
         String substring = str.substring(4, 36);
-        LogUtils.e("UDP==命令===getReceiveID===" + substring);
-
         return substring;
 
     }
@@ -618,23 +541,15 @@ public class CalculateUtils {
      * @return
      */
     public static String getReceiveRun2End4String(String str) {
-
         try {
+            LogUtils.e("getReceiveRun2End4String()-->str=="+str);
 
-            //      String str = "AAC501006A22 EE0700000000000000005618B1F96D92837Ca1f9432b11b93e8bb4ae34539b7472c20eFD7b227469746c65223a2241494f2d454e54222c2272656d61726b223a226f6e65686f6d65222c22656e646f74797065223a2233222c22616363657074223a2230227d b4DD";
-            LogUtils.e("UDP==命令===str=====" + str);
-
+//String str = "AAC501006A22 EE0700000000000000005618B1F96D92837Ca1f9432b11b93e8bb4ae34539b7472c20eFD7b227469746c65223a2241494f2d454e54222c2272656d61726b223a226f6e65686f6d65222c22656e646f74797065223a2233222c22616363657074223a2230227d b4DD";
             String substring = str.substring(12, str.length() - 4);
-            LogUtils.e("UDP==命令===getReceiveRun2End4String=====" + substring);
-            String s1 = hexStr2Str(substring);
-            LogUtils.e("UDP==命令===getReceiveRun2End4String=====" + s1);
-//        Gson gson = GsonFactory.getSingletonGson();
-//        BroadCastDataBean bean = gson.fromJson(s1, BroadCastDataBean.class);
-//        LogUtils.e("UDP==命令===bean=====" + bean.getBroadcaster());
-//        LogUtils.e("UDP==命令===bean=====" + bean.getRamdom());
+
             return substring;
         } catch (Exception e) {
-            LogUtils.e("getReceiveRun2End4String计算的时候发送了,Exception");
+            LogUtils.e("getReceiveRun2End4String()-->Exception,str=="+str);
         }
 
         return "";
@@ -650,8 +565,7 @@ public class CalculateUtils {
      * //10  to 16
      * int a = Integer.parseInt("A", 16);
      *
-     * @param para     修改了校验和异或结果有些时候是一位数表示十六进制的错误 get16HexXORData()
-     *
+     * @param para 修改了校验和异或结果有些时候是一位数表示十六进制的错误 get16HexXORData()
      * @return 获取异或值  校验结果
      */
 //    校验和，0xAA 依次与“Length、Random、CMD_ID、Send_Type、Send_ID、Received_Type、Received_ID、CMD、Data” 异或运算后的结果
@@ -670,17 +584,14 @@ public class CalculateUtils {
          * 此处,出现了是以为十六进制数字的时候,后续获取byte数组错误问题,
          * 在这里,个位显示的十六进制转换成两位的即可解决此bug
          */
-        String result =code;
-        if (result.length()==1){
-            LogUtils.e("UDP==命令===最后发送的String===异或的CSString==长度=1==错误数据"+code);
-
+        String result = code;
+        if (result.length() == 1) {
+//            LogUtils.e("UDP==命令===最后发送的String===异或的CSString==长度=1==错误数据" + code);
             result = "0" + code;
-            LogUtils.e("UDP==命令===最后发送的String===异或的CSString==长度=1==修正数据"+result);
-
-        }else {
-            result =code;
-            LogUtils.e("UDP==命令===最后发送的String===异或的CSString==长度=2==计算数据"+code);
-
+//            LogUtils.e("UDP==命令===最后发送的String===异或的CSString==长度=1==修正数据" + result);
+        } else {
+            result = code;
+//            LogUtils.e("UDP==命令===最后发送的String===异或的CSString==长度=2==计算数据" + code);
         }
         return result;
 //        return code;
@@ -770,13 +681,9 @@ public class CalculateUtils {
      * 16进制字符串--转--字节数组-----UDP---发包
      */
     public static byte[] hexString2Bytes(String hex) {
-        LogUtils.e("SocketUtils===发送消息==点对点==hexString2Bytes==hex.length()==" + hex.length());
-
         if ((hex == null) || (hex.equals(""))) {
             return null;
         } else if (hex.length() % 2 != 0) {
-            LogUtils.e("SocketUtils===发送消息==点对点==hexString2Bytes==hex.length()==" + hex.length());
-
             return null;
         } else {
             hex = hex.toUpperCase();
@@ -799,7 +706,6 @@ public class CalculateUtils {
      */
     private static byte charToByte(char c) {
         byte b = (byte) "0123456789ABCDEF".indexOf(c);
-//        LogUtils.e("TAG==字符转换为字节=" +b);
 //        aac5000008000001211597dd
 //        AAC5000008000001211597DD
         return b;
@@ -955,45 +861,6 @@ public class CalculateUtils {
         int d2 = n % 16;
         return hexDigits[d1] + hexDigits[d2];
     }
-
-//    /**********************************转换字节数组为16进制字串****************第二种方式*******************************/
-//    private static byte[] getSendDDData(String trim) {
-//        LogUtils.e("TAG==输入光源数值=trim===" + trim);
-//
-//        //非空等等校验
-//        if ("".equals(trim)) {
-//            trim = "50";
-//        }
-//        int iData = Integer.parseInt(trim);
-//        if (iData <= 0) {
-//            iData = 0;
-//        } else if (iData >= 63) {
-//            iData = 63;
-//        }
-//
-//        String inputSumLightData = numToHex8(iData);
-////      aa c5 00 -00 08 00 00 01 21-- 15 --97 dd
-//        String str = "aac5000008000001211597dd";   //该亮度   21
-//
-//        /**
-//         * 计算异或校验值
-//         * 先截取需要做校验的字符串,再计算校验值
-//         */
-//        //AA+截取数据命令+输入光源16进制    之后再做异或校验值
-//        LogUtils.e("TAG==输入光源数值==16进制==" + inputSumLightData);
-//
-//        String checkData = "AA" + str.substring(6, str.length() - 6);
-//        LogUtils.e("TAG==截取的长度=" + checkData);                            //AA000800000121
-//        LogUtils.e("TAG==需要计算异或的数据=" + checkData + inputSumLightData); //AA00080000012115
-//        String hexXORData = get16HexXORData(checkData + inputSumLightData);
-//        LogUtils.e("TAG==异或结果=" + hexXORData);
-//        //AA+截取数据命令+输入光源16进制    之后再做异或校验值+DD结尾
-//        String sendStringData = str.substring(0, str.length() - 6) + inputSumLightData + hexXORData + "dd";
-//        LogUtils.e("TAG==发送的结果=" + sendStringData);
-//        //16进制String转换成byte字节数组
-//        byte[] bytes = hexString2Bytes(sendStringData);
-//        return bytes;
-//    }
 
 
 }

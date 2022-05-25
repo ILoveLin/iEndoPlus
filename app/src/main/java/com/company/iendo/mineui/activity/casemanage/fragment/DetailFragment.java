@@ -47,7 +47,6 @@ import com.company.iendo.ui.dialog.MenuDialog;
 import com.company.iendo.ui.dialog.MessageDialog;
 import com.company.iendo.utils.CalculateUtils;
 import com.company.iendo.utils.FileUtil;
-import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.SharePreferenceUtil;
 import com.company.iendo.utils.SocketUtils;
 import com.company.iendo.widget.LinesEditView;
@@ -219,8 +218,6 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
-                        LogUtils.e("图片" + "初始化图片路径保存失败===" + e);////原图路径
-
                         showError(listener -> {
                             sendRequest(currentItemID);
                         });
@@ -232,16 +229,12 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                         if ("" != response) {
                             DetailPictureBean mBean = mGson.fromJson(response, DetailPictureBean.class);
                             List<DetailPictureBean.DataDTO> data = mBean.getData();
-                            LogUtils.e("图片" + "response===" + response);////原图路径
-
                             if (0 == mBean.getCode()) {  //成功
                                 showComplete();
                                 if (mBean.getData().size() != 0) {
                                     for (int i = 0; i < mBean.getData().size(); i++) {
                                         String imageName = mBean.getData().get(i).getImagePath();
                                         String url = mBaseUrl + "/" + MainActivity.getCurrentItemID() + "/" + imageName;
-                                        LogUtils.e("详情界面---获取到当前图片name===" + imageName);
-                                        LogUtils.e("详情界面---获取到当前图片path===" + url);
                                         //例如imageName=001.jpg  url=http://192.168.64.56:7001/3/001.jpg
                                         mPathMap.put(imageName, url);
 
@@ -266,7 +259,6 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 
 
         showLoading();
-        LogUtils.e("Socket回调==DetailFragment==当前UDP命令==event.====相等====开始请求界面=");
         sendCaseInfoRequest(currentItemID, false, null);
 
     }
@@ -293,8 +285,6 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                     @Override
                     public void onResponse(String response, int id) {
                         if ("" != response) {
-                            LogUtils.e("详情界面---8病例详情response===" + response);
-
                             mBean = mGson.fromJson(response, CaseDetailBean.class);
                             if (0 == mBean.getCode()) {  //成功
                                 showComplete();
@@ -326,7 +316,6 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
      */
     private void setLayoutData(CaseDetailBean mBean) {
         mDataBean = mBean.getData();
-        LogUtils.e("病例详情界面数据====" + mDataBean);
         //送检医生/SubmitDoctor   检查医生/ExaminingPhysician
         et_01_check_num.setText(mDataBean.getCaseNo());     //检查号也叫病例编号
         et_01_name.setText(mDataBean.getName());
@@ -576,16 +565,10 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
          */
         //创建本地的/MyDownImages/mID文件夹  再把图片下载到这个文件夹下  文件夹（设备ID-病例ID）
         String dirName = Environment.getExternalStorageDirectory() + "/MyDownImages/" + mDeviceCode + "_" + currentItemCaseID;
-        LogUtils.e("文件下载===01==文件夹名字===" + dirName);// /storage/emulated/0/MyDownImages/31376335613463353432626432363561_9
-        LogUtils.e("文件下载===01==mDeviceCode===" + mDeviceCode);//31376335613463353432626432363561
-        LogUtils.e("文件下载===01==currentItemCaseID===" + currentItemCaseID);//9
-        LogUtils.e("文件下载===01==mUserID===" + mUserID);//1
         File toLocalFile = new File(dirName);
         //此处做校验,本文件夹创建过,并且里面的图片数量和请求结果数量一直,表示下载过
         boolean FileExists = toLocalFile.exists();
         if (FileExists) {
-            LogUtils.e("文件下载===01==toLocalFile.exists()===" + toLocalFile.exists());
-            LogUtils.e("文件下载===01==toLocalFile.exists()===" + toLocalFile.listFiles().length);
             int length = toLocalFile.listFiles().length;  //本地下载的图片数量
             if (null != mPathMap && !mPathMap.isEmpty()) {
                 int size = mPathMap.keySet().size();  //当前上位机该病例图片数量
@@ -641,10 +624,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
             for (String key : mPathMap.keySet()) {
                 //001.jpg     http://192.168.131.43:7001/1154/001.jpg
                 //001.jpg     http://192.168.131.43:7001/1154/001.jpg
-                LogUtils.e("文件下载===数目不相等==entry.getKey()===" + key);   //004.jpg
-                LogUtils.e("文件下载===数目不相等==entry.getValue()===" + mPathMap.get(key));//http://192.168.31.249:7001/9/004.jpg
                 mImageCountNum = mPathMap.keySet().size();//5
-                LogUtils.e("文件下载===数目不相等1==mPathMap.keySet().size()==" + mImageCountNum);
                 //此处循环遍历上位机map,和本地文件夹图片作比较,没有包含,直接更新下载使用
 
                 boolean contains = mFileList.contains(key);//包含返回true
@@ -659,11 +639,8 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
             for (String key : mFilesHashMap.keySet()) {
                 //001.jpg     http://192.168.131.43:7001/1154/001.jpg
                 //001.jpg     http://192.168.131.43:7001/1154/001.jpg
-                LogUtils.e("文件下载===01==entry.getKey()===" + key);   //004.jpg
-                LogUtils.e("文件下载===01==entry.getValue()===" + mPathMap.get(key));//http://192.168.31.249:7001/9/004.jpg
                 //5
                 mImageUpdateCountNum = mFilesHashMap.keySet().size();
-                LogUtils.e("文件下载===01==mPathMap.keySet().size()==" + mImageCountNum);
                 sendUpdatePictureRequest(toLocalFile, mPathMap.get(key), key);
             }
 
@@ -731,17 +708,11 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
      */
     private void downPictureCaseData(File toLocalFile) {
         //mPathMap===例如imageName=001.jpg  url=http://192.168.64.56:7001/1_3/001.jpg
-        LogUtils.e("文件下载===01==详情界面---mPathMap==mPathMap.isEmpty()=" + mPathMap.isEmpty());
-        LogUtils.e("文件下载===01==详情界面---toLocalFile===" + toLocalFile.listFiles().length);
         if (null != mPathMap && !mPathMap.isEmpty()) {   //说明有图片
             for (String key : mPathMap.keySet()) {
                 //001.jpg     http://192.168.131.43:7001/1154/001.jpg
                 //001.jpg     http://192.168.131.43:7001/1154/001.jpg
-                LogUtils.e("文件下载===01==entry.getKey()===" + key);   //004.jpg
-                LogUtils.e("文件下载===01==entry.getValue()===" + mPathMap.get(key));//http://192.168.31.249:7001/9/004.jpg
                 mImageCountNum = mPathMap.keySet().size();//5
-                LogUtils.e("文件下载===01==mPathMap.keySet().size()==" + mImageCountNum);
-
                 sendPictureRequest(toLocalFile, mPathMap.get(key), key);
             }
 
@@ -776,17 +747,12 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 
                     @Override
                     public void onError(Call call, Exception e, int id) {
-                        LogUtils.e("文件下载=更新=onError==" + e);
                         //下载失败
                     }
 
                     @Override
                     public void onResponse(File response, int id) {
-                        LogUtils.e("文件下载=更新=onResponse==" + response.toString());
-                        LogUtils.e("文件下载=更新=更新相册图片==" + toLocalFile.getAbsolutePath() + "/" + pictureName);
-
                         mCurrentUpdateDownImageCount++;
-                        LogUtils.e("文件下载=更新=当前下载第几张图片==" + mCurrentUpdateDownImageCount);
                         mHandler.sendEmptyMessage(IMAGE_DOWN_UPDATE);
                         //=====/storage/emulated/0/MyDownImages/2_3/004.jpg
                         //刷新相册 必须下载完了才能退出不然容易出现bug ,所以我们放在每次进入该界面的时候刷新
@@ -804,9 +770,6 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 //                                @Override
 //                                public void onScanCompleted(String path, Uri uri) {
 //                                    //刷新成功的回调方法
-//                                    LogUtils.e("OkHttpUtils======资源刷新成功路径为===" + path);
-//                                    LogUtils.e("OkHttpUtils======资源刷新成功路径为===" + uri);
-//
 //                                }
 //                            });
                         } catch (FileNotFoundException e) {
@@ -836,17 +799,12 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 
                     @Override
                     public void onError(Call call, Exception e, int id) {
-                        LogUtils.e("下载图片==onError==" + e);
                         //下载失败
                     }
 
                     @Override
                     public void onResponse(File response, int id) {
-                        LogUtils.e("下载图片==onResponse==" + response.toString());
-                        LogUtils.e("下载图片==更新相册图片==" + toLocalFile.getAbsolutePath() + "/" + pictureName);
-
                         mCurrentDownImageCount++;
-                        LogUtils.e("下载图片==当前下载第几张图片==" + mCurrentDownImageCount);
                         mHandler.sendEmptyMessage(IMAGE_DOWN);
                         //=====/storage/emulated/0/MyDownImages/2_3/004.jpg
                         //刷新相册 必须下载完了才能退出不然容易出现bug ,所以我们放在每次进入该界面的时候刷新
@@ -864,9 +822,6 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 //                                @Override
 //                                public void onScanCompleted(String path, Uri uri) {
 //                                    //刷新成功的回调方法
-//                                    LogUtils.e("OkHttpUtils======资源刷新成功路径为===" + path);
-//                                    LogUtils.e("OkHttpUtils======资源刷新成功路径为===" + uri);
-//
 //                                }
 //                            });
                         } catch (FileNotFoundException e) {
@@ -892,9 +847,6 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         //查询当前设备码下,当前病例详情ID(mDataBean.getID()),之下的病例,有就是下载过,没有就是没下载过,数字长度0或者1
         List<CaseDBBean> myList = CaseDBUtils.getQueryBeanByTow02(getApplication(), mDeviceCode, mDataBean.getID() + "");
 
-        LogUtils.e("DownloadListener==queue====详情界面mDeviceCode====: " + mDeviceCode);//0000000000000000546017FE6BC28949
-        LogUtils.e("DownloadListener==queue====详情界面mDataBean.getID()====: " + mDataBean.getID());//1195
-
         /**
          *   病例不存在,就存入
          *   存在就不处理
@@ -919,15 +871,10 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
             if (null != mPathMap && !mPathMap.isEmpty()) {
                 for (String key : mPathMap.keySet()) {
                     //001.jpg     http://192.168.131.43:7001/1154/001.jpg
-                    LogUtils.e("文件下载===02==存储图片==entry.getKey()===" + key);
-                    LogUtils.e("文件下载===02==存储图片==entry.getValue()===" + mPathMap.get(key));
                     int size = mPathMap.keySet().size();
 //                sendPictureRequest(toLocalFile, mPathMap.get(key), key, false);
                     CaseImageListBean imageBean = new CaseImageListBean();
                     // /storage/emulated/0/MyDownImages/0000000000000000546017FE6BC28949_1154/001.jpg
-                    LogUtils.e("文件下载===02==存储图片==ImagePath===" + toLocalFile.getAbsolutePath() + "/" + key);
-
-
                     imageBean.setImagePath(toLocalFile.getAbsolutePath() + "/" + key);  //存入本地存储路径
                     caseImageList.add(imageBean);
                 }
@@ -947,8 +894,6 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 ////                    caseVideoListBean.setFileName();
 //                    caseVideoListBean.setDown(false);
 //                    VideoList.add(caseVideoListBean);
-//                    LogUtils.e("文件下载===02==视频存储==VideoPath===" + str);
-//                    LogUtils.e("文件下载===02==视频存储==setFileName===" + substring);
 //                }
 //                caseDBBean.setVideoList(VideoList);
 //            }
@@ -977,7 +922,6 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
             int i = check_date.indexOf(" ");
             //获取到需要在下载病例的时候,需要存入时间的正确值 2022-03-23
             mCurrentDonwTime = check_date.substring(0, i);
-            LogUtils.e("病例下载==存入当前病例时间==mCurrentDonwTime===" + mCurrentDonwTime);
 
             caseDBBean.setCheck_date(mCurrentDonwTime + "");    // 检查时间,也是下载的时候当前时间的标识!!!
             caseDBBean.setPatientNo(mDataBean.getPatientNo() + "");    // 病人编号
@@ -1027,15 +971,10 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
             if (null != mPathMap && !mPathMap.isEmpty()) {
                 for (String key : mPathMap.keySet()) {
                     //001.jpg     http://192.168.131.43:7001/1154/001.jpg
-                    LogUtils.e("文件下载===02==存储图片==entry.getKey()===" + key);
-                    LogUtils.e("文件下载===02==存储图片==entry.getValue()===" + mPathMap.get(key));
                     int size = mPathMap.keySet().size();
 //                sendPictureRequest(toLocalFile, mPathMap.get(key), key, false);
                     CaseImageListBean imageBean = new CaseImageListBean();
                     // /storage/emulated/0/MyDownImages/0000000000000000546017FE6BC28949_1154/001.jpg
-                    LogUtils.e("文件下载===02==存储图片==ImagePath===" + toLocalFile.getAbsolutePath() + "/" + key);
-
-
                     imageBean.setImagePath(toLocalFile.getAbsolutePath() + "/" + key);  //存入本地存储路径
                     caseImageList.add(imageBean);
                 }
@@ -1152,7 +1091,6 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
             int i = check_date.indexOf(" ");
             //获取到需要在下载病例的时候,需要存入时间的正确值 2022-03-23
             mCurrentDonwTime = check_date.substring(0, i);
-            LogUtils.e("病例下载==存入当前病例时间==mCurrentDonwTime===" + mCurrentDonwTime);
 
             caseDBBean.setCheck_date(mCurrentDonwTime + "");    // 检查时间,也是下载的时候当前时间的标识!!!
             caseDBBean.setPatientNo(mDataBean.getPatientNo() + "");    // 病人编号
@@ -1199,7 +1137,6 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         if (null != userListt && userListt.size() > 0) {
             UserDBBean userDBBean = userListt.get(0);
             //有数据,更新
-            LogUtils.e("用户表====有数据,更新====" + userDBBean.getUserName());
             userDBBean.setId(userDBBean.getId());
             userDBBean.setDeviceID(mDeviceCode + "");
             userDBBean.setDeviceUserID(mLoginUserID + "");  //设置用户ID
@@ -1211,7 +1148,6 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
             UserDBUtils.insertOrReplaceInTx(getAttachActivity(), userDBBean);
 
         } else {
-            LogUtils.e("用户表====无数据,新增====" + userLoginUserName);
             //无数据,新增
             UserDBBean bean = new UserDBBean();
             bean.setDeviceID(mDeviceCode + "");
@@ -1308,7 +1244,6 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         //创建本地的/MyDownImages/mID文件夹  再把图片下载到这个文件夹下  文件夹（设备ID-病例ID）
         String dirNameImages = Environment.getExternalStorageDirectory() + "/MyDownImages/" + mDeviceCode + "_" + currentItemCaseID;
         String dirNameVideos = Environment.getExternalStorageDirectory() + "/MyDownVideos/" + mDeviceCode + "_" + currentItemCaseID;
-        LogUtils.e("===========dirname========="+dirNameImages);
         //删除本地图片文件夹以及图片
         File mImagesFile = new File(dirNameImages);
         if (mImagesFile.exists()) {
@@ -1330,7 +1265,6 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
     private void sendDeleteRequest() {
         mLoginUserName = mMMKVInstace.decodeString(Constants.KEY_CurrentLoginUserName);
         if (Details_Reault_Ok) {
-            LogUtils.e("删除用户==params=" + mBean.getData().getID() + "");
             showLoading();
             OkHttpUtils.post()
                     .url(mBaseUrl + HttpConstant.CaseManager_DeleteCase)
@@ -1342,7 +1276,6 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                     .execute(new StringCallback() {
                         @Override
                         public void onError(Call call, Exception e, int id) {
-                            LogUtils.e("删除用户==e=" + e);
                             showError(listener -> {
                                 sendDeleteRequest();
                             });
@@ -1350,7 +1283,6 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 
                         @Override
                         public void onResponse(String response, int id) {
-                            LogUtils.e("删除用户==response=" + response);
                             if ("" != response) {
                                 DeleteBean mBean = mGson.fromJson(response, DeleteBean.class);
                                 if (0 == mBean.getCode()) {  //成功
@@ -1712,8 +1644,6 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                         @Override
                         public void onSelected(BaseDialog dialog, int position, String data) {
                             String s = stringList.get(position);
-                            LogUtils.e("MenuDialog====位置：" + position + "，文本：" + data);
-                            LogUtils.e("MenuDialog===s==" + s); //{0=HD3}
                             startDialogIconAnim(false, mAnimView);
                             mEdit.setText("" + s);
 
@@ -1745,14 +1675,12 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
-                        LogUtils.e("edit====" + e);
                         mFragClickable = false;
                     }
 
                     @SuppressLint("NewApi")
                     @Override
                     public void onResponse(String response, int id) {
-                        LogUtils.e("edit==onResponse==" + response);
                         ListDialogDateBean mBean = mGson.fromJson(response, ListDialogDateBean.class);
                         //1,按'DictName'进行分组
                         //2,按照分组中找出 'ParentId=0' 的项,作为每个分组的类别
@@ -2144,7 +2072,6 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
      * @param
      */
     private void sendUpdateRequest() {
-        LogUtils.e("发送更新病例请求=== mParamsMap.toString()===" + mParamsMap.toString());
         OkHttpUtils.post()
                 .url(mBaseUrl + HttpConstant.CaseManager_ChangeCase)
                 .params(mParamsMap)
@@ -2152,7 +2079,6 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
-                        LogUtils.e("发送更新病例请求===onError===" + e);
                         showError(listener -> {
 //                            sendRequest(mParamsMap);
                         });
@@ -2161,8 +2087,6 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                     @Override
                     public void onResponse(String response, int id) {
                         if ("" != response) {
-                            LogUtils.e("发送更新病例请求===onResponse===" + response);
-
                             AddCaseBean mBean = mGson.fromJson(response, AddCaseBean.class);
                             if (0 == mBean.getCode()) {  //成功
                                 showComplete();
@@ -2200,15 +2124,11 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                     @Override
                     public void onResponse(String response, int id) {
                         if ("" != response) {
-                            LogUtils.e("详情界面---截图界面===病例详情response==itemID=" + mCaseID);
-                            LogUtils.e("详情界面---截图界面===病例详情response===" + response);
-
                             CaseDetailBean mBean = mGson.fromJson(response, CaseDetailBean.class);
                             if (0 == mBean.getCode()) {  //成功
                                 showComplete();
                                 imageCounts = mBean.getData().getImagesCount() + "";
                                 videosCounts = mBean.getData().getVideosCount() + "";
-                                LogUtils.e("详情界面---截图界面===病例详情response==imageCount=" + imageCounts);
                                 DetailCaseActivity.mTabAdapter.setItem(1, "图片(" + imageCounts + ")");
                                 DetailCaseActivity.mTabAdapter.setItem(2, "视频(" + videosCounts + ")");
 
@@ -2233,21 +2153,15 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
     /**
      * eventbus 刷新socket数据
      */
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
     public void SocketRefreshEvent(SocketRefreshEvent event) {
 //        String mRun2End4 = CalculateUtils.getReceiveRun2End4String(event.getData());//随机数之后到data结尾的String
 //        String deviceType = CalculateUtils.getSendDeviceType(event.getData());
 //        String deviceOnlyCode = CalculateUtils.getSendDeviceOnlyCode(event.getData());
 //        String currentCMD = CalculateUtils.getCMD(event.getData());
-//        LogUtils.e("Socket回调==DetailFragment==随机数之后到data的Str==mRun2End4==" + mRun2End4);
-//        LogUtils.e("Socket回调==DetailFragment==发送方设备类型==deviceType==" + deviceType);
-//        LogUtils.e("Socket回调==DetailFragment==获取发送方设备Code==deviceOnlyCode==" + deviceOnlyCode);
-//        LogUtils.e("Socket回调==DetailFragment==当前UDP命令==currentCMD==" + currentCMD);
-//        LogUtils.e("Socket回调==DetailFragment==当前UDP命令==event.getUdpCmd()==" + event.getUdpCmd());
         String data = event.getData();
         switch (event.getUdpCmd()) {
             case Constants.UDP_15://截图
-                LogUtils.e("======LiveServiceImpl==回调=event==采图==" + event.getData());
                 if (mCaseID.equals(event.getData())) {
                     sendImageRequest(mCaseID);
                 }
@@ -2271,19 +2185,11 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                 }
                 break;
             case Constants.UDP_13://有病例,并且当前病例id==回调病例id则更新界面数据
-                LogUtils.e("Socket回调==DetailFragment==当前UDP命令==event.getData()==" + event.getData());
-                LogUtils.e("Socket回调==DetailFragment==当前UDP命令==currentItemCaseID==" + currentItemCaseID);
-
                 if (event.getTga()) {
                     if (currentItemCaseID.equals(event.getData())) {
                         //请求界面数据
                         sendRequest(currentItemCaseID);
-                        LogUtils.e("Socket回调==DetailFragment==当前UDP命令==event.====相等==");
-
                     }
-                    LogUtils.e("Socket回调==DetailFragment==当前UDP命令==event.===不=相等==");
-
-
                 }
                 break;
         }
@@ -2304,7 +2210,6 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                 String hexStringID = CalculateUtils.numToHex16(Integer.parseInt(mCaseID));
                 bean.setRecordid(hexStringID);
             }
-            LogUtils.e("SocketUtils===发送消息==点对点==Point===bean===" + bean.toString());
 
             byte[] sendByteData = CalculateUtils.getSendByteData(getAttachActivity(), mGson.toJson(bean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
                     CMDCode);
@@ -2428,9 +2333,6 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         super.onResume();
         isFatherExit = false;
         sendListDictsRequest();
-        LogUtils.e("onResume===DetailFragment===开始建立握手链接!" + HandService.UDP_HAND_GLOBAL_TAG);
-        LogUtils.e("onResume===DetailFragment===开始建立握手链接222!" + HandService.UDP_HAND_GLOBAL_TAG);
-        LogUtils.e("onResume===DetailFragment===开始建立握手链接333!" + HandService.UDP_HAND_GLOBAL_TAG);
     }
 
     @Override

@@ -8,7 +8,6 @@ import androidx.annotation.NonNull;
 import com.company.iendo.R;
 import com.company.iendo.action.StatusAction;
 import com.company.iendo.app.AppActivity;
-import com.company.iendo.utils.LogUtils;
 import com.company.iendo.widget.StatusLayout;
 import com.gyf.immersionbar.ImmersionBar;
 import com.hjq.bar.OnTitleBarListener;
@@ -87,7 +86,6 @@ public class ReportActivity extends AppActivity implements StatusAction {
         super.onResume();
 //        initReceiveThread();
         //握手通讯
-        LogUtils.e("onResume===ReportActivity===开始建立握手链接!");
 //        sendHandLinkMessage();
     }
 

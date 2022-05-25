@@ -13,7 +13,6 @@ import androidx.annotation.StringRes;
 import com.company.iendo.R;
 import com.company.iendo.aop.SingleClick;
 import com.company.iendo.bean.RefreshEvent;
-import com.company.iendo.utils.LogUtils;
 import com.hjq.base.BaseDialog;
 import com.hjq.widget.view.ClearEditText;
 
@@ -113,7 +112,6 @@ public final class InputDeviceDialog {
                     return;
                 }
                 autoDismiss();
-                LogUtils.e("");
                 mListener.onConfirm(getDialog(), mDeviceName, mDeviceCode, mDeviceNoteMessage, mDeviceIP,
                         mDeviceAccount, mDevicePassword, mHttpPort, mSocketPort, mLivePort, mMicPort, mDeviceType);
             } else if (viewId == R.id.tv_ui_cancel) {

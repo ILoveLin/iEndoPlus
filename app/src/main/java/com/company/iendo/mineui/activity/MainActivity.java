@@ -14,7 +14,6 @@ import com.company.iendo.R;
 import com.company.iendo.app.AppActivity;
 import com.company.iendo.app.AppFragment;
 import com.company.iendo.bean.event.RefreshItemIdEvent;
-import com.company.iendo.bean.event.SocketRefreshEvent;
 import com.company.iendo.manager.ActivityManager;
 import com.company.iendo.mineui.fragment.casemanage.CaseManageFragment;
 import com.company.iendo.mineui.fragment.setting.SettingFragment;
@@ -23,7 +22,6 @@ import com.company.iendo.mineui.offline.fragment.SettingOfflineFragment;
 import com.company.iendo.other.DoubleClickHelper;
 import com.company.iendo.ui.adapter.NavigationAdapter;
 import com.company.iendo.ui.fragment.HomeFragment;
-import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.SharePreferenceUtil;
 import com.gyf.immersionbar.ImmersionBar;
 import com.hjq.base.FragmentPagerAdapter;
@@ -231,10 +229,9 @@ public class MainActivity extends AppActivity implements NavigationAdapter.OnNav
     /**
      * eventbus 刷新socket数据
      */
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void RefreshItemIdEvent(RefreshItemIdEvent event) {
-        LogUtils.e("eventbus 刷新socket数据=====event.getId()===="+event.getId());
-        setCurrentItemID(event.getId()+"");
+        setCurrentItemID(event.getId() + "");
     }
 
 

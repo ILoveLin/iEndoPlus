@@ -35,7 +35,6 @@ import com.company.iendo.other.HttpConstant;
 import com.company.iendo.ui.dialog.DateDialog;
 import com.company.iendo.utils.CalculateUtils;
 import com.company.iendo.utils.DateUtil;
-import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.ScreenSizeUtil;
 import com.company.iendo.utils.SharePreferenceUtil;
 import com.company.iendo.utils.SocketUtils;
@@ -208,8 +207,6 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
                         calendar.set(Calendar.DAY_OF_MONTH, day);
                         String mDate = new SimpleDateFormat("yyyy年MM月dd日").format(calendar.getTime());
                         String mChoiceDate = mDate.replace("年", "-").replace("月", "-").replace("日", "");
-
-                        LogUtils.e("TTTTT" + mChoiceDate);
 //                        toast("时间：" + mChoiceDate);
                         mTitle.setText(mChoiceDate + "");
                         sendRequest(mChoiceDate);
@@ -229,8 +226,6 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
     }
 
     private void sendRequest(String mChoiceDate) {
-        LogUtils.e("=病例列表=hy=mChoiceDate==" + mChoiceDate);
-
         showLoading();
         OkHttpUtils.get()
                 .url(mBaseUrl + HttpConstant.CaseManager_List)
@@ -241,7 +236,6 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
-                        LogUtils.e("=病例列表=hy=onError==" + e.toString());
                         showError(listener -> {
                             sendRequest(mChoiceDate);
                         });
@@ -253,13 +247,7 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
                             showComplete();
                             if ("" != response) {
                                 mGson = GsonFactory.getSingletonGson();
-                                LogUtils.e("=病例列表=hy=response==response===" + response);
                                 CaseManageListBean mBean = mGson.fromJson(response, CaseManageListBean.class);
-                                LogUtils.e("=病例列表=hy=response==response===" + mBean.toString());
-                                LogUtils.e("=病例列表=hy=response==getEmpty===" + mBean.isIsEmpty());
-                                LogUtils.e("=病例列表=hy=response==getCode()===" + mBean.getCode());
-                                LogUtils.e("=病例列表=hy=response==getData===" + mBean.getData());
-
                                 if (0 == mBean.getCode()) {  //成功
                                     if (mBean.getData().size() != 0) {
                                         mDataLest.clear();
@@ -301,11 +289,9 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
     @Override
     public void onItemClick(RecyclerView recyclerView, View itemView, int position) {
         CaseManageListBean.DataDTO item = mAdapter.getItem(position);
-        LogUtils.e("======GetPictureActivity=====Handler接受====item==" + item.toString());
         mMMKVInstace.encode(Constants.KEY_CurrentCaseID, item.getID() + "");
         Intent intent = new Intent(getActivity(), DetailCaseActivity.class);
         ((MainActivity) getActivity()).setCurrentItemID(item.getID() + "");
-        LogUtils.e("itemID==" + item.getID() + "");
         intent.putExtra("Name", item.getName() + "");
         intent.putExtra("itemID", item.getID() + "");
         intent.putExtra("itemUserName", item.getUserName() + "");
@@ -336,7 +322,6 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
     public void onResume() {
         super.onResume();
         mBaseUrl = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_BaseUrl, "192.168.132.102");
-        LogUtils.e("currentChoseDate=====" + mTitle.getText().toString().trim());
         if (!mTitle.getText().toString().trim().isEmpty()) {
             sendRequest(mTitle.getText().toString().trim());
         } else {
@@ -365,8 +350,6 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
 //            toast("通讯端口不能为空");
             return;
         }
-        LogUtils.e("SocketUtils==HandService===发送消息==点对点==detailCaseActivity==sendByteData=i=" + sendByteData);
-        LogUtils.e("SocketUtils==HandService===发送消息==点对点==detailCaseActivity==mSocketPort===i=" + mSocketPort);
         SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), getAttachActivity());
 //        SocketManage.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort));
     }
@@ -388,9 +371,8 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
     /**
      * eventbus 刷新socket数据
      */
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
     public void SocketRefreshEvent(SocketRefreshEvent event) {
-        LogUtils.e("Socket回调==DetailFragment==event.getData()==" + event.getData());
         String data = event.getData();
         switch (event.getUdpCmd()) {
             case Constants.UDP_CUSTOM_TOAST://吐司
@@ -431,8 +413,6 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
 
                     @Override
                     public void onResponse(String response, int id) {
-//
-                        LogUtils.e("登录===" + response);
                         if (!"".equals(response)) {
                             UserReloBean mBean = mGson.fromJson(response, UserReloBean.class);
                             if (0 == mBean.getCode()) {

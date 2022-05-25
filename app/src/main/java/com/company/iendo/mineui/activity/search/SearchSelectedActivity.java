@@ -18,7 +18,6 @@ import com.company.iendo.ui.dialog.DateDialog;
 import com.company.iendo.ui.dialog.MenuDialog;
 import com.company.iendo.ui.dialog.SelectModifyTypeDialog;
 import com.company.iendo.utils.DateUtil;
-import com.company.iendo.utils.LogUtils;
 import com.hjq.bar.OnTitleBarListener;
 import com.hjq.bar.TitleBar;
 import com.hjq.base.BaseAdapter;
@@ -153,14 +152,12 @@ public class SearchSelectedActivity extends AppActivity  {
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
-                        LogUtils.e("edit====" + e);
                         mFragClickable = false;
                     }
 
                     @SuppressLint("NewApi")
                     @Override
                     public void onResponse(String response, int id) {
-                        LogUtils.e("edit==onResponse==" + response);
                         ListDialogDateBean mBean = mGson.fromJson(response, ListDialogDateBean.class);
                         //1,按'DictName'进行分组
                         //2,按照分组中找出 'ParentId=0' 的项,作为每个分组的类别
@@ -232,8 +229,6 @@ public class SearchSelectedActivity extends AppActivity  {
                         @Override
                         public void onSelected(BaseDialog dialog, int position, String data) {
                             String s = stringList.get(position);
-                            LogUtils.e("MenuDialog====位置：" + position + "，文本：" + data);
-                            LogUtils.e("MenuDialog===s==" + s); //{0=HD3}
                             mEdit.setText(mEdit.getText().toString() + "" + s);
 
                         }
@@ -403,10 +398,8 @@ public class SearchSelectedActivity extends AppActivity  {
 
                     @Override
                     public void onSelected(BaseDialog dialog, HashMap<Integer, String> data) {
-                        LogUtils.e("showMultiDialog===" + data.toString()); //{0=HD3}
                         int start = data.toString().indexOf("=");
                         String str = data.toString().substring(start + 1, data.toString().length() - 1);
-                        LogUtils.e("showMultiDialog===str==" + str); //{0=HD3}
                         mType.setText("" + str);
                     }
 
@@ -435,7 +428,6 @@ public class SearchSelectedActivity extends AppActivity  {
                         calendar.set(Calendar.MONTH, month - 1);
                         calendar.set(Calendar.DAY_OF_MONTH, day);
                         mChoiceDate = new SimpleDateFormat("yyyy年MM月dd日").format(calendar.getTime());
-                        LogUtils.e("TTTTT" + mChoiceDate);
                         String replaceDate = mChoiceDate.replace("年", "-").replace("月", "-").replace("日", "");
 //                        toast("时间：" + mChoiceDate);
                         if ("开始".equals(type)) {

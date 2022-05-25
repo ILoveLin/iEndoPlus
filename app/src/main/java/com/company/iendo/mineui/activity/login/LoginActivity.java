@@ -52,6 +52,7 @@ import com.company.iendo.ui.dialog.SelectDialog;
 import com.company.iendo.ui.dialog.TipsDialog;
 import com.company.iendo.ui.dialog.WaitDialog;
 import com.company.iendo.ui.popup.ListPopup;
+import com.company.iendo.utils.CalculateUtils;
 import com.company.iendo.utils.CommonUtil;
 import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.MD5ChangeUtil;
@@ -238,7 +239,6 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                 SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Current_Login_Remember_Password, true);
                 SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Flag_UserDBSave, true);
 
-                LogUtils.e("initRememberPassword==存入的==deviceID:" + deviceID);
                 UserDBUtils.insertOrReplaceInTx(LoginActivity.this, newBean);
             }
 
@@ -255,23 +255,17 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
         String deviceid = (String) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Current_DeviceID, "1");
 //        LogUtils.e("initRememberPassword====isSave:" + isSave);
         String userName = mPhoneView.getText().toString().trim();
-        LogUtils.e("initRememberPassword==当前设备==deviceid:" + deviceid);
-        LogUtils.e("initRememberPassword==当前设备==deviceID:" + deviceID);
         //电脑  0000000000000000ED3A93DA80A9BA8B
         //一体机0000000000000000546017FE6BC28949
 //        if (isSave) {//存过设备之后才能查询本地数据库用户表--并且选中了当前用户,此处存在不同设备名字相同的时候密码相同的bug
         //先查询deviceID设备下,存储过的用户
         List<UserDBBean> userDBBeans = UserDBUtils.getQueryByDeviceID(getApplicationContext(), deviceID);
-        LogUtils.e("initRememberPassword==当前设备==userDBBeans.size()=:" + userDBBeans.size());
         for (int i = 0; i < userDBBeans.size(); i++) {
             UserDBBean userDBBean = userDBBeans.get(i);
             userDBBean.getUserName();
             userDBBean.getPassword();
             userDBBean.getDeviceID();
             userDBBean.getIsRememberPassword();
-            LogUtils.e("initRememberPassword==当前设备==userDBBean.toString=:" + userDBBean.toString());
-
-
         }
 
         //数据库没有
@@ -366,11 +360,9 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
     private void sendRequest(String mBaseUrl) {
         showLoading(getString(R.string.common_loading_user_list));
         String mUrl = (String) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Current_BaseUrl, "http://192.168.1.200:3000");
-        LogUtils.e("登录==url==0001=" + mBaseUrl);
-        LogUtils.e("登录==url==0001=" + mUrl + HttpConstant.UserManager_List);
         OkHttpUtils.get()
                 .url(mUrl + HttpConstant.UserManager_List)
-                .addParams("type","account")
+                .addParams("type", "account")
                 .build()
                 .execute(new StringCallback() {
                     @Override
@@ -379,8 +371,6 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                         showComplete();
                         mPasswordView.setText("");
                         mPhoneView.setText("");
-                        LogUtils.e("用户列表==onError=" + e);
-
                     }
 
                     @Override
@@ -392,7 +382,6 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                                 showComplete();
                                 mUserListData = mBean.getData();
                                 setOnLineFirstName(mUserListData);
-                                LogUtils.e("用户列表===" + response);
 
                             } else {
                                 showError();
@@ -466,7 +455,6 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
             username_right.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    LogUtils.e("==========Tag======Tag===" + username_right.getTag());
                     if ("close".equals(username_right.getTag())) {
                         username_right.setTag("open");
                         username_right.setImageResource(R.drawable.login_icon_up);
@@ -476,16 +464,9 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                         username_right.setImageResource(R.drawable.login_icon_down);
                     }
 
-                    LogUtils.e("==========screenWidth======screenWidth===" + screenWidth);
-
                     String string = getResources().getString(R.dimen.dp_74);
                     String dip = string.replace("dip", "");
                     Float mFloatDate = Float.valueOf(dip).floatValue();
-                    LogUtils.e("==========screenWidth======mPhoneView===" + mPhoneView.getWidth());
-                    LogUtils.e("==========screenWidth======string===" + dip);
-                    LogUtils.e("==========screenWidth======mFloatDate===" + mFloatDate);
-                    LogUtils.e("==========screenWidth======screenWidth - mFloatDate===" + (screenWidth - mFloatDate));
-
                     if (!getListData().isEmpty()) {
                         historyBuilder = new ListPopup.Builder(LoginActivity.this);
                         historyBuilder.setList(getListData())
@@ -539,7 +520,6 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
         if (null != userList && userList.size() > 0) {
             for (int i = 0; i < userList.size(); i++) {
                 UserDBBean bean = userList.get(i);
-                LogUtils.e("用户表====登录====" + bean.getUserName());
                 //此时,当前设备下用户表有两种状态一种是下载过的,一种是记住密码的,所以要赛选
 
                 if ("true".equals(bean.getMake01())) {  //存在下载过该用户的数据,获取当前数据设置到UI上
@@ -574,7 +554,6 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
         if (loginType) { //在线登录
             for (int i = 0; i < mUserListData.size(); i++) {
                 mList.add(mUserListData.get(i).getUserName() + "");
-                LogUtils.e("用户表===getListData=用户名:" + mUserListData.get(i).getUserName());
             }
             return mList;
 
@@ -586,7 +565,6 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                 for (int i = 0; i < userList.size(); i++) {
                     UserDBBean bean = userList.get(i);
                     if ("true".equals(bean.getMake01())) {  //存在下载过该用户的数据,获取当前数据设置到UI上
-                        LogUtils.e("用户表===mUserOflineListData=用户名:" + bean.getUserName());
                         mList.add(bean.getUserName());
                     }
                 }
@@ -600,6 +578,12 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_login_commit:
+
+                String str = "AAC501005218000931376335613463353432626432363561A1F9432B11B93E8BB4AE34539B7472C20EF07B0A0922696D616765696422203A202230222C0A09227265636F7264696422203A202232366432220A7D33DD";
+                String sendDeviceType = CalculateUtils.getSendDeviceType(str);
+                LogUtils.e("登录测试==sendDeviceType==" + sendDeviceType);
+
+
                 CharSequence text = mLoginType.getText();
                 if (text.equals("在线登录")) {  //在线登录
                     SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.OnLine_Flag, true);
@@ -638,12 +622,7 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
         //动态清零用户列表
         // 隐藏软键盘
         hideKeyboard(getCurrentFocus());
-        LogUtils.e("登录===" + MD5ChangeUtil.Md5_16(mPasswordView.getText().toString()));
-        LogUtils.e("登录===" + MD5ChangeUtil.Md5_32(mPasswordView.getText().toString()));
-        LogUtils.e("登录==url=" + mBaseUrl + HttpConstant.UserManager_Login);
         String mUrl = (String) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Current_BaseUrl, "http://192.168.1.200:3000");
-        LogUtils.e("登录==url==02=" + mBaseUrl);
-        LogUtils.e("登录==url==02=" + mBaseUrl + HttpConstant.UserManager_Login);
 //                登录按钮动画
         showLoading(getString(R.string.common_loading_login));
 //        requestReloSaveToApp();
@@ -655,7 +634,6 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
-                        LogUtils.e("登录==onError=" + e);
                         mPasswordView.setText("");
                         mPhoneView.setText("");
                         showComplete();
@@ -677,13 +655,10 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                     @Override
                     public void onResponse(String response, int id) {
                         showComplete();
-                        LogUtils.e("登录=response==" + response);
                         if (!"".equals(response)) {
                             LoginBean mBean = mGson.fromJson(response, LoginBean.class);
                             if (0 == mBean.getCode()) {
                                 mUserListData.clear();
-                                LogUtils.e("登录==role==" + mBean.getData().getRole());
-                                LogUtils.e("登录==userid==" + mBean.getData().getUserID());
                                 SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Current_Login_Role, mBean.getData().getRole() + "");
                                 SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Current_Login_UserID, mBean.getData().getUserID() + "");
 //                                SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Current_Login_UserName, mPhoneView.getText().toString());
@@ -694,7 +669,7 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                                 //此次需要存入当前登入用户具有的操作权限
                                 MMKV kv = MMKV.defaultMMKV();
                                 LoginBean.DataDTO.PurviewDTO purviewBean = mBean.getData().getPurview();
-                                if (null!=purviewBean){
+                                if (null != purviewBean) {
                                     kv.encode(Constants.KEY_Login_Tag, true);//是否登入成功
                                     kv.encode(Constants.KEY_UserMan, purviewBean.isUserMan());//用户管理(用户管理界面能不能进)
                                     kv.encode(Constants.KEY_CanPsw, purviewBean.isCanPsw());//设置口令(修改别人密码)
@@ -722,17 +697,10 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                                     mAppIP = getIpString(wifiInfo.getIpAddress());
                                 }
                                 mSocketPort = (String) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Current_SocketPort, "7006");
-                                LogUtils.e("登录==mSocketPort==" +mSocketPort);
-                                LogUtils.e("登录==mSocketPort==" +mSocketPort);
-
                                 if ("".equals(mSocketPort) || null == mSocketPort) {
                                     toast("通讯接收端口不能为空");
-                                    LogUtils.e("登录==mSocketPort==11111111");
-
                                     return;
                                 } else {
-                                    LogUtils.e("登录==mSocketPort==222222222");
-
                                     receiveSocketService.setSettingReceiveThread(mAppIP, Integer.parseInt(mSocketPort), LoginActivity.this);
                                 }
                                 MainActivity.start(getContext(), CaseManageFragment.class);
@@ -740,7 +708,7 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                                 initHandService();
                                 finish();
                             } else {
-                                toast( "密码错误");
+                                toast("密码错误");
                             }
 
                         } else {
@@ -783,8 +751,6 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
 
                     @Override
                     public void onResponse(String response, int id) {
-//
-                        LogUtils.e("登录===" + response);
                         if (!"".equals(response)) {
                             UserReloBean mBean = mGson.fromJson(response, UserReloBean.class);
                             if (0 == mBean.getCode()) {
@@ -892,7 +858,6 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                         int size = data.size();
                         int i = string.indexOf("=");
                         String value = string.substring(i + 1, string.length() - 1);
-                        LogUtils.e("下载===value=" + value);
                         if (value.equals("在线登录")) {  //在线登录
                             mLoginType.setText("在线登录");
                             SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.OnLine_Flag, true);
@@ -990,10 +955,7 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
     @Override
     protected void onResume() {
         super.onResume();
-
-        LogUtils.e("========当前设备的备注信息~~~~====LoginActivity==onResume===");
         mBaseUrl = (String) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Current_BaseUrl, "http://192.168.1.200:3000");
-        LogUtils.e("========当前设备的备注信息~~~~====LoginActivity==mBaseUrl===" + mBaseUrl);
         postDelayed(() -> {
             sendRequest(mBaseUrl);
         }, 500);
@@ -1025,8 +987,6 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onRefreshEvent(RefreshEvent event) {
         String mType = setDeviceTitleLogo();
-        LogUtils.e("========当前设备的备注信息~~~~====eventbus==eventbus===" + mType);
-
 
     }
 

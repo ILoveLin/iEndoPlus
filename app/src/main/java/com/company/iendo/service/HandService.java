@@ -8,7 +8,6 @@ import android.os.IBinder;
 
 import com.company.iendo.bean.event.SocketRefreshEvent;
 import com.company.iendo.bean.socket.HandBean;
-import com.company.iendo.mineui.activity.login.LoginActivity;
 import com.company.iendo.other.Constants;
 import com.company.iendo.utils.CalculateUtils;
 import com.company.iendo.utils.LogUtils;
@@ -22,16 +21,10 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.Observer;
-import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
@@ -43,6 +36,7 @@ import io.reactivex.schedulers.Schedulers;
  */
 
 public class HandService extends AbsWorkService {
+    private static final String TAG = "握手服务===";
     //是否 任务完成, 不再需要服务运行?
     public static boolean sShouldStopService;
     public static boolean isFirstIn = false;
@@ -68,9 +62,6 @@ public class HandService extends AbsWorkService {
         cancelJobAlarmSub();
 //        EventBus.getDefault().unregister(this);
 
-        LogUtils.e("保活服务开启HandService==stopService------ + stopService... stopService = ");
-
-
     }
 
     /**
@@ -90,8 +81,6 @@ public class HandService extends AbsWorkService {
 
     @Override
     public void startWork(Intent intent, int flags, int startId) {
-
-        LogUtils.e("保活服务开启HandService======startWork=====startWork");
         //Wifi状态判断
         WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         lock = wifiManager.createMulticastLock("test wifi");
@@ -101,7 +90,6 @@ public class HandService extends AbsWorkService {
             WifiInfo wifiInfo = wifiManager.getConnectionInfo();
             mAppIP = getIpString(wifiInfo.getIpAddress());
         }
-        LogUtils.e("保活服务开启HandService==----AAA--" + Thread.currentThread().getName());
         start10STask();
 
 
@@ -109,14 +97,12 @@ public class HandService extends AbsWorkService {
 
     private void start60STask() {
         sDisposable60s = Observable
-                .interval(30, TimeUnit.SECONDS)//定时器操作符，这里三秒打印一个log
+                .interval(60, TimeUnit.SECONDS)//定时器操作符，这里三秒打印一个log
                 //取消任务时取消定时唤醒
                 .doOnDispose(() -> {
-                    LogUtils.e("保活服务开启HandService==---取消了--每 60 秒采集一次数据--===doOnDispose=取消了");
 //                    cancelJobAlarmSub();
                 })
                 .subscribe(count -> {
-                    LogUtils.e("保活服务开启HandService==------每 60 秒采集一次数据... count = " + count + "==UDP_HAND_TAG==" + UDP_HAND_GLOBAL_TAG);
                     sendHandLinkMessage();
                     sendCount = count;
                     long tag = sendCount - currentIndex;
@@ -128,9 +114,13 @@ public class HandService extends AbsWorkService {
                         event.setUdpCmd(Constants.UDP_CUSTOM_TOAST);
                         event.setData(Constants.HAVE_HAND_FAIL_OFFLINE);
                         EventBus.getDefault().post(event);
+                        LogUtils.e(TAG + "握手失败(60s)且tag=2,开始10s轮询");
+                        LogUtils.e(TAG + "握手状态:" + UDP_HAND_GLOBAL_TAG);
 
                     } else if (UDP_HAND_GLOBAL_TAG) {
                         sDisposable60s.dispose();
+                        LogUtils.e(TAG + "握手失败(60s),取消60s轮询,开始10s轮询");
+                        LogUtils.e(TAG + "握手状态:" + UDP_HAND_GLOBAL_TAG);
                         start10STask();
                     }
                 });
@@ -150,36 +140,37 @@ public class HandService extends AbsWorkService {
 //        observeOn是来设定我们的观察者的操作是在哪个线程执行   AndroidSchedulers.mainThread()
 
         sDisposable10s = Observable
-                .interval(10, TimeUnit.SECONDS)//定时器操作符，这里三秒打印一个log
+                .interval(30, TimeUnit.SECONDS)//定时器操作符，这里三秒打印一个log
                 //取消任务时取消定时唤醒
                 .doOnDispose(() -> {
-                    LogUtils.e("保活服务开启HandService==---取消了--每 10 秒采集一次数据--===doOnDispose=取消了");
 //                    cancelJobAlarmSub();
                 }).subscribeOn(Schedulers.io())
                 .subscribe(count -> {
                     sendCount = count;
-                    LogUtils.e("保活服务开启HandService==------每 10 秒采集一次数据... count = " + count + "==UDP_HAND_TAG==" + UDP_HAND_GLOBAL_TAG);
                     sendHandLinkMessage();
                     long tag = sendCount - currentIndex;
                     if (tag == 5 && !UDP_HAND_GLOBAL_TAG) {
                         sDisposable10s.dispose();
                         start60STask();
+                        LogUtils.e(TAG + "握手失败(10s)且tag=5,开始60s轮询");
+                        LogUtils.e(TAG + "握手状态:" + UDP_HAND_GLOBAL_TAG);
+
 
                     } else if ((tag == 1 || tag == 2) && !UDP_HAND_GLOBAL_TAG) {//第二次就握手失败 我就重启下监听线程
                         MMKV mmkv = MMKV.defaultMMKV();
                         boolean b = mmkv.decodeBool(Constants.KEY_Login_Tag);
                         String mSocketPort = mmkv.decodeString(Constants.KEY_Device_SocketPort);
-                        LogUtils.e("保活服务开启HandService==------第一次采集一次数据... count = 超过次数,直接重启接收线程!!!!!!!");
-                        LogUtils.e("保活服务开启HandService==------第一次采集一次数据... count = 超过次数,直接重启接收线程!!!!!!!" + b);
-                        LogUtils.e("保活服务开启HandService==------第一次采集一次数据... count = 超过次数,直接重启接收线程!!!!!!!" + mSocketPort);
+                        LogUtils.e(TAG + "握手状态:" + UDP_HAND_GLOBAL_TAG);
+
                         if (b) {//如果是登录状态,重启登入时候的监听
                             ReceiveSocketService receiveSocketService = new ReceiveSocketService();
-                            LogUtils.e("保活服务开启HandService==------第一次采集一次数据... count = 超过次数,直接重启接收线程===登录状态");
                             receiveSocketService.setSettingReceiveThread(mAppIP, Integer.parseInt(mSocketPort), getApplicationContext());
+                            LogUtils.e(TAG + "握手失败(10s),重启,登入时候的,监听服务");
                         } else {//不是登录状态,重启广播搜索监听
-                            LogUtils.e("保活服务开启HandService==------第一次采集一次数据... count = 超过次数,直接重启接收线程==没有=登录状态");
                             ReceiveSocketService receiveSocketService = new ReceiveSocketService();
                             receiveSocketService.initFirstThread(mAppIP);
+                            LogUtils.e(TAG + "握手失败(10s),重启,没有登入时候的,广播搜索监听服务");
+
                         }
                     }
                 });
@@ -191,14 +182,14 @@ public class HandService extends AbsWorkService {
     /**
      * eventbus 刷新数据
      */
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
     public void SocketRefreshEvent(SocketRefreshEvent event) {
         switch (event.getUdpCmd()) {
             case Constants.UDP_HAND://握手
                 UDP_HAND_GLOBAL_TAG = true;
+                LogUtils.e(TAG + "握手状态(socket回调):" + UDP_HAND_GLOBAL_TAG);
                 //计入当前收到回调的次数
                 currentIndex = sendCount;
-                LogUtils.e("保活服务开启HandService==------SocketRefreshEvent... UDP_HAND_TAG = " + UDP_HAND_GLOBAL_TAG);
                 break;
         }
 
@@ -215,11 +206,6 @@ public class HandService extends AbsWorkService {
         String mSocketPort = mmkv.decodeString(Constants.KEY_Device_SocketPort);
         String mSocketOrLiveIP = mmkv.decodeString(Constants.KEY_Device_Ip);
 
-        LogUtils.e("SocketUtils==HandService===发送消息==点对点==HandService==mCurrentTypeNum==" + mCurrentTypeNum);
-        LogUtils.e("SocketUtils==HandService===发送消息==点对点==HandService==mLoginTag==" + mLoginTag);
-        LogUtils.e("SocketUtils==HandService===发送消息==点对点==HandService==mCurrentReceiveDeviceCode==" + mCurrentReceiveDeviceCode);
-        LogUtils.e("SocketUtils==HandService===发送消息==点对点==HandService==mSocketPort==" + mSocketPort);
-        LogUtils.e("SocketUtils==HandService===发送消息==点对点==HandService==mSocketOrLiveIP==" + mSocketOrLiveIP);
 
         if (mLoginTag && null != mLoginTag) {
             HandBean handBean = new HandBean();
@@ -228,13 +214,10 @@ public class HandService extends AbsWorkService {
             if (!"".equals(mCurrentTypeNum) && !"".equals(mCurrentReceiveDeviceCode) && !("".equals(mSocketPort))) {
                 byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(handBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
                         Constants.UDP_HAND);
-                LogUtils.e("SocketUtils==HandService===发送消息==点对点==HandService==sendByteData==" + sendByteData);
-                LogUtils.e("SocketUtils==HandService===发送消息==点对点==HandService==mSocketPort==" + mSocketPort);
                 startTime = System.currentTimeMillis();
                 if (null != sendByteData) {
                     SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), this);
                 } else {
-                    LogUtils.e("SocketUtils==HandService===发送消息==点对点==HandService==握手数据为null==" + sendByteData);
 
                 }
             }
@@ -249,7 +232,6 @@ public class HandService extends AbsWorkService {
 
     @Override
     public void stopWork(Intent intent, int flags, int startId) {
-        LogUtils.e("保活服务开启HandService=====关闭了====stopWork。");
         stopService();
     }
 
@@ -273,9 +255,6 @@ public class HandService extends AbsWorkService {
     public static Boolean getWorkStatue() {
         boolean b1 = sDisposable10s != null && !sDisposable10s.isDisposed();
         boolean b2 = sDisposable60s != null && !sDisposable60s.isDisposed();
-        LogUtils.e("保活服务开启HandService=====getWorkStatue====b1==" + b1);
-        LogUtils.e("保活服务开启HandService=====getWorkStatue====b2==" + b2);
-
         return b1 || b2;
     }
 
@@ -286,7 +265,6 @@ public class HandService extends AbsWorkService {
 
     @Override
     public void onServiceKilled(Intent rootIntent) {
-        LogUtils.e("保活服务HandService=====保存数据到磁盘===onServiceKilled。");
     }
 
     /**
@@ -307,7 +285,6 @@ public class HandService extends AbsWorkService {
     @Override
     public void onDestroy() {
         isFirstIn = false;
-        LogUtils.e("保活服务HandService====保存数据到磁盘===onDestroy。");
         super.onDestroy();
         EventBus.getDefault().unregister(this);
 

@@ -20,11 +20,7 @@ import com.company.iendo.bean.RefreshEvent;
 import com.company.iendo.bean.ZXBean;
 import com.company.iendo.green.db.DeviceDBBean;
 import com.company.iendo.green.db.DeviceDBUtils;
-import com.company.iendo.mineui.activity.login.device.DeviceActivity;
 import com.company.iendo.other.Constants;
-import com.company.iendo.utils.LogUtils;
-import com.company.iendo.utils.db.DBManager;
-import com.company.iendo.widget.StatusLayout;
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
@@ -166,14 +162,11 @@ public final class ZXingActivity extends AppActivity implements QRCodeView.Deleg
         Type type = new TypeToken<ZXBean>() {
         }.getType();
         ZXBean mBean = gson.fromJson(result, type);
-        LogUtils.e("Zingx==========" + mBean.toString());
 //            VideoDBBean01 videoDBBean = new VideoDBBean01();
 
         DeviceDBBean deviceDBBean = new DeviceDBBean();
 
         String deviceTypeString = getDeviceTypeNum(mBean.getDeviceType());
-        LogUtils.e("Zingx=====deviceTypeString=====" + deviceTypeString);
-
         deviceDBBean.setDeviceID("" + mBean.getDeviceID());//
         deviceDBBean.setDeviceCode("" + mBean.getDeviceID());//
         deviceDBBean.setEndoType("" + mBean.getEndoType());//PC端 对应的endotype  比如我们这边耳鼻喉治疗台是3   这个对应是8
@@ -192,15 +185,10 @@ public final class ZXingActivity extends AppActivity implements QRCodeView.Deleg
         deviceDBBean.setUsername("" + mBean.getUsername());//
         deviceDBBean.setMSelected(false);//
 
-//
-        LogUtils.e("========当前设备的备注信息~~~~====ZXingActivity==deviceDBBean===" + deviceDBBean.toString());
-
-
         DeviceDBUtils.insertOrReplace(ZXingActivity.this, deviceDBBean);
 
         EventBus.getDefault().post(new RefreshEvent("refresh"));
         List<DeviceDBBean> deviceDBBeans = DeviceDBUtils.queryAll(ZXingActivity.this);
-        LogUtils.e("========当前设备的备注信息~~~~====ZXingActivity==deviceDBBeans===" + deviceDBBeans.size());
 
     }
 

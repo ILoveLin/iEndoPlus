@@ -12,7 +12,6 @@ import androidx.annotation.StringRes;
 
 import com.company.iendo.R;
 import com.company.iendo.aop.SingleClick;
-import com.company.iendo.utils.LogUtils;
 import com.hjq.base.BaseDialog;
 import com.hjq.widget.view.RegexEditText;
 
@@ -98,7 +97,6 @@ public final class Input2SettingDialog {
                     return;
                 }
                 Editable editable2 = mInput2View.getText();
-                LogUtils.e("新密码=2="+editable2);
                 mListener.onConfirm(getDialog(), editable2 != null ? editable2.toString() : "");
             } else if (viewId == R.id.tv_ui_cancel) {
                 autoDismiss();

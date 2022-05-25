@@ -21,7 +21,6 @@ import com.company.iendo.ui.dialog.InputDialog;
 import com.company.iendo.ui.dialog.MessageDialog;
 import com.company.iendo.ui.dialog.SelectDialog;
 import com.company.iendo.ui.dialog.SelectUserDialog;
-import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.MD5ChangeUtil;
 import com.company.iendo.utils.SharePreferenceUtil;
 import com.company.iendo.widget.StatusLayout;
@@ -132,10 +131,6 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
                 .setListener(new InputAddUserDialog.OnListener() {
                     @Override
                     public void onConfirm(BaseDialog dialog, String userName, String passwrod, String relo) {
-                        LogUtils.e("userName==" + userName);
-                        LogUtils.e("passwrod==" + passwrod);
-                        LogUtils.e("relo==" + mAddCurrentString);
-                        LogUtils.e("relo=code=" + mAddCurrentCode);
                         //添加用户请求
                         if ("".equals(userName)) {
                             toast("用户名不能为空");
@@ -171,8 +166,6 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
                                 String substringName = string.substring(i + 1, data.toString().length() - 1);
                                 mAddCurrentCode = Integer.parseInt(string.substring(1, 2));
                                 mAddCurrentString = substringName;
-                                LogUtils.e("mAddCurrentCode==" + mAddCurrentCode);
-                                LogUtils.e("mAddCurrentString==" + mAddCurrentString);
                                 reloView.setText("" + mAddCurrentString);
                             }
                         }).show();
@@ -214,7 +207,6 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
 
                     @Override
                     public void onResponse(String response, int id) {
-                        LogUtils.e("新增用户==" + response);
                         showComplete();
                         if ("" != response) {
                             UserDeletedBean mBean = mGson.fromJson(response, UserDeletedBean.class);
@@ -251,7 +243,6 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
 
                     @Override
                     public void onResponse(String response, int id) {
-                        LogUtils.e("用户列表==" + response);
                         if ("" != response) {
                             showComplete();
                             UserListBean mBean = mGson.fromJson(response, UserListBean.class);
@@ -366,7 +357,6 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
         int i = Integer.parseInt(substring);
         showLoading();
         String userID = item.getUserID();
-        LogUtils.e("修改权限====userID==" + userID + "");
         OkHttpUtils.post()
                 .url(mBaseUrl + HttpConstant.UserManager_ChangeRelo)
                 .addParams("CurrentUserID", mLoginUserID)//当前登入的用户ID == 1
@@ -388,13 +378,9 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
                     @Override
                     public void onResponse(String response, int id) {
                         showComplete();
-                        LogUtils.e("修改权限====response==" + response);
-
                         if ("" != response) {
                             UserDeletedBean mBean = mGson.fromJson(response, UserDeletedBean.class);
-                            LogUtils.e("修改权限====Relo==" + i);
                             toast("修改成功");
-                            LogUtils.e("修改权限====item.getUserID()==" + item.getUserID() + "");
                             if (mBean.getCode().equals("0")) {
                                 sendRequest();
                             }
@@ -465,7 +451,6 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
                         showComplete();
                         if ("" != response) {
                             UserDeletedBean mBean = mGson.fromJson(response, UserDeletedBean.class);
-                            LogUtils.e("修改其他人密码====" + response);
                             if (mBean.getCode().equals("0")) {
                                 toast("修改成功");
                                 mAdapter.notifyDataSetChanged();
@@ -533,7 +518,6 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
                         showComplete();
                         if ("" != response) {
                             UserDeletedBean mBean = mGson.fromJson(response, UserDeletedBean.class);
-                            LogUtils.e("删除用户====");
                             if (mBean.getCode().equals("0")) {
                                 toast("删除成功");
 

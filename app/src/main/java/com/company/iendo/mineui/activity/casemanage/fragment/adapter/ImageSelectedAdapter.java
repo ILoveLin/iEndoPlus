@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.company.iendo.R;
 import com.company.iendo.app.AppAdapter;
 import com.company.iendo.bean.socket.searchdevice.BroadCastReceiveBean;
-import com.company.iendo.utils.LogUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -97,7 +96,6 @@ public class ImageSelectedAdapter extends AppAdapter<BroadCastReceiveBean> {
         this.mRv = mRv;
         this.mDataLest = mDataLest;
         //找到默认选中的position
-        LogUtils.e(mDataLest.size() + "mDataLest===Adapter==" + mDataLest.size());
     }
 
     @NonNull
@@ -179,9 +177,6 @@ public class ImageSelectedAdapter extends AppAdapter<BroadCastReceiveBean> {
 //            mTitle.setText(mDBBean.getDeviceName()); //设备名字
 //            mMake.setText(mDBBean.getMsg()); //备注信息
 ////            mType.setText(mDBBean.getType());
-//            LogUtils.e(mDBBean.getMsg() + "========当前设备的备注信息~~~~======");
-//            LogUtils.e(mDBBean.getType() + "========当前设备的类型~~~~======");
-//
 //            mSelect.setSelected(mDBBean.getMSelected());
 
 

@@ -21,7 +21,6 @@ import com.company.iendo.bean.DetailPictureBean;
 import com.company.iendo.bean.PictureChoseBean;
 import com.company.iendo.bean.ReportSelectedImageBean;
 import com.company.iendo.bean.event.SocketRefreshEvent;
-import com.company.iendo.bean.socket.HandBean;
 import com.company.iendo.bean.socket.getpicture.ShotPictureBean;
 import com.company.iendo.mineui.activity.MainActivity;
 import com.company.iendo.mineui.activity.casemanage.fragment.adapter.ChosePictureAdapter;
@@ -30,7 +29,6 @@ import com.company.iendo.other.GridSpaceDecoration;
 import com.company.iendo.other.HttpConstant;
 import com.company.iendo.service.HandService;
 import com.company.iendo.utils.CalculateUtils;
-import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.SharePreferenceUtil;
 import com.company.iendo.utils.SocketUtils;
 import com.company.iendo.widget.StatusLayout;
@@ -164,7 +162,6 @@ public final class PictureChoseActivity extends AppActivity implements StatusAct
                         mList.add(pictureChoseBean);
                     }
                 }
-                LogUtils.e("图片" + "mList.size()===" + mList.size());////原图路径
                 //获取请求参数oldImageIDs和newImageIDs
                 String oldImageIDs = "";
                 String newImageIDs = "";
@@ -185,9 +182,6 @@ public final class PictureChoseActivity extends AppActivity implements StatusAct
                         }
                     }
                 }
-                LogUtils.e("图片" + "id==========oldImageIDs==" + getIDs(oldIDS));////原图路径
-                LogUtils.e("图片" + "id==========newImageIDs==" + getIDs(newImageIDs));////原图路径
-
                 if (mList.size() > 9) {
                     toast("最多不超过9张");
                     return;
@@ -230,9 +224,6 @@ public final class PictureChoseActivity extends AppActivity implements StatusAct
      */
     private void sendRequest(String currentItemID) {
         showLoading();
-        LogUtils.e("currentItemID" + currentItemID);
-        LogUtils.e("currentItemID" + mBaseUrl + HttpConstant.CaseManager_Report);
-
         OkHttpUtils.get()
                 .url(mBaseUrl + HttpConstant.CaseManager_CasePictures)
                 .addParams("ID", currentItemID)
@@ -247,14 +238,13 @@ public final class PictureChoseActivity extends AppActivity implements StatusAct
 
                     @Override
                     public void onResponse(String response, int id) {
-                        oldIDS="";
+                        oldIDS = "";
                         mPathList = new ArrayList<>();
                         showComplete();
                         mImageEmpty.setVisibility(View.INVISIBLE);
                         if ("" != response) {
                             DetailPictureBean mBean = mGson.fromJson(response, DetailPictureBean.class);
                             List<DetailPictureBean.DataDTO> data = mBean.getData();
-                            LogUtils.e("图片" + "response===" + response);////原图路径
 
                             if (0 == mBean.getCode()) {  //成功
                                 showComplete();
@@ -264,8 +254,6 @@ public final class PictureChoseActivity extends AppActivity implements StatusAct
                                         DetailPictureBean.DataDTO dataDTO = mBean.getData().get(i);
                                         String imageName = dataDTO.getImagePath();
                                         String url = mBaseUrl + "/" + MainActivity.getCurrentItemID() + "/" + imageName;
-                                        LogUtils.e("图片fragment===" + imageName);
-                                        LogUtils.e("图片fragment===" + url);
                                         PictureChoseBean bean = new PictureChoseBean();
                                         bean.setUrl(url);
                                         if (dataDTO.isSelected()) {
@@ -289,7 +277,6 @@ public final class PictureChoseActivity extends AppActivity implements StatusAct
                                     }
                                     mDataLest.clear();
                                     mDataLest.addAll(mPathList);
-                                    LogUtils.e("图片" + "");////原图路径
                                     mAdapter.setData(mDataLest);
 
                                 } else {
@@ -319,8 +306,6 @@ public final class PictureChoseActivity extends AppActivity implements StatusAct
      * @param newImageIDs 自己新选的图片id       :230,220,245
      */
     private void sendReportRequest(String oldImageIDs, String newImageIDs) {
-        LogUtils.e("currentItemID" + currentItemID);
-        LogUtils.e("currentItemID" + mBaseUrl + HttpConstant.CaseManager_Report);
         OkHttpUtils.post()
 //                .url("192.168.132.102:7001/report/selectImages")
                 .url(mBaseUrl + HttpConstant.CaseManager_Report)
@@ -331,7 +316,6 @@ public final class PictureChoseActivity extends AppActivity implements StatusAct
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
-                        LogUtils.e("图片" + "response==Exception=" + e);////原图路径
                         showError(listener -> {
                             sendReportRequest(oldImageIDs, newImageIDs);
                         });
@@ -340,16 +324,14 @@ public final class PictureChoseActivity extends AppActivity implements StatusAct
                     @Override
                     public void onResponse(String response, int id) {
                         mPathList = new ArrayList<>();
-                        LogUtils.e("图片" + "response===" + response);////原图路径
                         if ("" != response) {
                             ReportSelectedImageBean mBean = mGson.fromJson(response, ReportSelectedImageBean.class);
                             int code = mBean.getCode();
-                            LogUtils.e("图片" + "response===" + response);////原图路径
                             if (0 == code) {
                                 //成功,之后才开启动画显示报告预览
-                                if(HandService.UDP_HAND_GLOBAL_TAG){
+                                if (HandService.UDP_HAND_GLOBAL_TAG) {
                                     showStartReportAnim();
-                                }else {
+                                } else {
                                     toast(Constants.HAVE_HAND_FAIL_OFFLINE);
                                 }
                             } else {
@@ -376,18 +358,11 @@ public final class PictureChoseActivity extends AppActivity implements StatusAct
     /**
      * eventbus 刷新socket数据
      */
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
     public void SocketRefreshEvent(SocketRefreshEvent event) {
-        LogUtils.e("Socket回调==PictureChoseActivity==event.getData()==" + event.getData());
         String deviceType = CalculateUtils.getSendDeviceType(event.getData());
         String deviceOnlyCode = CalculateUtils.getSendDeviceOnlyCode(event.getData());
         String currentCMD = CalculateUtils.getCMD(event.getData());
-        LogUtils.e("Socket回调==PictureChoseActivity==发送方设备类型==deviceType==" + deviceType);
-        LogUtils.e("Socket回调==PictureChoseActivity==获取发送方设备Code==deviceOnlyCode==" + deviceOnlyCode);
-        LogUtils.e("Socket回调==PictureChoseActivity==当前UDP命令==currentCMD==" + currentCMD);
-        LogUtils.e("Socket回调==PictureChoseActivity==当前UDP命令==event.getUdpCmd()==" + event.getUdpCmd());
-        LogUtils.e("Socket回调==PictureChoseActivity==SocketRefreshEvent==event.toString()==" + event.toString());
-
         String data = event.getData();
         switch (event.getUdpCmd()) {
             case Constants.UDP_F1://预览报告
@@ -396,7 +371,6 @@ public final class PictureChoseActivity extends AppActivity implements StatusAct
                 } else {
                     String path = "http://" + mSocketOrLiveIP + ":" + mBaseUrlPort + "/" + data;
 //                    String path = mSocketOrLiveIP + ":" + mBaseUrlPort + "/" + data;
-                    LogUtils.e("Socket回调==PictureChoseActivity==当前UDP命令==path==" + path);
                     Glide.with(PictureChoseActivity.this)
                             .load(path)
                             .placeholder(R.drawable.ic_bg_splash_des) //占位符 也就是加载中的图片，可放个gif
@@ -415,8 +389,6 @@ public final class PictureChoseActivity extends AppActivity implements StatusAct
         }
 
     }
-
-
 
 
     /**
@@ -560,7 +532,6 @@ public final class PictureChoseActivity extends AppActivity implements StatusAct
     @Override
     protected void onResume() {
         super.onResume();
-        LogUtils.e("onResume===PictureChoseActivity===开始建立握手链接!");
 
     }
 

@@ -11,7 +11,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.company.iendo.bean.DetailDownVideoBean;
-import com.company.iendo.bean.RefreshEvent;
 import com.company.iendo.bean.event.downevent.DownEndEvent;
 import com.company.iendo.bean.event.downevent.DownLoadingEvent;
 import com.company.iendo.bean.event.downevent.DownStartEvent;
@@ -19,10 +18,8 @@ import com.company.iendo.green.db.DownVideoMsgDBUtils;
 import com.company.iendo.green.db.TaskDBBean;
 import com.company.iendo.green.db.TaskDBBeanUtils;
 import com.company.iendo.green.db.downcase.dwonmsg.DownVideoMessage;
-import com.company.iendo.mineui.activity.casemanage.dowvideo.DownVideoListActivity;
 import com.company.iendo.other.Constants;
 import com.company.iendo.utils.FileUtil;
-import com.company.iendo.utils.LogUtils;
 import com.liulishuo.okdownload.DownloadContext;
 import com.liulishuo.okdownload.DownloadContextListener;
 import com.liulishuo.okdownload.DownloadTask;
@@ -40,7 +37,6 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -72,9 +68,6 @@ public class DownVideoService extends AbsWorkService {
         if (sDisposable10s != null) sDisposable10s.dispose();
         //取消 Job / Alarm / Subscription
         cancelJobAlarmSub();
-        LogUtils.e("保活服务开启HandService==stopService------ + stopService... stopService = ");
-
-
     }
 
     /**
@@ -101,7 +94,6 @@ public class DownVideoService extends AbsWorkService {
 //        subscribeOn是来设定我们的被观察者的操作是在哪个线程中进行   Schedulers.io()
 
 //        observeOn是来设定我们的观察者的操作是在哪个线程执行   AndroidSchedulers.mainThread()
-        LogUtils.e("保活服务开启HandService==----AAA--" + Thread.currentThread().getName());
 
 
     }
@@ -124,13 +116,11 @@ public class DownVideoService extends AbsWorkService {
                 event.setContentLength(task.getInfo().getTotalLength());
                 event.setCurrentContentLength(task.getInfo().getTotalLength());
                 EventBus.getDefault().postSticky(event);
-                LogUtils.e("DownloadListener==taskStart: " + task.getTag());
             }
 
             @Override
             public void fetchStart(@NonNull DownloadTask task, int blockIndex, long contentLength) {
                 super.fetchStart(task, blockIndex, contentLength);
-                LogUtils.e("DownloadListener==fetchStart==task.getTag==: " + task.getTag()); //02
 //                LogUtils.e("DownloadListener==fetchStart==task.getParentFile==: " + task.getParentFile());// /storage/emulated/0/CME_01
 //                LogUtils.e("DownloadListener==fetchStart==task.getFile==: " + task.getFile());///storage/emulated/0/CME_01/222.mp4
 //                LogUtils.e("DownloadListener==fetchStart==task.getFilename==: " + task.getFilename());//222.mp4
@@ -147,13 +137,11 @@ public class DownVideoService extends AbsWorkService {
 
             @Override
             public void connectStart(@NonNull DownloadTask task, int blockIndex, @NonNull Map<String, List<String>> requestHeaderFields) {
-                LogUtils.e("DownloadListener==connectStart: " + task.getTag());
 
             }
 
             @Override
             public void connectEnd(@NonNull DownloadTask task, int blockIndex, int responseCode, @NonNull Map<String, List<String>> responseHeaderFields) {
-                LogUtils.e("DownloadListener==connectEnd:==responseCode " + responseCode);
 
 
             }
@@ -161,25 +149,21 @@ public class DownVideoService extends AbsWorkService {
             @Override
             public void infoReady(@NonNull DownloadTask task, @NonNull BreakpointInfo info, boolean fromBreakpoint, @NonNull Listener4SpeedAssistExtend.Listener4SpeedModel model) {
 
-                LogUtils.e("DownloadListener==infoReady==task.getEtag(): " + task.getTag());
-                LogUtils.e("DownloadListener==infoReady==info.getTotalLength(): " + info.getTotalLength());
-                LogUtils.e("DownloadListener==infoReady==info.getTaskSpeed(): " + model.getTaskSpeed());
-
             }
 
             @Override
             public void progressBlock(@NonNull DownloadTask task, int blockIndex, long currentBlockOffset, @NonNull SpeedCalculator blockSpeed) {
-                LogUtils.e("DownloadListener==progressBlock==task.toString(): " + task.toString());
-                LogUtils.e("DownloadListener==progressBlock==task.getReadBufferSize(): " + task.getReadBufferSize());
-                LogUtils.e("DownloadListener==progressBlock==task.getFlushBufferSize(): " + task.getFlushBufferSize());
-                LogUtils.e("DownloadListener==progressBlock==task.getRedirectLocation(): " + task.getRedirectLocation());
-                LogUtils.e("DownloadListener==progressBlock==task.getTag(): " + task.getTag());
-                LogUtils.e("DownloadListener==progressBlock==task.getFilename(): " + task.getFilename());
-                LogUtils.e("DownloadListener==progressBlock==blockSpeed: " + blockSpeed.speed());
-                LogUtils.e("DownloadListener==progressBlock==getTotalLength: " + task.getInfo().getTotalLength());
-                LogUtils.e("DownloadListener==progressBlock==getTotalOffset: " + task.getInfo().getTotalOffset());
-                LogUtils.e("DownloadListener==progressBlock==getInstantSpeedDurationMillis: " + blockSpeed.getInstantSpeedDurationMillis());
-                LogUtils.e("DownloadListener==progressBlock==currentBlockOffset: " + currentBlockOffset);
+//                LogUtils.e("DownloadListener==progressBlock==task.toString(): " + task.toString());
+//                LogUtils.e("DownloadListener==progressBlock==task.getReadBufferSize(): " + task.getReadBufferSize());
+//                LogUtils.e("DownloadListener==progressBlock==task.getFlushBufferSize(): " + task.getFlushBufferSize());
+//                LogUtils.e("DownloadListener==progressBlock==task.getRedirectLocation(): " + task.getRedirectLocation());
+//                LogUtils.e("DownloadListener==progressBlock==task.getTag(): " + task.getTag());
+//                LogUtils.e("DownloadListener==progressBlock==task.getFilename(): " + task.getFilename());
+//                LogUtils.e("DownloadListener==progressBlock==blockSpeed: " + blockSpeed.speed());
+//                LogUtils.e("DownloadListener==progressBlock==getTotalLength: " + task.getInfo().getTotalLength());
+//                LogUtils.e("DownloadListener==progressBlock==getTotalOffset: " + task.getInfo().getTotalOffset());
+//                LogUtils.e("DownloadListener==progressBlock==getInstantSpeedDurationMillis: " + blockSpeed.getInstantSpeedDurationMillis());
+//                LogUtils.e("DownloadListener==progressBlock==currentBlockOffset: " + currentBlockOffset);
 
                 String formatOffsetLength = FileUtil.formatFileSizeMethod(currentBlockOffset);
                 DownLoadingEvent event = new DownLoadingEvent();
@@ -198,36 +182,16 @@ public class DownVideoService extends AbsWorkService {
 
             @Override
             public void progress(@NonNull DownloadTask task, long currentOffset, @NonNull SpeedCalculator taskSpeed) {
-                LogUtils.e("DownloadListener==progress==currentOffset: " + currentOffset);
-                LogUtils.e("DownloadListener==progress==task.getTag: " + task.getTag());
-                LogUtils.e("DownloadListener==progress==task.getFilename: " + task.getFilename());
-                LogUtils.e("DownloadListener==progress==taskSpeed: " + taskSpeed.speed());
+
             }
 
             @Override
             public void blockEnd(@NonNull DownloadTask task, int blockIndex, BlockInfo info, @NonNull SpeedCalculator blockSpeed) {
-                LogUtils.e("DownloadListener==blockEnd==blockIndex: " + blockIndex);
-                LogUtils.e("DownloadListener==blockEnd==blockSpeed: " + blockSpeed.speed());
-                LogUtils.e("DownloadListener==blockEnd==blockIndex==getContentLength=: " + info.getContentLength());  //下载成功的前提下,这个就是总偏移量
-                LogUtils.e("DownloadListener==blockEnd==blockIndex==getCurrentOffset=: " + info.getCurrentOffset());
-                LogUtils.e("DownloadListener==blockEnd==blockIndex==getStartOffset=: " + info.getStartOffset());
-                LogUtils.e("DownloadListener==blockEnd==blockIndex==getRangeLeft=: " + info.getRangeLeft());
+
             }
 
             @Override
             public void taskEnd(@NonNull DownloadTask task, @NonNull EndCause cause, @Nullable Exception realCause, @NonNull SpeedCalculator taskSpeed) {
-                LogUtils.e("DownloadListener==taskEnd=1=cause.name(): " + cause.name());
-                LogUtils.e("DownloadListener==taskEnd=1=task.getTag(): " + task.getTag());
-                LogUtils.e("DownloadListener==taskEnd=1=task.getFilename(): " + task.getFilename());
-                LogUtils.e("DownloadListener==taskEnd=1=task.getParentFile(): " + task.getParentFile().getAbsolutePath());//commonFolderName
-                LogUtils.e("DownloadListener==taskEnd=1=task.taskSpeed(): " + taskSpeed.speed());
-
-                LogUtils.e("DownloadListener==taskEnd=1=task.getFlushBufferSize(): " + task.getFlushBufferSize());
-                LogUtils.e("DownloadListener==taskEnd=1=task.getReadBufferSize(): " + task.getReadBufferSize());
-                LogUtils.e("DownloadListener==taskEnd=1=task.getTotalLength(): " + task.getInfo().getTotalLength());
-                LogUtils.e("DownloadListener==taskEnd=1=task.getTotalOffset(): " + task.getInfo().getTotalOffset());
-
-                LogUtils.e("DownloadListener==taskEnd=1=taskSpeed: " + taskSpeed.speed());
 
                 DownEndEvent event = new DownEndEvent();
                 String tag = (String) task.getTag();
@@ -279,9 +243,7 @@ public class DownVideoService extends AbsWorkService {
                         TaskDBBean taskDBBean = mDBDownList.get(0);
                         //删除具体某天数据
                         TaskDBBeanUtils.delete(mContext, taskDBBean);
-                        LogUtils.e("DownloadListener==taskEnd=2=cause.name(): " + cause.name());
                     }
-                    LogUtils.e("DownloadListener==taskEnd=3=cause.name(): " + cause.name());
 
                 } else if (cause.name().equals("ERROR")) {
                     /**
@@ -291,11 +253,9 @@ public class DownVideoService extends AbsWorkService {
                     if (mDBDownList.size() != 0) {
                         TaskDBBean taskDBBean = mDBDownList.get(0);
                         //删除具体某天数据
-                        LogUtils.e("DownloadListener==taskEnd=2=cause.name(): " + cause.name());
                         //删除具体某天数据
                         TaskDBBeanUtils.delete(mContext, taskDBBean);
                     }
-                    LogUtils.e("DownloadListener==taskEnd=3=cause.name(): " + cause.name());
                     event.setStatue(Constants.STATUE_ERROR);
                     event.setDownStatueDes(Constants.STATUE_ERROR_DES);
                     long totalLength = task.getInfo().getTotalLength();
@@ -321,11 +281,6 @@ public class DownVideoService extends AbsWorkService {
             @Override
             public void taskEnd(@NonNull DownloadContext context, @NonNull DownloadTask task, @NonNull EndCause cause, @Nullable Exception realCause,
                                 int remainCount) {
-                LogUtils.e("DownloadListener==queue==taskEnd==taskSpeed==task.getTag==: " + task.getTag());
-                LogUtils.e("DownloadListener==queue==taskEnd==taskSpeed==cause.name()==: " + cause.name());
-                LogUtils.e("DownloadListener==queue==taskEnd==taskSpeed==Exception==: " + realCause);
-                LogUtils.e("DownloadListener==queue==taskEnd==taskSpeed==cause==: " + cause.toString());
-                LogUtils.e("DownloadListener==queue==taskEnd==taskSpeed==remainCount==: " + remainCount);
 
             }
 
@@ -348,10 +303,7 @@ public class DownVideoService extends AbsWorkService {
             }
         });
 
-        LogUtils.e("DownloadListener===下载任务的path==" + DataDTOBean.getAllUrl());
         ///storage/emulated/0/MyDownVideos/null_null
-        LogUtils.e("DownloadListener下载任务的本地文件路径==" + DataDTOBean.getLocalFolderName());
-        LogUtils.e("DownloadListener下载任务的path==" + DataDTOBean.getFileName());
         //同一个任务在运行的时候,会显示taskEnd回调===cause.name()==SAME_TASK_BUSY
         DownloadTask task = new DownloadTask.Builder(DataDTOBean.getAllUrl(), DataDTOBean.getLocalFolderName(), DataDTOBean.getFileName())
                 .setConnectionCount(1)
@@ -376,7 +328,6 @@ public class DownVideoService extends AbsWorkService {
      */
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void DownEndEvent(DownEndEvent event) {
-        LogUtils.e("DownloadListener==服务==监听==下载任务==结束=== " + event.getTag());
         String tag = event.getTag();
         String mDeviceCode = event.getDeviceCode();
         String currentItemCaseID = event.getCurrentItemCaseID();
@@ -400,7 +351,6 @@ public class DownVideoService extends AbsWorkService {
                     @Override
                     public void onScanCompleted(String path, Uri uri) {
                         //刷新成功的回调方法
-                        LogUtils.e("DownSelectedVideoActivity02======下载任务==结束==相册刷新成功==" + tag);
 
                     }
                 });
@@ -415,7 +365,6 @@ public class DownVideoService extends AbsWorkService {
         if (event.getStatue().equals(Constants.STATUE_COMPLETED)) {
             //数据库存在
             if (mList.size() > 0) {
-                LogUtils.e("DownStatueActivity====下载任务==结束====数据库存在这条数据==存在了===");
                 DownVideoMessage dbBean = mList.get(0);
                 String localUrl = event.getLocalUrl();
                 dbBean.setId(dbBean.getId());
@@ -450,7 +399,6 @@ public class DownVideoService extends AbsWorkService {
 
     @Override
     public void stopWork(Intent intent, int flags, int startId) {
-        LogUtils.e("保活服务开启HandService=====关闭了====stopWork。");
         stopService();
     }
 
@@ -472,7 +420,6 @@ public class DownVideoService extends AbsWorkService {
 
     public static Boolean getWorkStatue() {
         boolean b1 = sDisposable10s != null && !sDisposable10s.isDisposed();
-        LogUtils.e("保活服务开启HandService=====getWorkStatue====b1==" + b1);
 
         return b1;
     }
@@ -484,7 +431,6 @@ public class DownVideoService extends AbsWorkService {
 
     @Override
     public void onServiceKilled(Intent rootIntent) {
-        LogUtils.e("保活服务HandService=====保存数据到磁盘===onServiceKilled。");
     }
 
     /**
@@ -498,7 +444,6 @@ public class DownVideoService extends AbsWorkService {
     @Override
     public void onCreate() {
         super.onCreate();
-        LogUtils.e("保活服务HandService====onCreate===onCreate。");
 
         EventBus.getDefault().register(this);
     }
@@ -506,7 +451,6 @@ public class DownVideoService extends AbsWorkService {
     @Override
     public void onDestroy() {
         isFirstIn = false;
-        LogUtils.e("保活服务HandService====保存数据到磁盘===onDestroy。");
         super.onDestroy();
         EventBus.getDefault().unregister(this);
 

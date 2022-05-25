@@ -19,7 +19,6 @@ import com.company.iendo.mineui.activity.search.adapter.SearchAdapter;
 import com.company.iendo.other.Constants;
 import com.company.iendo.other.HttpConstant;
 import com.company.iendo.utils.DateUtil;
-import com.company.iendo.utils.LogUtils;
 import com.company.iendo.widget.MyItemDecoration;
 import com.company.iendo.widget.StatusLayout;
 import com.gyf.immersionbar.ImmersionBar;
@@ -71,12 +70,7 @@ public class SearchActivity extends AppActivity implements StatusAction, BaseAda
         String CheckDateEnd = (String) parmasMap.get("CheckDateEnd");
         String Married = (String) parmasMap.get("Married");
         // Iterator entrySet 获取key and value
-        Iterator<Map.Entry<Integer, Integer>> it = parmasMap.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry<Integer, Integer> entry = it.next();
-            LogUtils.e(entry.getKey() + ":" + entry.getValue());
-            // it.remove(); 删除元素
-        }
+
     }
 
     @Override
@@ -106,7 +100,6 @@ public class SearchActivity extends AppActivity implements StatusAction, BaseAda
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
-                        LogUtils.e("=TAG=sendRequest=onError==" + e.toString());
                         showError(listener -> {
                             sendRequest(systemDate);
                         });
@@ -114,7 +107,6 @@ public class SearchActivity extends AppActivity implements StatusAction, BaseAda
 
                     @Override
                     public void onResponse(String response, int id) {
-                        LogUtils.e("=TAG=sendRequest=onResponse==" + response);
                         if ("" != response) {
                             SearchListBean mBean = mGson.fromJson(response, SearchListBean.class);
                             if (0 == mBean.getCode()) {  //成功
@@ -161,13 +153,11 @@ public class SearchActivity extends AppActivity implements StatusAction, BaseAda
     @Override
     public void onItemClick(RecyclerView recyclerView, View itemView, int position) {
         SearchListBean.DataDTO item = mAdapter.getItem(position);
-        LogUtils.e("======GetPictureActivity=====搜索结果界面跳转====item==" + item.toString());
         mMMKVInstace.encode(Constants.KEY_CurrentCaseID, item.getID() + "");
         Intent intent = new Intent(getActivity(), DetailCaseActivity.class);
         RefreshItemIdEvent refreshItemIdEvent = new RefreshItemIdEvent(true);
         refreshItemIdEvent.setId(item.getID()+"");
         EventBus.getDefault().post(refreshItemIdEvent);
-        LogUtils.e("itemID==" + item.getID() + "");
         intent.putExtra("Name", item.getName() + "");
         intent.putExtra("itemID", item.getID() + "");
         intent.putExtra("itemUserName", item.getUserName() + "");

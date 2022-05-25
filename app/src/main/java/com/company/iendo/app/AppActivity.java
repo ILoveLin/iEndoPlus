@@ -14,8 +14,8 @@ import androidx.annotation.StringRes;
 import com.company.iendo.bean.RefreshEvent;
 import com.company.iendo.bean.event.SocketRefreshEvent;
 import com.company.iendo.other.Constants;
-import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.SharePreferenceUtil;
+import com.didichuxing.doraemonkit.util.LogUtils;
 import com.google.gson.Gson;
 import com.gyf.immersionbar.ImmersionBar;
 import com.hjq.bar.TitleBar;
@@ -133,7 +133,7 @@ public abstract class AppActivity extends BaseActivity
     /**
      * 解决:its super classes have no public methods with the @Subscribe annotation的BUG
      */
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN,sticky = true )
     public void SocketRefreshEvent(SocketRefreshEvent event) {
 
     }
@@ -150,13 +150,7 @@ public abstract class AppActivity extends BaseActivity
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onRefreshEvent(RefreshEvent event) {
-        LogUtils.e("DownloadListener===下载任务的path=====eventbus===" + event.getStr());
-
         isQueueDownOver = true;
-
-
-
-
     }
 
 
@@ -192,8 +186,6 @@ public abstract class AppActivity extends BaseActivity
         mLivePort = (String) SharePreferenceUtil.get(AppActivity.this, SharePreferenceUtil.Current_LivePort, "7788");
 
 
-        LogUtils.e("AppActivity===mSocketOrLiveIP====" + mSocketOrLiveIP);
-        LogUtils.e("AppActivity===mSocketPort====" + mSocketPort);
         // 初始化沉浸式状态栏
         if (isStatusBarEnabled()) {
             getStatusBarConfig().init();

@@ -37,7 +37,6 @@ import com.company.iendo.ui.adapter.TabAdapter;
 import com.company.iendo.ui.dialog.MessageDialog;
 import com.company.iendo.ui.dialog.SelectDialog;
 import com.company.iendo.utils.CalculateUtils;
-import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.SocketUtils;
 import com.gyf.immersionbar.ImmersionBar;
 import com.hjq.bar.OnTitleBarListener;
@@ -106,16 +105,10 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
                     @Override
                     public void onResponse(String response, int id) {
                         if ("" != response) {
-                            LogUtils.e("详情界面---截图界面===病例详情response==itemID=" + mCaseID);
-                            LogUtils.e("详情界面---截图界面===病例详情response===" + response);
-
                             CaseDetailBean mBean = mGson.fromJson(response, CaseDetailBean.class);
                             if (0 == mBean.getCode()) {  //成功
                                 imageCounts = mBean.getData().getImagesCount() + "";
                                 videosCounts = mBean.getData().getVideosCount() + "";
-                                LogUtils.e("详情界面---截图界面===病例详情response==mCaseID=" + mCaseID);
-                                LogUtils.e("详情界面---截图界面===病例详情response==imageCount=" + imageCounts);
-                                LogUtils.e("详情界面---截图界面===病例详情response==videosCounts=" + videosCounts);
                                 DetailCaseActivity.mTabAdapter.setItem(1, "图片(" + imageCounts + ")");
                                 DetailCaseActivity.mTabAdapter.setItem(2, "视频(" + videosCounts + ")");
 
@@ -275,7 +268,6 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
 
             @Override
             public void onRightClick(View view) {
-                LogUtils.e("Socket回调==DetailCaseActivity==握手==onRightClick==" + HandService.UDP_HAND_GLOBAL_TAG);
                 if (HandService.UDP_HAND_GLOBAL_TAG) {
                     sendSocketPointMessage(Constants.UDP_F2);
                 } else {
@@ -322,7 +314,6 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
                     @Override
                     public void onResponse(String response, int id) {
                         if ("" != response) {
-                            LogUtils.e("详情界面---8病例详情response===" + response);
                             CaseDetailBean mBean = mGson.fromJson(response, CaseDetailBean.class);
                             mCreatedByWho = mBean.getData().getUserName();
 
@@ -436,7 +427,6 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
 //                if (!"".equals(FLAG_PICTURE_URL)){
         //194/Report/电脑022021091403.bmp
         String path = "http://" + mSocketOrLiveIP + ":" + mBaseUrlPort + "/" + FLAG_PICTURE_URL;
-        LogUtils.e("历史报告地址==" + path);
         Glide.with(DetailCaseActivity.this)
                 .load(path)
                 .placeholder(R.drawable.ic_bg_splash_des) //占位符 也就是加载中的图片，可放个gif
@@ -452,7 +442,7 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
     /**
      * eventbus 刷新socket数据
      */
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
     public void SocketRefreshEvent(SocketRefreshEvent event) {
         String data = event.getData();
         switch (event.getUdpCmd()) {
@@ -487,8 +477,6 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
                 }
                 break;
             case Constants.UDP_CUSTOM14://自定义命令---->在图像采集界面,接受到删除病例,需要退到病例列表界面而不是回退病例详情界面
-                LogUtils.e("删除病例了===UDP_CUSTOM14=" + UDP_EQUALS_ID);
-
                 if (Constants.UDP_CUSTOM14.equals(data)) {//当前病例相同才能操作
                     finish();
                 }
@@ -504,7 +492,6 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
                 } else {
                     String path = "http://" + mSocketOrLiveIP + ":" + mBaseUrlPort + "/" + data;
 //                    String path = mSocketOrLiveIP + ":" + mBaseUrlPort + "/" + data;
-                    LogUtils.e("Socket回调==PictureChoseActivity==当前UDP命令==path==" + path);
                     Glide.with(DetailCaseActivity.this)
                             .load(path)
                             .placeholder(R.drawable.ic_bg_splash_des) //占位符 也就是加载中的图片，可放个gif
@@ -514,7 +501,6 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
                 }
                 break;
             case Constants.UDP_F2://打印报告
-                LogUtils.e("Socket回调==DetailCaseActivity==当前UDP命令==打印报告==" + data);
                 if ("00".equals(data)) {
                     toast("报告打印成功");
                 } else {
@@ -547,8 +533,6 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
 
                     @Override
                     public void onResponse(String response, int id) {
-//
-                        LogUtils.e("登录===" + response);
                         if (!"".equals(response)) {
                             UserReloBean mBean = mGson.fromJson(response, UserReloBean.class);
                             if (0 == mBean.getCode()) {
@@ -671,8 +655,6 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
 
                     @Override
                     public void onResponse(String response, int id) {
-                        LogUtils.e("图片" + "response===" + response);////原图路径
-
                         if ("" != response) {
                             ReportExistBean mBean = mGson.fromJson(response, ReportExistBean.class);
                             if (0 == mBean.getCode()) {  //成功
@@ -708,7 +690,6 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
                     String currentUrl0 = "rtsp://" + mUsername + ":" + mPassword + "@" + mSocketOrLiveIP + ":" + mLivePort + "/session0.mpg";  //高清
                     String currentUrl1 = "rtsp://" + mUsername + ":" + mPassword + "@" + mSocketOrLiveIP + ":" + mLivePort + "/session1.mpg";  //标清
                     Intent intent1 = new Intent(this, GetPictureActivity.class);
-                    LogUtils.e("======GetPictureActivity=====currentUrl====currentUrl==" + currentUrl0);
                     Bundle bundle1 = new Bundle();
                     bundle1.putString("ItemID", currentItemID);
                     bundle1.putString("currentUrl0", currentUrl0);
@@ -763,7 +744,6 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
                     @Override
                     public void onSelected(BaseDialog dialog, HashMap<Integer, String> data) {
                         String substring = data.toString().substring(1, 2);
-                        LogUtils.e("确定了=" + substring);
                         String str = data.get(Integer.parseInt(substring));
                         if ("获取报告".equals(str)) {  //进入图片选择界面,选择获取新的报告,需要获取CanPrint字段判断是否有能打印的权限
                             boolean b = mMMKVInstace.decodeBool(Constants.KEY_CanPrint);

@@ -2,7 +2,6 @@ package com.company.iendo.green.db;
 
 import android.content.Context;
 
-import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.db.DBManager;
 
 import org.greenrobot.greendao.query.Query;

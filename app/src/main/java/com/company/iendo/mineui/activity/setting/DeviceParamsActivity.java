@@ -12,7 +12,6 @@ import androidx.annotation.NonNull;
 import com.company.iendo.R;
 import com.company.iendo.action.StatusAction;
 import com.company.iendo.app.AppActivity;
-import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.SharePreferenceUtil;
 import com.company.iendo.widget.StatusLayout;
 import com.gyf.immersionbar.ImmersionBar;
@@ -188,17 +187,14 @@ public class DeviceParamsActivity extends AppActivity implements StatusAction, O
         String round = (Math.round(progress) + "").replace(".", "");
         switch (view.getId()) {
             case R.id.sb_single_balance:
-                LogUtils.e("progress==balance==" + round);
                 toast("白平衡===" + round);
                 mEditBalance.setText("" + round);
                 break;
             case R.id.sb_single_pressure:
-                LogUtils.e("progress==pressure==" + round);
                 toast("实时压力===" + round);
                 mEditPressure.setText("" + round);
                 break;
             case R.id.sb_single_flow:
-                LogUtils.e("progress==flow==" + round);
                 toast("流量===" + round);
                 mEditFlow.setText("" + round);
                 break;
@@ -209,11 +205,9 @@ public class DeviceParamsActivity extends AppActivity implements StatusAction, O
     public void onCheckedChanged(SwitchButton button, boolean checked) {
         switch (button.getId()) {
             case R.id.sb_find_switch_light:
-                LogUtils.e("progress==SwitchButton-----Light==" + checked);
                 toast("Light==" + checked);
                 break;
             case R.id.sb_find_switch_blood:
-                LogUtils.e("progress==SwitchButton-----Blood==" + checked);
                 toast("Blood==" + checked);
                 break;
 

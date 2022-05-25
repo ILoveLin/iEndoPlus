@@ -12,7 +12,6 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.company.iendo.R;
 import com.company.iendo.app.AppAdapter;
-import com.company.iendo.utils.LogUtils;
 
 import java.io.File;
 
@@ -49,7 +48,6 @@ public class PictureOfflineAdapter extends AppAdapter<String> {
         public void onBindView(int position) {
             String item = getItem(position);
             File file = new File(item);
-            LogUtils.e("图片url==file=url=" + item);
 
             Glide.with(mContext)
                     .load(file)

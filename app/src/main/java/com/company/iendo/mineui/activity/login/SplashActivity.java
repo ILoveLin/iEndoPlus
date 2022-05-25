@@ -11,7 +11,6 @@ import com.company.iendo.mineui.activity.MainActivity;
 import com.company.iendo.other.Constants;
 import com.company.iendo.service.HandService;
 import com.company.iendo.service.ReceiveSocketService;
-import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.SharePreferenceUtil;
 import com.google.gson.Gson;
 import com.tencent.mmkv.MMKV;
@@ -73,7 +72,6 @@ public class SplashActivity extends AppActivity {
     protected void onResume() {
         super.onResume();
         Boolean workStatue = HandService.getWorkStatue();
-        LogUtils.e("保活服务HandService=====SplashActivity===workStatue。"+workStatue);
         if (!workStatue){
             initHandService();
         }
@@ -116,9 +114,6 @@ public class SplashActivity extends AppActivity {
 //            }
 //            startActivity(intent);
 //            finish();
-        LogUtils.e("isFirstIn===="+isFirstIn);
-        LogUtils.e("login===="+isLogined);
-
         if (isFirstIn) {
             SharePreferenceUtil.put(SplashActivity.this, Constants.SP_IS_FIRST_IN, true);
             Intent intent = new Intent();

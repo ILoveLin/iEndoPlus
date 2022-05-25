@@ -38,6 +38,8 @@ public class SocketUtils {
     public static void startSendBroadcastMessage(byte[] data, Context mContext) {
 //        WifiManager manager = (WifiManager) mContext.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 //        WifiManager.MulticastLock lock = manager.createMulticastLock("test wifi");
+
+
         //申请广播开启
 //        lock.acquire();
         InetAddress mAddress = null;
@@ -107,6 +109,8 @@ public class SocketUtils {
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
+        LogUtils.e("SocketUtils===发送消息==点对点==hand==data0000==" + mAddress);
+
         InetAddress finalMAddress = mAddress;
 
         LogUtils.e("SocketUtils===发送消息==点对点==hand==data111111==" + data);

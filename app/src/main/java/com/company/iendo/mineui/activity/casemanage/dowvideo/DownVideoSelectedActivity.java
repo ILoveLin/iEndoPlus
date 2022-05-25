@@ -26,7 +26,6 @@ import com.company.iendo.green.db.downcase.dwonmsg.DownVideoMessage;
 import com.company.iendo.other.Constants;
 import com.company.iendo.other.HttpConstant;
 import com.company.iendo.service.DownVideoService;
-import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.SharePreferenceUtil;
 import com.company.iendo.widget.MyItemDecoration;
 import com.company.iendo.widget.StatusLayout;
@@ -163,8 +162,6 @@ public final class DownVideoSelectedActivity extends AppActivity implements Stat
                                 if (mDBDownList.size() == 0) {
                                     //选中需要下载的item
                                     if (selected) {
-                                        LogUtils.e("DownloadListener===下载任务的path====选择界面=确认下载=mDeviceCode===" + mDeviceCode);
-                                        LogUtils.e("DownloadListener===下载任务的path====选择界面=确认下载=currentItemCaseID==" + currentItemCaseID);
                                         DownVideoService downVideoService = new DownVideoService();
                                         downVideoService.startDownVideoThread(dataDTO, DownVideoSelectedActivity.this, localFolderName, mDeviceCode, currentItemCaseID);
                                     }
@@ -197,7 +194,6 @@ public final class DownVideoSelectedActivity extends AppActivity implements Stat
                 mDeviceCode, currentItemCaseID, event.getTag());
         //数据库存在
         if (mList.size() > 0) {
-            LogUtils.e("DownStatueActivity====下载任务==结束====数据库存在这条数据==存在了===");
             DownVideoMessage dbBean = mList.get(0);
             String localUrl = event.getLocalUrl();
             dbBean.setId(dbBean.getId());
@@ -210,7 +206,6 @@ public final class DownVideoSelectedActivity extends AppActivity implements Stat
             DownVideoMsgDBUtils.insertOrReplaceInTx(DownVideoSelectedActivity.this, dbBean);
 
         } else {
-            LogUtils.e("DownStatueActivity====下载任务==结束=数据库数据====数据库没有下载过====不存在=====");
             DownVideoMessage downVideoMessage = new DownVideoMessage();
             String localUrl = event.getLocalUrl();
             downVideoMessage.setDeviceCode(mDeviceCode);
@@ -231,12 +226,6 @@ public final class DownVideoSelectedActivity extends AppActivity implements Stat
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void DownEndEvent(DownEndEvent event) {
         String tag = event.getTag();
-        LogUtils.e("DownSelectedVideoActivity02====下载任务==结束...==== ");
-        LogUtils.e("DownVideoSelectedActivity===下载任务的path====选择界面==mDeviceCode===" + mDeviceCode);
-        LogUtils.e("DownVideoSelectedActivity===下载任务的path====选择界面==currentItemCaseID==" + currentItemCaseID);
-        LogUtils.e("DownVideoSelectedActivity===下载任务的path====选择界面==localFolderName==" + localFolderName);
-        LogUtils.e("DownVideoSelectedActivity===下载任务的path====选择界面==event.getRefreshLocalFileName()==" + event.getRefreshLocalFileName());
-        LogUtils.e("DownVideoSelectedActivity===下载任务的path====选择界面==all==" + localFolderName + "/" + event.getRefreshLocalFileName());
         /**
          * 删除下载的队列记录
          */
@@ -258,7 +247,6 @@ public final class DownVideoSelectedActivity extends AppActivity implements Stat
                         @Override
                         public void onScanCompleted(String path, Uri uri) {
                             //刷新成功的回调方法
-                            LogUtils.e("DownSelectedVideoActivity02======下载任务==结束==相册刷新成功==" + tag);
 
                         }
                     });
@@ -266,11 +254,8 @@ public final class DownVideoSelectedActivity extends AppActivity implements Stat
             //1,判断是否下载过
             List<DownVideoMessage> mList = DownVideoMsgDBUtils.getQueryBeanByThree(DownVideoSelectedActivity.this,
                     mDeviceCode, currentItemCaseID, event.getTag());
-            LogUtils.e("DownStatueActivity====下载任务==结束=数据库数据====下载失败====下载失败===size==" + mList.size());
             //数据库存在,就删除当前数据
             if (mList.size() > 0) {
-                LogUtils.e("DownStatueActivity====下载任务==结束=数据库数据====下载失败====下载失败===size==" + mList.size());
-
                 DownVideoMessage dbBean = mList.get(0);
                 DownVideoMsgDBUtils.delete(DownVideoSelectedActivity.this, dbBean);
             }
@@ -301,11 +286,7 @@ public final class DownVideoSelectedActivity extends AppActivity implements Stat
                 }
 
             }
-
-
         }
-
-        LogUtils.e("DownSelectedVideoActivity02====下载任务==结束...==== " + mDataLest.size());
     }
 
     /**
@@ -314,7 +295,6 @@ public final class DownVideoSelectedActivity extends AppActivity implements Stat
      */
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void DownStartEvent(DownStartEvent event) {
-        LogUtils.e("DownStatueActivity====下载任务==开始...==== " + event.getTag());
         DetailDownVideoBean.DataDTO bean = new DetailDownVideoBean.DataDTO();
         bean.setProcessMax(bean.getProcessMax());
         bean.setFileName(event.getTag());
@@ -325,9 +305,6 @@ public final class DownVideoSelectedActivity extends AppActivity implements Stat
 
         List<TaskDBBean> queryBeanByCommonCode1 = TaskDBBeanUtils.getQueryBeanByCommonCode(getApplicationContext(), mDeviceCode + "_" + currentItemCaseID);
 
-        LogUtils.e("DownStatueActivity====下载任务==开始...=队列表中000000==DB.size=== " + queryBeanByCommonCode1.size());
-
-
         /**
          * 添加之前先判断队列数据库中是否存在
          */
@@ -335,10 +312,8 @@ public final class DownVideoSelectedActivity extends AppActivity implements Stat
 
         List<TaskDBBean> queryBeanBySingleCode = TaskDBBeanUtils.getQueryBeanBySingleCode(getApplicationContext(), mDeviceCode + "_" + currentItemCaseID + "-" + tag);
         if (queryBeanBySingleCode.size() != 0) {
-            LogUtils.e("DownStatueActivity====下载任务==开始...=队列表中存在===不添加=== " + tag);
 
         } else {
-            LogUtils.e("DownStatueActivity====下载任务==开始...=队列表中不存在===添加=== " + tag);
             TaskDBBean taskDBBean = new TaskDBBean();
             taskDBBean.setCommonCode(mDeviceCode + "_" + currentItemCaseID);
             taskDBBean.setSingleCode(mDeviceCode + "_" + currentItemCaseID + "-" + tag);
@@ -346,11 +321,7 @@ public final class DownVideoSelectedActivity extends AppActivity implements Stat
             TaskDBBeanUtils.insertOrReplaceInTx(getApplicationContext(), taskDBBean);
         }
 
-
         List<TaskDBBean> queryBeanByCommonCode = TaskDBBeanUtils.getQueryBeanByCommonCode(getApplicationContext(), mDeviceCode + "_" + currentItemCaseID);
-
-        LogUtils.e("DownStatueActivity====下载任务==开始...=队列表中000000==DB.size=== " + queryBeanByCommonCode.size());
-
 
     }
 
@@ -361,15 +332,10 @@ public final class DownVideoSelectedActivity extends AppActivity implements Stat
      */
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void DownProcessStatueEvent(DownLoadingEvent event) {
-        LogUtils.e("====下载任务==下载中...==刷新这个界面== ");
-
         if (mAdapter.getData().size() != 0) {
             List<DetailDownVideoBean.DataDTO> adapterList = mAdapter.getData();
             for (int i = 0; i < adapterList.size(); i++) {
                 DetailDownVideoBean.DataDTO bean = adapterList.get(i);
-                LogUtils.e("====下载任务==下载中...==getFileName== " + bean.getFileName());
-                LogUtils.e("====下载任务==下载中...==getTag== " + event.getTag());
-
                 if (bean.getFileName().equals(event.getTag())) {
                     //设置下载进度数据
                     String speed = event.getSpeed();
@@ -416,12 +382,6 @@ public final class DownVideoSelectedActivity extends AppActivity implements Stat
                     public void onResponse(String response, int id) {
                         if ("" != response) {
                             DetailDownVideoBean mBean = mGson.fromJson(response, DetailDownVideoBean.class);
-                            LogUtils.e("视频界面=== response==mCaseID=" + currentItemID);
-                            LogUtils.e("视频界面=== response==currentItemCaseID=" + currentItemCaseID);
-                            LogUtils.e("视频界面=== response==mDeviceCode=" + mDeviceCode);
-                            LogUtils.e("视频界面=== response===" + mBaseUrl + HttpConstant.CaseManager_CaseVideos);
-                            LogUtils.e("视频界面=== response===" + response);
-                            LogUtils.e("视频界面=== size===" + mBean.getData().size());
                             if (0 == mBean.getCode()) {  //成功
                                 showComplete();
 
@@ -450,7 +410,6 @@ public final class DownVideoSelectedActivity extends AppActivity implements Stat
                                             bean.setDownStatueDes(Constants.STATUE_DOWNING_DES);
                                         }
                                         String mUrl = mBaseUrl + "/" + bean.getRecordID() + "/" + bean.getFilePath();
-                                        LogUtils.e("视频界面=== response==mUrl=" + mUrl);
                                         bean.setAllUrl(mUrl);
                                         bean.setFileName(bean.getFilePath());
                                         bean.setLocalFolderName(localFolderName);
@@ -526,8 +485,6 @@ public final class DownVideoSelectedActivity extends AppActivity implements Stat
             itemBean.setSelected(true);
         }
         mAdapter.setItem(position, itemBean);
-
-        LogUtils.e("onChildClick===" + itemBean.toString());
 
     }
 
