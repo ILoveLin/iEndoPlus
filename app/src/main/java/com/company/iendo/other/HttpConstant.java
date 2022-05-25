@@ -168,5 +168,15 @@ public class HttpConstant {
      */
     public static final String UserManager_getCurrentRelo = "/users/purview";
 
+    /**
+     * 修改用户信息和权限
+     */
+    public static final String UserManager_changePurviewDetail = "/users/changePurviewDetail";
+
+  /**
+     * 1.9 用户详情
+     */
+    public static final String UserManager_userDetail = "/users/detail";
+
 
 }

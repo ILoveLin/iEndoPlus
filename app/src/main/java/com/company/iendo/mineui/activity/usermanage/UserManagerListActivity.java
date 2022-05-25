@@ -1,5 +1,6 @@
 package com.company.iendo.mineui.activity.usermanage;
 
+import android.content.Intent;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -69,7 +70,6 @@ public final class UserManagerListActivity extends AppActivity implements Status
 
     @Override
     protected void initData() {
-
         mLoginRole = (String) SharePreferenceUtil.get(this, SharePreferenceUtil.Current_Login_Role, "");
         mLoginUserID = (String) SharePreferenceUtil.get(this, SharePreferenceUtil.Current_Login_UserID, "1");
         mLoginUserName = mMMKVInstace.decodeString(Constants.KEY_CurrentLoginUserName);
@@ -86,7 +86,7 @@ public final class UserManagerListActivity extends AppActivity implements Status
     /**
      * eventbus 刷新socket数据
      */
-    @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void RefreshItemIdEvent(RefreshUserListEvent event) {
         sendRequest();
     }
@@ -160,7 +160,13 @@ public final class UserManagerListActivity extends AppActivity implements Status
 
     @Override
     public void onItemClick(RecyclerView recyclerView, View itemView, int position) {
-
+        UserManagerListBean.DataDTO item = mAdapter.getItem(position);
+        String cUserID = item.getUserID();
+        String changedUserRelo = item.getRole()+"";
+        Intent intent = new Intent(UserManagerListActivity.this, ChangeUserActivity.class);
+        intent.putExtra("cUserID",cUserID);//被修改用户ID
+        intent.putExtra("changedUserRelo",changedUserRelo);//被修改用户的权限
+        startActivity(intent);
     }
 
     @Override

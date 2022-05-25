@@ -227,20 +227,19 @@ public class ReceiveSocketService extends AbsWorkService {
                                     String dataString = CalculateUtils.getReceiveDataString(resultData);
                                     LogUtils.e(TAG + "命令CMD==" + currentCMD);
                                     LogUtils.e(TAG + "上位机ip==" + hostAddressIP);
-                                    LogUtils.e(TAG + "上位机ip==" + hostAddressIP);
                                     LogUtils.e(TAG + "上位机port==" + port);
                                     LogUtils.e(TAG + "上位机deviceType==" + deviceType);
                                     LogUtils.e(TAG + "上位机deviceCode==" + deviceOnlyCode);
                                     //16进制直接转换成为字符串
                                     String str = CalculateUtils.hexStr2Str(dataString);
-                                    LogUtils.e(TAG + "是否接收数据==" + dataIfForMe);
-                                    LogUtils.e(TAG + "协议allData==" + resultData);
-                                    LogUtils.e(TAG + "协议data==" + dataString);
+                                    LogUtils.e(TAG + "接收数据 ?? ==" + dataIfForMe);
+                                    LogUtils.e(TAG + "协议String==" + resultData);
+                                    LogUtils.e(TAG + "协议 data ==" + dataString);
                                     if (dataIfForMe) {
                                         switch (currentCMD) {
                                             case Constants.UDP_HAND://握手
                                                 try {
-                                                    LogUtils.e(TAG + "回调==握手");
+                                                    LogUtils.e(TAG + "回调形式:握手");
                                                     //判断数据是否是发个自己的
                                                     Long startTime = System.currentTimeMillis();
                                                     //设备在线握手成功
@@ -252,25 +251,25 @@ public class ReceiveSocketService extends AbsWorkService {
                                                     EventBus.getDefault().postSticky(event);
 //                                                HandService.UDP_HAND_GLOBAL_TAG = true;
                                                 } catch (Exception e) {
-                                                    LogUtils.e(TAG + "回调==握手==Exception====");
+                                                    LogUtils.e(TAG + "回调形式:握手==Exception====");
                                                 }
                                                 break;
 
                                             case Constants.UDP_FD: //广播
                                                 try {
-                                                    LogUtils.e(TAG + "回调==广播");
+                                                    LogUtils.e(TAG + "回调形式:广播");
                                                     event.setTga(true);
                                                     event.setData(resultData);
                                                     event.setIp(hostAddressIP);
                                                     event.setUdpCmd(Constants.UDP_FD);
                                                     EventBus.getDefault().postSticky(event);
                                                 } catch (Exception e) {
-                                                    LogUtils.e(TAG + "回调==广播==Exception====");
+                                                    LogUtils.e(TAG + "回调形式:广播==Exception====");
                                                 }
                                                 break;
                                             case Constants.UDP_FC://授权接入
                                                 try {
-                                                    LogUtils.e(TAG + "回调==授权接入");
+                                                    LogUtils.e(TAG + "回调形式:授权接入");
                                                     //获取到病例的ID是十六进制的,需要转成十进制
                                                     event.setTga(true);
                                                     event.setData(resultData);
@@ -278,17 +277,17 @@ public class ReceiveSocketService extends AbsWorkService {
                                                     event.setUdpCmd(Constants.UDP_FC);
                                                     EventBus.getDefault().postSticky(event);
                                                 } catch (Exception e) {
-                                                    LogUtils.e(TAG + "回调==授权接入==Exception====");
+                                                    LogUtils.e(TAG + "回调形式:授权接入==Exception====");
                                                 }
 
                                                 break;
                                             case Constants.UDP_F0://获取当前病例
                                                 try {
-                                                    LogUtils.e(TAG + "回调==获取当前病例==str=="+str);
+                                                    LogUtils.e(TAG + "回调形式:获取当前病例==str=="+str);
                                                     //获取到病例的ID是十六进制的,需要转成十进制
 //                                                    String jsonID = CalculateUtils.hex16To10(dataString) + "";
                                                     UserIDBean mUserIDBean = mGson.fromJson(str, UserIDBean.class);
-//                                                    LogUtils.e("======GetPictureActivity==回调===CMD=jsonID==" + jsonID);
+//                                                    LogUtils.e("======GetPictureActivity==回调形式:=CMD=jsonID==" + jsonID);
                                                     String jsonID = CalculateUtils.hex16To10(mUserIDBean.getRecordid()) + "";
                                                     //必须从新取数据不然会错乱
                                                     String spCaseID = MMKV.defaultMMKV().decodeString(Constants.KEY_CurrentCaseID);
@@ -303,13 +302,13 @@ public class ReceiveSocketService extends AbsWorkService {
                                                     event.setUdpCmd(Constants.UDP_F0);
                                                     EventBus.getDefault().postSticky(event);
                                                 } catch (Exception e) {
-                                                    LogUtils.e(TAG + "回调==获取当前病例==Exception==str==" + str);
+                                                    LogUtils.e(TAG + "回调形式:获取当前病例==Exception==str==" + str);
                                                 }
 
                                                 break;
                                             case Constants.UDP_F3://冻结与解冻:00冻结，01解冻,未调试
                                                 try {
-                                                    LogUtils.e(TAG + "回调==冻结与解冻");
+                                                    LogUtils.e(TAG + "回调形式:冻结与解冻");
                                                     ColdPictureBean mColdBean = mGson.fromJson(str, ColdPictureBean.class);
                                                     String jsonString = CalculateUtils.hex16To10(mColdBean.getFreeze()) + "";
                                                     event.setTga(true);
@@ -318,13 +317,13 @@ public class ReceiveSocketService extends AbsWorkService {
                                                     event.setUdpCmd(Constants.UDP_F3);
                                                     EventBus.getDefault().postSticky(event);
                                                 } catch (Exception e) {
-                                                    LogUtils.e(TAG + "回调==冻结与解冻==Exception====");
+                                                    LogUtils.e(TAG + "回调形式:冻结与解冻==Exception====");
                                                 }
 
                                                 break;
                                             case Constants.UDP_F1://预览报告
                                                 try {
-                                                    LogUtils.e(TAG + "回调==预览报告");
+                                                    LogUtils.e(TAG + "回调形式:预览报告");
                                                     LookReportBean lookBean = mGson.fromJson(str, LookReportBean.class);
                                                     event.setTga(true);
                                                     event.setData(lookBean.getReporturl());
@@ -332,13 +331,13 @@ public class ReceiveSocketService extends AbsWorkService {
                                                     event.setUdpCmd(Constants.UDP_F1);
                                                     EventBus.getDefault().postSticky(event);
                                                 } catch (Exception e) {
-                                                    LogUtils.e(TAG + "回调==预览报告==Exception==str==" + str);
+                                                    LogUtils.e(TAG + "回调形式:预览报告==Exception==str==" + str);
                                                 }
 
                                                 break;
                                             case Constants.UDP_F2://打印报告
                                                 try {
-                                                    LogUtils.e(TAG + "回调==打印报告");
+                                                    LogUtils.e(TAG + "回调形式:打印报告");
                                                     PrintReportBean portBean = mGson.fromJson(str, PrintReportBean.class);
                                                     event.setTga(true);
                                                     event.setData(portBean.getPrintcode());
@@ -346,13 +345,13 @@ public class ReceiveSocketService extends AbsWorkService {
                                                     event.setUdpCmd(Constants.UDP_F2);
                                                     EventBus.getDefault().postSticky(event);
                                                 } catch (Exception e) {
-                                                    LogUtils.e(TAG + "回调==打印报告==Exception==str==" + str);
+                                                    LogUtils.e(TAG + "回调形式:打印报告==Exception==str==" + str);
                                                 }
 
                                                 break;
                                             case Constants.UDP_18://录像
                                                 try {
-                                                    LogUtils.e(TAG + "回调==录像");
+                                                    LogUtils.e(TAG + "回调形式:录像");
                                                     RecodeBean recodeBean = mGson.fromJson(str, RecodeBean.class);
                                                     event.setTga(true);
                                                     event.setData(recodeBean.getQrycode());
@@ -360,13 +359,13 @@ public class ReceiveSocketService extends AbsWorkService {
                                                     event.setUdpCmd(Constants.UDP_18);
                                                     EventBus.getDefault().postSticky(event);
                                                 } catch (Exception e) {
-                                                    LogUtils.e(TAG + "回调==录像==Exception==str==" + str);
+                                                    LogUtils.e(TAG + "回调形式:录像==Exception==str==" + str);
                                                 }
 
                                                 break;
                                             case Constants.UDP_13://更新病例
                                                 try {
-                                                    LogUtils.e(TAG + "回调==更新病例");
+                                                    LogUtils.e(TAG + "回调形式:更新病例");
                                                     UpdateCaseBean updateBean = mGson.fromJson(str, UpdateCaseBean.class);
                                                     //hex转成十进制
                                                     String caseID = CalculateUtils.hex16To10(updateBean.getRecordid()) + "";
@@ -376,13 +375,13 @@ public class ReceiveSocketService extends AbsWorkService {
                                                     event.setUdpCmd(Constants.UDP_13);
                                                     EventBus.getDefault().postSticky(event);
                                                 } catch (Exception e) {
-                                                    LogUtils.e(TAG + "回调==更新病例==Exception==str==" + str);
+                                                    LogUtils.e(TAG + "回调形式:更新病例==Exception==str==" + str);
                                                 }
 
                                                 break;
                                             case Constants.UDP_15://采图
                                                 try {
-                                                    LogUtils.e(TAG + "回调==采图");
+                                                    LogUtils.e(TAG + "回调形式:采图");
                                                     ShotPictureCallBlackBean pictureCallBlackBean = mGson.fromJson(str, ShotPictureCallBlackBean.class);
                                                     //hex转成十进制
                                                     String picCaseID = CalculateUtils.hex16To10(pictureCallBlackBean.getRecordid()) + "";
@@ -393,13 +392,13 @@ public class ReceiveSocketService extends AbsWorkService {
                                                     event.setUdpCmd(Constants.UDP_15);
                                                     EventBus.getDefault().postSticky(event);
                                                 } catch (Exception e) {
-                                                    LogUtils.e(TAG + "回调==采图==Exception==str==" + str);
+                                                    LogUtils.e(TAG + "回调形式:采图==Exception==str==" + str);
                                                 }
 
                                                 break;
                                             case Constants.UDP_16://删除图片
                                                 try {
-                                                    LogUtils.e(TAG + "回调==删除图片");
+                                                    LogUtils.e(TAG + "回调形式:删除图片");
                                                     DeletedPictureBean deletePictureBean = mGson.fromJson(str, DeletedPictureBean.class);
                                                     //hex转成十进制
                                                     String deleteBeanID = CalculateUtils.hex16To10(deletePictureBean.getRecordid()) + "";
@@ -414,12 +413,12 @@ public class ReceiveSocketService extends AbsWorkService {
                                                         EventBus.getDefault().postSticky(event);
                                                     }
                                                 } catch (Exception e) {
-                                                    LogUtils.e(TAG + "回调==删除图片==Exception==str==" + str);
+                                                    LogUtils.e(TAG + "回调形式:删除图片==Exception==str==" + str);
                                                 }
                                                 break;
                                             case Constants.UDP_20://删除视频
                                                 try {
-                                                    LogUtils.e(TAG + "回调==删除视频");
+                                                    LogUtils.e(TAG + "回调形式:删除视频");
                                                     DeletedVideoBean videoBean = mGson.fromJson(str, DeletedVideoBean.class);
                                                     //hex转成十进制
                                                     String deleteVideoBeanID = CalculateUtils.hex16To10(videoBean.getRecordid()) + "";
@@ -434,13 +433,13 @@ public class ReceiveSocketService extends AbsWorkService {
                                                         EventBus.getDefault().postSticky(event);
                                                     }
                                                 } catch (Exception e) {
-                                                    LogUtils.e(TAG + "回调==删除视频==Exception==str==" + str);
+                                                    LogUtils.e(TAG + "回调形式:删除视频==Exception==str==" + str);
                                                 }
 
                                                 break;
                                             case Constants.UDP_17://编辑图片
                                                 try {
-                                                    LogUtils.e(TAG + "回调==编辑图片");
+                                                    LogUtils.e(TAG + "回调形式:编辑图片");
                                                     EditPictureBean editBean = mGson.fromJson(str, EditPictureBean.class);
                                                     //hex转成十进制
                                                     String editCaseID = CalculateUtils.hex16To10(editBean.getRecordid()) + "";
@@ -451,13 +450,13 @@ public class ReceiveSocketService extends AbsWorkService {
                                                     event.setUdpCmd(Constants.UDP_17);
                                                     EventBus.getDefault().postSticky(event);
                                                 } catch (Exception e) {
-                                                    LogUtils.e(TAG + "回调==编辑图片==Exception==str==" + str);
+                                                    LogUtils.e(TAG + "回调形式:编辑图片==Exception==str==" + str);
                                                 }
 
                                                 break;
                                             case Constants.UDP_14://删除病例
                                                 try {
-                                                    LogUtils.e(TAG + "回调==删除病例");
+                                                    LogUtils.e(TAG + "回调形式:删除病例");
                                                     DeleteUserBean deleteBean = mGson.fromJson(str, DeleteUserBean.class);
                                                     //hex转成十进制
                                                     String deleteCaseID = CalculateUtils.hex16To10(deleteBean.getRecordid()) + "";
@@ -467,13 +466,13 @@ public class ReceiveSocketService extends AbsWorkService {
                                                     event.setUdpCmd(Constants.UDP_14);
                                                     EventBus.getDefault().postSticky(event);
                                                 } catch (Exception e) {
-                                                    LogUtils.e(TAG + "回调==删除病例==Exception==str==" + str);
+                                                    LogUtils.e(TAG + "回调形式:删除病例==Exception==str==" + str);
                                                 }
 
                                                 break;
                                             case Constants.UDP_12://新增病例
                                                 try {
-                                                    LogUtils.e(TAG + "回调==新增病例");
+                                                    LogUtils.e(TAG + "回调形式:新增病例");
                                                     DeleteUserBean addBean = mGson.fromJson(str, DeleteUserBean.class);
                                                     //hex转成十进制
                                                     String addBeanCaseID = CalculateUtils.hex16To10(addBean.getRecordid()) + "";
@@ -483,13 +482,13 @@ public class ReceiveSocketService extends AbsWorkService {
                                                     event.setUdpCmd(Constants.UDP_12);
                                                     EventBus.getDefault().postSticky(event);
                                                 } catch (Exception e) {
-                                                    LogUtils.e(TAG + "回调==新增病例==Exception==str==" + str);
+                                                    LogUtils.e(TAG + "回调形式:新增病例==Exception==str==" + str);
                                                 }
 
                                                 break;
                                             case Constants.UDP_F4://语音接入
                                                 try {
-                                                    LogUtils.e(TAG + "回调==语音接入");
+                                                    LogUtils.e(TAG + "回调形式:语音接入");
                                                     MicResponseBean micResponseBean = mGson.fromJson(str, MicResponseBean.class);
                                                     event.setTga(true);
                                                     event.setData(micResponseBean.getUrl());//传递url
@@ -497,26 +496,26 @@ public class ReceiveSocketService extends AbsWorkService {
                                                     event.setUdpCmd(Constants.UDP_F4);
                                                     EventBus.getDefault().postSticky(event);
                                                 } catch (Exception e) {
-                                                    LogUtils.e(TAG + "回调==语音接入==Exception==str==" + str);
+                                                    LogUtils.e(TAG + "回调形式:语音接入==Exception==str==" + str);
                                                 }
 
                                                 break;
                                             case Constants.UDP_F5://查询设备参数
                                                 try {
-                                                    LogUtils.e(TAG + "回调==查询设备参数");
+                                                    LogUtils.e(TAG + "回调形式:查询设备参数");
                                                     event.setTga(true);
                                                     event.setData(str);//此处直接把数据bean的string回传到GetPictureActivity界面
                                                     event.setIp(hostAddressIP);
                                                     event.setUdpCmd(Constants.UDP_F5);
                                                     EventBus.getDefault().postSticky(event);
                                                 } catch (Exception e) {
-                                                    LogUtils.e(TAG + "回调==查询设备参数==Exception==str==" + str);
+                                                    LogUtils.e(TAG + "回调形式:查询设备参数==Exception==str==" + str);
                                                 }
 
                                                 break;
                                             case Constants.UDP_F7://通知权限变动
                                                 try {
-                                                    LogUtils.e(TAG + "回调==通知权限变动");
+                                                    LogUtils.e(TAG + "回调形式:通知权限变动");
                                                     String mLoginUserName = MMKV.defaultMMKV().decodeString(Constants.KEY_CurrentLoginUserName);
                                                     UserReloChanged reloBean = mGson.fromJson(str, UserReloChanged.class);
                                                     if (mLoginUserName.equals(reloBean.getUsername())) {
@@ -529,20 +528,20 @@ public class ReceiveSocketService extends AbsWorkService {
                                                     event.setUdpCmd(Constants.UDP_F7);
                                                     EventBus.getDefault().postSticky(event);
                                                 } catch (Exception e) {
-                                                    LogUtils.e(TAG + "回调==通知权限变动==Exception==str==" + str);
+                                                    LogUtils.e(TAG + "回调形式:通知权限变动==Exception==str==" + str);
                                                 }
 
                                                 break;
                                             case Constants.UDP_40://刷新医院信息
                                                 try {
-                                                    LogUtils.e(TAG + "回调==刷新医院信息");
+                                                    LogUtils.e(TAG + "回调形式:刷新医院信息");
                                                     event.setTga(true);
                                                     event.setData(str);//此处直接把数据bean的string回传到GetPictureActivity界面
                                                     event.setIp(hostAddressIP);
                                                     event.setUdpCmd(Constants.UDP_40);
                                                     EventBus.getDefault().postSticky(event);
                                                 } catch (Exception e) {
-                                                    LogUtils.e(TAG + "回调==刷新医院信息==Exception==str==");
+                                                    LogUtils.e(TAG + "回调形式:刷新医院信息==Exception==str==");
                                                 }
                                                 break;
 

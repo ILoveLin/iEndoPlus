@@ -4,7 +4,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatCheckBox;
@@ -13,9 +15,12 @@ import com.company.iendo.R;
 import com.company.iendo.action.StatusAction;
 import com.company.iendo.app.AppActivity;
 import com.company.iendo.bean.UserDeletedBean;
-import com.company.iendo.bean.event.RefreshUserListEvent;
+import com.company.iendo.bean.UserDetailBean;
+import com.company.iendo.other.Constants;
 import com.company.iendo.other.HttpConstant;
+import com.company.iendo.ui.dialog.InputDialog;
 import com.company.iendo.ui.dialog.SelectDialog;
+import com.company.iendo.utils.MD5ChangeUtil;
 import com.company.iendo.utils.SharePreferenceUtil;
 import com.company.iendo.widget.StatusLayout;
 import com.gyf.immersionbar.ImmersionBar;
@@ -23,12 +28,10 @@ import com.hjq.bar.TitleBar;
 import com.hjq.base.BaseDialog;
 import com.hjq.widget.layout.WrapRecyclerView;
 import com.hjq.widget.view.ClearEditText;
-import com.hjq.widget.view.PasswordEditText;
 import com.scwang.smart.refresh.layout.SmartRefreshLayout;
+import com.tencent.mmkv.MMKV;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
-
-import org.greenrobot.eventbus.EventBus;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -39,15 +42,13 @@ import okhttp3.Call;
  * author : Android 轮子哥
  * github : https://github.com/getActivity/AndroidProject
  * time   : 2018/10/18
- * desc   : 新增用户的界面
+ * desc   : 修改用户权限的界面
  */
-public final class AddUserActivity extends AppActivity implements StatusAction, CompoundButton.OnCheckedChangeListener {
+public final class ChangeUserActivity extends AppActivity implements StatusAction, CompoundButton.OnCheckedChangeListener {
     private StatusLayout mStatusLayout;
     private WrapRecyclerView mRecyclerView;
     private SmartRefreshLayout mSmartRefreshLayout;
     private TitleBar mTitleBar;
-    private ClearEditText mAccount;
-    private PasswordEditText mPassword;
     private ClearEditText mReloType;
     private ClearEditText mUserDesc;
     private RadioGroup mRadioGroup;
@@ -62,12 +63,19 @@ public final class AddUserActivity extends AppActivity implements StatusAction, 
     private String UserMan, CanPsw, SnapVideoRecord, LiveStream, DeviceSet, CanNew, CanEdit, CanDelete, CanPrint,
             UnPrinted, ExportRecord, ExportVideo, ExportImage, CanBackup, OnlySelf, VideoSet, HospitalInfo, ReportStyle, SeatAdjust;
     private ImageView mIVReloType;
-    private String Role;
-    private Button mBtnCommit;
+    private String Role;  //角色权限类型,表现形式:0,1,2,3  而不是中文
+    private Button mBtnSave, mBtnChangePassword;
+    private String cUserID;
+    private String mLoginRole;
+    private String userID;
+    private String changedUserRelo;
+    private TextView mUserNameView;
+    private RadioButton mRadioOpen;
+    private RadioButton mRadioClose;
 
     @Override
     protected int getLayoutId() {
-        return R.layout.activity_user_add;
+        return R.layout.activity_user_eidt;
     }
 
     @Override
@@ -76,19 +84,22 @@ public final class AddUserActivity extends AppActivity implements StatusAction, 
         mTitleBar = findViewById(R.id.userlist_titlebar);
         mSmartRefreshLayout = findViewById(R.id.rl_userlist_refresh);
         mRecyclerView = findViewById(R.id.rv_userlist_recyclerview);
-        mBtnCommit = findViewById(R.id.btn_login_commit);
+        mBtnSave = findViewById(R.id.btn_login_save);
+        mBtnChangePassword = findViewById(R.id.btn_login_change_password);
 
-        //账户,密码
-        mAccount = findViewById(R.id.user_account);
-        mPassword = findViewById(R.id.user_password);
+        mUserNameView = findViewById(R.id.tv_current_name);
+        mIVReloType = findViewById(R.id.user_iv_relo_type);
         //角色,描述
         mIVReloType = findViewById(R.id.user_iv_relo_type);
         mReloType = findViewById(R.id.user_et_relo_type);
         mUserDesc = findViewById(R.id.user_msg);
         //状态
         mRadioGroup = findViewById(R.id.radio_add_group);
-        //权限相关
+        mRadioOpen = findViewById(R.id.radio_btn_add_open);
+        mRadioClose = findViewById(R.id.radio_btn_add_close);
+        mRadioGroup = findViewById(R.id.radio_add_group);
 
+        //权限相关
         userMan01 = findViewById(R.id.cb_01_manager);
         CanPsw01 = findViewById(R.id.cb_01_setting_kouling);
         SnapVideoRecord01 = findViewById(R.id.cb_01_record_shot);
@@ -254,15 +265,254 @@ public final class AddUserActivity extends AppActivity implements StatusAction, 
 
     @Override
     protected void initData() {
+        cUserID = getIntent().getStringExtra("cUserID");
+        changedUserRelo = getIntent().getStringExtra("changedUserRelo");
+        userID = (String) SharePreferenceUtil.get(ChangeUserActivity.this, SharePreferenceUtil.Current_Login_UserID, "");
+        mLoginRole = (String) SharePreferenceUtil.get(this, SharePreferenceUtil.Current_Login_Role, "2");
         responseListener();
     }
 
     private void sendRequest() {
         getRequestParamsToSendRequest();
+
+    }
+
+    /**
+     * 设置界面数据
+     *
+     * @param mBean
+     */
+    private void setLayoutData(UserDetailBean mBean) {
+        UserDetailBean.DataDTO.PurviewDTO purviewBean = mBean.getData().getPurview();
+        UserDetailBean.DataDTO.UserDTO userBean = mBean.getData().getUser();
+        /**
+         * 设置描述
+         */
+        String userName = userBean.getUserName();
+        String des = userBean.getDes();
+        int role = userBean.getRole();
+        //是否激活
+        boolean canUSE = userBean.isCanUSE();
+        if (canUSE) {//激活
+            mRadioOpen.setChecked(true);
+            mRadioClose.setChecked(false);
+            CanUSE = "1";
+        } else {//冻结
+            mRadioOpen.setChecked(false);
+            mRadioClose.setChecked(true);
+            CanUSE = "0";
+        }
+        mUserNameView.setText("" + userName);
+        mUserDesc.setText("" + des);
+        switch (role) {
+            case 0:
+                if ("Admin".equals(userName)) {
+                    mReloType.setText("超级管理员");
+
+                } else {
+                    mReloType.setText("管理员");
+                }
+                Role = "0";
+                break;
+            case 1:
+                mReloType.setText("操作员");
+                Role = "1";
+                break;
+            case 2:
+                mReloType.setText("普通用户");
+                Role = "2";
+                break;
+            case 3:
+                mReloType.setText("自定义");
+                Role = "3";
+                break;
+        }
+
+
+        /**
+         * 设置权限
+         */
+
+        //用户管理
+        boolean userMan = purviewBean.isUserMan();
+        if (userMan) {
+            UserMan = "1";
+            userMan01.setChecked(true);
+        } else {
+            UserMan = "0";
+            userMan01.setChecked(false);
+
+        }
+        //设置口令
+        boolean canPsw = purviewBean.isCanPsw();
+        if (canPsw) {
+            CanPsw = "1";
+            CanPsw01.setChecked(true);
+        } else {
+            CanPsw = "0";
+            CanPsw01.setChecked(false);
+
+        }
+        //拍照录像
+        boolean snapVideoRecord = purviewBean.isSnapVideoRecord();
+        if (snapVideoRecord) {
+            SnapVideoRecord = "1";
+            SnapVideoRecord01.setChecked(true);
+        } else {
+            SnapVideoRecord = "0";
+            SnapVideoRecord01.setChecked(false);
+
+        }
+        //直播
+        boolean liveStream = purviewBean.isLiveStream();
+        if (liveStream) {
+            LiveStream = "1";
+            LiveStream02.setChecked(true);
+        } else {
+            LiveStream = "0";
+            LiveStream02.setChecked(false);
+
+        }
+        //喷吸吹设置
+        boolean deviceSet = purviewBean.isDeviceSet();
+        if (deviceSet) {
+            DeviceSet = "1";
+            DeviceSet02.setChecked(true);
+        } else {
+            DeviceSet = "0";
+            DeviceSet02.setChecked(false);
+        }
+        //登记病人
+        boolean canNew = purviewBean.isCanNew();
+        if (canNew) {
+            CanNew = "1";
+            CanNew02.setChecked(true);
+        } else {
+            CanNew = "0";
+            CanNew02.setChecked(false);
+        }
+        //修改病人
+        boolean canEdit = purviewBean.isCanEdit();
+        if (canEdit) {
+            CanEdit = "1";
+            CanEdit03.setChecked(true);
+        } else {
+            CanEdit = "0";
+            CanEdit03.setChecked(false);
+        }
+        //删除病人
+        boolean canDelete = purviewBean.isCanDelete();
+        if (canDelete) {
+            CanDelete = "1";
+            CanDelete03.setChecked(true);
+        } else {
+            CanDelete = "0";
+            CanDelete03.setChecked(false);
+        }
+        //打印病例
+        boolean canPrint = purviewBean.isCanPrint();
+        if (canPrint) {
+            CanPrint = "1";
+            CanPrint03.setChecked(true);
+        } else {
+            CanPrint = "0";
+            CanPrint03.setChecked(false);
+        }
+        //仅限未打印病例
+        boolean unPrinted = purviewBean.isUnPrinted();
+        if (unPrinted) {
+            UnPrinted = "1";
+            UnPrinted04.setChecked(true);
+        } else {
+            UnPrinted = "0";
+            UnPrinted04.setChecked(false);
+        }
+        //导出病历
+        boolean exportRecord = purviewBean.isExportRecord();
+        if (exportRecord) {
+            ExportRecord = "1";
+            ExportRecord04.setChecked(true);
+        } else {
+            ExportRecord = "0";
+            ExportRecord04.setChecked(false);
+        }
+        //导出录像
+        boolean exportVideo = purviewBean.isExportVideo();
+        if (exportVideo) {
+            ExportVideo = "1";
+            ExportVideo04.setChecked(true);
+        } else {
+            ExportVideo = "0";
+            ExportVideo04.setChecked(false);
+        }
+        //导出图片
+        boolean exportImage = purviewBean.isExportImage();
+        if (exportImage) {
+            ExportImage = "1";
+            ExportImage05.setChecked(true);
+        } else {
+            ExportImage = "0";
+            ExportImage05.setChecked(false);
+        }
+        //备份数据
+        boolean canBackup = purviewBean.isCanBackup();
+        if (canBackup) {
+            CanBackup = "1";
+            CanBackup05.setChecked(true);
+        } else {
+            CanBackup = "0";
+            CanBackup05.setChecked(false);
+        }
+        //仅限本人病例
+        boolean onlySelf = purviewBean.isOnlySelf();
+        if (onlySelf) {
+            OnlySelf = "1";
+            OnlySelf05.setChecked(true);
+        } else {
+            OnlySelf = "0";
+            OnlySelf05.setChecked(false);
+        }
+        //视频设置
+        boolean videoSet = purviewBean.isVideoSet();
+        if (videoSet) {
+            VideoSet = "1";
+            VideoSet06.setChecked(true);
+        } else {
+            VideoSet = "0";
+            VideoSet06.setChecked(false);
+        }
+        //医院信息
+        boolean hospitalInfo = purviewBean.isHospitalInfo();
+        if (hospitalInfo) {
+            HospitalInfo = "1";
+            HospitalInfo06.setChecked(true);
+        } else {
+            HospitalInfo = "0";
+            HospitalInfo06.setChecked(false);
+        }
+        //报告样式
+        boolean reportStyle = purviewBean.isReportStyle();
+        if (reportStyle) {
+            ReportStyle = "1";
+            ReportStyle06.setChecked(true);
+        } else {
+            ReportStyle = "0";
+            ReportStyle06.setChecked(false);
+        }
+        //座椅操作
+        boolean seatAdjust = purviewBean.isSeatAdjust();
+        if (seatAdjust) {
+            SeatAdjust07.setChecked(true);
+            SeatAdjust = "1";
+        } else {
+            SeatAdjust07.setChecked(false);
+            SeatAdjust = "0";
+        }
+
     }
 
     private void getRequestParamsToSendRequest() {
-        String UserID = (String) SharePreferenceUtil.get(AddUserActivity.this, SharePreferenceUtil.Current_Login_UserID, "");
+
         mParamsMap = new HashMap<>();
         //用户管理
         if (userMan01.isChecked()) {
@@ -378,40 +628,19 @@ public final class AddUserActivity extends AppActivity implements StatusAction, 
         } else {
             SeatAdjust = "0";
         }
-        String UserName = mAccount.getText().toString().trim();
-        String Password = mPassword.getText().toString().trim();
-        String Des = mUserDesc.getText().toString().trim();
         String mReloTypeString = mReloType.getText().toString().trim();
 
-        if ("".equals(UserName)) {
-            toast("用户名不能为空");
-            showComplete();
-            return;
-        } else if ("".equals(UserID)) {
-            toast("用户ID不能为空");
-            showComplete();
-            return;
-        } else if ("".equals(Password)) {
-            toast("密码不能为空");
-            showComplete();
-            return;
-        } else if ("".equals(mReloTypeString)) {
+        if ("".equals(mReloTypeString)) {
             toast("角色不能为空");
-            showComplete();
-            return;
-        } else if ("".equals(Des)) {
-            toast("描述不能为空");
             showComplete();
             return;
         } else {
             //必选参数
-            mParamsMap.put("UserID", UserID);
+            mParamsMap.put("oUserID", userID);//当前用户ID
+            mParamsMap.put("cUserID", cUserID);//被修改用户ID
             mParamsMap.put("Role", Role);//新增的用户角色
-            mParamsMap.put("UserName", UserName);//新增的用户名
-            mParamsMap.put("Password", Password);//新增用户的密码
-            mParamsMap.put("Des", Des);//新增用户的描述
-            mParamsMap.put("CanUSE", CanUSE); //是否激活
             //已下是可选参数
+            mParamsMap.put("CanUSE", CanUSE); //是否激活
             mParamsMap.put("UserMan", UserMan);
             mParamsMap.put("CanPsw", CanPsw);
             mParamsMap.put("SnapVideoRecord", SnapVideoRecord);
@@ -433,7 +662,7 @@ public final class AddUserActivity extends AppActivity implements StatusAction, 
             mParamsMap.put("SeatAdjust", SeatAdjust);
             showLoading();
             OkHttpUtils.post()
-                    .url(mBaseUrl + HttpConstant.UserManager_AddUser)
+                    .url(mBaseUrl + HttpConstant.UserManager_changePurviewDetail)
                     .params(mParamsMap)
                     .build()
                     .execute(new StringCallback() {
@@ -452,10 +681,10 @@ public final class AddUserActivity extends AppActivity implements StatusAction, 
                             showComplete();
                             if ("" != response) {
                                 UserDeletedBean mBean = mGson.fromJson(response, UserDeletedBean.class);
-                                toast("添加成功");
                                 if (mBean.getCode().equals("0")) {
-                                    EventBus.getDefault().post(new RefreshUserListEvent(true));
-
+                                    toast("修改成功");
+                                } else {
+                                    toast("修改失败");
                                 }
                             } else {
                                 showError(listener -> {
@@ -491,11 +720,14 @@ public final class AddUserActivity extends AppActivity implements StatusAction, 
         ReportStyle06.setOnCheckedChangeListener(this);
         SeatAdjust07.setOnCheckedChangeListener(this);
 
+        //获取当前用户权限数据
+        sendGetDataRequest();
+
         mIVReloType.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // 单选对话框
-                new SelectDialog.Builder(AddUserActivity.this)
+                new SelectDialog.Builder(ChangeUserActivity.this)
                         .setTitle("请选择")//0:管理员,1:操作员,2:普通用户,3:自定义
                         .setList("管理员", "操作员", "普通用户", "自定义")
                         // 设置单选模式
@@ -535,13 +767,135 @@ public final class AddUserActivity extends AppActivity implements StatusAction, 
             }
         });
 
-
-        mBtnCommit.setOnClickListener(new View.OnClickListener() {
+        //修改权限,保存
+        mBtnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 sendRequest();
             }
         });
+        //修改密码
+        mBtnChangePassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MMKV mmkv = MMKV.defaultMMKV();
+                if (mmkv.decodeBool(Constants.KEY_CanPsw)) {
+                    showChangePasswordDialog();
+                } else {
+                    toast("暂无权限");
+                }
+
+            }
+        });
+    }
+
+    /**
+     * 获取当前被修改用户的详情数据
+     */
+    private void sendGetDataRequest() {
+        OkHttpUtils.get()
+                .url(mBaseUrl + HttpConstant.UserManager_userDetail)
+                .addParams("UserID", cUserID)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+
+                        showError(new StatusLayout.OnRetryListener() {
+                            @Override
+                            public void onRetry(StatusLayout layout) {
+                                toast("请求错误");
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        showComplete();
+                        if ("" != response) {
+                            UserDetailBean mBean = mGson.fromJson(response, UserDetailBean.class);
+                            String code = mBean.getCode() + "";
+                            if (code.equals("0")) {
+                                setLayoutData(mBean);
+                            }
+                        } else {
+                            showError(listener -> {
+                                sendRequest();
+                            });
+                        }
+                    }
+                });
+
+
+    }
+
+
+    /**
+     * 修改密码对话框
+     */
+    private void showChangePasswordDialog() {
+        new InputDialog.Builder(this)
+                .setTitle("提示")
+                .setHint("请输入新密码")
+                .setCancel("取消")
+                .setConfirm("确定")
+                .setListener(new InputDialog.OnListener() {
+                    @Override
+                    public void onConfirm(BaseDialog dialog, String password) {
+                        sendChangePasswordRequest(MD5ChangeUtil.Md5_32(password));
+                    }
+
+                    @Override
+                    public void onCancel(BaseDialog dialog) {
+
+                    }
+                }).show();
+    }
+
+    /**
+     * 发送其他人修改密码请求
+     *
+     * @param password
+     */
+    private void sendChangePasswordRequest(String password) {
+        OkHttpUtils.post()
+                .url(mBaseUrl + HttpConstant.UserManager_ChangeElsePassword)
+                .addParams("userID", userID)//自己的ID
+                .addParams("changedUserID", cUserID)//被修改用户ID
+                .addParams("userRelo", mLoginRole)//自己的权限
+                .addParams("changedUserRelo", changedUserRelo + "")//被修改用户的权限
+                .addParams("changedPassword", password)//新密码
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        showError(new StatusLayout.OnRetryListener() {
+                            @Override
+                            public void onRetry(StatusLayout layout) {
+                                toast("请求错误");
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        showComplete();
+                        if ("" != response) {
+                            UserDeletedBean mBean = mGson.fromJson(response, UserDeletedBean.class);
+                            if (mBean.getCode().equals("0")) {
+                                toast("修改成功");
+                            } else if (mBean.getCode().equals("1")) {
+                                toast(mBean.getMsg() + "");
+
+                            }
+                        } else {
+                            showError(listener -> {
+                                sendRequest();
+                            });
+                        }
+                    }
+                });
+
     }
 
     @Override

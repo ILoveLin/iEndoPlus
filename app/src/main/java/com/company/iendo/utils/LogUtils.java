@@ -2,13 +2,41 @@ package com.company.iendo.utils;
 
 import android.util.Log;
 
+//public class LogUtils {
+//
+//    /**
+//     * 类名==字段==字段说明
+//     */
+//
+//    public static final String TAG = "";
+//
+//    public static final boolean DEBUG = true;
+//
+//    public static void i(String msg) {
+//        if (!DEBUG) {
+//            return;
+//        }
+//        String componName = Thread.currentThread().getStackTrace()[3].getClassName();
+//        String className = componName.substring(componName.lastIndexOf(".") + 1, componName.length());
+//        String methodName = Thread.currentThread().getStackTrace()[3].getMethodName();
+////        Log.i(TAG, TAG + " class:" + className + " called:" + methodName + " " + msg);
+//    }
+//
+//    public static void e(String msg) {
+//        if (!DEBUG) {
+//            return;
+//        }
+//        String componName = Thread.currentThread().getStackTrace()[3].getClassName();
+//        String className = componName.substring(componName.lastIndexOf(".") + 1, componName.length());
+//        String methodName = Thread.currentThread().getStackTrace()[3].getMethodName();
+////        Log.e(TAG, msg);
+//        Log.e(TAG, TAG + " class:" + className + " called:" + methodName + " " + msg);
+//    }
+//}
+
 public class LogUtils {
 
-    /**
-     * 类名==字段==字段说明
-     */
-
-    public static final String TAG = "";
+    private static final String TAG = "iEndo";
 
     public static final boolean DEBUG = true;
 
@@ -19,7 +47,7 @@ public class LogUtils {
         String componName = Thread.currentThread().getStackTrace()[3].getClassName();
         String className = componName.substring(componName.lastIndexOf(".") + 1, componName.length());
         String methodName = Thread.currentThread().getStackTrace()[3].getMethodName();
-//        Log.i(TAG, TAG + " class:" + className + " called:" + methodName + " " + msg);
+//        Log.i(TAG, TAG+" class:"+className+" called:"+methodName+" "+msg);
     }
 
     public static void e(String msg) {
@@ -30,6 +58,7 @@ public class LogUtils {
         String className = componName.substring(componName.lastIndexOf(".") + 1, componName.length());
         String methodName = Thread.currentThread().getStackTrace()[3].getMethodName();
         Log.e(TAG, msg);
-//        Log.e(TAG, TAG + " class:" + className + " called:" + methodName + " " + msg);
+
+//		Log.e(TAG, TAG+" class:"+className+" called:"+methodName+" "+msg);
     }
 }

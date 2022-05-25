@@ -78,7 +78,6 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
         mBaseUrl = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_BaseUrl, "192.168.312.102");
         setOnClickListener(R.id.memory_bar, R.id.hospital_bar, R.id.user_bar, R.id.about_bar, R.id.memory_bar, R.id.password_bar, R.id.linear_exit);
 
-
         Log.e("TAG", "手机厂商：" + SystemUtil.getDeviceBrand());  //OPPO        HUAWEI
         Log.e("TAG", "手机型号：" + SystemUtil.getSystemModel()); //OPPO A83t   SCMR-W09
         Log.e("TAG", "手机当前系统语言：" + SystemUtil.getSystemLanguage());

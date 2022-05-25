@@ -194,6 +194,11 @@
             android:name=".mineui.activity.usermanage.AddUserActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
+        <!-- 修改用户权限 -->
+        <activity
+            android:name=".mineui.activity.usermanage.ChangeUserActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
         <!-- 选择图片界面 -->
         <activity
             android:name=".mineui.activity.casemanage.PictureChoseActivity"

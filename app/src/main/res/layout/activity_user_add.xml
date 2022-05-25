@@ -13,242 +13,244 @@
         app:rightTitle="添加"
         app:rightTitleSize="@dimen/dp_16"
         app:title="用户管理" />
-    <!--    <androidx.core.widget.NestedScrollView-->
-    <!--        android:layout_width="match_parent"-->
-    <!--        android:layout_height="match_parent"-->
-    <!--        android:background="@color/color_line"-->
-    <!--        android:scrollbars="vertical">-->
+
     <com.company.iendo.widget.StatusLayout
         android:id="@+id/status_hint"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/dp_25"
-        android:orientation="vertical">
-        <!--账户，密码-->
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/dp_40"
-            android:layout_marginLeft="@dimen/dp_10"
-            android:layout_marginRight="@dimen/dp_10"
-            android:orientation="horizontal"
-            android:weightSum="2">
+            android:layout_height="match_parent">
 
             <LinearLayout
-                android:layout_width="0dp"
+                android:id="@+id/linear_all"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center_vertical">
-
-                <TextView
-                    android:layout_width="@dimen/dp_45"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/dp_5"
-                    android:text="用户名"
-                    android:textSize="@dimen/sp_14" />
-
-                <com.hjq.widget.view.ClearEditText
-                    android:id="@+id/user_account"
-                    style="@style/EditTextStyle"
+                android:layout_marginTop="@dimen/dp_10"
+                android:orientation="vertical">
+                <!--账户，密码-->
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/dp_35"
+                    android:layout_height="@dimen/dp_40"
                     android:layout_marginLeft="@dimen/dp_10"
                     android:layout_marginRight="@dimen/dp_10"
-                    android:background="@drawable/shape_cme_login"
-                    android:drawablePadding="@dimen/dp_10"
-                    android:inputType="text"
-                    android:singleLine="true"
-                    android:textColor="@color/black"
-                    android:textColorHint="@color/color_999999"
-                    tools:ignore="DuplicateIds" />
+                    android:orientation="horizontal"
+                    android:weightSum="2">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:layout_width="@dimen/dp_45"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/dp_5"
+                            android:text="用户名"
+                            android:textSize="@dimen/sp_14" />
+
+                        <com.hjq.widget.view.ClearEditText
+                            android:id="@+id/user_account"
+                            style="@style/EditTextStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/dp_35"
+                            android:layout_marginLeft="@dimen/dp_5"
+                            android:layout_marginRight="@dimen/dp_10"
+                            android:background="@drawable/shape_cme_login"
+                            android:drawablePadding="@dimen/dp_10"
+                            android:inputType="text"
+                            android:singleLine="true"
+                            android:textColor="@color/black"
+                            android:textColorHint="@color/color_999999"
+                            tools:ignore="DuplicateIds" />
 
 
-            </LinearLayout>
+                    </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center_vertical">
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="密码"
-                    android:textSize="@dimen/sp_14" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="密码"
+                            android:textSize="@dimen/sp_14" />
 
-                <com.hjq.widget.view.PasswordEditText
-                    android:id="@+id/user_password"
-                    style="@style/EditTextStyle"
+                        <com.hjq.widget.view.PasswordEditText
+                            android:id="@+id/user_password"
+                            style="@style/EditTextStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/dp_35"
+                            android:layout_marginLeft="@dimen/dp_10"
+                            android:layout_marginRight="@dimen/dp_10"
+                            android:background="@drawable/shape_cme_login"
+                            android:digits="0123456789abcdefghigklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ@."
+                            android:maxLength="20"
+                            android:maxLines="1"
+                            android:textColor="@color/black"
+                            android:textColorHint="@color/color_999999"
+                            tools:ignore="DuplicateIds" />
+
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <!--角色，描述-->
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/dp_35"
+                    android:layout_height="@dimen/dp_40"
                     android:layout_marginLeft="@dimen/dp_10"
+                    android:layout_marginTop="@dimen/dp_5"
                     android:layout_marginRight="@dimen/dp_10"
-                    android:background="@drawable/shape_cme_login"
-                    android:digits="0123456789abcdefghigklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ@."
-                    android:maxLength="20"
-                    android:maxLines="1"
-                    android:textColor="@color/black"
-                    android:textColorHint="@color/color_999999"
-                    tools:ignore="DuplicateIds" />
+                    android:orientation="horizontal"
+                    android:weightSum="2">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:layout_width="@dimen/dp_45"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/dp_5"
+                            android:text="角色"
+                            android:textSize="@dimen/sp_14" />
+
+                        <com.hjq.widget.view.ClearEditText
+                            android:id="@+id/user_et_relo_type"
+                            style="@style/EditTextStyle"
+                            android:layout_width="0dp"
+                            android:layout_height="@dimen/dp_35"
+                            android:layout_marginLeft="@dimen/dp_5"
+                            android:layout_marginRight="@dimen/dp_10"
+                            android:layout_weight="1"
+                            android:background="@drawable/shape_cme_login"
+                            android:drawablePadding="@dimen/dp_10"
+                            android:focusable="false"
+                            android:inputType="text"
+                            android:singleLine="true"
+                            android:textColor="@color/black"
+                            android:textColorHint="@color/color_999999"
+                            tools:ignore="DuplicateIds" />
+
+                        <ImageView
+                            android:id="@+id/user_iv_relo_type"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:src="@drawable/selector_detail_dialog" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/dp_5"
+                            android:text="描述"
+                            android:textSize="@dimen/sp_14" />
+
+                        <com.hjq.widget.view.ClearEditText
+                            android:id="@+id/user_msg"
+                            style="@style/EditTextStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/dp_35"
+                            android:layout_marginLeft="@dimen/dp_10"
+                            android:layout_marginRight="@dimen/dp_10"
+                            android:background="@drawable/shape_cme_login"
+                            android:digits="0123456789abcdefghigklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ@."
+                            android:maxLength="20"
+                            android:maxLines="1"
+                            android:textColor="@color/black"
+                            android:textColorHint="@color/color_999999"
+                            tools:ignore="DuplicateIds" />
 
 
-            </LinearLayout>
+                    </LinearLayout>
 
-        </LinearLayout>
+                </LinearLayout>
 
-        <!--角色，描述-->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/dp_40"
-            android:layout_marginLeft="@dimen/dp_10"
-            android:layout_marginTop="@dimen/dp_10"
-            android:layout_marginRight="@dimen/dp_10"
-            android:orientation="horizontal"
-            android:weightSum="2">
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center_vertical">
-
-                <TextView
-                    android:layout_width="@dimen/dp_45"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/dp_5"
-                    android:text="角色"
-                    android:textSize="@dimen/sp_14" />
-
-                <com.hjq.widget.view.ClearEditText
-                    android:id="@+id/user_et_relo_type"
-                    style="@style/EditTextStyle"
-                    android:layout_width="0dp"
-                    android:layout_height="@dimen/dp_35"
-                    android:layout_marginLeft="@dimen/dp_10"
-                    android:layout_marginRight="@dimen/dp_10"
-                    android:layout_weight="1"
-                    android:background="@drawable/shape_cme_login"
-                    android:drawablePadding="@dimen/dp_10"
-                    android:inputType="text"
-                    android:singleLine="true"
-                    android:focusable="false"
-                    android:textColor="@color/black"
-                    android:textColorHint="@color/color_999999"
-                    tools:ignore="DuplicateIds" />
-
-                <ImageView
-                    android:id="@+id/user_iv_relo_type"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:src="@drawable/selector_detail_dialog" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center_vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/dp_5"
-                    android:text="描述"
-                    android:textSize="@dimen/sp_14" />
-
-                <com.hjq.widget.view.ClearEditText
-                    android:id="@+id/user_msg"
-                    style="@style/EditTextStyle"
+                <!--状态-->
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/dp_35"
-                    android:layout_marginLeft="@dimen/dp_10"
-                    android:layout_marginRight="@dimen/dp_10"
-                    android:background="@drawable/shape_cme_login"
-                    android:digits="0123456789abcdefghigklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ@."
-                    android:maxLength="20"
-                    android:maxLines="1"
-                    android:textColor="@color/black"
-                    android:textColorHint="@color/color_999999"
-                    tools:ignore="DuplicateIds" />
+                    android:layout_height="@dimen/dp_40"
+                    android:layout_marginTop="@dimen/dp_5"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="@dimen/dp_45"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="@dimen/dp_5"
+                        android:gravity="center"
+                        android:text="状态"
+                        android:textSize="@dimen/sp_14" />
+
+                    <RadioGroup
+                        android:id="@+id/radio_add_group"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="@dimen/dp_20"
+                        android:orientation="horizontal">
+
+
+                        <RadioButton
+                            android:id="@+id/radio_btn_add_open"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:text="激活"
+                            android:textSize="@dimen/sp_12" />
+
+                        <RadioButton
+                            android:id="@+id/radio_btn_add_close"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/dp_10"
+                            android:text="冻结"
+                            android:textSize="@dimen/sp_12" />
+                    </RadioGroup>
+
+                </LinearLayout>
+
+                <!--用户权限-->
+                <include layout="@layout/include_layout_user_permission" />
 
 
             </LinearLayout>
 
-        </LinearLayout>
-
-        <!--状态-->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/dp_40"
-            android:layout_marginTop="@dimen/dp_10"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="@dimen/dp_45"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginLeft="@dimen/dp_5"
-                android:gravity="center"
-                android:text="状态"
-                android:textSize="@dimen/sp_14" />
-
-            <RadioGroup
-                android:id="@+id/radio_add_group"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginLeft="@dimen/dp_20"
-                android:orientation="horizontal">
+            <Button
+                android:id="@+id/btn_login_commit"
+                android:layout_width="@dimen/dp_80"
+                android:layout_height="@dimen/dp_40"
+                android:layout_alignParentBottom="true"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="@dimen/dp_10"
+                android:background="@drawable/selector_item_shot"
+                android:foreground="@null"
+                android:text="保存"
+                android:textColor="@color/white90"
+                android:textSize="@dimen/sp_16" />
 
 
-                <RadioButton
-                    android:id="@+id/radio_btn_add_open"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checked="true"
-                    android:text="激活"
-                    android:textSize="@dimen/sp_12" />
-
-                <RadioButton
-                    android:layout_marginLeft="@dimen/dp_10"
-                    android:id="@+id/radio_btn_add_close"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="冻结"
-                    android:textSize="@dimen/sp_12" />
-            </RadioGroup>
-
-        </LinearLayout>
-
-        <!--用户权限-->
-        <include layout="@layout/include_layout_user_permission" />
-
-        <View
-            android:layout_width="@dimen/dp_1"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
-
-        <Button
-            android:id="@+id/btn_login_commit"
-            android:layout_width="@dimen/dp_150"
-            android:layout_height="@dimen/dp_50"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="@dimen/dp_20"
-            android:background="@drawable/selector_item_shot"
-            android:foreground="@null"
-            android:text="保存"
-            android:textColor="@color/white90"
-            android:textSize="@dimen/sp_18" />
-
-    </LinearLayout>
-
+        </RelativeLayout>
     </com.company.iendo.widget.StatusLayout>
+
 
     <!--    </androidx.core.widget.NestedScrollView>-->
 

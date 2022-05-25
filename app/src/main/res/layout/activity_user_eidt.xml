@@ -33,18 +33,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/dp_40"
                 android:layout_gravity="center"
-                android:layout_marginTop="@dimen/dp_20"
+                android:layout_marginTop="@dimen/dp_5"
                 android:gravity="center"
                 android:text="Admin"
                 android:textSize="@dimen/sp_15" />
 
             <!--角色，描述-->
             <LinearLayout
-
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dp_40"
                 android:layout_marginLeft="@dimen/dp_10"
-                android:layout_marginTop="@dimen/dp_10"
+                android:layout_marginTop="@dimen/dp_5"
                 android:layout_marginRight="@dimen/dp_10"
                 android:orientation="horizontal"
                 android:weightSum="2">
@@ -56,14 +55,14 @@
                     android:gravity="center_vertical">
 
                     <TextView
-                        android:layout_width="@dimen/dp_45"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/dp_5"
                         android:text="角色"
                         android:textSize="@dimen/sp_14" />
 
                     <com.hjq.widget.view.ClearEditText
-                        android:id="@+id/user_change_et_relo_type"
+                        android:id="@+id/user_et_relo_type"
                         style="@style/EditTextStyle"
                         android:layout_width="0dp"
                         android:layout_height="@dimen/dp_35"
@@ -73,7 +72,6 @@
                         android:background="@drawable/shape_cme_login"
                         android:drawablePadding="@dimen/dp_10"
                         android:inputType="text"
-                        android:paddingLeft="@dimen/dp_50"
                         android:singleLine="true"
                         android:textColor="@color/black"
                         android:textColorHint="@color/color_999999"
@@ -102,7 +100,7 @@
                         android:textSize="@dimen/sp_14" />
 
                     <com.hjq.widget.view.ClearEditText
-                        android:id="@+id/user_change_msg"
+                        android:id="@+id/user_msg"
                         style="@style/EditTextStyle"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/dp_35"
@@ -112,7 +110,6 @@
                         android:digits="0123456789abcdefghigklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ@."
                         android:maxLength="20"
                         android:maxLines="1"
-                        android:paddingLeft="@dimen/dp_50"
                         android:textColor="@color/black"
                         android:textColorHint="@color/color_999999"
                         tools:ignore="DuplicateIds" />
@@ -123,32 +120,49 @@
             </LinearLayout>
 
             <!--状态-->
-            <RadioGroup
-                android:id="@+id/radio_group"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginLeft="@dimen/dp_20"
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_40"
+                android:layout_marginTop="@dimen/dp_5"
                 android:orientation="horizontal">
 
+                <TextView
+                    android:layout_width="@dimen/dp_45"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="@dimen/dp_5"
+                    android:gravity="center"
+                    android:text="状态"
+                    android:textSize="@dimen/sp_14" />
 
-                <RadioButton
-                    android:id="@+id/radio_btn_open"
+                <RadioGroup
+                    android:id="@+id/radio_add_group"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:checked="true"
-                    android:text="激活"
-                    android:textSize="@dimen/sp_12" />
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="@dimen/dp_20"
+                    android:orientation="horizontal">
 
-                <RadioButton
-                    android:id="@+id/radio_btn_close"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/dp_10"
-                    android:text="冻结"
-                    android:textSize="@dimen/sp_12" />
-            </RadioGroup>
 
+                    <RadioButton
+                        android:id="@+id/radio_btn_add_open"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:text="激活"
+                        android:textSize="@dimen/sp_12" />
+
+                    <RadioButton
+                        android:id="@+id/radio_btn_add_close"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/dp_10"
+                        android:text="冻结"
+                        android:textSize="@dimen/sp_12" />
+                </RadioGroup>
+
+            </LinearLayout>
             <!--用户权限-->
             <include layout="@layout/include_layout_user_permission" />
 
@@ -157,17 +171,47 @@
                 android:layout_height="0dp"
                 android:layout_weight="1" />
 
-            <Button
-                android:id="@+id/btn_login_commit"
-                android:layout_width="@dimen/dp_150"
-                android:layout_height="@dimen/dp_50"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginBottom="@dimen/dp_20"
-                android:background="@drawable/selector_item_shot"
-                android:foreground="@null"
-                android:text="保存"
-                android:textColor="@color/white90"
-                android:textSize="@dimen/sp_18" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <View
+                    android:id="@+id/view_point"
+                    android:layout_width="@dimen/dp_1"
+                    android:layout_height="@dimen/dp_1"
+                    android:layout_centerInParent="true" />
+
+                <Button
+                    android:id="@+id/btn_login_save"
+                    android:layout_width="@dimen/dp_90"
+                    android:layout_height="@dimen/dp_40"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginLeft="@dimen/dp_20"
+                    android:layout_marginBottom="@dimen/dp_20"
+                    android:layout_toRightOf="@+id/view_point"
+                    android:background="@drawable/selector_item_shot"
+                    android:foreground="@null"
+                    android:text="保存"
+                    android:textColor="@color/white90"
+                    android:textSize="@dimen/sp_16" />
+
+                <Button
+                    android:id="@+id/btn_login_change_password"
+                    android:layout_width="@dimen/dp_90"
+                    android:layout_height="@dimen/dp_40"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginRight="@dimen/dp_20"
+                    android:layout_marginBottom="@dimen/dp_20"
+                    android:layout_toLeftOf="@+id/view_point"
+                    android:background="@drawable/selector_item_shot"
+                    android:foreground="@null"
+                    android:text="修改密码"
+                    android:textColor="@color/white90"
+                    android:textSize="@dimen/sp_16" />
+
+
+            </RelativeLayout>
 
         </LinearLayout>
     </com.company.iendo.widget.StatusLayout>
