@@ -283,7 +283,7 @@ public class ReceiveSocketService extends AbsWorkService {
                                                 break;
                                             case Constants.UDP_F0://获取当前病例
                                                 try {
-                                                    LogUtils.e(TAG + "回调形式:获取当前病例==str=="+str);
+                                                    LogUtils.e(TAG + "回调形式:获取当前病例==str==" + str);
                                                     //获取到病例的ID是十六进制的,需要转成十进制
 //                                                    String jsonID = CalculateUtils.hex16To10(dataString) + "";
                                                     UserIDBean mUserIDBean = mGson.fromJson(str, UserIDBean.class);
@@ -547,8 +547,10 @@ public class ReceiveSocketService extends AbsWorkService {
 
                                         }
                                     }
-                                    LogUtils.e(TAG + "!=========================华丽的分割线=============================");
-                                    LogUtils.e(TAG + "!=========================华丽的分割线=============================");
+                                    LogUtils.e(TAG + "!=======================华丽的分割线===========================!");
+                                    LogUtils.e(TAG + "!*******************************************************************************!");
+                                    LogUtils.e(TAG + "!*******************************************************************************!");
+                                    LogUtils.e(TAG + "!=======================华丽的分割线===========================!");
                                 }
 
                                 //及时释放资源不然次数多了会报错
