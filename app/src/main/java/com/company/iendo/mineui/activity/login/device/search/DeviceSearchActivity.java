@@ -244,22 +244,34 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
      */
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void SocketRefreshEvent(SocketRefreshEvent event) {
-        String mRun2End4 = CalculateUtils.getReceiveRun2End4String(event.getData());//随机数之后到data结尾的String
+        /**
+         * 获取接收socket的数据--随机数之后到data结尾的String
+         * @param str 传入接收指令所有长度的,16进制的string
+         * @return  返回-->随机数结尾,CMD_ID开始+发送设备+......+Data结尾,整个十六进制字符串(不包含Check_Sum,和DD)
+         * random
+         * getRandomEndData2DataEndResultHexString
+         */
+        String mRandom2DataResultData = CalculateUtils.getRandomEndData2DataEndResultHexString(event.getData());//随机数之后到data结尾的String
+        //上位机的设备类型比如:一代一体机
         String deviceType = CalculateUtils.getSendDeviceType(event.getData());
+        //上位机的设备码
         String deviceOnlyCode = CalculateUtils.getSendDeviceOnlyCode(event.getData());
         String currentCMD = CalculateUtils.getCMD(event.getData());
         switch (event.getUdpCmd()) {
             case Constants.UDP_FD://广播
                 //判断是否包含指定的key:设备码+设备类型
                 boolean flag = mReceiveBroadMap.containsKey(deviceOnlyCode + deviceType);
+                LogUtils.e("设备搜索界面==flag==" + flag);
+                LogUtils.e("设备搜索界面==key==" + deviceOnlyCode + deviceType);
+
                 if (!flag) {
-                    mReceiveBroadMap.put(deviceOnlyCode + deviceType, mRun2End4 + "==" + event.getIp());
+                    mReceiveBroadMap.put(deviceOnlyCode + deviceType, mRandom2DataResultData + "==" + event.getIp());
                 }
 
                 break;
             case Constants.UDP_FC://授权接入
-                if (!mReceivePointList.contains(mRun2End4)) {
-                    mReceivePointList.add(mRun2End4 + "==" + event.getIp());
+                if (!mReceivePointList.contains(mRandom2DataResultData)) {
+                    mReceivePointList.add(mRandom2DataResultData + "==" + event.getIp());
                     //发消息,存入数据库,并且刷新设备搜索界面
                     mHandler.sendEmptyMessage(UDP_Point_Over);
 

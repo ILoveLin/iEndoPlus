@@ -14,7 +14,6 @@ public class DateUtil {
     public static String getSystemDate() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String dateNow = sdf.format(new Date());
-        LogUtils.e("=TAG=sdf=sdf==sdf===" + dateNow);
 //        2021-11-04
         return dateNow;
     }

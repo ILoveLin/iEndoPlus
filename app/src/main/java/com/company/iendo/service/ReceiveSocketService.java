@@ -192,8 +192,8 @@ public class ReceiveSocketService extends AbsWorkService {
             while (true) {
                 if (isRuning) {
                     try {
-                        LogUtils.e(TAG + ":轮询中------>接收,上位机数据");
-                        LogUtils.e(TAG + ":轮询中------>接收,上位机数据");
+                        LogUtils.e(TAG + "轮询中:------>接收,上位机数据");
+                        LogUtils.e(TAG + "轮询中:------>接收,上位机数据");
                         LogUtils.e(TAG + "                                                                                      ");
                         //不是自己的IP不接受
                         if (!AppIP.equals(mSettingDataPacket.getAddress())) {
@@ -218,7 +218,6 @@ public class ReceiveSocketService extends AbsWorkService {
                                 if (mSettingDataPacket != null) {
                                     String hostAddressIP = mSettingDataPacket.getAddress().getHostAddress();
                                     int port = mSettingDataPacket.getPort();
-                                    String mRun2End4 = CalculateUtils.getReceiveRun2End4String(resultData);//随机数之后到data结尾的String
                                     String deviceType = CalculateUtils.getSendDeviceType(resultData);
                                     String deviceOnlyCode = CalculateUtils.getSendDeviceOnlyCode(resultData);
                                     String currentCMD = CalculateUtils.getCMD(resultData);

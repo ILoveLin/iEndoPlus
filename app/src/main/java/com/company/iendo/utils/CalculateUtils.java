@@ -20,6 +20,7 @@ import java.util.Random;
  * desc：各种进制计算的工具类
  */
 public class CalculateUtils {
+    private static final String TAG = "计算工具类===";
     private static Gson mGson = new Gson();
     private static String sendCommandString;
 /**
@@ -34,6 +35,9 @@ public class CalculateUtils {
      * FF-所有设备
      * 更多设备类型依次类推，平台最大可连接255种受控设备
      * 相对于pad来说的发送方也就是上位机的设备设备类型
+     *
+     *
+     * 相对于pad来说的发送方也就是上位机的设备类型,比如一带一体
      */
 
 
@@ -173,7 +177,7 @@ public class CalculateUtils {
 
             }
         } catch (Exception e) {
-            LogUtils.e("getCMD()-->Exception,str="+string);
+            LogUtils.e(TAG+"getCMD()-->Exception,str="+string);
         }
         return "";
     }
@@ -194,7 +198,7 @@ public class CalculateUtils {
 
             }
         } catch (Exception e) {
-            LogUtils.e("getSendDeviceOnlyCode()-->Exception,str="+string);
+            LogUtils.e(TAG+"getSendDeviceOnlyCode()-->Exception,str="+string);
         }
 
         return "";
@@ -233,7 +237,6 @@ public class CalculateUtils {
         if (!(("".equals(string)) && string.length() >= 179)) {
             String currentDevice = MD5ChangeUtil.Md5_32(DeviceIdUtil.getDeviceId(activity)); //记得大写
             String currentDeviceID = currentDevice.toUpperCase(); //记得大写
-
             if (string.length() < 82) {
                 return false;
             }
@@ -261,7 +264,7 @@ public class CalculateUtils {
             String hexXORData = get16HexXORData("AA" + substring1);
             //获取接收的设备id 必须和本机的设备id相同
             if (oldCSData.equals(hexXORData.toUpperCase())) {
-                LogUtils.e(TAG + "接收数据校验OK,返回ture,可以,解析监听获取到的16进制String数据");
+                LogUtils.e(TAG + "数据校验OK,返回ture,可以解析,监听到的16进制String数据");
                 return true;
             }
         } else {
@@ -440,7 +443,7 @@ public class CalculateUtils {
         return bytes;
     }
 
-    private static final String TAG = "计算工具类===";
+
 
 
     /**
@@ -528,7 +531,7 @@ public class CalculateUtils {
     public static String getReceiveID(String str) {
 //      String str = "EE0700000000000000005618B1F96D92837CA1F9432B11B93E8BB4AE34539B7472C20EFD7B227469746C65223A2241494F2D454E54222C2272656D61726B223A2231E58FB7E58685E9959CE5AEA4222C22656E646F74797065223A2233222C22616363657074223A2231227D";
         String substring = str.substring(4, 36);
-        LogUtils.e("UDP==命令===getReceiveID===" + substring);
+        LogUtils.e(TAG+"UDP==命令===getReceiveID===" + substring);
 
         return substring;
 
@@ -538,18 +541,20 @@ public class CalculateUtils {
      * 获取接收socket的数据--随机数之后到data结尾的String
      *
      * @param str 传入接收指令所有长度的,16进制的string
-     * @return
+     * @return  返回-->随机数结尾,CMD_ID开始+发送设备+......+Data结尾,整个十六进制字符串(不包含Check_Sum,和DD)
+     * random
+     * getRandomEndData2DataEndResultHexString
      */
-    public static String getReceiveRun2End4String(String str) {
+    public static String getRandomEndData2DataEndResultHexString(String str) {
         try {
-            LogUtils.e("getReceiveRun2End4String()-->str=="+str);
+            LogUtils.e(TAG+"getRandomEndData2DataEndResultHexString()-->str=="+str);
 
 //String str = "AAC501006A22 EE0700000000000000005618B1F96D92837Ca1f9432b11b93e8bb4ae34539b7472c20eFD7b227469746c65223a2241494f2d454e54222c2272656d61726b223a226f6e65686f6d65222c22656e646f74797065223a2233222c22616363657074223a2230227d b4DD";
             String substring = str.substring(12, str.length() - 4);
 
             return substring;
         } catch (Exception e) {
-            LogUtils.e("getReceiveRun2End4String()-->Exception,str=="+str);
+            LogUtils.e(TAG+"getRandomEndData2DataEndResultHexString()-->Exception,str=="+str);
         }
 
         return "";

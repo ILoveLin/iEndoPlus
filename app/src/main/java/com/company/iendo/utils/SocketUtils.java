@@ -63,7 +63,7 @@ public class SocketUtils {
 
                     DatagramPacket mSendPacket = new DatagramPacket(data, data.length, finalMAddress, mCastSendPort);
                     for (int i = 0; i < 5; i++) {
-                        LogUtils.e(TAG + "广播消息===发送第:"+ i + "次广播,端口:" + mCastSendPort);
+                        LogUtils.e(TAG + "广播消息--->发送第:"+ i + "次广播,端口:" + mCastSendPort);
                         Thread.sleep(500);
                         //固定端口
                         DatagramSocket mSendBroadcastSocket = new DatagramSocket(null);
@@ -115,7 +115,8 @@ public class SocketUtils {
             public void run() {
                 super.run();
                 try {
-                    LogUtils.e(TAG + "hand消息==="+"发送,ip:" + finalMAddress+",port:" + receivePort+",data:" + data);
+
+                    LogUtils.e(TAG + "hand消息--->"+"发送,ip:" + finalMAddress+",port:" + receivePort+",data:" + data);
                     DatagramPacket mSendPacket = new DatagramPacket(data, data.length, finalMAddress, receivePort);
 //                    for (int i = 0; i < 5; i++) {
                     //随机端口
@@ -133,7 +134,7 @@ public class SocketUtils {
 //                    lock.release();
 //                    }
                 } catch (Exception e) {
-                    LogUtils.e(TAG + "hand消息==1="+"发生Exception:"+e);
+                    LogUtils.e(TAG + "hand消息--->"+"发生Exception:"+e);
                 }
             }
         }.start();
@@ -165,7 +166,7 @@ public class SocketUtils {
                 super.run();
                 try {
 //                    byte[] sendData = data.getBytes();
-                    LogUtils.e(TAG + "hand消息==="+"发送,ip:" + finalMAddress+",port:" + receivePort+",data:" + data);
+                    LogUtils.e(TAG + "point消息--->"+"发送,ip:" + finalMAddress+",port:" + receivePort+",data:" + data);
                     DatagramPacket mSendPacket = new DatagramPacket(data, data.length, finalMAddress, receivePort);
 //                    for (int i = 0; i < 5; i++) {
                     //随机端口
@@ -182,7 +183,7 @@ public class SocketUtils {
 //                    lock.release();
 //                    }
                 } catch (Exception e) {
-                    LogUtils.e(TAG + "point消息==1="+"发生Exception:"+e);
+                    LogUtils.e(TAG + "point消息--->"+"发生Exception:"+e);
 
 
                 }
