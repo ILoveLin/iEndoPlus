@@ -47,6 +47,7 @@ import com.company.iendo.ui.dialog.MenuDialog;
 import com.company.iendo.ui.dialog.MessageDialog;
 import com.company.iendo.utils.CalculateUtils;
 import com.company.iendo.utils.FileUtil;
+import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.SharePreferenceUtil;
 import com.company.iendo.utils.SocketUtils;
 import com.company.iendo.widget.LinesEditView;
@@ -146,10 +147,14 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                 case IMAGE_DOWN: //下载图片
                     if (mImageCountNum == mCurrentDownImageCount) {
                         toast("下载完毕");
+                        //下载中的标识,true标识下载中,false标识没有下载
+                        mMMKVInstace.encode(Constants.KEY_Picture_Downing,false);
                         mCurrentDownImageCount = 0;
                         mImageCountNum = 0;
                         event.setData("true");
                     } else {
+                        //下载中的标识,true标识下载中,false标识没有下载
+                        mMMKVInstace.encode(Constants.KEY_Picture_Downing,true);
                         event.setData("false");
                     }
                     EventBus.getDefault().post(event);
@@ -157,10 +162,14 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                 case IMAGE_DOWN_UPDATE://更新图片
                     if (mImageUpdateCountNum == mCurrentUpdateDownImageCount) {
                         toast("下载完毕");
+                        //下载中的标识,true标识下载中,false标识没有下载
+                        mMMKVInstace.encode(Constants.KEY_Picture_Downing,true);
                         mCurrentUpdateDownImageCount = 0;
                         mImageUpdateCountNum = 0;
                         event.setData("true");
                     } else {
+                        //下载中的标识,true标识下载中,false标识没有下载
+                        mMMKVInstace.encode(Constants.KEY_Picture_Downing,false);
                         event.setData("false");
                     }
                     EventBus.getDefault().post(event);
@@ -722,7 +731,6 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
          * true表示 当前下载病例的时候,编辑了病例,需要获取最新的bean
          * 再次请求数据获取最新更改的UserBean和CaseBean,再存入数据库,避免bug
          */
-
         sendCaseInfoRequest(currentItemCaseID, true, toLocalFile);
 
 
@@ -757,11 +765,17 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                         //=====/storage/emulated/0/MyDownImages/2_3/004.jpg
                         //刷新相册 必须下载完了才能退出不然容易出现bug ,所以我们放在每次进入该界面的时候刷新
                         try {
-                            MediaStore.Images.Media.insertImage(getActivity().getApplication().getContentResolver(), toLocalFile.getAbsolutePath() + "/" + pictureName, pictureName, "");
-                            // 最后通知图库更新
-                            getActivity().getApplication().sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
-                                    Uri.fromFile(new File(toLocalFile.getPath()))));
 
+                            if (null != getActivity()) {
+                                MediaStore.Images.Media.insertImage(getActivity().getApplication().getContentResolver(), toLocalFile.getAbsolutePath() + "/" + pictureName, pictureName, "");
+                                // 最后通知图库更新
+                                getActivity().getApplication().sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
+                                        Uri.fromFile(new File(toLocalFile.getPath()))));
+                            } else {
+                                LogUtils.e("下载图片的时候(sendUpdatePictureRequest),getActivity()==00==null");
+                                mMMKVInstace.encode(Constants.KEY_Picture_Downing,false);
+
+                            }
 
 //                             视频下载,刷新图库
 //                            //说明第一个参数上下文，第二个参数是文件路径例如
@@ -809,11 +823,16 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                         //=====/storage/emulated/0/MyDownImages/2_3/004.jpg
                         //刷新相册 必须下载完了才能退出不然容易出现bug ,所以我们放在每次进入该界面的时候刷新
                         try {
-                            MediaStore.Images.Media.insertImage(getActivity().getApplication().getContentResolver(), toLocalFile.getAbsolutePath() + "/" + pictureName, pictureName, "");
-                            // 最后通知图库更新
-                            getActivity().getApplication().sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
-                                    Uri.fromFile(new File(toLocalFile.getPath()))));
-
+                            if (null != getActivity()) {
+                                MediaStore.Images.Media.insertImage(getActivity().getApplication().getContentResolver(), toLocalFile.getAbsolutePath() + "/" + pictureName, pictureName, "");
+//                            MediaStore.Images.Media.insertImage(getActivity().getApplication().getContentResolver(), toLocalFile.getAbsolutePath() + "/" + pictureName, pictureName, "");
+                                // 最后通知图库更新
+                                getActivity().getApplication().sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
+                                        Uri.fromFile(new File(toLocalFile.getPath()))));
+                            } else {
+                                LogUtils.e("下载图片的时候(sendPictureRequest),getActivity()==null");
+                                mMMKVInstace.encode(Constants.KEY_Picture_Downing,false);
+                            }
 
 //                             视频下载,刷新图库
 //                            //说明第一个参数上下文，第二个参数是文件路径例如
@@ -837,6 +856,11 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
      * 创建一个CaseDBBean,直接存信息和图片信息即可
      */
     private void downLocalCaseUserData(File toLocalFile) {
+        if (getActivity()==null){
+            LogUtils.e("下载图片的时候(downLocalCaseUserData),getActivity()====null");
+            mMMKVInstace.encode(Constants.KEY_Picture_Downing,false);
+            return;
+        }
 
         /**
          * 创建需要下载的本地的--->病例表
@@ -980,92 +1004,6 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                 }
                 caseDBBean.setImageList(caseImageList);    //图片路径集合--文件夹（设备ID-病例ID）
             }
-
-//            //此数据currentBean,下载过,这里我们需要校验
-//            //1,标题相同的数据bean,我们直接past
-//            //2,标题不同的数据我们做新增,离线模式的时候最对是否下载过的字段来进行赛选
-//            ArrayList<String> list01 = new ArrayList<String>();
-//            ArrayList<String> list02 = new ArrayList<String>();
-//            if (null != mVideoPathList && mVideoPathList.size() > 0) {//1 2 3  4
-//                for (int i = 0; i < mVideoPathList.size(); i++) {
-//                    String downString = mVideoPathList.get(i);
-//                    int index = downString.lastIndexOf("/");
-//                    String downName = downString.substring(index + 1, downString.length());
-//                    list01.add(downName);
-//                }
-//            }
-//            List<CaseVideoListBean> DBVideoList = caseDBBean.getVideoList();
-//            int size1 = caseDBBean.getVideoList().size();
-//            if (size1 > 0) {//1 2
-//                for (int i = 0; i < size1; i++) {
-//                    CaseVideoListBean caseVideoListBean = caseDBBean.getVideoList().get(i);
-//                    list01.add(caseVideoListBean.getFileName());
-//                }
-//            }
-//
-//            //补集是新增数据
-//            //两个集合交集的补集 1234   123  ==> 4
-//            List<String> disjunction = (List<String>) CollectionUtils.disjunction(list01, list02);
-//
-//            for (int i = 0; i < disjunction.size(); i++) {
-//                if (null != mVideoPathList && mVideoPathList.size() > 0) {//1 2 3  4
-//                    for (int y = 0; y < mVideoPathList.size(); y++) {
-//
-//                        String downString = mVideoPathList.get(y);
-//                        int index = downString.lastIndexOf("/");
-//                        String downName = downString.substring(index + 1, downString.length());
-//
-//
-//                        if (disjunction.equals(downName)) {
-//                            CaseVideoListBean caseVideoListBean = new CaseVideoListBean();
-//                            //http://192.168.67.219:7001/1196/88820220424081936912.mp4
-//                            caseVideoListBean.setVideoPath(downString);
-//                            //caseVideoListBean.setFileName();
-//                            caseVideoListBean.setDown(false);
-//                            DBVideoList.add(caseVideoListBean);
-//                        }
-//                    }
-//                }
-//
-//            }
-//            //存入数据库,此时数据更新了上位机新增的视频数量
-//            caseDBBean.setVideoList(DBVideoList);
-//            if (null != mVideoPathList && mVideoPathList.size() > 0) {//1 2 3  4
-//                for (int i = 0; i < mVideoPathList.size(); i++) {
-//
-//                    String downString = mVideoPathList.get(i);
-//                    int index = downString.lastIndexOf("/");
-//                    String downName = downString.substring(index + 1, downString.length());
-//
-//                    int size = caseDBBean.getVideoList().size();
-//
-////                    if (size > 0) {
-//                    for (int y = 0; y < size; y++) { //1 2 3
-//                        CaseVideoListBean dbVideoBean = caseDBBean.getVideoList().get(i);
-//
-//                        //不相等的时候新增
-//                        if (!dbVideoBean.getFileName().equals(downName)) {
-//                            CaseVideoListBean caseVideoListBean = new CaseVideoListBean();
-//                            //http://192.168.67.219:7001/1196/88820220424081936912.mp4
-//                            caseVideoListBean.setVideoPath(downString);
-//                            //caseVideoListBean.setFileName();
-//                            caseVideoListBean.setDown(false);
-//                            SaveVideoList.add(caseVideoListBean);
-//                            LogUtils.e("文件下载===02==视频存储==VideoPath===" + downString);
-//                            LogUtils.e("文件下载===02==视频存储==setFileName===" + downName);
-//
-//                        } else {//相等的时候,不作处理
-//                            SaveVideoList.add(dbVideoBean);
-//                        }
-//
-//
-//                    }
-////                    }
-//
-//
-//                }
-//                caseDBBean.setVideoList(SaveVideoList);
-//            }
 
             caseDBBean.setBiopsy(mDataBean.getBiopsy() + "");    //活检
             caseDBBean.setPathology(mDataBean.getPathology() + "");    //病理学
@@ -1247,15 +1185,16 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         //删除本地图片文件夹以及图片
         File mImagesFile = new File(dirNameImages);
         if (mImagesFile.exists()) {
-           FileUtil.deleteSDFile(dirNameImages,true);
+            FileUtil.deleteSDFile(dirNameImages, true);
         }
         //删除本地视频文件夹以及视频
         File mVideoFile = new File(dirNameImages);
         if (mVideoFile.exists()) {
-            FileUtil.deleteSDFile(dirNameVideos,true);
+            FileUtil.deleteSDFile(dirNameVideos, true);
         }
 
     }
+
     /**
      * 删除用户请求
      * 成功回调之后,需要删除,数据库表中病例表,和已缓存的图片和视频(删除-MyDownImages和MyDownVideos两个文件夹下的code_caseID)
@@ -2153,7 +2092,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
     /**
      * eventbus 刷新socket数据
      */
-    @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void SocketRefreshEvent(SocketRefreshEvent event) {
 //        String mRun2End4 = CalculateUtils.getReceiveRun2End4String(event.getData());//随机数之后到data结尾的String
 //        String deviceType = CalculateUtils.getSendDeviceType(event.getData());

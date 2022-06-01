@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
-import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
@@ -23,7 +22,6 @@ import com.company.iendo.bean.CaseDetailBean;
 import com.company.iendo.bean.ReportExistBean;
 import com.company.iendo.bean.UserReloBean;
 import com.company.iendo.bean.event.SocketRefreshEvent;
-import com.company.iendo.bean.socket.HandBean;
 import com.company.iendo.bean.socket.getpicture.ShotPictureBean;
 import com.company.iendo.manager.ActivityManager;
 import com.company.iendo.mineui.activity.casemanage.fragment.DetailFragment;
@@ -37,6 +35,7 @@ import com.company.iendo.ui.adapter.TabAdapter;
 import com.company.iendo.ui.dialog.MessageDialog;
 import com.company.iendo.ui.dialog.SelectDialog;
 import com.company.iendo.utils.CalculateUtils;
+import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.SocketUtils;
 import com.gyf.immersionbar.ImmersionBar;
 import com.hjq.bar.OnTitleBarListener;
@@ -155,13 +154,18 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
 
 
     private void responseListener() {
+        //默认没有下载中
+        mMMKVInstace.encode(Constants.KEY_Picture_Downing,false);
         sendGetEditStatueRequest();
         setOnClickListener(R.id.linear_get_picture, R.id.linear_get_report, R.id.linear_delete, R.id.linear_down, R.id.linear_down_video);
         mTitlebar.setOnTitleBarListener(new OnTitleBarListener() {
             @Override
             public void onLeftClick(View view) {
+                boolean downStatue = mMMKVInstace.decodeBool(Constants.KEY_Picture_Downing, false);
+                LogUtils.e("下载图片的时候(downStatue),downStatue()=="+downStatue);
+
                 //如果下载病历中,退出界面提示用户
-                if (mCaseDown.getText().equals("下载中..")) {
+                if (mCaseDown.getText().equals("下载中..") ||downStatue) {
                     // 消息对话框
                     existBuilder = new MessageDialog.Builder(getActivity());
                     existBuilder.setTitle("是否返回")

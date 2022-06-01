@@ -87,6 +87,11 @@ public class Constants {
     public static final String KEY_CurrentCaseID = "KEY_CurrentCaseID";                     //当前选中的病例ID
     public static final String KEY_CurrentLoginUserName = "KEY_CurrentLoginUserName";            //当前登录的用户名
 
+    /**
+     * DetailFragment  界面下载图片的时候,网速不好的情况下,退出详情界面,会getActivity获取不到上下文  空指针异常
+     */
+
+    public static final String KEY_Picture_Downing = "KEY_Picture_Downing";            //图片下载中的标识,  true表示下载中,默认是false
 
     /**
      * toast 提示语

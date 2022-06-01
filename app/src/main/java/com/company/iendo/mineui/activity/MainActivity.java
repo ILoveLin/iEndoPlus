@@ -244,4 +244,10 @@ public class MainActivity extends AppActivity implements NavigationAdapter.OnNav
     }
 
 
+
+    public  Context getContext(){
+        Context applicationContext = getApplicationContext();
+        return  applicationContext;
+    }
+
 }
