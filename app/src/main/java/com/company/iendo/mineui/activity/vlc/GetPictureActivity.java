@@ -92,7 +92,7 @@ import okhttp3.Call;
  * 放大倍数  1-2.5 显示的数字    传的的值是1--15
  */
 public final class GetPictureActivity extends AppActivity implements StatusAction, OnRangeChangedListener,
-        SwitchButton.OnCheckedChangeListener, TextView.OnEditorActionListener, ConnectCheckerRtmp, TextWatcher {
+        SwitchButton.OnCheckedChangeListener, ConnectCheckerRtmp {
     public static String path = "http://9890.vod.myqcloud.com/9890_4e292f9a3dd011e6b4078980237cc3d3.f20.mp4";
     public static String path1 = "rtsp://184.72.239.149/vod/mp4://BigBuckBunny_175k.mov";
     public boolean isFullscreen = false;
@@ -218,7 +218,6 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         }
     };
     private TextView mPictureDes;
-    private ClearEditText mEdit01Light, mEdit02Light, mEdit02Saturation, mEdit02Definition, mEdit02Zoom;
     private RangeSeekBar mRangeBar01Light, mRangeBar02Light, mRangeBar02Saturation, mRangeBar02Definition, mRangeBar02Zoom;
     private SwitchButton mSwitchBlood, mSwitchVertical, mSwitchHorizontal;
     private TextView mLightLine, mDeviceLine;
@@ -457,25 +456,20 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         DeviceParamsBean.Type01 type01 = deviceParamsBean.getType01(); //摄像机
         DeviceParamsBean.Type02 type02 = deviceParamsBean.getType02(); //光源
         if (type02 != null) {
-            mEdit01Light.setText(type02.getBrightness());
             mRangeBar01Light.setProgress(Integer.parseInt(type02.getBrightness()));
         }
         if (type01 != null) {
             //光源
-            mEdit02Light.setText(type01.getBrightness());
             mRangeBar02Light.setProgress(Integer.parseInt(type01.getBrightness()));
 
             //饱和度
-            mEdit02Saturation.setText(type01.getSaturation());
             mRangeBar02Saturation.setProgress(Integer.parseInt(type01.getSaturation()));
 
             //清晰度
-            mEdit02Definition.setText(type01.getSharpness());
             mRangeBar02Definition.setProgress(Integer.parseInt(type01.getSharpness()));
 
             //放大倍数           //显示是1到2.5倍,传值是0--15
             float rangeBarNeedSetData = CommonUtil.getRangeBarNeedSetData(type01.getZoomrate());
-            mEdit02Zoom.setText(rangeBarNeedSetData + "");
             mRangeBar02Zoom.setProgress(rangeBarNeedSetData);
 
             //:影像翻转取值：  0（无翻转），1（水平翻转），2（垂直翻转），3（水平翻转+垂直翻转）
@@ -918,18 +912,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         mSwitchBlood.setOnCheckedChangeListener(this);
         mSwitchVertical.setOnCheckedChangeListener(this);
         mSwitchHorizontal.setOnCheckedChangeListener(this);
-        //文本变化监听器
-        mEdit01Light.addTextChangedListener(this);
-        mEdit02Light.addTextChangedListener(this);
-        mEdit02Saturation.addTextChangedListener(this);
-        mEdit02Definition.addTextChangedListener(this);
-        mEdit02Zoom.addTextChangedListener(this);
-        //edittext编辑监听器
-        mEdit01Light.setOnEditorActionListener(this);
-        mEdit02Light.setOnEditorActionListener(this);
-        mEdit02Saturation.setOnEditorActionListener(this);
-        mEdit02Definition.setOnEditorActionListener(this);
-        mEdit02Zoom.setOnEditorActionListener(this);
+
 
 
         mVLCView.setMediaListenerEvent(new MediaListenerEvent() {
@@ -1184,21 +1167,16 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         mMic = findViewById(R.id.linear_mic);
         mRecordMsg = findViewById(R.id.case_record);
         //亮度
-        mEdit01Light = findViewById(R.id.edit_01_light);
         mRangeBar01Light = findViewById(R.id.sb_01_range_light);
 
         mRangeBar01Light.setStepsAutoBonding(false);
         //亮度
-        mEdit02Light = findViewById(R.id.edit_02_light);
         mRangeBar02Light = findViewById(R.id.sb_02_range_light);
         //饱和度
-        mEdit02Saturation = findViewById(R.id.edit_02_saturation);
         mRangeBar02Saturation = findViewById(R.id.sb_02_range_saturation);
         //清晰度
-        mEdit02Definition = findViewById(R.id.edit_02_definition);
         mRangeBar02Definition = findViewById(R.id.sb_02_range_definition);
         //放大倍数
-        mEdit02Zoom = findViewById(R.id.edit_02_zoom);
         mRangeBar02Zoom = findViewById(R.id.sb_02_range_zoom);
         //水平翻转
         mSwitchHorizontal = findViewById(R.id.sb_find_switch_horizontal);
@@ -1457,24 +1435,20 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
 
         switch (view.getId()) {
             case R.id.sb_01_range_light:  //冷光源,亮度
-                mEdit01Light.setText("" + round);
                 sendSocketPointLight(Constants.UDP_F6, "" + round);
                 break;
             case R.id.sb_02_range_light://摄像机,亮度
-                mEdit02Light.setText("" + round);
                 typeBean.setBrightness(round);
                 bean.setType01(typeBean);
                 sendSocketPointVideoDevice(Constants.UDP_F6, bean);
 
                 break;
             case R.id.sb_02_range_saturation://摄像机,饱和度
-                mEdit02Saturation.setText("" + round);
                 typeBean.setSaturation(round);
                 bean.setType01(typeBean);
                 sendSocketPointVideoDevice(Constants.UDP_F6, bean);
                 break;
             case R.id.sb_02_range_definition://摄像机,清晰度
-                mEdit02Definition.setText("" + round);
                 typeBean.setSharpness(round);
                 bean.setType01(typeBean);
                 sendSocketPointVideoDevice(Constants.UDP_F6, bean);
@@ -1484,7 +1458,6 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                 float progress1 = ((view.getLeftSeekBar().getProgress()) * 10) - 10;
                 int round2 = Math.round(progress1); //传的值
                 String s = view.getLeftSeekBar().getProgress() + ""; //editText设置的值
-                mEdit02Zoom.setText("" + s.substring(0, 3));
                 typeBean.setZoomrate(round2 + "");
                 bean.setType01(typeBean);
                 sendSocketPointVideoDevice(Constants.UDP_F6, bean);
@@ -1493,107 +1466,6 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         }
     }
 
-    @Override
-    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-        //创建摄像机数据bean
-        Type01Bean bean = new Type01Bean();
-        Type01Bean.Type01 typeBean = new Type01Bean.Type01();
-        switch (v.getId()) {
-            case R.id.edit_01_light: //冷光源,亮度
-                sendSocketPointLight(Constants.UDP_F6, "" + Integer.parseInt(mEdit01Light.getText().toString().trim()));
-                if (!("".equals(mEdit01Light.getText().toString().trim()))) {
-                    mRangeBar01Light.setProgress(Integer.parseInt(mEdit01Light.getText().toString().trim()));
-                    mEdit01Light.clearFocus();
-                } else {
-                    toast("输入值不能为空");
-                }
-                break;
-            case R.id.edit_02_light://摄像机,亮度
-                if (!("".equals(mEdit02Light.getText().toString().trim()))) {
-                    typeBean.setBrightness(mEdit02Light.getText().toString().trim());
-                    bean.setType01(typeBean);
-                    sendSocketPointVideoDevice(Constants.UDP_F6, bean);
-                    mRangeBar02Light.setProgress(Integer.parseInt(mEdit02Light.getText().toString().trim()));
-                    mEdit02Light.clearFocus();
-                } else {
-                    toast("输入值不能为空");
-                }
-
-                break;
-            case R.id.edit_02_saturation://摄像机,饱和度
-                if (!("".equals(mEdit02Light.getText().toString().trim()))) {
-                    typeBean.setSaturation(mEdit02Light.getText().toString().trim());
-                    bean.setType01(typeBean);
-                    sendSocketPointVideoDevice(Constants.UDP_F6, bean);
-                    mRangeBar02Saturation.setProgress(Integer.parseInt(mEdit02Saturation.getText().toString().trim()));
-                    mEdit02Saturation.clearFocus();
-                } else {
-                    toast("输入值不能为空");
-                }
-
-                break;
-            case R.id.edit_02_definition://摄像机,清晰度
-                if (!("".equals(mEdit02Light.getText().toString().trim()))) {
-                    typeBean.setBrightness(mEdit02Light.getText().toString().trim());
-                    bean.setType01(typeBean);
-                    sendSocketPointVideoDevice(Constants.UDP_F6, bean);
-                    mRangeBar02Definition.setProgress(Integer.parseInt(mEdit02Definition.getText().toString().trim()));
-                    mEdit02Definition.clearFocus();
-                } else {
-                    toast("输入值不能为空");
-                }
-
-                break;
-            case R.id.edit_02_zoom://摄像机,放大倍数
-                if (!("".equals(mEdit02Zoom.getText().toString().trim()))) {
-                    //放大倍数           //显示是1到2.5倍,传值是0--15
-                    //获取需要发送的数值
-                    int rangeBarNeedSetData = CommonUtil.getEditDataToSend(mEdit02Zoom.getText() + "");
-                    //获取需要设置到rangebar上的数值
-                    typeBean.setZoomrate(rangeBarNeedSetData + "");
-                    bean.setType01(typeBean);
-                    sendSocketPointVideoDevice(Constants.UDP_F6, bean);
-                    mRangeBar02Zoom.setProgress(Float.parseFloat(mEdit02Zoom.getText().toString()));
-                    mEdit02Zoom.clearFocus();
-                } else {
-                    toast("输入值不能为空");
-                }
-
-
-                break;
-
-        }
-        return true;
-    }
-
-    /**
-     * EditText 文本监听器
-     * 数值0-100的限制监听
-     *
-     * @param s
-     * @param start
-     * @param count
-     * @param after
-     */
-    @Override
-    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-    }
-
-    @Override
-    public void onTextChanged(CharSequence s, int start, int before, int count) {
-        Pattern p = Pattern.compile("^(100|[1-9]\\d|\\d)$");//处理0~100正则
-        Matcher m = p.matcher(s.toString());
-        if (m.find() || ("").equals(s.toString())) {
-        } else {
-//            toast("请输入正确的数值!");
-        }
-    }
-
-    @Override
-    public void afterTextChanged(Editable s) {
-
-    }
 
 
     /**

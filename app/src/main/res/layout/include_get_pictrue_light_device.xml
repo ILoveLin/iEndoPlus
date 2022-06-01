@@ -113,24 +113,6 @@
                         android:layout_height="1px"
                         android:layout_weight="1" />
 
-                    <com.hjq.widget.view.ClearEditText
-                        android:id="@+id/edit_01_light"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:background="@null"
-                        android:gravity="right|center_vertical"
-                        android:hint="可手动输入数值"
-                        android:imeOptions="actionSend"
-                        android:inputType="number"
-                        android:lines="1"
-                        android:maxLength="3"
-                        android:paddingLeft="@dimen/dp_10"
-                        android:paddingRight="@dimen/dp_10"
-                        android:singleLine="true"
-                        android:text=""
-                        android:textColor="@color/color_0C0C0C"
-                        android:textColorHint="@color/color_9A9A9A"
-                        android:textSize="@dimen/sp_12" />
 
                 </LinearLayout>
 
@@ -255,24 +237,6 @@
                             android:layout_height="1px"
                             android:layout_weight="1" />
 
-                        <com.hjq.widget.view.ClearEditText
-                            android:id="@+id/edit_02_light"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:background="@null"
-                            android:gravity="right|center_vertical"
-                            android:hint="可手动输入数值"
-                            android:imeOptions="actionSend"
-                            android:inputType="number"
-                            android:lines="1"
-                            android:maxLength="3"
-                            android:paddingLeft="@dimen/dp_10"
-                            android:paddingRight="@dimen/dp_10"
-                            android:singleLine="true"
-                            android:text=""
-                            android:textColor="@color/color_0C0C0C"
-                            android:textColorHint="@color/color_9A9A9A"
-                            android:textSize="@dimen/sp_12" />
 
 
                     </LinearLayout>
@@ -372,24 +336,6 @@
                             android:layout_height="1px"
                             android:layout_weight="1" />
 
-                        <com.hjq.widget.view.ClearEditText
-                            android:id="@+id/edit_02_saturation"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:background="@null"
-                            android:gravity="right|center_vertical"
-                            android:hint="可手动输入数值"
-                            android:imeOptions="actionSend"
-                            android:inputType="number"
-                            android:lines="1"
-                            android:maxLength="3"
-                            android:paddingLeft="@dimen/dp_10"
-                            android:paddingRight="@dimen/dp_10"
-                            android:singleLine="true"
-                            android:text=""
-                            android:textColor="@color/color_0C0C0C"
-                            android:textColorHint="@color/color_9A9A9A"
-                            android:textSize="@dimen/sp_12" />
 
                     </LinearLayout>
 
@@ -489,24 +435,6 @@
                             android:layout_height="1px"
                             android:layout_weight="1" />
 
-                        <com.hjq.widget.view.ClearEditText
-                            android:id="@+id/edit_02_definition"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:background="@null"
-                            android:gravity="right|center_vertical"
-                            android:hint="可手动输入数值"
-                            android:imeOptions="actionSend"
-                            android:inputType="number"
-                            android:lines="1"
-                            android:maxLength="3"
-                            android:paddingLeft="@dimen/dp_10"
-                            android:paddingRight="@dimen/dp_10"
-                            android:singleLine="true"
-                            android:text=""
-                            android:textColor="@color/color_0C0C0C"
-                            android:textColorHint="@color/color_9A9A9A"
-                            android:textSize="@dimen/sp_12" />
 
                     </LinearLayout>
 
@@ -606,24 +534,6 @@
                             android:layout_height="1px"
                             android:layout_weight="1" />
 
-                        <com.hjq.widget.view.ClearEditText
-                            android:id="@+id/edit_02_zoom"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:background="@null"
-                            android:gravity="right|center_vertical"
-                            android:hint="可手动输入数值"
-                            android:imeOptions="actionSend"
-                            android:inputType="numberDecimal"
-                            android:lines="1"
-                            android:maxLength="3"
-                            android:paddingLeft="@dimen/dp_10"
-                            android:paddingRight="@dimen/dp_10"
-                            android:singleLine="true"
-                            android:text=""
-                            android:textColor="@color/color_0C0C0C"
-                            android:textColorHint="@color/color_9A9A9A"
-                            android:textSize="@dimen/sp_12" />
 
                     </LinearLayout>
 

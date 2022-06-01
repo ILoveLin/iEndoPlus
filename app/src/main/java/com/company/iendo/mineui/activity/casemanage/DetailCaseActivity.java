@@ -701,7 +701,6 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
                     break;
                 case R.id.linear_get_report://获取报告
                     Intent intent = new Intent(this, PictureChoseActivity.class);
-
                     if (FLAG_PICTURE_EXIST) {  //存在历史报告
                         //弹出对话框显示历史报告,还是获取新的报告
                         showSingleDialog(intent);
@@ -743,7 +742,7 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
                     public void onSelected(BaseDialog dialog, HashMap<Integer, String> data) {
                         String substring = data.toString().substring(1, 2);
                         String str = data.get(Integer.parseInt(substring));
-                        if ("获取报告".equals(str)) {  //进入图片选择界面,选择获取新的报告,需要获取CanPrint字段判断是否有能打印的权限
+                        if ("重新生成".equals(str)) {  //进入图片选择界面,选择获取新的报告,需要获取CanPrint字段判断是否有能打印的权限
                             boolean b = mMMKVInstace.decodeBool(Constants.KEY_CanPrint);
                             if (b) {
                                 mOnEditStatusListener.onGetReport();
