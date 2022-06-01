@@ -1,5 +1,7 @@
 package com.company.iendo.app;
 
+import android.animation.Animator;
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -7,6 +9,8 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -348,5 +352,87 @@ public abstract class AppActivity extends BaseActivity
             return activity.getResources().getDimensionPixelSize(resourceId);
         }
         return 0;
+    }
+
+
+
+
+
+
+
+
+    /**
+     * 执行动画的方法
+     * @param statue    开启还是关闭   true为打开
+     * @param mAnimView 播放的View
+     */
+
+    public void startDialogIconAnim(Boolean statue, View mAnimView) {
+        if (statue) {
+            ObjectAnimator animator = ObjectAnimator.ofFloat(mAnimView, "rotation", 0f, 180f);
+            animator.setDuration(150);
+            animator.start();
+            animator.addListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    if (mAnimView instanceof ImageView) {
+                        ImageView mView = (ImageView) mAnimView;
+                        mView.setImageDrawable(getDrawable(R.drawable.ic_case_select_down_pre));
+                    } else if (mAnimView instanceof TextView) {
+                        mAnimView.setBackground(getDrawable(R.drawable.ic_case_select_down_nor));
+                    }
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+
+                }
+            });
+
+        } else {
+            ObjectAnimator animator = ObjectAnimator.ofFloat(mAnimView, "rotation", 180f, 360f);
+            animator.setDuration(150);
+            animator.start();
+            animator.addListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+
+                    if (mAnimView instanceof ImageView) {
+                        ImageView mView = (ImageView) mAnimView;
+                        mView.setImageDrawable(getDrawable(R.drawable.ic_case_select_down_nor));
+                    } else if (mAnimView instanceof TextView) {
+                        mAnimView.setBackground(getDrawable(R.drawable.ic_case_select_down_nor));
+                    }
+
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+
+                }
+            });
+        }
+
     }
 }

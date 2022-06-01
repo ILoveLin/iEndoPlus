@@ -995,6 +995,7 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
      *
      * @return
      */
+    @SuppressLint("ResourceType")
     private void setDeviceTitleLogo() {
         List queryBeanBySelected = DeviceDBUtils.getQueryBeanBySelected(LoginActivity.this, true);
         String mCurrentTypeMsg = (String) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Current_Type_Msg, "1号内镜室");
@@ -1003,14 +1004,16 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
 
         if (0 == queryBeanBySelected.size()) {//数据库设备列表中,没有选中的设备,此时背景色被空
             mDeviceType.setText("");
-            mDeviceTitle.setText("");
+            mDeviceTitle.setText("请选择设备!");
+            mDeviceTitle.setTextColor(getResources().getColor(R.color.red));
+            mUserListData.clear();
             mLogoView.setImageResource(R.drawable.icon_bg_default);
         } else {
             //设备类型
             mDeviceType.setText("" + mCurrentDeviceName);
             //设备描述
             mDeviceTitle.setText(mCurrentTypeMsg + "");
-
+            mDeviceTitle.setTextColor(getResources().getColor(R.color.white));
             //设备背景图
             switch (mCurrentTypeDes) {
                 case Constants.Type_V1_YiTiJi:

@@ -217,7 +217,14 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
     }
 
 
-    //下载的时候从这里开始
+    /**
+     * 下载的时候从这里开始
+     * @param currentItemID
+     *
+     * 获取到mPathMap  存入图片信息
+     * 例如imageName=001.jpg  url=http://192.168.64.56:7001/3/001.jpg
+     */
+
     private void sendRequest(String currentItemID) {
         //获取图片并且把用户名添加到集合当中,以备下载需要
         OkHttpUtils.get()

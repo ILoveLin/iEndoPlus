@@ -466,6 +466,103 @@ public final class AddUserActivity extends AppActivity implements StatusAction, 
 
     }
 
+
+    /**
+     * 设置不同角色,默认的权限
+     *
+     * @param str
+     */
+    private void setDefaultReloData(String str) {
+        switch (str) {
+            case "管理员":
+                userMan01.setChecked(true);
+                CanPsw01.setChecked(true);
+                SnapVideoRecord01.setChecked(true);
+                LiveStream02.setChecked(true);
+                DeviceSet02.setChecked(true);
+                CanNew02.setChecked(true);
+                CanEdit03.setChecked(true);
+                CanDelete03.setChecked(true);
+                CanPrint03.setChecked(true);
+                UnPrinted04.setChecked(false);
+                ExportRecord04.setChecked(true);
+                ExportVideo04.setChecked(true);
+                ExportImage05.setChecked(true);
+                CanBackup05.setChecked(true);
+                OnlySelf05.setChecked(false);
+                VideoSet06.setChecked(true);
+                HospitalInfo06.setChecked(true);
+                ReportStyle06.setChecked(true);
+                SeatAdjust07.setChecked(true);
+                break;
+            case "操作员":
+                userMan01.setChecked(false);
+                CanPsw01.setChecked(false);
+                SnapVideoRecord01.setChecked(false);
+                LiveStream02.setChecked(false);
+                DeviceSet02.setChecked(false);
+                CanNew02.setChecked(true);
+                CanEdit03.setChecked(true);
+                CanDelete03.setChecked(true);
+                CanPrint03.setChecked(true);
+                UnPrinted04.setChecked(false);
+                ExportRecord04.setChecked(false);
+                ExportVideo04.setChecked(false);
+                ExportImage05.setChecked(false);
+                CanBackup05.setChecked(true);
+                OnlySelf05.setChecked(true);
+                VideoSet06.setChecked(false);
+                HospitalInfo06.setChecked(false);
+                ReportStyle06.setChecked(true);
+                SeatAdjust07.setChecked(false);
+                break;
+            case "普通用户":
+                userMan01.setChecked(false);
+                CanPsw01.setChecked(false);
+                SnapVideoRecord01.setChecked(false);
+                LiveStream02.setChecked(false);
+                DeviceSet02.setChecked(false);
+                CanNew02.setChecked(false);
+                CanEdit03.setChecked(false);
+                CanDelete03.setChecked(false);
+                CanPrint03.setChecked(true);
+                UnPrinted04.setChecked(false);
+                ExportRecord04.setChecked(false);
+                ExportVideo04.setChecked(false);
+                ExportImage05.setChecked(false);
+                CanBackup05.setChecked(false);
+                OnlySelf05.setChecked(false);
+                VideoSet06.setChecked(false);
+                HospitalInfo06.setChecked(false);
+                ReportStyle06.setChecked(false);
+                SeatAdjust07.setChecked(false);
+                break;
+            case "自定义":
+                userMan01.setChecked(false);
+                CanPsw01.setChecked(false);
+                SnapVideoRecord01.setChecked(false);
+                LiveStream02.setChecked(false);
+                DeviceSet02.setChecked(false);
+                CanNew02.setChecked(false);
+                CanEdit03.setChecked(false);
+                CanDelete03.setChecked(false);
+                CanPrint03.setChecked(false);
+                UnPrinted04.setChecked(false);
+                ExportRecord04.setChecked(false);
+                ExportVideo04.setChecked(false);
+                ExportImage05.setChecked(false);
+                CanBackup05.setChecked(false);
+                OnlySelf05.setChecked(false);
+                VideoSet06.setChecked(false);
+                HospitalInfo06.setChecked(false);
+                ReportStyle06.setChecked(false);
+                SeatAdjust07.setChecked(false);
+                break;
+        }
+
+
+    }
+
     private void responseListener() {
         userMan01.setOnCheckedChangeListener(this);
         CanPsw01.setOnCheckedChangeListener(this);
@@ -490,6 +587,7 @@ public final class AddUserActivity extends AppActivity implements StatusAction, 
         mIVReloType.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                startDialogIconAnim(true, mIVReloType);
                 // 单选对话框
                 new SelectDialog.Builder(AddUserActivity.this)
                         .setTitle("请选择")//0:管理员,1:操作员,2:普通用户,3:自定义
@@ -498,6 +596,7 @@ public final class AddUserActivity extends AppActivity implements StatusAction, 
                         .setSingleSelect()
                         // 设置默认选中
                         .setSelect(0)
+                        .setCanceledOnTouchOutside(false)
                         .setListener(new SelectDialog.OnListener<String>() {
 
                             @Override
@@ -506,10 +605,14 @@ public final class AddUserActivity extends AppActivity implements StatusAction, 
                                 String str = data.get(Integer.parseInt(position));
                                 Role = position;
                                 mReloType.setText(str + "");
+                                setDefaultReloData(str);
+                                startDialogIconAnim(false, mIVReloType);
+
                             }
 
                             @Override
                             public void onCancel(BaseDialog dialog) {
+                                startDialogIconAnim(false, mIVReloType);
                             }
                         })
                         .show();
@@ -539,6 +642,7 @@ public final class AddUserActivity extends AppActivity implements StatusAction, 
             }
         });
     }
+
 
     @Override
     public StatusLayout getStatusLayout() {
