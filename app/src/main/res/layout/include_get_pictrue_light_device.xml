@@ -51,7 +51,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="摄像机"
+                android:text="影像"
                 android:textSize="@dimen/sp_13" />
 
             <TextView
@@ -210,7 +210,7 @@
 
             </LinearLayout>
 
-            <!--摄像机参数-->
+            <!--影像-参数-->
             <LinearLayout
                 android:id="@+id/linear_device_part"
                 android:layout_width="match_parent"

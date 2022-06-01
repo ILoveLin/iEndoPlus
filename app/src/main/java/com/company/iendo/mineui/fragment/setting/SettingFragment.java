@@ -250,16 +250,26 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
      * 修改自己的密码
      */
     private void showChangePasswordDialog() {
-        new Input2Dialog.Builder(getActivity())
-                .setTitle("修改密码")
+        Input2Dialog.Builder builder = new Input2Dialog.Builder(getActivity());
+        builder.setTitle("修改密码")
                 .setHint("请输入原密码")
                 .set2Hint("请输入新密码")
+                .set3Hint("请输入新密码")
                 .setCancel("取消")
                 .setConfirm("确定")
                 .setListener(new Input2Dialog.OnListener() {
                     @Override
-                    public void onConfirm(BaseDialog dialog, String password, String newPassword) {
-                        sendChangeMineRequest(MD5ChangeUtil.Md5_32(password), MD5ChangeUtil.Md5_32(newPassword));
+                    public void onConfirm(BaseDialog dialog, String password, String newPassword, String newPassword2) {
+                        if (newPassword.equals(newPassword2)) {
+                            sendChangeMineRequest(MD5ChangeUtil.Md5_32(password), MD5ChangeUtil.Md5_32(newPassword));
+                            builder.dismiss();
+
+                        } else {
+                            toast("输入的新密码,两次不相等,请核对");
+
+                        }
+
+
                     }
 
                     @Override

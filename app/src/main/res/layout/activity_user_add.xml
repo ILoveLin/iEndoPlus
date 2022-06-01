@@ -142,7 +142,7 @@
                             tools:ignore="DuplicateIds" />
 
                         <ImageView
-                            android:id="@+id/user_iv_relo_type"
+                            android:id=" @+id/user_iv_relo_type"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
@@ -171,12 +171,13 @@
                             android:layout_marginLeft="@dimen/dp_10"
                             android:layout_marginRight="@dimen/dp_10"
                             android:background="@drawable/shape_cme_login"
-                            android:digits="0123456789abcdefghigklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ@."
+                            android:focusable="true"
                             android:maxLength="20"
                             android:maxLines="1"
                             android:textColor="@color/black"
-                            android:textColorHint="@color/color_999999"
-                            tools:ignore="DuplicateIds" />
+                            android:textColorHint="@color/color_999999" />
+                        <!--                        tools:ignore="DuplicateIds"-->
+                        <!--                        android:digits="0123456789abcdefghigklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ@."-->
 
 
                     </LinearLayout>
@@ -212,7 +213,6 @@
                             android:id="@+id/radio_btn_add_open"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:checked="true"
                             android:text="激活"
                             android:textSize="@dimen/sp_12" />
 

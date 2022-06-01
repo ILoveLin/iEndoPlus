@@ -370,7 +370,7 @@
                 </RelativeLayout>
 
 
-                <!--TAB 选择布局 光源和摄像机-->
+                <!--TAB 选择布局 光源和影像-->
                 <include layout="@layout/include_get_pictrue_light_device" />
 
             </LinearLayout>

@@ -32,6 +32,7 @@ public final class Input2Dialog {
         private OnListener mListener;
         private final RegexEditText mInputView;
         private final RegexEditText mInput2View;
+        private final RegexEditText mInput3View;
 
         public Builder(Context context) {
             super(context);
@@ -39,8 +40,10 @@ public final class Input2Dialog {
 
             mInputView = findViewById(R.id.tv_input_message);
             mInput2View = findViewById(R.id.tv_input_message2);
+            mInput3View = findViewById(R.id.tv_input_message3);
             mInputView.setOnEditorActionListener(this);
             mInput2View.setOnEditorActionListener(this);
+            mInput3View.setOnEditorActionListener(this);
 
             addOnShowListener(this);
         }
@@ -56,6 +59,11 @@ public final class Input2Dialog {
 
         public Builder set2Hint(CharSequence text) {
             mInput2View.setHint(text);
+            return this;
+        }
+
+        public Builder set3Hint(CharSequence text) {
+            mInput3View.setHint(text);
             return this;
         }
 
@@ -122,13 +130,14 @@ public final class Input2Dialog {
         public void onClick(View view) {
             int viewId = view.getId();
             if (viewId == R.id.tv_ui_confirm) {
-                autoDismiss();
                 if (mListener == null) {
                     return;
                 }
                 Editable editable = mInputView.getText();
                 Editable editable2 = mInput2View.getText();
-                mListener.onConfirm(getDialog(), editable != null ? editable.toString() : "", editable2 != null ? editable2.toString() : "");
+                Editable editable3 = mInput3View.getText();
+                mListener.onConfirm(getDialog(), editable != null ? editable.toString() : "",
+                        editable2 != null ? editable2.toString() : "", editable3 != null ? editable3.toString() : "");
             } else if (viewId == R.id.tv_ui_cancel) {
                 autoDismiss();
                 if (mListener == null) {
@@ -157,7 +166,7 @@ public final class Input2Dialog {
         /**
          * 点击确定时回调
          */
-        void onConfirm(BaseDialog dialog, String content, String content2);
+        void onConfirm(BaseDialog dialog, String content, String content2, String content3);
 
         /**
          * 点击取消时回调

@@ -26,6 +26,7 @@ import com.company.iendo.ui.dialog.ModifyDeviceDialog;
 import com.company.iendo.ui.dialog.SelectDialog;
 import com.company.iendo.ui.dialog.SelectModifyTypeDialog;
 import com.company.iendo.ui.popup.ListSearchPopup;
+import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.SharePreferenceUtil;
 import com.company.iendo.widget.StatusLayout;
 import com.hjq.base.BaseAdapter;
@@ -73,6 +74,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
     private TextView tvLeft;
     private ImageView rightAdd;
     private TextView statusBarView;
+    private static final String TAG = "设备列表界面===";
 
     @Override
     protected int getLayoutId() {
@@ -900,7 +902,6 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                     SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_Type_Num, mDBBean.getType_num());
                     mMMKVInstace.encode(Constants.KEY_Device_Type_Num, mDBBean.getType_num());
                     break;
-
             }
             mMMKVInstace.encode(Constants.KEY_Device_SocketPort, mDBBean.getSocketPort());
             mMMKVInstace.encode(Constants.KEY_DeviceCode, mDBBean.getDeviceCode());
@@ -918,8 +919,9 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
             String o = (String) SharePreferenceUtil.get(DeviceActivity.this, SharePreferenceUtil.Current_DeviceID, "");
 
             mMMKVInstace.encode(Constants.KEY_Device_Ip, mDBBean.getIp());
+            LogUtils.e(TAG + "轮询中:------>接收,上位机数据");
 
-
+            LogUtils.e(TAG+"当前选中的设备数据-->"+mDBBean.toString());
             SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_Type_Msg, mDBBean.getMsg());
             SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_IP, mDBBean.getIp());
             SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_HttpPort, mDBBean.getHttpPort());

@@ -32,7 +32,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="智能搜索"
+            android:text="发现设备"
             android:textColor="@color/black" />
 
         <ImageView

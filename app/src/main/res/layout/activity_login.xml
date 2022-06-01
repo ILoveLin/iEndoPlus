@@ -70,7 +70,7 @@
                 android:id="@+id/iv_login_logo"
                 android:layout_width="@dimen/dp_50"
                 android:layout_height="@dimen/dp_75"
-                android:src="@mipmap/icon_yitiji" />
+                android:src="@mipmap/icon_bg_default" />
         </LinearLayout>
 
 

@@ -72,6 +72,7 @@
                         android:background="@drawable/shape_cme_login"
                         android:drawablePadding="@dimen/dp_10"
                         android:inputType="text"
+                        android:focusable="false"
                         android:singleLine="true"
                         android:textColor="@color/black"
                         android:textColorHint="@color/color_999999"
@@ -107,13 +108,13 @@
                         android:layout_marginLeft="@dimen/dp_10"
                         android:layout_marginRight="@dimen/dp_10"
                         android:background="@drawable/shape_cme_login"
-                        android:digits="0123456789abcdefghigklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ@."
                         android:maxLength="20"
                         android:maxLines="1"
                         android:textColor="@color/black"
                         android:textColorHint="@color/color_999999"
-                        tools:ignore="DuplicateIds" />
-
+                        />
+<!--                    tools:ignore="DuplicateIds"-->
+<!--                    android:digits="0123456789abcdefghigklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ@."-->
 
                 </LinearLayout>
 

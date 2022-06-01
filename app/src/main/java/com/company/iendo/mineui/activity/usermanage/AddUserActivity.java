@@ -399,10 +399,6 @@ public final class AddUserActivity extends AppActivity implements StatusAction, 
             toast("角色不能为空");
             showComplete();
             return;
-        } else if ("".equals(Des)) {
-            toast("描述不能为空");
-            showComplete();
-            return;
         } else {
             //必选参数
             mParamsMap.put("UserID", UserID);

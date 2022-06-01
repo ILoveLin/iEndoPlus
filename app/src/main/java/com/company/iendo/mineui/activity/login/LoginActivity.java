@@ -36,6 +36,7 @@ import com.company.iendo.bean.LoginBean;
 import com.company.iendo.bean.RefreshEvent;
 import com.company.iendo.bean.UserListBean;
 import com.company.iendo.bean.UserReloBean;
+import com.company.iendo.green.db.DeviceDBUtils;
 import com.company.iendo.green.db.UserDBBean;
 import com.company.iendo.green.db.UserDBUtils;
 import com.company.iendo.manager.InputTextManager;
@@ -358,6 +359,12 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
      */
 
     private void sendRequest(String mBaseUrl) {
+
+        List queryBeanBySelected = DeviceDBUtils.getQueryBeanBySelected(LoginActivity.this, true);
+
+        if (queryBeanBySelected.size()==0){
+            return;
+        }
         showLoading(getString(R.string.common_loading_user_list));
         String mUrl = (String) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Current_BaseUrl, "http://192.168.1.200:3000");
         OkHttpUtils.get()
@@ -980,8 +987,7 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onRefreshEvent(RefreshEvent event) {
-        String mType = setDeviceTitleLogo();
-
+        setDeviceTitleLogo();
     }
 
     /**
@@ -989,36 +995,40 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
      *
      * @return
      */
-    private String setDeviceTitleLogo() {
-        String mType = (String) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Current_Type, "耳鼻喉治疗台");
+    private void setDeviceTitleLogo() {
+        List queryBeanBySelected = DeviceDBUtils.getQueryBeanBySelected(LoginActivity.this, true);
         String mCurrentTypeMsg = (String) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Current_Type_Msg, "1号内镜室");
         String mCurrentTypeDes = (String) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Current_Type, "妇科治疗台");
+        String mCurrentDeviceName = (String) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Current_DeviceName, "ENT");
 
-        //设备类型
-        if (mDeviceType != null) {
-            mDeviceType.setText("" + mType);
+        if (0 == queryBeanBySelected.size()) {//数据库设备列表中,没有选中的设备,此时背景色被空
+            mDeviceType.setText("");
+            mDeviceTitle.setText("");
+            mLogoView.setImageResource(R.drawable.icon_bg_default);
         } else {
-            mDeviceType.setText("未选择设备!");
+            //设备类型
+            mDeviceType.setText("" + mCurrentDeviceName);
+            //设备描述
+            mDeviceTitle.setText(mCurrentTypeMsg + "");
+
+            //设备背景图
+            switch (mCurrentTypeDes) {
+                case Constants.Type_V1_YiTiJi:
+                    mLogoView.setImageResource(R.drawable.icon_yitiji);
+                    break;
+                case Constants.Type_EarNoseTable:
+                    mLogoView.setImageResource(R.drawable.icon_erbihou);
+                    break;
+                case Constants.Type_FuKeTable:
+                    mLogoView.setImageResource(R.drawable.icon_erbihou);
+                case Constants.Type_MiNiaoTable:
+                    mLogoView.setImageResource(R.drawable.icon_erbihou);
+                    break;
+            }
 
         }
-        //设备描述
-        mDeviceTitle.setText(mCurrentTypeMsg + "");
-        //设备背景图
-        switch (mCurrentTypeDes) {
-            case Constants.Type_V1_YiTiJi:
-                mLogoView.setImageResource(R.drawable.icon_yitiji);
-                break;
-            case Constants.Type_EarNoseTable:
-                mLogoView.setImageResource(R.drawable.icon_erbihou);
-                break;
-            case Constants.Type_FuKeTable:
-                mLogoView.setImageResource(R.drawable.icon_erbihou);
-            case Constants.Type_MiNiaoTable:
-                mLogoView.setImageResource(R.drawable.icon_erbihou);
-                break;
-        }
-        return mType;
     }
+
 
     /**
      * {@link TextView.OnEditorActionListener}

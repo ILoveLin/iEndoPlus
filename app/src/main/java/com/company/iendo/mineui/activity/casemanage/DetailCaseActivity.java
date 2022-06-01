@@ -714,11 +714,9 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
                             toast("当前账号无权限修改病历");
                         }
                     }
-
                     break;
                 case R.id.linear_delete://删除
                     mOnEditStatusListener.onDelete();
-
                     break;
                 case R.id.linear_down://下载图片和病例
                     mOnEditStatusListener.onDown(true, true);

@@ -225,6 +225,8 @@ public class CalculateUtils {
      * 2,在判断接收方是android 并且发送的data 的设备id必须和我本机android设备id相同
      * 3,再次检验验算发送过来string的检验值,正确才回调数据
      *
+     *
+     * @param currentCMD  当前是什么命令
      * @param string 全部hexstring 数据DetailFragment$22
      * @return true 是发给我的  false 不是发给我的
      */
@@ -245,16 +247,31 @@ public class CalculateUtils {
             //获取发送给什么设备的id
             String substring = string.substring(50, 82);
             String sendType = string.substring(7, 9);
+
+
+            LogUtils.e(TAG + "sendType=="+sendType);
             //android发送给android的 直接过滤
             if (("A1".equals(sendType))) {
+                LogUtils.e(TAG + "sendType=="+sendType);
+
+                LogUtils.e(TAG + "直接过滤:返回false-->android发送给android");
+
                 return false;
             }
             //获取接收的设备id 必须本机的设备id相同,返回false
+
             if (!(currentDeviceID.equals(substring))) {
+                LogUtils.e(TAG + "currentDeviceID=="+currentDeviceID);
+                LogUtils.e(TAG + "substring=="+substring);
+                LogUtils.e(TAG + "直接过滤:返回false-->接收的设备id 必须本机的设备id相同");
                 return false;
             }
             //接收方不是android-A1 返回false
             if (!("A1".equals(str))) {
+                LogUtils.e(TAG + "str=="+str);
+
+                LogUtils.e(TAG + "直接过滤:返回false-->接收方不是android");
+
                 return false;
 
             }

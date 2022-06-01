@@ -6,6 +6,7 @@ import com.company.iendo.utils.db.DBManager;
 
 import org.greenrobot.greendao.query.Query;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -62,7 +63,20 @@ public class DeviceDBUtils {
     }
 
     //条件查询
-    //精确查询  获取到bean
+    //精确查询  获取到bean  授权接入是否存入DB的标识
+    public static List getQueryBeanBySelected(Context context, Boolean mSelected) {
+        DeviceDBBeanDao deviceDBBeanDao = DBManager.getDaoSession(context).getDeviceDBBeanDao();
+        List<DeviceDBBean> list = deviceDBBeanDao.queryBuilder().where(DeviceDBBeanDao.Properties.MSelected.eq(mSelected)).list();
+        if (null == list) {
+            return null;
+        } else {
+            return list;
+        }
+
+    }
+
+    //条件查询
+    //精确查询  获取到bean  授权接入是否存入DB的标识
     public static DeviceDBBean getQueryBeanByAcceptAndInsertDB(Context context, String acceptAndInsertDB) {
         DeviceDBBeanDao deviceDBBeanDao = DBManager.getDaoSession(context).getDeviceDBBeanDao();
         List<DeviceDBBean> list = deviceDBBeanDao.queryBuilder().where(DeviceDBBeanDao.Properties.AcceptAndInsertDB.eq(acceptAndInsertDB)).list();
