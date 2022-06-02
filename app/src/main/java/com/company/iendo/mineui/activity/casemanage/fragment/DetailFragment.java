@@ -35,6 +35,8 @@ import com.company.iendo.green.db.UserDBBean;
 import com.company.iendo.green.db.UserDBUtils;
 import com.company.iendo.green.db.downcase.CaseDBBean;
 import com.company.iendo.green.db.downcase.CaseImageListBean;
+import com.company.iendo.green.db.downcase.CaseVideoListBean;
+import com.company.iendo.green.db.downcase.DownloadedNameListBean;
 import com.company.iendo.manager.ActivityManager;
 import com.company.iendo.mineui.activity.MainActivity;
 import com.company.iendo.mineui.activity.casemanage.AddCaseActivity;
@@ -597,10 +599,10 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         //存在,更新
         if (FileExists) {
             int length = toLocalFile.listFiles().length;  //本地下载的图片数量
-            if (null != mPathMap ) {
+            if (null != mPathMap) {
                 int size = mPathMap.keySet().size();  //当前上位机该病例图片数量
                 //下载的图片数量和请求的图片数量不一样
-                if (length == size || length <= size ) {
+                if (length == size || length <= size) {
                     new MessageDialog.Builder(getActivity())
                             .setTitle("提示")
                             .setMessage("该病历已经下载,是否需要更新?")
@@ -875,6 +877,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
      * 创建一个CaseDBBean,直接存信息和图片信息即可
      */
     private void downLocalCaseUserData(File toLocalFile) {
+        mLoginUserName = mMMKVInstace.decodeString(Constants.KEY_CurrentLoginUserName);
         if (getActivity() == null) {
             LogUtils.e("下载图片的时候(downLocalCaseUserData),getActivity()====null");
             mMMKVInstace.encode(Constants.KEY_Picture_Downing, false);
@@ -941,6 +944,14 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 //                caseDBBean.setVideoList(VideoList);
 //            }
 
+            //不管存在不存在,都需要校验和存储被下载着名单列表,当前情况是病例不存在,所以创建list集合
+            ArrayList<DownloadedNameListBean> mNameList = new ArrayList<DownloadedNameListBean>();
+            DownloadedNameListBean nameBean = new DownloadedNameListBean();
+            nameBean.setDownloadedByName(mLoginUserName);
+            mNameList.add(nameBean);
+            caseDBBean.setDownloadedNameList(mNameList);
+
+
             caseDBBean.setBiopsy(mDataBean.getBiopsy() + "");    //活检
             caseDBBean.setPathology(mDataBean.getPathology() + "");    //病理学
             caseDBBean.setFeeType(mDataBean.getFeeType() + "");    //收费类型
@@ -951,7 +962,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
             caseDBBean.setUserName(mDataBean.getUserName() + "");    // 操作员用户名
             caseDBBean.setRecord_date(mDataBean.getRecord_date() + "");    // 创建时间
             caseDBBean.setImagesCount(mDataBean.getImageCount() + "");    // 图片数量
-//        caseDBBean.setVideosCount(mDataBean.getVid() + "");    // 视频数量
+//          caseDBBean.setVideosCount(mDataBean.getVid() + "");    // 视频数量
             caseDBBean.setSubmitDoctor(mDataBean.getSubmitDoctor() + "");    //送检医生
             caseDBBean.setRace(mDataBean.getRace() + "");    // 民族种族
             caseDBBean.setRecordType(mDataBean.getRecordType() + "");    // 病例类型
@@ -994,10 +1005,12 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
             CaseDBUtils.insertOrReplaceInTx(getActivity(), caseDBBean);
 
         } else {
-            //存在就更新
-            CaseDBBean currentBean = myList.get(0);
+            /**
+             * 存在就更新
+             */
+            CaseDBBean currentDBBean = myList.get(0);
             //设置id,就是执行update的操作
-            caseDBBean.setId(currentBean.getId());
+            caseDBBean.setId(currentDBBean.getId());
             //设置是否下载过的标识 ==上位机返回的ID
             caseDBBean.setOthers(mDataBean.getID() + "");
             caseDBBean.setDeviceCaseID(mDeviceCode + "");  //用户表和设备表进行绑定, //用户表和设备表进行绑定, //用户表和设备表进行绑定
@@ -1005,11 +1018,11 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
             caseDBBean.setNativePlace(mDataBean.getAddress() + "");    //籍贯
             caseDBBean.setFee(mDataBean.getFee() + "");    //收费
             caseDBBean.setChiefComplaint(mDataBean.getChiefComplaint() + "");  //主诉
-            //图片路径集合--文件夹（设备ID_病例ID）
-//      /storage/emulated/0/MyDownImages/2_3/004.jpg
-//      LogUtils.e("下载图片==更新相册图片==" + toLocalFile.getAbsolutePath() + "/" + pictureName);       本地存的路径
-//     toLocalFile.getAbsolutePath()==/storage/emulated/0/MyDownImages/0000000000000000546017FE6BC28949_1154
-//     pictureName==001.jpg
+            //        图片路径集合--文件夹（设备ID_病例ID）
+            //      /storage/emulated/0/MyDownImages/2_3/004.jpg
+            //      LogUtils.e("下载图片==更新相册图片==" + toLocalFile.getAbsolutePath() + "/" + pictureName);       本地存的路径
+            //     toLocalFile.getAbsolutePath()==/storage/emulated/0/MyDownImages/0000000000000000546017FE6BC28949_1154
+            //     pictureName==001.jpg
             ArrayList<CaseImageListBean> caseImageList = new ArrayList<CaseImageListBean>();
             if (null != mPathMap && !mPathMap.isEmpty()) {
                 for (String key : mPathMap.keySet()) {
@@ -1023,6 +1036,26 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                 }
                 caseDBBean.setImageList(caseImageList);    //图片路径集合--文件夹（设备ID-病例ID）
             }
+
+
+            //不管存在不存在,都需要校验和存储被下载着名单列表
+            //当前情况是病例被下载过,所以需要校验被下载着名单,是否有当前登入用户,有就不操作,没有就存入,下载者名单列表中
+            List<DownloadedNameListBean> mDownloadNameList = currentDBBean.getDownloadedNameList();
+            DownloadedNameListBean  tagBean = new DownloadedNameListBean();
+            tagBean.setDownloadedByName(mLoginUserName);
+            if (mDownloadNameList.size()!=0){
+                //下载者名单中没有包含了,此用户
+                boolean contains = mDownloadNameList.contains(tagBean);
+                if (!contains){
+                   DownloadedNameListBean nameBean = new DownloadedNameListBean();
+                   nameBean.setDownloadedByName(mLoginUserName);
+                   mDownloadNameList.add(nameBean);
+                   caseDBBean.setDownloadedNameList(mDownloadNameList);
+               }else {
+                    caseDBBean.setDownloadedNameList(mDownloadNameList);
+                }
+            }
+
 
             caseDBBean.setBiopsy(mDataBean.getBiopsy() + "");    //活检
             caseDBBean.setPathology(mDataBean.getPathology() + "");    //病理学

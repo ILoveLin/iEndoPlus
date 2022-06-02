@@ -39,7 +39,7 @@ public class UserDBBean {
 
     //备用01字段--->是否被下载过  true 表示下载过, false 表示没有被下载(在线登入的时候在记住密码的时候会存入false)
     private String make01;
-    //备用02字段
+    //备用02字段--->离线登录的时候,是否通过点击列表选中的状态,整个列表仅有一个true  其他的都为false,初始化状态,默认第一个用户true
     private String make02;
     private Boolean isRememberPassword;
 

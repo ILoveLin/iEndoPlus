@@ -4,7 +4,6 @@ import org.greenrobot.greendao.annotation.Convert;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
 
-import java.io.Serializable;
 import java.util.List;
 
 import org.greenrobot.greendao.annotation.Generated;
@@ -40,9 +39,16 @@ public class CaseDBBean  {
     //图片路径集合--文件夹（设备ID-病例ID）
     @Convert(columnType = String.class, converter = CaseImageConverter.class)
     private List<CaseImageListBean> ImageList;
+    //视频路径集合--文件夹（设备ID-病例ID）,已作废,不使用了,视频下载使用DownVideoMessage这个Bean来操作
     @Convert(columnType = String.class, converter = CaseVideoConverter.class)
-    //视频路径集合--文件夹（设备ID-病例ID）
     private List<CaseVideoListBean> VideoList;
+    /**
+     * 离线模式下,每个用户只能查看到自己下载的病例信息
+     * list记录每个下载者的名字,绑定被下载着,的名字
+     */
+    @Convert(columnType = String.class, converter = DownloadedConverter.class)
+    private List<DownloadedNameListBean> DownloadedNameList;
+
     //活检
     private String Biopsy;
     //病理学
@@ -136,22 +142,22 @@ public class CaseDBBean  {
     // 其他01
     private String Others01;
 
-    @Generated(hash = 688807308)
+    @Generated(hash = 1976384325)
     public CaseDBBean(Long id, String deviceCaseID, String Did, String Occupatior,
-                      String NativePlace, String Fee, String ChiefComplaint,
-                      List<CaseImageListBean> ImageList, List<CaseVideoListBean> VideoList,
-                      String Biopsy, String Pathology, String FeeType, String MedHistory,
-                      String LastCheckUserID, String AgeUnit, String Advice, String UserName,
-                      String record_date, String imagesCount, String videosCount,
-                      String SubmitDoctor, String Race, String RecordType, String update_time,
-                      String PatientAge, String CardID, String Tel, String check_date,
-                      String PatientNo, String InpatientID, String BedID, String CheckContent,
-                      String ReturnVisit, String CaseNo, String Ctology, String DOB,
-                      String ExaminingPhysician, String CheckDiagnosis, String Sex,
-                      String EndoType, String Device, String IsInHospital, String Married,
-                      String FamilyHistory, String Test, String ClinicalDiagnosis,
-                      String Department, String WardID, String CaseID, String Name,
-                      String Address, String InsuranceID, String Others, String Others01) {
+            String NativePlace, String Fee, String ChiefComplaint,
+            List<CaseImageListBean> ImageList, List<CaseVideoListBean> VideoList,
+            List<DownloadedNameListBean> DownloadedNameList, String Biopsy, String Pathology,
+            String FeeType, String MedHistory, String LastCheckUserID, String AgeUnit,
+            String Advice, String UserName, String record_date, String imagesCount,
+            String videosCount, String SubmitDoctor, String Race, String RecordType,
+            String update_time, String PatientAge, String CardID, String Tel,
+            String check_date, String PatientNo, String InpatientID, String BedID,
+            String CheckContent, String ReturnVisit, String CaseNo, String Ctology,
+            String DOB, String ExaminingPhysician, String CheckDiagnosis, String Sex,
+            String EndoType, String Device, String IsInHospital, String Married,
+            String FamilyHistory, String Test, String ClinicalDiagnosis, String Department,
+            String WardID, String CaseID, String Name, String Address, String InsuranceID,
+            String Others, String Others01) {
         this.id = id;
         this.deviceCaseID = deviceCaseID;
         this.Did = Did;
@@ -161,6 +167,7 @@ public class CaseDBBean  {
         this.ChiefComplaint = ChiefComplaint;
         this.ImageList = ImageList;
         this.VideoList = VideoList;
+        this.DownloadedNameList = DownloadedNameList;
         this.Biopsy = Biopsy;
         this.Pathology = Pathology;
         this.FeeType = FeeType;
@@ -702,5 +709,13 @@ public class CaseDBBean  {
                 ", Others='" + Others + '\'' +
                 ", Others01='" + Others01 + '\'' +
                 '}';
+    }
+
+    public List<DownloadedNameListBean> getDownloadedNameList() {
+        return this.DownloadedNameList;
+    }
+
+    public void setDownloadedNameList(List<DownloadedNameListBean> DownloadedNameList) {
+        this.DownloadedNameList = DownloadedNameList;
     }
 }

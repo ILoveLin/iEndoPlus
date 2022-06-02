@@ -90,7 +90,7 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
                     //模拟获取到点对点数据回传
                     break;
                 case UDP_Point_Over:     //点对点授权结束
-                    toast("存入数据库,并且刷新设备搜索界面");
+//                    toast("存入数据库,并且刷新设备搜索界面");
                     getDataInsertDB();
                     break;
                 case UDP_Anim:

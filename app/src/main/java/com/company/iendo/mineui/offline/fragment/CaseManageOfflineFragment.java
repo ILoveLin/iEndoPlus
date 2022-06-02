@@ -13,16 +13,20 @@ import com.company.iendo.bean.event.RefreshOfflineCaseListEvent;
 import com.company.iendo.bean.event.SocketRefreshEvent;
 import com.company.iendo.green.db.CaseDBUtils;
 import com.company.iendo.green.db.downcase.CaseDBBean;
+import com.company.iendo.green.db.downcase.DownloadedNameListBean;
 import com.company.iendo.mineui.activity.MainActivity;
 import com.company.iendo.mineui.activity.casemanage.DetailCaseActivity;
 import com.company.iendo.mineui.offline.activity.DetailCaseOfflineActivity;
 import com.company.iendo.mineui.offline.entitydb.GroupEntity;
+import com.company.iendo.other.Constants;
+import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.SharePreferenceUtil;
 import com.company.iendo.widget.StatusLayout;
 import com.donkingliang.groupedadapter.adapter.GroupedRecyclerViewAdapter;
 import com.donkingliang.groupedadapter.holder.BaseViewHolder;
 import com.donkingliang.groupedadapter.layoutmanger.GroupedGridLayoutManager;
 import com.donkingliang.groupedadapter.widget.StickyHeaderLayout;
+import com.tencent.mmkv.MMKV;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -70,7 +74,6 @@ public class CaseManageOfflineFragment extends TitleBarFragment<MainActivity> im
         mStickyLayout = (StickyHeaderLayout) findViewById(R.id.sticky_layout);
 
         getAdapterData();
-
         mAdapter = new CaseOfflineAdapter(getActivity(), mGroupList);
         mAdapter.setOnHeaderClickListener(new GroupedRecyclerViewAdapter.OnHeaderClickListener() {
             @Override
@@ -108,15 +111,42 @@ public class CaseManageOfflineFragment extends TitleBarFragment<MainActivity> im
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void getAdapterData() {
+        //获取当前登录者名字
+        MMKV mMMKVInstace = MMKV.defaultMMKV();
+        mLoginUserName = mMMKVInstace.decodeString(Constants.KEY_CurrentLoginUserName);
+        //创建当前登入用户的标识bean
+        DownloadedNameListBean  tagBean = new DownloadedNameListBean();
+        tagBean.setDownloadedByName(mLoginUserName);
+        LogUtils.e("离线列表===tagBean.toString()=="+tagBean.toString());
+
+
         mGroupList = new ArrayList<>();
         //查询当前设备码的下载过的病例
         mCurrentReceiveDeviceCode = (String) SharePreferenceUtil.get(getAttachActivity(), SharePreferenceUtil.Current_DeviceCode, "00000000000000000000000000000000");
         List<CaseDBBean> mDBList = CaseDBUtils.getQueryBeanByCode(getActivity(), mCurrentReceiveDeviceCode);
         ArrayList<String> stringsList = new ArrayList<>();
 
-
+        /**
+         * 获取当前登入用户下,下载过的病例集合
+         */
+        ArrayList<CaseDBBean> mCurrentLoginData = new ArrayList<>();
         for (int i = 0; i < mDBList.size(); i++) {
-            String check_date = mDBList.get(i).getCheck_date();
+            CaseDBBean caseDBBean = mDBList.get(i);
+            //获取当前这个病例下载者名单列表
+            List<DownloadedNameListBean> downloadedNameList = caseDBBean.getDownloadedNameList();
+            for (int i1 = 0; i1 < downloadedNameList.size(); i1++) {
+                String downloadedByName = downloadedNameList.get(i1).getDownloadedByName();
+                String downloadedByName1 = downloadedNameList.get(i1).getDownloadedByName();
+
+            }
+            //包含,就存入
+            if (downloadedNameList.contains(tagBean)) {
+                mCurrentLoginData.add(caseDBBean);
+            }
+        }
+
+        for (int i = 0; i < mCurrentLoginData.size(); i++) {
+            String check_date = mCurrentLoginData.get(i).getCheck_date();
             stringsList.add(check_date);
 
         }
@@ -132,12 +162,26 @@ public class CaseManageOfflineFragment extends TitleBarFragment<MainActivity> im
 //                //获取到时间的正确值 2022-03-23
             String tag = result.get(i);
             List<CaseDBBean> dataList = CaseDBUtils.getQueryBeanByTow(getActivity(), mCurrentReceiveDeviceCode, tag);
-            GroupEntity groupEntity1 = new GroupEntity(tag, "", (ArrayList<CaseDBBean>) dataList);
+            int size = dataList.size();
+
+            /**
+             * 获取当前登入用户下,下载过的病例集合
+             */
+            ArrayList<CaseDBBean> mToEntityList = new ArrayList<>();
+            for (int i1 = 0; i1 < dataList.size(); i1++) {
+                CaseDBBean caseDBBean = dataList.get(i1);
+                List<DownloadedNameListBean> downloadedNameList = caseDBBean.getDownloadedNameList();
+
+                //包含,就存入
+                if (downloadedNameList.contains(tagBean)) {
+                    mToEntityList.add(caseDBBean);
+                }
+            }
+
+            GroupEntity groupEntity1 = new GroupEntity(tag, "", (ArrayList<CaseDBBean>) mToEntityList);
             mGroupList.add(groupEntity1);
             keyList.add(tag);
-            mListHashMap.put(tag, (ArrayList<CaseDBBean>) dataList);
-
-
+            mListHashMap.put(tag, (ArrayList<CaseDBBean>) mToEntityList);
         }
 
 
@@ -169,6 +213,9 @@ public class CaseManageOfflineFragment extends TitleBarFragment<MainActivity> im
     @Override
     public void onDestroy() {
         super.onDestroy();
+        mListHashMap.clear();
+        keyList.clear();
+        mGroupList.clear();
         EventBus.getDefault().unregister(this);
 
     }

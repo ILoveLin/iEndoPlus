@@ -522,8 +522,7 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
         //查询当前设备是否下载过病例
         List<UserDBBean> userList = UserDBUtils.getQueryBeanByCode(getActivity(), mCurrentReceiveDeviceCode);
 
-        //动态清零用户列表
-//        mUserOflineListData.clear();
+
         if (null != userList && userList.size() > 0) {
             for (int i = 0; i < userList.size(); i++) {
                 UserDBBean bean = userList.get(i);
@@ -591,7 +590,6 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                     LoginByOnline();
                 } else if (text.equals("离线登录")) {//离线登录
                     SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.OnLine_Flag, false);
-                    setOfflineFirstName();
                     LoginByOffline();
                 }
 
@@ -801,12 +799,14 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
     private void LoginByOffline() {
         // 隐藏软键盘
         hideKeyboard(getCurrentFocus());
-        setOfflineHistoryData();
+//        setOfflineHistoryData();
 
         String username = mPhoneView.getText().toString();
         String password = mPasswordView.getText().toString();
-
-        List<UserDBBean> userList = UserDBUtils.getQueryBeanByUserName(getActivity(), username);
+        /**
+         * 查询当前设备下,当前用户名的用户表,校验密码
+         */
+        List<UserDBBean> userList = UserDBUtils.getQueryBeanByTow(getActivity(), mCurrentReceiveDeviceCode,username);
         if (null != userList && userList.size() > 0) {
             UserDBBean bean = userList.get(0);
             String password1 = bean.getPassword();
@@ -814,7 +814,6 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                 SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Current_Login_Role, bean.getRelo() + "");
 //                SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Current_Login_UserName, username);
                 mMMKVInstace.encode(Constants.KEY_CurrentLoginUserName, mPhoneView.getText().toString());
-
                 SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Current_Login_Password, password);
                 SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.Flag_UserDBSave, true);
                 SharePreferenceUtil.put(LoginActivity.this, Constants.Is_Logined, true);
@@ -866,7 +865,9 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                         } else if (value.equals("离线登录")) {//离线登录
                             mLoginType.setText("离线登录");
                             SharePreferenceUtil.put(LoginActivity.this, SharePreferenceUtil.OnLine_Flag, false);
-                            setOfflineHistoryData();
+//                            setOfflineHistoryData();
+                            setOfflineFirstName();
+
                         }
                     }
                 }).show();

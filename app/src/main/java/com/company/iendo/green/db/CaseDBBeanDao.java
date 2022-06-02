@@ -11,6 +11,7 @@ import org.greenrobot.greendao.database.DatabaseStatement;
 
 import com.company.iendo.green.db.downcase.CaseImageConverter;
 import com.company.iendo.green.db.downcase.CaseVideoConverter;
+import com.company.iendo.green.db.downcase.DownloadedConverter;
 import java.util.List;
 
 import com.company.iendo.green.db.downcase.CaseDBBean;
@@ -37,55 +38,57 @@ public class CaseDBBeanDao extends AbstractDao<CaseDBBean, Long> {
         public final static Property ChiefComplaint = new Property(6, String.class, "ChiefComplaint", false, "CHIEF_COMPLAINT");
         public final static Property ImageList = new Property(7, String.class, "ImageList", false, "IMAGE_LIST");
         public final static Property VideoList = new Property(8, String.class, "VideoList", false, "VIDEO_LIST");
-        public final static Property Biopsy = new Property(9, String.class, "Biopsy", false, "BIOPSY");
-        public final static Property Pathology = new Property(10, String.class, "Pathology", false, "PATHOLOGY");
-        public final static Property FeeType = new Property(11, String.class, "FeeType", false, "FEE_TYPE");
-        public final static Property MedHistory = new Property(12, String.class, "MedHistory", false, "MED_HISTORY");
-        public final static Property LastCheckUserID = new Property(13, String.class, "LastCheckUserID", false, "LAST_CHECK_USER_ID");
-        public final static Property AgeUnit = new Property(14, String.class, "AgeUnit", false, "AGE_UNIT");
-        public final static Property Advice = new Property(15, String.class, "Advice", false, "ADVICE");
-        public final static Property UserName = new Property(16, String.class, "UserName", false, "USER_NAME");
-        public final static Property Record_date = new Property(17, String.class, "record_date", false, "RECORD_DATE");
-        public final static Property ImagesCount = new Property(18, String.class, "imagesCount", false, "IMAGES_COUNT");
-        public final static Property VideosCount = new Property(19, String.class, "videosCount", false, "VIDEOS_COUNT");
-        public final static Property SubmitDoctor = new Property(20, String.class, "SubmitDoctor", false, "SUBMIT_DOCTOR");
-        public final static Property Race = new Property(21, String.class, "Race", false, "RACE");
-        public final static Property RecordType = new Property(22, String.class, "RecordType", false, "RECORD_TYPE");
-        public final static Property Update_time = new Property(23, String.class, "update_time", false, "UPDATE_TIME");
-        public final static Property PatientAge = new Property(24, String.class, "PatientAge", false, "PATIENT_AGE");
-        public final static Property CardID = new Property(25, String.class, "CardID", false, "CARD_ID");
-        public final static Property Tel = new Property(26, String.class, "Tel", false, "TEL");
-        public final static Property Check_date = new Property(27, String.class, "check_date", false, "CHECK_DATE");
-        public final static Property PatientNo = new Property(28, String.class, "PatientNo", false, "PATIENT_NO");
-        public final static Property InpatientID = new Property(29, String.class, "InpatientID", false, "INPATIENT_ID");
-        public final static Property BedID = new Property(30, String.class, "BedID", false, "BED_ID");
-        public final static Property CheckContent = new Property(31, String.class, "CheckContent", false, "CHECK_CONTENT");
-        public final static Property ReturnVisit = new Property(32, String.class, "ReturnVisit", false, "RETURN_VISIT");
-        public final static Property CaseNo = new Property(33, String.class, "CaseNo", false, "CASE_NO");
-        public final static Property Ctology = new Property(34, String.class, "Ctology", false, "CTOLOGY");
-        public final static Property DOB = new Property(35, String.class, "DOB", false, "DOB");
-        public final static Property ExaminingPhysician = new Property(36, String.class, "ExaminingPhysician", false, "EXAMINING_PHYSICIAN");
-        public final static Property CheckDiagnosis = new Property(37, String.class, "CheckDiagnosis", false, "CHECK_DIAGNOSIS");
-        public final static Property Sex = new Property(38, String.class, "Sex", false, "SEX");
-        public final static Property EndoType = new Property(39, String.class, "EndoType", false, "ENDO_TYPE");
-        public final static Property Device = new Property(40, String.class, "Device", false, "DEVICE");
-        public final static Property IsInHospital = new Property(41, String.class, "IsInHospital", false, "IS_IN_HOSPITAL");
-        public final static Property Married = new Property(42, String.class, "Married", false, "MARRIED");
-        public final static Property FamilyHistory = new Property(43, String.class, "FamilyHistory", false, "FAMILY_HISTORY");
-        public final static Property Test = new Property(44, String.class, "Test", false, "TEST");
-        public final static Property ClinicalDiagnosis = new Property(45, String.class, "ClinicalDiagnosis", false, "CLINICAL_DIAGNOSIS");
-        public final static Property Department = new Property(46, String.class, "Department", false, "DEPARTMENT");
-        public final static Property WardID = new Property(47, String.class, "WardID", false, "WARD_ID");
-        public final static Property CaseID = new Property(48, String.class, "CaseID", false, "CASE_ID");
-        public final static Property Name = new Property(49, String.class, "Name", false, "NAME");
-        public final static Property Address = new Property(50, String.class, "Address", false, "ADDRESS");
-        public final static Property InsuranceID = new Property(51, String.class, "InsuranceID", false, "INSURANCE_ID");
-        public final static Property Others = new Property(52, String.class, "Others", false, "OTHERS");
-        public final static Property Others01 = new Property(53, String.class, "Others01", false, "OTHERS01");
+        public final static Property DownloadedNameList = new Property(9, String.class, "DownloadedNameList", false, "DOWNLOADED_NAME_LIST");
+        public final static Property Biopsy = new Property(10, String.class, "Biopsy", false, "BIOPSY");
+        public final static Property Pathology = new Property(11, String.class, "Pathology", false, "PATHOLOGY");
+        public final static Property FeeType = new Property(12, String.class, "FeeType", false, "FEE_TYPE");
+        public final static Property MedHistory = new Property(13, String.class, "MedHistory", false, "MED_HISTORY");
+        public final static Property LastCheckUserID = new Property(14, String.class, "LastCheckUserID", false, "LAST_CHECK_USER_ID");
+        public final static Property AgeUnit = new Property(15, String.class, "AgeUnit", false, "AGE_UNIT");
+        public final static Property Advice = new Property(16, String.class, "Advice", false, "ADVICE");
+        public final static Property UserName = new Property(17, String.class, "UserName", false, "USER_NAME");
+        public final static Property Record_date = new Property(18, String.class, "record_date", false, "RECORD_DATE");
+        public final static Property ImagesCount = new Property(19, String.class, "imagesCount", false, "IMAGES_COUNT");
+        public final static Property VideosCount = new Property(20, String.class, "videosCount", false, "VIDEOS_COUNT");
+        public final static Property SubmitDoctor = new Property(21, String.class, "SubmitDoctor", false, "SUBMIT_DOCTOR");
+        public final static Property Race = new Property(22, String.class, "Race", false, "RACE");
+        public final static Property RecordType = new Property(23, String.class, "RecordType", false, "RECORD_TYPE");
+        public final static Property Update_time = new Property(24, String.class, "update_time", false, "UPDATE_TIME");
+        public final static Property PatientAge = new Property(25, String.class, "PatientAge", false, "PATIENT_AGE");
+        public final static Property CardID = new Property(26, String.class, "CardID", false, "CARD_ID");
+        public final static Property Tel = new Property(27, String.class, "Tel", false, "TEL");
+        public final static Property Check_date = new Property(28, String.class, "check_date", false, "CHECK_DATE");
+        public final static Property PatientNo = new Property(29, String.class, "PatientNo", false, "PATIENT_NO");
+        public final static Property InpatientID = new Property(30, String.class, "InpatientID", false, "INPATIENT_ID");
+        public final static Property BedID = new Property(31, String.class, "BedID", false, "BED_ID");
+        public final static Property CheckContent = new Property(32, String.class, "CheckContent", false, "CHECK_CONTENT");
+        public final static Property ReturnVisit = new Property(33, String.class, "ReturnVisit", false, "RETURN_VISIT");
+        public final static Property CaseNo = new Property(34, String.class, "CaseNo", false, "CASE_NO");
+        public final static Property Ctology = new Property(35, String.class, "Ctology", false, "CTOLOGY");
+        public final static Property DOB = new Property(36, String.class, "DOB", false, "DOB");
+        public final static Property ExaminingPhysician = new Property(37, String.class, "ExaminingPhysician", false, "EXAMINING_PHYSICIAN");
+        public final static Property CheckDiagnosis = new Property(38, String.class, "CheckDiagnosis", false, "CHECK_DIAGNOSIS");
+        public final static Property Sex = new Property(39, String.class, "Sex", false, "SEX");
+        public final static Property EndoType = new Property(40, String.class, "EndoType", false, "ENDO_TYPE");
+        public final static Property Device = new Property(41, String.class, "Device", false, "DEVICE");
+        public final static Property IsInHospital = new Property(42, String.class, "IsInHospital", false, "IS_IN_HOSPITAL");
+        public final static Property Married = new Property(43, String.class, "Married", false, "MARRIED");
+        public final static Property FamilyHistory = new Property(44, String.class, "FamilyHistory", false, "FAMILY_HISTORY");
+        public final static Property Test = new Property(45, String.class, "Test", false, "TEST");
+        public final static Property ClinicalDiagnosis = new Property(46, String.class, "ClinicalDiagnosis", false, "CLINICAL_DIAGNOSIS");
+        public final static Property Department = new Property(47, String.class, "Department", false, "DEPARTMENT");
+        public final static Property WardID = new Property(48, String.class, "WardID", false, "WARD_ID");
+        public final static Property CaseID = new Property(49, String.class, "CaseID", false, "CASE_ID");
+        public final static Property Name = new Property(50, String.class, "Name", false, "NAME");
+        public final static Property Address = new Property(51, String.class, "Address", false, "ADDRESS");
+        public final static Property InsuranceID = new Property(52, String.class, "InsuranceID", false, "INSURANCE_ID");
+        public final static Property Others = new Property(53, String.class, "Others", false, "OTHERS");
+        public final static Property Others01 = new Property(54, String.class, "Others01", false, "OTHERS01");
     }
 
     private final CaseImageConverter ImageListConverter = new CaseImageConverter();
     private final CaseVideoConverter VideoListConverter = new CaseVideoConverter();
+    private final DownloadedConverter DownloadedNameListConverter = new DownloadedConverter();
 
     public CaseDBBeanDao(DaoConfig config) {
         super(config);
@@ -108,51 +111,52 @@ public class CaseDBBeanDao extends AbstractDao<CaseDBBean, Long> {
                 "\"CHIEF_COMPLAINT\" TEXT," + // 6: ChiefComplaint
                 "\"IMAGE_LIST\" TEXT," + // 7: ImageList
                 "\"VIDEO_LIST\" TEXT," + // 8: VideoList
-                "\"BIOPSY\" TEXT," + // 9: Biopsy
-                "\"PATHOLOGY\" TEXT," + // 10: Pathology
-                "\"FEE_TYPE\" TEXT," + // 11: FeeType
-                "\"MED_HISTORY\" TEXT," + // 12: MedHistory
-                "\"LAST_CHECK_USER_ID\" TEXT," + // 13: LastCheckUserID
-                "\"AGE_UNIT\" TEXT," + // 14: AgeUnit
-                "\"ADVICE\" TEXT," + // 15: Advice
-                "\"USER_NAME\" TEXT," + // 16: UserName
-                "\"RECORD_DATE\" TEXT," + // 17: record_date
-                "\"IMAGES_COUNT\" TEXT," + // 18: imagesCount
-                "\"VIDEOS_COUNT\" TEXT," + // 19: videosCount
-                "\"SUBMIT_DOCTOR\" TEXT," + // 20: SubmitDoctor
-                "\"RACE\" TEXT," + // 21: Race
-                "\"RECORD_TYPE\" TEXT," + // 22: RecordType
-                "\"UPDATE_TIME\" TEXT," + // 23: update_time
-                "\"PATIENT_AGE\" TEXT," + // 24: PatientAge
-                "\"CARD_ID\" TEXT," + // 25: CardID
-                "\"TEL\" TEXT," + // 26: Tel
-                "\"CHECK_DATE\" TEXT," + // 27: check_date
-                "\"PATIENT_NO\" TEXT," + // 28: PatientNo
-                "\"INPATIENT_ID\" TEXT," + // 29: InpatientID
-                "\"BED_ID\" TEXT," + // 30: BedID
-                "\"CHECK_CONTENT\" TEXT," + // 31: CheckContent
-                "\"RETURN_VISIT\" TEXT," + // 32: ReturnVisit
-                "\"CASE_NO\" TEXT," + // 33: CaseNo
-                "\"CTOLOGY\" TEXT," + // 34: Ctology
-                "\"DOB\" TEXT," + // 35: DOB
-                "\"EXAMINING_PHYSICIAN\" TEXT," + // 36: ExaminingPhysician
-                "\"CHECK_DIAGNOSIS\" TEXT," + // 37: CheckDiagnosis
-                "\"SEX\" TEXT," + // 38: Sex
-                "\"ENDO_TYPE\" TEXT," + // 39: EndoType
-                "\"DEVICE\" TEXT," + // 40: Device
-                "\"IS_IN_HOSPITAL\" TEXT," + // 41: IsInHospital
-                "\"MARRIED\" TEXT," + // 42: Married
-                "\"FAMILY_HISTORY\" TEXT," + // 43: FamilyHistory
-                "\"TEST\" TEXT," + // 44: Test
-                "\"CLINICAL_DIAGNOSIS\" TEXT," + // 45: ClinicalDiagnosis
-                "\"DEPARTMENT\" TEXT," + // 46: Department
-                "\"WARD_ID\" TEXT," + // 47: WardID
-                "\"CASE_ID\" TEXT," + // 48: CaseID
-                "\"NAME\" TEXT," + // 49: Name
-                "\"ADDRESS\" TEXT," + // 50: Address
-                "\"INSURANCE_ID\" TEXT," + // 51: InsuranceID
-                "\"OTHERS\" TEXT," + // 52: Others
-                "\"OTHERS01\" TEXT);"); // 53: Others01
+                "\"DOWNLOADED_NAME_LIST\" TEXT," + // 9: DownloadedNameList
+                "\"BIOPSY\" TEXT," + // 10: Biopsy
+                "\"PATHOLOGY\" TEXT," + // 11: Pathology
+                "\"FEE_TYPE\" TEXT," + // 12: FeeType
+                "\"MED_HISTORY\" TEXT," + // 13: MedHistory
+                "\"LAST_CHECK_USER_ID\" TEXT," + // 14: LastCheckUserID
+                "\"AGE_UNIT\" TEXT," + // 15: AgeUnit
+                "\"ADVICE\" TEXT," + // 16: Advice
+                "\"USER_NAME\" TEXT," + // 17: UserName
+                "\"RECORD_DATE\" TEXT," + // 18: record_date
+                "\"IMAGES_COUNT\" TEXT," + // 19: imagesCount
+                "\"VIDEOS_COUNT\" TEXT," + // 20: videosCount
+                "\"SUBMIT_DOCTOR\" TEXT," + // 21: SubmitDoctor
+                "\"RACE\" TEXT," + // 22: Race
+                "\"RECORD_TYPE\" TEXT," + // 23: RecordType
+                "\"UPDATE_TIME\" TEXT," + // 24: update_time
+                "\"PATIENT_AGE\" TEXT," + // 25: PatientAge
+                "\"CARD_ID\" TEXT," + // 26: CardID
+                "\"TEL\" TEXT," + // 27: Tel
+                "\"CHECK_DATE\" TEXT," + // 28: check_date
+                "\"PATIENT_NO\" TEXT," + // 29: PatientNo
+                "\"INPATIENT_ID\" TEXT," + // 30: InpatientID
+                "\"BED_ID\" TEXT," + // 31: BedID
+                "\"CHECK_CONTENT\" TEXT," + // 32: CheckContent
+                "\"RETURN_VISIT\" TEXT," + // 33: ReturnVisit
+                "\"CASE_NO\" TEXT," + // 34: CaseNo
+                "\"CTOLOGY\" TEXT," + // 35: Ctology
+                "\"DOB\" TEXT," + // 36: DOB
+                "\"EXAMINING_PHYSICIAN\" TEXT," + // 37: ExaminingPhysician
+                "\"CHECK_DIAGNOSIS\" TEXT," + // 38: CheckDiagnosis
+                "\"SEX\" TEXT," + // 39: Sex
+                "\"ENDO_TYPE\" TEXT," + // 40: EndoType
+                "\"DEVICE\" TEXT," + // 41: Device
+                "\"IS_IN_HOSPITAL\" TEXT," + // 42: IsInHospital
+                "\"MARRIED\" TEXT," + // 43: Married
+                "\"FAMILY_HISTORY\" TEXT," + // 44: FamilyHistory
+                "\"TEST\" TEXT," + // 45: Test
+                "\"CLINICAL_DIAGNOSIS\" TEXT," + // 46: ClinicalDiagnosis
+                "\"DEPARTMENT\" TEXT," + // 47: Department
+                "\"WARD_ID\" TEXT," + // 48: WardID
+                "\"CASE_ID\" TEXT," + // 49: CaseID
+                "\"NAME\" TEXT," + // 50: Name
+                "\"ADDRESS\" TEXT," + // 51: Address
+                "\"INSURANCE_ID\" TEXT," + // 52: InsuranceID
+                "\"OTHERS\" TEXT," + // 53: Others
+                "\"OTHERS01\" TEXT);"); // 54: Others01
     }
 
     /** Drops the underlying database table. */
@@ -210,229 +214,234 @@ public class CaseDBBeanDao extends AbstractDao<CaseDBBean, Long> {
             stmt.bindString(9, VideoListConverter.convertToDatabaseValue(VideoList));
         }
  
+        List DownloadedNameList = entity.getDownloadedNameList();
+        if (DownloadedNameList != null) {
+            stmt.bindString(10, DownloadedNameListConverter.convertToDatabaseValue(DownloadedNameList));
+        }
+ 
         String Biopsy = entity.getBiopsy();
         if (Biopsy != null) {
-            stmt.bindString(10, Biopsy);
+            stmt.bindString(11, Biopsy);
         }
  
         String Pathology = entity.getPathology();
         if (Pathology != null) {
-            stmt.bindString(11, Pathology);
+            stmt.bindString(12, Pathology);
         }
  
         String FeeType = entity.getFeeType();
         if (FeeType != null) {
-            stmt.bindString(12, FeeType);
+            stmt.bindString(13, FeeType);
         }
  
         String MedHistory = entity.getMedHistory();
         if (MedHistory != null) {
-            stmt.bindString(13, MedHistory);
+            stmt.bindString(14, MedHistory);
         }
  
         String LastCheckUserID = entity.getLastCheckUserID();
         if (LastCheckUserID != null) {
-            stmt.bindString(14, LastCheckUserID);
+            stmt.bindString(15, LastCheckUserID);
         }
  
         String AgeUnit = entity.getAgeUnit();
         if (AgeUnit != null) {
-            stmt.bindString(15, AgeUnit);
+            stmt.bindString(16, AgeUnit);
         }
  
         String Advice = entity.getAdvice();
         if (Advice != null) {
-            stmt.bindString(16, Advice);
+            stmt.bindString(17, Advice);
         }
  
         String UserName = entity.getUserName();
         if (UserName != null) {
-            stmt.bindString(17, UserName);
+            stmt.bindString(18, UserName);
         }
  
         String record_date = entity.getRecord_date();
         if (record_date != null) {
-            stmt.bindString(18, record_date);
+            stmt.bindString(19, record_date);
         }
  
         String imagesCount = entity.getImagesCount();
         if (imagesCount != null) {
-            stmt.bindString(19, imagesCount);
+            stmt.bindString(20, imagesCount);
         }
  
         String videosCount = entity.getVideosCount();
         if (videosCount != null) {
-            stmt.bindString(20, videosCount);
+            stmt.bindString(21, videosCount);
         }
  
         String SubmitDoctor = entity.getSubmitDoctor();
         if (SubmitDoctor != null) {
-            stmt.bindString(21, SubmitDoctor);
+            stmt.bindString(22, SubmitDoctor);
         }
  
         String Race = entity.getRace();
         if (Race != null) {
-            stmt.bindString(22, Race);
+            stmt.bindString(23, Race);
         }
  
         String RecordType = entity.getRecordType();
         if (RecordType != null) {
-            stmt.bindString(23, RecordType);
+            stmt.bindString(24, RecordType);
         }
  
         String update_time = entity.getUpdate_time();
         if (update_time != null) {
-            stmt.bindString(24, update_time);
+            stmt.bindString(25, update_time);
         }
  
         String PatientAge = entity.getPatientAge();
         if (PatientAge != null) {
-            stmt.bindString(25, PatientAge);
+            stmt.bindString(26, PatientAge);
         }
  
         String CardID = entity.getCardID();
         if (CardID != null) {
-            stmt.bindString(26, CardID);
+            stmt.bindString(27, CardID);
         }
  
         String Tel = entity.getTel();
         if (Tel != null) {
-            stmt.bindString(27, Tel);
+            stmt.bindString(28, Tel);
         }
  
         String check_date = entity.getCheck_date();
         if (check_date != null) {
-            stmt.bindString(28, check_date);
+            stmt.bindString(29, check_date);
         }
  
         String PatientNo = entity.getPatientNo();
         if (PatientNo != null) {
-            stmt.bindString(29, PatientNo);
+            stmt.bindString(30, PatientNo);
         }
  
         String InpatientID = entity.getInpatientID();
         if (InpatientID != null) {
-            stmt.bindString(30, InpatientID);
+            stmt.bindString(31, InpatientID);
         }
  
         String BedID = entity.getBedID();
         if (BedID != null) {
-            stmt.bindString(31, BedID);
+            stmt.bindString(32, BedID);
         }
  
         String CheckContent = entity.getCheckContent();
         if (CheckContent != null) {
-            stmt.bindString(32, CheckContent);
+            stmt.bindString(33, CheckContent);
         }
  
         String ReturnVisit = entity.getReturnVisit();
         if (ReturnVisit != null) {
-            stmt.bindString(33, ReturnVisit);
+            stmt.bindString(34, ReturnVisit);
         }
  
         String CaseNo = entity.getCaseNo();
         if (CaseNo != null) {
-            stmt.bindString(34, CaseNo);
+            stmt.bindString(35, CaseNo);
         }
  
         String Ctology = entity.getCtology();
         if (Ctology != null) {
-            stmt.bindString(35, Ctology);
+            stmt.bindString(36, Ctology);
         }
  
         String DOB = entity.getDOB();
         if (DOB != null) {
-            stmt.bindString(36, DOB);
+            stmt.bindString(37, DOB);
         }
  
         String ExaminingPhysician = entity.getExaminingPhysician();
         if (ExaminingPhysician != null) {
-            stmt.bindString(37, ExaminingPhysician);
+            stmt.bindString(38, ExaminingPhysician);
         }
  
         String CheckDiagnosis = entity.getCheckDiagnosis();
         if (CheckDiagnosis != null) {
-            stmt.bindString(38, CheckDiagnosis);
+            stmt.bindString(39, CheckDiagnosis);
         }
  
         String Sex = entity.getSex();
         if (Sex != null) {
-            stmt.bindString(39, Sex);
+            stmt.bindString(40, Sex);
         }
  
         String EndoType = entity.getEndoType();
         if (EndoType != null) {
-            stmt.bindString(40, EndoType);
+            stmt.bindString(41, EndoType);
         }
  
         String Device = entity.getDevice();
         if (Device != null) {
-            stmt.bindString(41, Device);
+            stmt.bindString(42, Device);
         }
  
         String IsInHospital = entity.getIsInHospital();
         if (IsInHospital != null) {
-            stmt.bindString(42, IsInHospital);
+            stmt.bindString(43, IsInHospital);
         }
  
         String Married = entity.getMarried();
         if (Married != null) {
-            stmt.bindString(43, Married);
+            stmt.bindString(44, Married);
         }
  
         String FamilyHistory = entity.getFamilyHistory();
         if (FamilyHistory != null) {
-            stmt.bindString(44, FamilyHistory);
+            stmt.bindString(45, FamilyHistory);
         }
  
         String Test = entity.getTest();
         if (Test != null) {
-            stmt.bindString(45, Test);
+            stmt.bindString(46, Test);
         }
  
         String ClinicalDiagnosis = entity.getClinicalDiagnosis();
         if (ClinicalDiagnosis != null) {
-            stmt.bindString(46, ClinicalDiagnosis);
+            stmt.bindString(47, ClinicalDiagnosis);
         }
  
         String Department = entity.getDepartment();
         if (Department != null) {
-            stmt.bindString(47, Department);
+            stmt.bindString(48, Department);
         }
  
         String WardID = entity.getWardID();
         if (WardID != null) {
-            stmt.bindString(48, WardID);
+            stmt.bindString(49, WardID);
         }
  
         String CaseID = entity.getCaseID();
         if (CaseID != null) {
-            stmt.bindString(49, CaseID);
+            stmt.bindString(50, CaseID);
         }
  
         String Name = entity.getName();
         if (Name != null) {
-            stmt.bindString(50, Name);
+            stmt.bindString(51, Name);
         }
  
         String Address = entity.getAddress();
         if (Address != null) {
-            stmt.bindString(51, Address);
+            stmt.bindString(52, Address);
         }
  
         String InsuranceID = entity.getInsuranceID();
         if (InsuranceID != null) {
-            stmt.bindString(52, InsuranceID);
+            stmt.bindString(53, InsuranceID);
         }
  
         String Others = entity.getOthers();
         if (Others != null) {
-            stmt.bindString(53, Others);
+            stmt.bindString(54, Others);
         }
  
         String Others01 = entity.getOthers01();
         if (Others01 != null) {
-            stmt.bindString(54, Others01);
+            stmt.bindString(55, Others01);
         }
     }
 
@@ -485,229 +494,234 @@ public class CaseDBBeanDao extends AbstractDao<CaseDBBean, Long> {
             stmt.bindString(9, VideoListConverter.convertToDatabaseValue(VideoList));
         }
  
+        List DownloadedNameList = entity.getDownloadedNameList();
+        if (DownloadedNameList != null) {
+            stmt.bindString(10, DownloadedNameListConverter.convertToDatabaseValue(DownloadedNameList));
+        }
+ 
         String Biopsy = entity.getBiopsy();
         if (Biopsy != null) {
-            stmt.bindString(10, Biopsy);
+            stmt.bindString(11, Biopsy);
         }
  
         String Pathology = entity.getPathology();
         if (Pathology != null) {
-            stmt.bindString(11, Pathology);
+            stmt.bindString(12, Pathology);
         }
  
         String FeeType = entity.getFeeType();
         if (FeeType != null) {
-            stmt.bindString(12, FeeType);
+            stmt.bindString(13, FeeType);
         }
  
         String MedHistory = entity.getMedHistory();
         if (MedHistory != null) {
-            stmt.bindString(13, MedHistory);
+            stmt.bindString(14, MedHistory);
         }
  
         String LastCheckUserID = entity.getLastCheckUserID();
         if (LastCheckUserID != null) {
-            stmt.bindString(14, LastCheckUserID);
+            stmt.bindString(15, LastCheckUserID);
         }
  
         String AgeUnit = entity.getAgeUnit();
         if (AgeUnit != null) {
-            stmt.bindString(15, AgeUnit);
+            stmt.bindString(16, AgeUnit);
         }
  
         String Advice = entity.getAdvice();
         if (Advice != null) {
-            stmt.bindString(16, Advice);
+            stmt.bindString(17, Advice);
         }
  
         String UserName = entity.getUserName();
         if (UserName != null) {
-            stmt.bindString(17, UserName);
+            stmt.bindString(18, UserName);
         }
  
         String record_date = entity.getRecord_date();
         if (record_date != null) {
-            stmt.bindString(18, record_date);
+            stmt.bindString(19, record_date);
         }
  
         String imagesCount = entity.getImagesCount();
         if (imagesCount != null) {
-            stmt.bindString(19, imagesCount);
+            stmt.bindString(20, imagesCount);
         }
  
         String videosCount = entity.getVideosCount();
         if (videosCount != null) {
-            stmt.bindString(20, videosCount);
+            stmt.bindString(21, videosCount);
         }
  
         String SubmitDoctor = entity.getSubmitDoctor();
         if (SubmitDoctor != null) {
-            stmt.bindString(21, SubmitDoctor);
+            stmt.bindString(22, SubmitDoctor);
         }
  
         String Race = entity.getRace();
         if (Race != null) {
-            stmt.bindString(22, Race);
+            stmt.bindString(23, Race);
         }
  
         String RecordType = entity.getRecordType();
         if (RecordType != null) {
-            stmt.bindString(23, RecordType);
+            stmt.bindString(24, RecordType);
         }
  
         String update_time = entity.getUpdate_time();
         if (update_time != null) {
-            stmt.bindString(24, update_time);
+            stmt.bindString(25, update_time);
         }
  
         String PatientAge = entity.getPatientAge();
         if (PatientAge != null) {
-            stmt.bindString(25, PatientAge);
+            stmt.bindString(26, PatientAge);
         }
  
         String CardID = entity.getCardID();
         if (CardID != null) {
-            stmt.bindString(26, CardID);
+            stmt.bindString(27, CardID);
         }
  
         String Tel = entity.getTel();
         if (Tel != null) {
-            stmt.bindString(27, Tel);
+            stmt.bindString(28, Tel);
         }
  
         String check_date = entity.getCheck_date();
         if (check_date != null) {
-            stmt.bindString(28, check_date);
+            stmt.bindString(29, check_date);
         }
  
         String PatientNo = entity.getPatientNo();
         if (PatientNo != null) {
-            stmt.bindString(29, PatientNo);
+            stmt.bindString(30, PatientNo);
         }
  
         String InpatientID = entity.getInpatientID();
         if (InpatientID != null) {
-            stmt.bindString(30, InpatientID);
+            stmt.bindString(31, InpatientID);
         }
  
         String BedID = entity.getBedID();
         if (BedID != null) {
-            stmt.bindString(31, BedID);
+            stmt.bindString(32, BedID);
         }
  
         String CheckContent = entity.getCheckContent();
         if (CheckContent != null) {
-            stmt.bindString(32, CheckContent);
+            stmt.bindString(33, CheckContent);
         }
  
         String ReturnVisit = entity.getReturnVisit();
         if (ReturnVisit != null) {
-            stmt.bindString(33, ReturnVisit);
+            stmt.bindString(34, ReturnVisit);
         }
  
         String CaseNo = entity.getCaseNo();
         if (CaseNo != null) {
-            stmt.bindString(34, CaseNo);
+            stmt.bindString(35, CaseNo);
         }
  
         String Ctology = entity.getCtology();
         if (Ctology != null) {
-            stmt.bindString(35, Ctology);
+            stmt.bindString(36, Ctology);
         }
  
         String DOB = entity.getDOB();
         if (DOB != null) {
-            stmt.bindString(36, DOB);
+            stmt.bindString(37, DOB);
         }
  
         String ExaminingPhysician = entity.getExaminingPhysician();
         if (ExaminingPhysician != null) {
-            stmt.bindString(37, ExaminingPhysician);
+            stmt.bindString(38, ExaminingPhysician);
         }
  
         String CheckDiagnosis = entity.getCheckDiagnosis();
         if (CheckDiagnosis != null) {
-            stmt.bindString(38, CheckDiagnosis);
+            stmt.bindString(39, CheckDiagnosis);
         }
  
         String Sex = entity.getSex();
         if (Sex != null) {
-            stmt.bindString(39, Sex);
+            stmt.bindString(40, Sex);
         }
  
         String EndoType = entity.getEndoType();
         if (EndoType != null) {
-            stmt.bindString(40, EndoType);
+            stmt.bindString(41, EndoType);
         }
  
         String Device = entity.getDevice();
         if (Device != null) {
-            stmt.bindString(41, Device);
+            stmt.bindString(42, Device);
         }
  
         String IsInHospital = entity.getIsInHospital();
         if (IsInHospital != null) {
-            stmt.bindString(42, IsInHospital);
+            stmt.bindString(43, IsInHospital);
         }
  
         String Married = entity.getMarried();
         if (Married != null) {
-            stmt.bindString(43, Married);
+            stmt.bindString(44, Married);
         }
  
         String FamilyHistory = entity.getFamilyHistory();
         if (FamilyHistory != null) {
-            stmt.bindString(44, FamilyHistory);
+            stmt.bindString(45, FamilyHistory);
         }
  
         String Test = entity.getTest();
         if (Test != null) {
-            stmt.bindString(45, Test);
+            stmt.bindString(46, Test);
         }
  
         String ClinicalDiagnosis = entity.getClinicalDiagnosis();
         if (ClinicalDiagnosis != null) {
-            stmt.bindString(46, ClinicalDiagnosis);
+            stmt.bindString(47, ClinicalDiagnosis);
         }
  
         String Department = entity.getDepartment();
         if (Department != null) {
-            stmt.bindString(47, Department);
+            stmt.bindString(48, Department);
         }
  
         String WardID = entity.getWardID();
         if (WardID != null) {
-            stmt.bindString(48, WardID);
+            stmt.bindString(49, WardID);
         }
  
         String CaseID = entity.getCaseID();
         if (CaseID != null) {
-            stmt.bindString(49, CaseID);
+            stmt.bindString(50, CaseID);
         }
  
         String Name = entity.getName();
         if (Name != null) {
-            stmt.bindString(50, Name);
+            stmt.bindString(51, Name);
         }
  
         String Address = entity.getAddress();
         if (Address != null) {
-            stmt.bindString(51, Address);
+            stmt.bindString(52, Address);
         }
  
         String InsuranceID = entity.getInsuranceID();
         if (InsuranceID != null) {
-            stmt.bindString(52, InsuranceID);
+            stmt.bindString(53, InsuranceID);
         }
  
         String Others = entity.getOthers();
         if (Others != null) {
-            stmt.bindString(53, Others);
+            stmt.bindString(54, Others);
         }
  
         String Others01 = entity.getOthers01();
         if (Others01 != null) {
-            stmt.bindString(54, Others01);
+            stmt.bindString(55, Others01);
         }
     }
 
@@ -728,51 +742,52 @@ public class CaseDBBeanDao extends AbstractDao<CaseDBBean, Long> {
             cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6), // ChiefComplaint
             cursor.isNull(offset + 7) ? null : ImageListConverter.convertToEntityProperty(cursor.getString(offset + 7)), // ImageList
             cursor.isNull(offset + 8) ? null : VideoListConverter.convertToEntityProperty(cursor.getString(offset + 8)), // VideoList
-            cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9), // Biopsy
-            cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10), // Pathology
-            cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11), // FeeType
-            cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12), // MedHistory
-            cursor.isNull(offset + 13) ? null : cursor.getString(offset + 13), // LastCheckUserID
-            cursor.isNull(offset + 14) ? null : cursor.getString(offset + 14), // AgeUnit
-            cursor.isNull(offset + 15) ? null : cursor.getString(offset + 15), // Advice
-            cursor.isNull(offset + 16) ? null : cursor.getString(offset + 16), // UserName
-            cursor.isNull(offset + 17) ? null : cursor.getString(offset + 17), // record_date
-            cursor.isNull(offset + 18) ? null : cursor.getString(offset + 18), // imagesCount
-            cursor.isNull(offset + 19) ? null : cursor.getString(offset + 19), // videosCount
-            cursor.isNull(offset + 20) ? null : cursor.getString(offset + 20), // SubmitDoctor
-            cursor.isNull(offset + 21) ? null : cursor.getString(offset + 21), // Race
-            cursor.isNull(offset + 22) ? null : cursor.getString(offset + 22), // RecordType
-            cursor.isNull(offset + 23) ? null : cursor.getString(offset + 23), // update_time
-            cursor.isNull(offset + 24) ? null : cursor.getString(offset + 24), // PatientAge
-            cursor.isNull(offset + 25) ? null : cursor.getString(offset + 25), // CardID
-            cursor.isNull(offset + 26) ? null : cursor.getString(offset + 26), // Tel
-            cursor.isNull(offset + 27) ? null : cursor.getString(offset + 27), // check_date
-            cursor.isNull(offset + 28) ? null : cursor.getString(offset + 28), // PatientNo
-            cursor.isNull(offset + 29) ? null : cursor.getString(offset + 29), // InpatientID
-            cursor.isNull(offset + 30) ? null : cursor.getString(offset + 30), // BedID
-            cursor.isNull(offset + 31) ? null : cursor.getString(offset + 31), // CheckContent
-            cursor.isNull(offset + 32) ? null : cursor.getString(offset + 32), // ReturnVisit
-            cursor.isNull(offset + 33) ? null : cursor.getString(offset + 33), // CaseNo
-            cursor.isNull(offset + 34) ? null : cursor.getString(offset + 34), // Ctology
-            cursor.isNull(offset + 35) ? null : cursor.getString(offset + 35), // DOB
-            cursor.isNull(offset + 36) ? null : cursor.getString(offset + 36), // ExaminingPhysician
-            cursor.isNull(offset + 37) ? null : cursor.getString(offset + 37), // CheckDiagnosis
-            cursor.isNull(offset + 38) ? null : cursor.getString(offset + 38), // Sex
-            cursor.isNull(offset + 39) ? null : cursor.getString(offset + 39), // EndoType
-            cursor.isNull(offset + 40) ? null : cursor.getString(offset + 40), // Device
-            cursor.isNull(offset + 41) ? null : cursor.getString(offset + 41), // IsInHospital
-            cursor.isNull(offset + 42) ? null : cursor.getString(offset + 42), // Married
-            cursor.isNull(offset + 43) ? null : cursor.getString(offset + 43), // FamilyHistory
-            cursor.isNull(offset + 44) ? null : cursor.getString(offset + 44), // Test
-            cursor.isNull(offset + 45) ? null : cursor.getString(offset + 45), // ClinicalDiagnosis
-            cursor.isNull(offset + 46) ? null : cursor.getString(offset + 46), // Department
-            cursor.isNull(offset + 47) ? null : cursor.getString(offset + 47), // WardID
-            cursor.isNull(offset + 48) ? null : cursor.getString(offset + 48), // CaseID
-            cursor.isNull(offset + 49) ? null : cursor.getString(offset + 49), // Name
-            cursor.isNull(offset + 50) ? null : cursor.getString(offset + 50), // Address
-            cursor.isNull(offset + 51) ? null : cursor.getString(offset + 51), // InsuranceID
-            cursor.isNull(offset + 52) ? null : cursor.getString(offset + 52), // Others
-            cursor.isNull(offset + 53) ? null : cursor.getString(offset + 53) // Others01
+            cursor.isNull(offset + 9) ? null : DownloadedNameListConverter.convertToEntityProperty(cursor.getString(offset + 9)), // DownloadedNameList
+            cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10), // Biopsy
+            cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11), // Pathology
+            cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12), // FeeType
+            cursor.isNull(offset + 13) ? null : cursor.getString(offset + 13), // MedHistory
+            cursor.isNull(offset + 14) ? null : cursor.getString(offset + 14), // LastCheckUserID
+            cursor.isNull(offset + 15) ? null : cursor.getString(offset + 15), // AgeUnit
+            cursor.isNull(offset + 16) ? null : cursor.getString(offset + 16), // Advice
+            cursor.isNull(offset + 17) ? null : cursor.getString(offset + 17), // UserName
+            cursor.isNull(offset + 18) ? null : cursor.getString(offset + 18), // record_date
+            cursor.isNull(offset + 19) ? null : cursor.getString(offset + 19), // imagesCount
+            cursor.isNull(offset + 20) ? null : cursor.getString(offset + 20), // videosCount
+            cursor.isNull(offset + 21) ? null : cursor.getString(offset + 21), // SubmitDoctor
+            cursor.isNull(offset + 22) ? null : cursor.getString(offset + 22), // Race
+            cursor.isNull(offset + 23) ? null : cursor.getString(offset + 23), // RecordType
+            cursor.isNull(offset + 24) ? null : cursor.getString(offset + 24), // update_time
+            cursor.isNull(offset + 25) ? null : cursor.getString(offset + 25), // PatientAge
+            cursor.isNull(offset + 26) ? null : cursor.getString(offset + 26), // CardID
+            cursor.isNull(offset + 27) ? null : cursor.getString(offset + 27), // Tel
+            cursor.isNull(offset + 28) ? null : cursor.getString(offset + 28), // check_date
+            cursor.isNull(offset + 29) ? null : cursor.getString(offset + 29), // PatientNo
+            cursor.isNull(offset + 30) ? null : cursor.getString(offset + 30), // InpatientID
+            cursor.isNull(offset + 31) ? null : cursor.getString(offset + 31), // BedID
+            cursor.isNull(offset + 32) ? null : cursor.getString(offset + 32), // CheckContent
+            cursor.isNull(offset + 33) ? null : cursor.getString(offset + 33), // ReturnVisit
+            cursor.isNull(offset + 34) ? null : cursor.getString(offset + 34), // CaseNo
+            cursor.isNull(offset + 35) ? null : cursor.getString(offset + 35), // Ctology
+            cursor.isNull(offset + 36) ? null : cursor.getString(offset + 36), // DOB
+            cursor.isNull(offset + 37) ? null : cursor.getString(offset + 37), // ExaminingPhysician
+            cursor.isNull(offset + 38) ? null : cursor.getString(offset + 38), // CheckDiagnosis
+            cursor.isNull(offset + 39) ? null : cursor.getString(offset + 39), // Sex
+            cursor.isNull(offset + 40) ? null : cursor.getString(offset + 40), // EndoType
+            cursor.isNull(offset + 41) ? null : cursor.getString(offset + 41), // Device
+            cursor.isNull(offset + 42) ? null : cursor.getString(offset + 42), // IsInHospital
+            cursor.isNull(offset + 43) ? null : cursor.getString(offset + 43), // Married
+            cursor.isNull(offset + 44) ? null : cursor.getString(offset + 44), // FamilyHistory
+            cursor.isNull(offset + 45) ? null : cursor.getString(offset + 45), // Test
+            cursor.isNull(offset + 46) ? null : cursor.getString(offset + 46), // ClinicalDiagnosis
+            cursor.isNull(offset + 47) ? null : cursor.getString(offset + 47), // Department
+            cursor.isNull(offset + 48) ? null : cursor.getString(offset + 48), // WardID
+            cursor.isNull(offset + 49) ? null : cursor.getString(offset + 49), // CaseID
+            cursor.isNull(offset + 50) ? null : cursor.getString(offset + 50), // Name
+            cursor.isNull(offset + 51) ? null : cursor.getString(offset + 51), // Address
+            cursor.isNull(offset + 52) ? null : cursor.getString(offset + 52), // InsuranceID
+            cursor.isNull(offset + 53) ? null : cursor.getString(offset + 53), // Others
+            cursor.isNull(offset + 54) ? null : cursor.getString(offset + 54) // Others01
         );
         return entity;
     }
@@ -788,51 +803,52 @@ public class CaseDBBeanDao extends AbstractDao<CaseDBBean, Long> {
         entity.setChiefComplaint(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
         entity.setImageList(cursor.isNull(offset + 7) ? null : ImageListConverter.convertToEntityProperty(cursor.getString(offset + 7)));
         entity.setVideoList(cursor.isNull(offset + 8) ? null : VideoListConverter.convertToEntityProperty(cursor.getString(offset + 8)));
-        entity.setBiopsy(cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9));
-        entity.setPathology(cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10));
-        entity.setFeeType(cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11));
-        entity.setMedHistory(cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12));
-        entity.setLastCheckUserID(cursor.isNull(offset + 13) ? null : cursor.getString(offset + 13));
-        entity.setAgeUnit(cursor.isNull(offset + 14) ? null : cursor.getString(offset + 14));
-        entity.setAdvice(cursor.isNull(offset + 15) ? null : cursor.getString(offset + 15));
-        entity.setUserName(cursor.isNull(offset + 16) ? null : cursor.getString(offset + 16));
-        entity.setRecord_date(cursor.isNull(offset + 17) ? null : cursor.getString(offset + 17));
-        entity.setImagesCount(cursor.isNull(offset + 18) ? null : cursor.getString(offset + 18));
-        entity.setVideosCount(cursor.isNull(offset + 19) ? null : cursor.getString(offset + 19));
-        entity.setSubmitDoctor(cursor.isNull(offset + 20) ? null : cursor.getString(offset + 20));
-        entity.setRace(cursor.isNull(offset + 21) ? null : cursor.getString(offset + 21));
-        entity.setRecordType(cursor.isNull(offset + 22) ? null : cursor.getString(offset + 22));
-        entity.setUpdate_time(cursor.isNull(offset + 23) ? null : cursor.getString(offset + 23));
-        entity.setPatientAge(cursor.isNull(offset + 24) ? null : cursor.getString(offset + 24));
-        entity.setCardID(cursor.isNull(offset + 25) ? null : cursor.getString(offset + 25));
-        entity.setTel(cursor.isNull(offset + 26) ? null : cursor.getString(offset + 26));
-        entity.setCheck_date(cursor.isNull(offset + 27) ? null : cursor.getString(offset + 27));
-        entity.setPatientNo(cursor.isNull(offset + 28) ? null : cursor.getString(offset + 28));
-        entity.setInpatientID(cursor.isNull(offset + 29) ? null : cursor.getString(offset + 29));
-        entity.setBedID(cursor.isNull(offset + 30) ? null : cursor.getString(offset + 30));
-        entity.setCheckContent(cursor.isNull(offset + 31) ? null : cursor.getString(offset + 31));
-        entity.setReturnVisit(cursor.isNull(offset + 32) ? null : cursor.getString(offset + 32));
-        entity.setCaseNo(cursor.isNull(offset + 33) ? null : cursor.getString(offset + 33));
-        entity.setCtology(cursor.isNull(offset + 34) ? null : cursor.getString(offset + 34));
-        entity.setDOB(cursor.isNull(offset + 35) ? null : cursor.getString(offset + 35));
-        entity.setExaminingPhysician(cursor.isNull(offset + 36) ? null : cursor.getString(offset + 36));
-        entity.setCheckDiagnosis(cursor.isNull(offset + 37) ? null : cursor.getString(offset + 37));
-        entity.setSex(cursor.isNull(offset + 38) ? null : cursor.getString(offset + 38));
-        entity.setEndoType(cursor.isNull(offset + 39) ? null : cursor.getString(offset + 39));
-        entity.setDevice(cursor.isNull(offset + 40) ? null : cursor.getString(offset + 40));
-        entity.setIsInHospital(cursor.isNull(offset + 41) ? null : cursor.getString(offset + 41));
-        entity.setMarried(cursor.isNull(offset + 42) ? null : cursor.getString(offset + 42));
-        entity.setFamilyHistory(cursor.isNull(offset + 43) ? null : cursor.getString(offset + 43));
-        entity.setTest(cursor.isNull(offset + 44) ? null : cursor.getString(offset + 44));
-        entity.setClinicalDiagnosis(cursor.isNull(offset + 45) ? null : cursor.getString(offset + 45));
-        entity.setDepartment(cursor.isNull(offset + 46) ? null : cursor.getString(offset + 46));
-        entity.setWardID(cursor.isNull(offset + 47) ? null : cursor.getString(offset + 47));
-        entity.setCaseID(cursor.isNull(offset + 48) ? null : cursor.getString(offset + 48));
-        entity.setName(cursor.isNull(offset + 49) ? null : cursor.getString(offset + 49));
-        entity.setAddress(cursor.isNull(offset + 50) ? null : cursor.getString(offset + 50));
-        entity.setInsuranceID(cursor.isNull(offset + 51) ? null : cursor.getString(offset + 51));
-        entity.setOthers(cursor.isNull(offset + 52) ? null : cursor.getString(offset + 52));
-        entity.setOthers01(cursor.isNull(offset + 53) ? null : cursor.getString(offset + 53));
+        entity.setDownloadedNameList(cursor.isNull(offset + 9) ? null : DownloadedNameListConverter.convertToEntityProperty(cursor.getString(offset + 9)));
+        entity.setBiopsy(cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10));
+        entity.setPathology(cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11));
+        entity.setFeeType(cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12));
+        entity.setMedHistory(cursor.isNull(offset + 13) ? null : cursor.getString(offset + 13));
+        entity.setLastCheckUserID(cursor.isNull(offset + 14) ? null : cursor.getString(offset + 14));
+        entity.setAgeUnit(cursor.isNull(offset + 15) ? null : cursor.getString(offset + 15));
+        entity.setAdvice(cursor.isNull(offset + 16) ? null : cursor.getString(offset + 16));
+        entity.setUserName(cursor.isNull(offset + 17) ? null : cursor.getString(offset + 17));
+        entity.setRecord_date(cursor.isNull(offset + 18) ? null : cursor.getString(offset + 18));
+        entity.setImagesCount(cursor.isNull(offset + 19) ? null : cursor.getString(offset + 19));
+        entity.setVideosCount(cursor.isNull(offset + 20) ? null : cursor.getString(offset + 20));
+        entity.setSubmitDoctor(cursor.isNull(offset + 21) ? null : cursor.getString(offset + 21));
+        entity.setRace(cursor.isNull(offset + 22) ? null : cursor.getString(offset + 22));
+        entity.setRecordType(cursor.isNull(offset + 23) ? null : cursor.getString(offset + 23));
+        entity.setUpdate_time(cursor.isNull(offset + 24) ? null : cursor.getString(offset + 24));
+        entity.setPatientAge(cursor.isNull(offset + 25) ? null : cursor.getString(offset + 25));
+        entity.setCardID(cursor.isNull(offset + 26) ? null : cursor.getString(offset + 26));
+        entity.setTel(cursor.isNull(offset + 27) ? null : cursor.getString(offset + 27));
+        entity.setCheck_date(cursor.isNull(offset + 28) ? null : cursor.getString(offset + 28));
+        entity.setPatientNo(cursor.isNull(offset + 29) ? null : cursor.getString(offset + 29));
+        entity.setInpatientID(cursor.isNull(offset + 30) ? null : cursor.getString(offset + 30));
+        entity.setBedID(cursor.isNull(offset + 31) ? null : cursor.getString(offset + 31));
+        entity.setCheckContent(cursor.isNull(offset + 32) ? null : cursor.getString(offset + 32));
+        entity.setReturnVisit(cursor.isNull(offset + 33) ? null : cursor.getString(offset + 33));
+        entity.setCaseNo(cursor.isNull(offset + 34) ? null : cursor.getString(offset + 34));
+        entity.setCtology(cursor.isNull(offset + 35) ? null : cursor.getString(offset + 35));
+        entity.setDOB(cursor.isNull(offset + 36) ? null : cursor.getString(offset + 36));
+        entity.setExaminingPhysician(cursor.isNull(offset + 37) ? null : cursor.getString(offset + 37));
+        entity.setCheckDiagnosis(cursor.isNull(offset + 38) ? null : cursor.getString(offset + 38));
+        entity.setSex(cursor.isNull(offset + 39) ? null : cursor.getString(offset + 39));
+        entity.setEndoType(cursor.isNull(offset + 40) ? null : cursor.getString(offset + 40));
+        entity.setDevice(cursor.isNull(offset + 41) ? null : cursor.getString(offset + 41));
+        entity.setIsInHospital(cursor.isNull(offset + 42) ? null : cursor.getString(offset + 42));
+        entity.setMarried(cursor.isNull(offset + 43) ? null : cursor.getString(offset + 43));
+        entity.setFamilyHistory(cursor.isNull(offset + 44) ? null : cursor.getString(offset + 44));
+        entity.setTest(cursor.isNull(offset + 45) ? null : cursor.getString(offset + 45));
+        entity.setClinicalDiagnosis(cursor.isNull(offset + 46) ? null : cursor.getString(offset + 46));
+        entity.setDepartment(cursor.isNull(offset + 47) ? null : cursor.getString(offset + 47));
+        entity.setWardID(cursor.isNull(offset + 48) ? null : cursor.getString(offset + 48));
+        entity.setCaseID(cursor.isNull(offset + 49) ? null : cursor.getString(offset + 49));
+        entity.setName(cursor.isNull(offset + 50) ? null : cursor.getString(offset + 50));
+        entity.setAddress(cursor.isNull(offset + 51) ? null : cursor.getString(offset + 51));
+        entity.setInsuranceID(cursor.isNull(offset + 52) ? null : cursor.getString(offset + 52));
+        entity.setOthers(cursor.isNull(offset + 53) ? null : cursor.getString(offset + 53));
+        entity.setOthers01(cursor.isNull(offset + 54) ? null : cursor.getString(offset + 54));
      }
     
     @Override
