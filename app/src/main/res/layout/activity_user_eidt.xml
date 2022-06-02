@@ -149,7 +149,6 @@
                         android:id="@+id/radio_btn_add_open"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:checked="true"
                         android:text="激活"
                         android:textSize="@dimen/sp_12" />
 

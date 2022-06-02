@@ -1013,7 +1013,7 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
             mDeviceType.setText("" + mCurrentDeviceName);
             //设备描述
             mDeviceTitle.setText(mCurrentTypeMsg + "");
-            mDeviceTitle.setTextColor(getResources().getColor(R.color.white));
+            mDeviceTitle.setTextColor(getResources().getColor(R.color.color_707070));
             //设备背景图
             switch (mCurrentTypeDes) {
                 case Constants.Type_V1_YiTiJi:

@@ -19,7 +19,16 @@ public interface MediaListenerEvent {
 
     void eventPlay(final boolean isPlaying);//子线程
     void eventSystemEnd(String isStringed);//子线程
+    /**
+     * 直播回调的时间  时间都是线性增长的比如:250,456,780,979
+     * @param time
+     */
     void eventCurrentTime(String time);//子线程
+    /**
+     * 录像回调的时间  时间都是线下一秒一秒相同的250数字
+     * @param time   录像的视频 时间戳有bug 有些线性增长,有些非线性增长,有些前办法线性增长后半部分非限制增长
+     */
+    void eventRecordCurrentTime(String time);//子线程
     /**
      * 初始化开始加载  当前线程为调用者线程
      *

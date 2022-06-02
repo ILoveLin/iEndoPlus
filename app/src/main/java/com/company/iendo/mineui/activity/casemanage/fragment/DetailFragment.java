@@ -122,6 +122,8 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
     private String mUserName;
     private static final int IMAGE_DOWN = 126;   //下载图片
     private static final int IMAGE_DOWN_UPDATE = 127;   //更新图片
+    private static final int DOWN_STATUE_DOWNING = 128;   //下载中,解决没有图片的时候,handler不发消息,从而UI界面不显示状态的bug
+    private static final int DOWN_STATUE_OK = 129;   //下载完毕,更新图片
     private static boolean Details_Reault_Ok = false;
     private String itemID;
     private ArrayList<ImageView> mImageViewList;
@@ -144,17 +146,26 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
             SocketRefreshEvent event = new SocketRefreshEvent();
             event.setUdpCmd(Constants.UDP_CUSTOM_DOWN_OVER);
             switch (msg.what) {
+                case DOWN_STATUE_DOWNING: //下载中
+                    event.setData("false");
+                    EventBus.getDefault().post(event);
+                    break;
+                case DOWN_STATUE_OK: //下载完毕
+                    event.setData("true");
+                    EventBus.getDefault().post(event);
+                    toast("下载完毕");
+                    break;
                 case IMAGE_DOWN: //下载图片
                     if (mImageCountNum == mCurrentDownImageCount) {
                         toast("下载完毕");
                         //下载中的标识,true标识下载中,false标识没有下载
-                        mMMKVInstace.encode(Constants.KEY_Picture_Downing,false);
+                        mMMKVInstace.encode(Constants.KEY_Picture_Downing, false);
                         mCurrentDownImageCount = 0;
                         mImageCountNum = 0;
                         event.setData("true");
                     } else {
                         //下载中的标识,true标识下载中,false标识没有下载
-                        mMMKVInstace.encode(Constants.KEY_Picture_Downing,true);
+                        mMMKVInstace.encode(Constants.KEY_Picture_Downing, true);
                         event.setData("false");
                     }
                     EventBus.getDefault().post(event);
@@ -163,13 +174,13 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                     if (mImageUpdateCountNum == mCurrentUpdateDownImageCount) {
                         toast("下载完毕");
                         //下载中的标识,true标识下载中,false标识没有下载
-                        mMMKVInstace.encode(Constants.KEY_Picture_Downing,true);
+                        mMMKVInstace.encode(Constants.KEY_Picture_Downing, true);
                         mCurrentUpdateDownImageCount = 0;
                         mImageUpdateCountNum = 0;
                         event.setData("true");
                     } else {
                         //下载中的标识,true标识下载中,false标识没有下载
-                        mMMKVInstace.encode(Constants.KEY_Picture_Downing,false);
+                        mMMKVInstace.encode(Constants.KEY_Picture_Downing, false);
                         event.setData("false");
                     }
                     EventBus.getDefault().post(event);
@@ -219,10 +230,9 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 
     /**
      * 下载的时候从这里开始
-     * @param currentItemID
      *
-     * 获取到mPathMap  存入图片信息
-     * 例如imageName=001.jpg  url=http://192.168.64.56:7001/3/001.jpg
+     * @param currentItemID 获取到mPathMap  存入图片信息
+     *                      例如imageName=001.jpg  url=http://192.168.64.56:7001/3/001.jpg
      */
 
     private void sendRequest(String currentItemID) {
@@ -584,12 +594,13 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         File toLocalFile = new File(dirName);
         //此处做校验,本文件夹创建过,并且里面的图片数量和请求结果数量一直,表示下载过
         boolean FileExists = toLocalFile.exists();
+        //存在,更新
         if (FileExists) {
             int length = toLocalFile.listFiles().length;  //本地下载的图片数量
-            if (null != mPathMap && !mPathMap.isEmpty()) {
+            if (null != mPathMap ) {
                 int size = mPathMap.keySet().size();  //当前上位机该病例图片数量
                 //下载的图片数量和请求的图片数量不一样
-                if (length == size || length <= size || length == 0) {
+                if (length == size || length <= size ) {
                     new MessageDialog.Builder(getActivity())
                             .setTitle("提示")
                             .setMessage("该病历已经下载,是否需要更新?")
@@ -600,6 +611,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 
                                 @Override
                                 public void onConfirm(BaseDialog dialog) {
+                                    mHandler.sendEmptyMessage(DOWN_STATUE_DOWNING);
                                     updatePictureCaseData(toLocalFile);
                                 }
 
@@ -610,9 +622,9 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                             .show();
                 }
             }
-        } else if (!toLocalFile.exists()) {
+        } else if (!toLocalFile.exists()) {   //没有下载过,下载
             toLocalFile.mkdir();
-            //没有下载过,下载
+            mHandler.sendEmptyMessage(DOWN_STATUE_DOWNING);
             downPictureCaseData(toLocalFile);
 
         }
@@ -780,7 +792,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                                         Uri.fromFile(new File(toLocalFile.getPath()))));
                             } else {
                                 LogUtils.e("下载图片的时候(sendUpdatePictureRequest),getActivity()==00==null");
-                                mMMKVInstace.encode(Constants.KEY_Picture_Downing,false);
+                                mMMKVInstace.encode(Constants.KEY_Picture_Downing, false);
 
                             }
 
@@ -838,7 +850,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                                         Uri.fromFile(new File(toLocalFile.getPath()))));
                             } else {
                                 LogUtils.e("下载图片的时候(sendPictureRequest),getActivity()==null");
-                                mMMKVInstace.encode(Constants.KEY_Picture_Downing,false);
+                                mMMKVInstace.encode(Constants.KEY_Picture_Downing, false);
                             }
 
 //                             视频下载,刷新图库
@@ -863,9 +875,9 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
      * 创建一个CaseDBBean,直接存信息和图片信息即可
      */
     private void downLocalCaseUserData(File toLocalFile) {
-        if (getActivity()==null){
+        if (getActivity() == null) {
             LogUtils.e("下载图片的时候(downLocalCaseUserData),getActivity()====null");
-            mMMKVInstace.encode(Constants.KEY_Picture_Downing,false);
+            mMMKVInstace.encode(Constants.KEY_Picture_Downing, false);
             return;
         }
 
@@ -1104,6 +1116,9 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
             bean.setIsRememberPassword(isRemember);
             UserDBUtils.insertOrReplaceInTx(getAttachActivity(), bean);
         }
+
+        //发送消息刷新界面
+        mHandler.sendEmptyMessage(DOWN_STATUE_OK);
 
 
     }

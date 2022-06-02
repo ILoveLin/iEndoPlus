@@ -20,6 +20,7 @@ import com.company.iendo.R;
 import com.company.iendo.action.StatusAction;
 import com.company.iendo.app.AppActivity;
 import com.company.iendo.utils.CommonUtil;
+import com.company.iendo.utils.LogUtils;
 import com.company.iendo.widget.StatusLayout;
 import com.company.iendo.widget.vlc.ENDownloadView;
 import com.company.iendo.widget.vlc.ENPlayView;
@@ -68,21 +69,24 @@ public final class VideoActivity extends AppActivity implements StatusAction, Se
             super.handleMessage(msg);
             switch (msg.what) {
                 case Time:
-                    String string = CommonUtil.stringForTime(Integer.parseInt(currentTime));
-                    String stringAll = CommonUtil.stringForTime(mVLCView.getDuration());
-                    mTime.setText("" + string);
-                    mTimeAll.setText(stringAll + "");
-                    if (!isTouch) {
-                        if (mVLCView.getDuration() != 0) {
-                            double v = Double.parseDouble(currentTime);
-                            double duration = (double) mVLCView.getDuration();
-                            double v1 = v / (duration);
-                            int intData = getIntData(v1 + "");
-                            mProgress.setProgress(intData);
-                        } else {
-                            mProgress.setProgress(1);
-                        }
-                    }
+//                    String string = CommonUtil.stringForTime(Integer.parseInt(currentTime));
+//                    String stringAll = CommonUtil.stringForTime(mVLCView.getDuration());
+//                    LogUtils.e("视频播放===string==" + string);
+//                    LogUtils.e("视频播放===stringAll==" + stringAll);
+//                    mTime.setText("" + string);
+//                    mTimeAll.setText(stringAll + "");
+//                    if (!isTouch) {
+//                        if (mVLCView.getDuration() != 0) {
+//                            double v = Double.parseDouble(currentTime);
+//                            double duration = (double) mVLCView.getDuration();
+//                            double v1 = v / (duration);
+//                            int intData = getIntData(v1 + "");
+//                            mProgress.setProgress(intData);
+//                        } else {
+//                            mProgress.setProgress(1);
+//                        }
+//                    }
+
                     break;
             }
         }
@@ -118,6 +122,7 @@ public final class VideoActivity extends AppActivity implements StatusAction, Se
         path = intent.getStringExtra("mUrl");
         mTitle = intent.getStringExtra("mTitle");
         loginType = intent.getStringExtra("loginType");
+        RecordType="";
         mTitleName.setText(mTitle + "");
         startLive(path);
     }
@@ -197,6 +202,7 @@ public final class VideoActivity extends AppActivity implements StatusAction, Se
             public void eventStop(boolean isPlayError) {
                 mLoadingView.setVisibility(View.INVISIBLE);
                 mStartView.setVisibility(View.VISIBLE);
+                LogUtils.e("视频播放===eventStop==");
 
             }
 
@@ -204,7 +210,7 @@ public final class VideoActivity extends AppActivity implements StatusAction, Se
             public void eventError(int event, boolean show) {
                 mStartView.setVisibility(View.VISIBLE);
                 mLoadingView.setVisibility(View.INVISIBLE);
-                if ("offline".equals(loginType)){
+                if ("offline".equals(loginType)) {
                     toast("下载的视频,已经被删除了,无法播放");
                 }
             }
@@ -212,6 +218,7 @@ public final class VideoActivity extends AppActivity implements StatusAction, Se
             @Override
             public void eventPlayInit(boolean openClose) {
                 mStartView.setVisibility(View.INVISIBLE);
+                LogUtils.e("视频播放===eventPlayInit==");
 
 //                error_text.setVisibility(View.INVISIBLE);
             }
@@ -227,22 +234,55 @@ public final class VideoActivity extends AppActivity implements StatusAction, Se
                         mProgress.setProgress(progressData);
                     }
                 }
+                currentTime = "0";
+
+                LogUtils.e("视频播放===eventPlay==");
             }
 
             @Override
             public void eventSystemEnd(String isStringed) {
+                LogUtils.e("视频播放===eventSystemEnd==");
+
 
             }
 
             @Override
             public void eventCurrentTime(String time) {
-                currentTime = time;
-                mHandler.sendEmptyMessageDelayed(Time, 1000);
+//                RecordType="线性增长";
+//                currentTime = time;
+//                mHandler.sendEmptyMessageDelayed(Time,1000);
+
+
+                String stringAll = CommonUtil.stringForTime(mVLCView.getDuration());
+                mTimeAll.setText(stringAll + "");
+            }
+
+            /**
+             * 录像回调的时间  时间都是线下一秒一秒相同的250数字
+             * @param time
+             */
+            @Override
+            public void eventRecordCurrentTime(String time) {
+//                if (RecordType.equals("线性增长")){
+//                    return;
+//                }
+//                RecordType="非线性增长";
+//                int i = Integer.parseInt(time);
+//                int aa = Integer.parseInt(currentTime);
+//                currentTime = aa + i + "";
+//                LogUtils.e("视频播放==回调前==string==" + time);
+////                mHandler.sendEmptyMessageDelayed(Time,1000);
+
+
+                String stringAll = CommonUtil.stringForTime(mVLCView.getDuration());
+                mTimeAll.setText(stringAll + "");
             }
 
 
         });
     }
+
+    private String RecordType = "";
 
     @Override
     public StatusLayout getStatusLayout() {
@@ -315,9 +355,16 @@ public final class VideoActivity extends AppActivity implements StatusAction, Se
 
 
     private int getIntData(String data) {
+        LogUtils.e("视频播放===getIntData==" + data);
+
         int i = data.indexOf(".");//0.0
-        if ("0.0".equals(data) ||"0".equals(data)){
+        if ("0.0".equals(data) || "0".equals(data)) {
             return 0;
+        }
+        if (data.length()==2||data.length()==3){
+            data =data+"44";
+            LogUtils.e("视频播放===getIntData=加了之后=" + data);
+
         }
         String substring = data.substring(i + 1, i + 3);
         if ("00".equals(substring)) {

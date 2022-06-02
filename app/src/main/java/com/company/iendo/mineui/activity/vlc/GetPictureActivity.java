@@ -973,6 +973,11 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                 mHandler.sendEmptyMessageDelayed(Time, 1000);
             }
 
+            @Override
+            public void eventRecordCurrentTime(String time) {
+
+            }
+
 
         });
 

@@ -426,6 +426,7 @@ public class VlcPlayer implements MediaPlayerControl, Handler.Callback, IVLCVout
                 boolean seekable = event.getSeekable();
                 int voutCount = event.getVoutCount();
 
+                LogUtils.i(tag + "event==A==getTimeChanged===", t + "");
                 LogUtils.i(tag + "event==A==lengthChanged===", lengthChanged + "");
                 LogUtils.i(tag + "event==A==buffering===", buffering + "");
                 LogUtils.i(tag + "event==A==esChangedID===", esChangedID + "");
@@ -444,9 +445,11 @@ public class VlcPlayer implements MediaPlayerControl, Handler.Callback, IVLCVout
                 this.timee = imeChanged;
                 time = event.getTimeChanged();
                 LogUtils.i(tag + "event====time===", time + "");
+                LogUtils.i(tag + "event====timee===", timee + "");
 
                 if (indexTime == time) {
                     LogUtils.i(tag + "event====time===", "Time相等");
+                    mediaListenerEvent.eventRecordCurrentTime(imeChanged);
 
                 } else {
                     mediaListenerEvent.eventCurrentTime(imeChanged);
