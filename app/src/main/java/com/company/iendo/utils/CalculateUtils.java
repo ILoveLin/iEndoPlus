@@ -226,7 +226,6 @@ public class CalculateUtils {
      * 3,再次检验验算发送过来string的检验值,正确才回调数据
      *
      *
-     * @param currentCMD  当前是什么命令
      * @param string 全部hexstring 数据DetailFragment$22
      * @return true 是发给我的  false 不是发给我的
      */
@@ -372,6 +371,7 @@ public class CalculateUtils {
 
     /**
      * 16进制直接转换成为字符串(无需Unicode解码)
+     * 十六进制转字符串
      *
      * @param hexStr 字母必须为大写
      * @return

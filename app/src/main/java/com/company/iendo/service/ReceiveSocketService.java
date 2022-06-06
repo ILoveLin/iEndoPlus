@@ -35,6 +35,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
+import java.util.ArrayList;
 
 import io.reactivex.disposables.Disposable;
 
@@ -126,29 +127,29 @@ public class ReceiveSocketService extends AbsWorkService {
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void SocketRefreshEvent(SocketRefreshEvent event) {
         switch (event.getUdpCmd()) {
-            case Constants.UDP_CUSTOM_RESTART://重启监听线程
-
-                //Wifi状态判断
-                WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-                lock = wifiManager.createMulticastLock("test wifi");
-                //用完之后及时调用lock.release()释放资源，否决多次调用lock.acquire()方法，程序可能会崩
-                if (wifiManager.isWifiEnabled()) {
-                    WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-                    mAppIP = getIpString(wifiInfo.getIpAddress());
-                }
-
-                //此处重启监听线程
-                MMKV mmkv = MMKV.defaultMMKV();
-                boolean b = mmkv.decodeBool(Constants.KEY_Login_Tag);
-                String mSocketPort = mmkv.decodeString(Constants.KEY_Device_SocketPort);
-                if (b) {//如果是登录状态,重启登入时候的监听
-                    ReceiveSocketService receiveSocketService = new ReceiveSocketService();
-                    receiveSocketService.setSettingReceiveThread(mAppIP, Integer.parseInt(mSocketPort), getApplicationContext());
-                } else {//不是登录状态,重启广播搜索监听
-                    ReceiveSocketService receiveSocketService = new ReceiveSocketService();
-                    receiveSocketService.initFirstThread(mAppIP);
-                }
-                break;
+//            case Constants.UDP_CUSTOM_RESTART://重启监听线程
+//
+//                //Wifi状态判断
+//                WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+//                lock = wifiManager.createMulticastLock("test wifi");
+//                //用完之后及时调用lock.release()释放资源，否决多次调用lock.acquire()方法，程序可能会崩
+//                if (wifiManager.isWifiEnabled()) {
+//                    WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+//                    mAppIP = getIpString(wifiInfo.getIpAddress());
+//                }
+//
+//                //此处重启监听线程
+//                MMKV mmkv = MMKV.defaultMMKV();
+//                boolean b = mmkv.decodeBool(Constants.KEY_Login_Tag);
+//                String mSocketPort = mmkv.decodeString(Constants.KEY_Device_SocketPort);
+//                if (b) {//如果是登录状态,重启登入时候的监听
+//                    ReceiveSocketService receiveSocketService = new ReceiveSocketService();
+//                    receiveSocketService.setSettingReceiveThread(mAppIP, Integer.parseInt(mSocketPort), getApplicationContext());
+//                } else {//不是登录状态,重启广播搜索监听
+//                    ReceiveSocketService receiveSocketService = new ReceiveSocketService();
+//                    receiveSocketService.initFirstThread(mAppIP);
+//                }
+//                break;
         }
 
     }
@@ -555,7 +556,6 @@ public class ReceiveSocketService extends AbsWorkService {
                                     LogUtils.e(TAG + "!=======================华丽的分割线===========================!");
 
                                 }
-
                                 //及时释放资源不然次数多了会报错
 //                            lock.release();
                             } else {
@@ -569,29 +569,30 @@ public class ReceiveSocketService extends AbsWorkService {
 //                                SocketRefreshEvent event1 = new SocketRefreshEvent();
 //                                event1.setUdpCmd(Constants.UDP_CUSTOM_RESTART);
 //                                EventBus.getDefault().postSticky(event1);
+                                LogUtils.e(TAG + "异常-->code=0,监听port端口不一致,退出多余的监听线程!!");
+
                                 break;//不相等的直接跳出接收,关闭线程
                             }
 
                         }
 
                     } catch (Exception e) {
-                        SocketRefreshEvent event1 = new SocketRefreshEvent();
-                        event1.setUdpCmd(Constants.UDP_CUSTOM_RESTART);
-                        EventBus.getDefault().postSticky(event1);
-                        SocketRefreshEvent event = new SocketRefreshEvent();
-                        event.setUdpCmd(Constants.UDP_CUSTOM_TOAST);
-                        event.setData("");
+//                        之前方案是,退出线程,弹出提示信息,重新开启线程监听
+//                        现在方案是,直接捕获,不退出异常,只打印日志
+//                        SocketRefreshEvent event1 = new SocketRefreshEvent();
+//                        event1.setUdpCmd(Constants.UDP_CUSTOM_RESTART);
+//                        EventBus.getDefault().postSticky(event1);
+//                        SocketRefreshEvent event = new SocketRefreshEvent();
+//                        event.setUdpCmd(Constants.UDP_CUSTOM_TOAST);
+//                        event.setData("");
                         //java.lang.NullPointerException:
                         // Attempt to invoke virtual method 'boolean java.lang.String.equals(java.lang.Object)' on a null object reference
-                        event.setData("code=1,循环监听异常,错误,退出监听线程!!");
-                        LogUtils.e(TAG + "code=1,循环监听异常,错误,退出监听线程!!");
-                        MMKV mmkv = MMKV.defaultMMKV();
-                        EventBus.getDefault().postSticky(event);
-                        HandService.UDP_HAND_GLOBAL_TAG = false;
-                        String port = mmkv.decodeString(Constants.KEY_RECEIVE_PORT, "7006");
-                        String IP = mmkv.decodeString(Constants.KEY_Device_Ip);
+//                        event.setData("code=1,循环监听异常,错误,退出监听线程!!");
+//                        EventBus.getDefault().postSticky(event);
+//                        HandService.UDP_HAND_GLOBAL_TAG = false;
+                        LogUtils.e(TAG + "异常-->code=1,循环监听解析,异常:");
                         e.printStackTrace();
-                        break;//捕获到异常之后，执行break跳出循环
+//                        break;//捕获到异常之后，执行break跳出循环
                     }
 
                 }

@@ -270,9 +270,15 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
 
                 break;
             case Constants.UDP_FC://授权接入
+                int size = mReceivePointList.size();
+                LogUtils.e("设备搜索界面==授权接入==" );
+                LogUtils.e("设备搜索界面==授权接入=="+size );
+
                 if (!mReceivePointList.contains(mRandom2DataResultData)) {
                     mReceivePointList.add(mRandom2DataResultData + "==" + event.getIp());
                     //发消息,存入数据库,并且刷新设备搜索界面
+                    LogUtils.e("设备搜索界面==授权接入==mRandom2DataResultData="+mRandom2DataResultData );
+                    LogUtils.e("设备搜索界面==授权接入==getIp="+event.getIp() );
                     mHandler.sendEmptyMessage(UDP_Point_Over);
 
                 }
@@ -434,6 +440,16 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
         putBean.setSpt(Constants.RECEIVE_PORT + "");
         //存入数据库的标识;endotype(数字)+devicecode(36位设备码)+devicetype(中文说明)
         String tag = item.getEndotype() + item.getDeviceCode() + item.getDeviceType();
+
+
+        LogUtils.e("设备搜索界面==getDataInsertDB=item.getEndotype()===="+item.getEndotype() );
+        LogUtils.e("设备搜索界面==getDataInsertDB=item.getDeviceCode()===="+item.getDeviceCode() );
+        LogUtils.e("设备搜索界面==getDataInsertDB=item.getDeviceType()===="+item.getDeviceType() );
+        LogUtils.e("设备搜索界面==getDataInsertDB=item.getIp()===="+item.getIp() );
+
+
+        String endotype = item.getEndotype();
+
         //判断是否存入过该条数据到数据库中
         DeviceDBBean codeBean = DeviceDBUtils.getQueryBeanByAcceptAndInsertDB(DeviceSearchActivity.this, tag);
         List<DeviceDBBean> deviceDBBeans = DeviceDBUtils.queryAll(DeviceSearchActivity.this);
@@ -574,8 +590,21 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
      */
     private void getDataInsertDB() {
 
+
+        /**
+         * 一个个添加活重复新增之前的设备bug
+         *
+         */
         for (int i = 0; i < mReceivePointList.size(); i++) {
+
+            LogUtils.e("设备搜索界面==getDataInsertDB=currentItemPosition===="+currentItemPosition );
+
+
+            LogUtils.e("设备搜索界面==getDataInsertDB==size=="+mReceivePointList.size() );
             String str = mReceivePointList.get(i);
+            LogUtils.e("设备搜索界面==getDataInsertDB==i=="+i );
+            LogUtils.e("设备搜索界面==getDataInsertDB==str=="+str );
+
             String receiveDataStringFromRoom = CalculateUtils.getReceiveDataStringFromRoomForPoint(str);
             String s = receiveDataStringFromRoom.toUpperCase();
 
@@ -585,6 +614,10 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
             String s1 = CalculateUtils.hexStr2Str(s);
             PutInDeviceMsgBean bean = mGson.fromJson(s1, PutInDeviceMsgBean.class);
             String retcode = bean.getRetcode();
+            String devicecode11 = CalculateUtils.hexStr2Str(deviceOnlyCodeFromRoom);
+            LogUtils.e("设备搜索界面==getDataInsertDB==deviceOnlyCodeFromRoom=="+devicecode11 );
+            LogUtils.e("设备搜索界面==getDataInsertDB==bean=="+bean );
+            LogUtils.e("设备搜索界面==getDataInsertDB======================================");
 
             if ("0".equals(retcode)) {
                 toast("接入成功");

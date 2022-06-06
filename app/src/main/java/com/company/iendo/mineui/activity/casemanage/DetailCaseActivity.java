@@ -98,7 +98,6 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
-                        toast("请求错误" + e);
                     }
 
                     @Override
