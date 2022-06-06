@@ -3,6 +3,7 @@ package com.company.iendo.mineui.activity.casemanage;
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
+import android.text.InputFilter;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -794,10 +795,11 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
 
         //主诉---多行显示的edit
         edit_01_i_tell_you = lines_01_i_tell_you.getContentEdit();
+        edit_01_i_tell_you.setFilters(new InputFilter[]{new InputFilter.LengthFilter(200)});
+
         //临床诊断---多行显示的edit
         edit_01_i_bad_tell = lines_01_bad_tell.getContentEdit();
-
-
+        edit_01_i_bad_tell.setFilters(new InputFilter[]{new InputFilter.LengthFilter(300)});
         /**
          *获取镜信息id
          */
@@ -819,12 +821,19 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
         et_02_check_doctor = findViewById(R.id.et_02_check_doctor);//常规的edittext
 
         et_02_mirror_see = etlines_02_mirror_see.getContentEdit();
+        et_02_mirror_see.setFilters(new InputFilter[]{new InputFilter.LengthFilter(300)});
         et_02_mirror_result = etlines_02_mirror_result.getContentEdit();
+        et_02_mirror_result.setFilters(new InputFilter[]{new InputFilter.LengthFilter(300)});
         et_02_live_check = etlines_02_live_check.getContentEdit();
+        et_02_live_check.setFilters(new InputFilter[]{new InputFilter.LengthFilter(200)});
         et_02_cytology = etlines_02_cytology.getContentEdit();
+        et_02_cytology.setFilters(new InputFilter[]{new InputFilter.LengthFilter(200)});
         et_02_test = etlines_02_test.getContentEdit();
+        et_02_test.setFilters(new InputFilter[]{new InputFilter.LengthFilter(200)});
         et_02_pathology = etlines_02_pathology.getContentEdit();
+        et_02_pathology.setFilters(new InputFilter[]{new InputFilter.LengthFilter(200)});
         et_02_advice = etlines_02_advice.getContentEdit();
+        et_02_advice.setFilters(new InputFilter[]{new InputFilter.LengthFilter(200)});
 
         /**
          * 获取其他信息id
@@ -865,7 +874,8 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
 
         edit_03_case_history = lines_03_case_history.getContentEdit();
         edit_03_family_case_history = lines_03_family_case_history.getContentEdit();
-
+        edit_03_case_history.setFilters(new InputFilter[]{new InputFilter.LengthFilter(300)});
+        edit_03_family_case_history.setFilters(new InputFilter[]{new InputFilter.LengthFilter(300)});
         //获取点击图标弹出dialog
         iv_01_sex_type = findViewById(R.id.iv_01_sex_type);
         iv_01_age_type = findViewById(R.id.iv_01_age_type);

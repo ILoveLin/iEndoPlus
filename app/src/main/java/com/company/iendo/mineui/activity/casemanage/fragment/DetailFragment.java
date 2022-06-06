@@ -10,6 +10,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.text.InputFilter;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -1758,8 +1759,12 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 
         //主诉---多行显示的edit
         edit_01_i_tell_you = lines_01_i_tell_you.getContentEdit();
+        edit_01_i_tell_you.setFilters(new InputFilter[]{new InputFilter.LengthFilter(200)});
+
         //临床诊断---多行显示的edit
         edit_01_i_bad_tell = lines_01_bad_tell.getContentEdit();
+        edit_01_i_tell_you.setFilters(new InputFilter[]{new InputFilter.LengthFilter(300)});
+
 
         //获取点击图标弹出dialog
         iv_01_sex_type = findViewById(R.id.iv_01_sex_type);
@@ -1798,6 +1803,14 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         et_02_pathology = etlines_02_pathology.getContentEdit();
         et_02_advice = etlines_02_advice.getContentEdit();
 
+
+        et_02_mirror_see.setFilters(new InputFilter[]{new InputFilter.LengthFilter(300)});
+        et_02_mirror_result.setFilters(new InputFilter[]{new InputFilter.LengthFilter(300)});
+        et_02_live_check.setFilters(new InputFilter[]{new InputFilter.LengthFilter(200)});
+        et_02_cytology.setFilters(new InputFilter[]{new InputFilter.LengthFilter(200)});
+        et_02_test.setFilters(new InputFilter[]{new InputFilter.LengthFilter(200)});
+        et_02_pathology.setFilters(new InputFilter[]{new InputFilter.LengthFilter(200)});
+        et_02_advice.setFilters(new InputFilter[]{new InputFilter.LengthFilter(200)});
 
         //获取点击图标弹出dialog
         iv_02_mirror_see = findViewById(R.id.iv_02_mirror_see);
@@ -1848,7 +1861,8 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 
         edit_03_case_history = lines_03_case_history.getContentEdit();
         edit_03_family_case_history = lines_03_family_case_history.getContentEdit();
-
+        edit_03_case_history.setFilters(new InputFilter[]{new InputFilter.LengthFilter(300)});
+        edit_03_family_case_history.setFilters(new InputFilter[]{new InputFilter.LengthFilter(300)});
         //获取点击图标弹出dialog
         iv_03_section = findViewById(R.id.iv_03_section);
         iv_03_device = findViewById(R.id.iv_03_device);

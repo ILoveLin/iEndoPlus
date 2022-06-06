@@ -443,6 +443,7 @@
                 android:focusable="false"
                 android:gravity="right"
                 android:hint=""
+                android:maxLength="20"
                 android:lines="1"
                 android:paddingLeft="@dimen/dp_10"
                 android:paddingTop="@dimen/dp_10"

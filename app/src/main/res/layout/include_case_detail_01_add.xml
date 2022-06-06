@@ -45,6 +45,7 @@
                 android:gravity="right|center_vertical"
                 android:hint=""
                 android:lines="1"
+                android:maxLength="50"
                 android:paddingLeft="@dimen/dp_10"
                 android:paddingRight="@dimen/dp_10"
                 android:singleLine="true"
@@ -89,6 +90,7 @@
                     android:focusable="false"
                     android:gravity="right|center_vertical"
                     android:hint=""
+                    android:maxLength="10"
                     android:lines="1"
                     android:paddingLeft="@dimen/dp_10"
                     android:paddingRight="@dimen/dp_10"
@@ -146,6 +148,7 @@
                     android:layout_height="@dimen/dp_35"
                     android:layout_weight="4"
                     android:background="@null"
+                    android:maxLength="3"
                     android:gravity="right|center_vertical"
                     android:hint="请输入年龄"
                     android:inputType="phone"
@@ -211,6 +214,7 @@
                 android:gravity="right|center_vertical"
                 android:hint=""
                 android:lines="1"
+                android:maxLength="200"
                 android:paddingLeft="@dimen/dp_10"
                 android:paddingRight="@dimen/dp_10"
                 android:singleLine="true"
@@ -258,7 +262,7 @@
                 android:gravity="right|center_vertical"
                 android:hint=""
                 android:lines="1"
-
+                android:maxLength="50"
                 android:paddingLeft="@dimen/dp_10"
                 android:paddingRight="@dimen/dp_10"
                 android:singleLine="true"
@@ -296,6 +300,7 @@
                 android:layout_weight="1"
                 android:background="@null"
                 android:focusable="false"
+                android:maxLength="20"
                 android:gravity="right|center_vertical"
                 android:hint=""
                 android:lines="1"
@@ -374,7 +379,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/dp_10"
-            app:classic_maxCount="800"
+            app:classic_maxCount="30"
+            android:maxLength="50"
             app:classic_showPositive="true" />
 
         <!--        <com.hjq.widget.view.ClearEditText-->

@@ -86,6 +86,7 @@
                 android:gravity="right|center_vertical"
                 android:hint=""
                 android:lines="1"
+                android:maxLength="200"
                 android:paddingLeft="@dimen/dp_10"
                 android:paddingRight="@dimen/dp_10"
                 android:singleLine="true"
@@ -124,13 +125,14 @@
                 <com.hjq.widget.view.ClearEditText
                     android:id="@+id/et_03_section"
                     android:layout_width="0dp"
-                    android:layout_weight="1"
                     android:layout_height="@dimen/dp_35"
+                    android:layout_weight="1"
                     android:background="@null"
                     android:focusable="false"
                     android:gravity="right|center_vertical"
                     android:hint=""
                     android:lines="1"
+                    android:maxLength="20"
                     android:paddingLeft="@dimen/dp_10"
                     android:paddingRight="@dimen/dp_10"
                     android:singleLine="true"
@@ -178,15 +180,16 @@
                     android:text="设备" />
 
                 <com.hjq.widget.view.ClearEditText
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
                     android:id="@+id/et_03_device"
+                    android:layout_width="0dp"
                     android:layout_height="@dimen/dp_35"
+                    android:layout_weight="1"
                     android:background="@null"
                     android:focusable="false"
                     android:gravity="right|center_vertical"
                     android:hint=""
                     android:lines="1"
+                    android:maxLength="20"
                     android:paddingLeft="@dimen/dp_10"
                     android:paddingRight="@dimen/dp_10"
                     android:singleLine="true"
@@ -194,6 +197,7 @@
                     android:textColor="@color/black80"
                     android:textColorHint="@color/black20"
                     android:textSize="@dimen/sp_14" />
+
                 <ImageView
                     android:id="@+id/iv_03_device"
                     android:layout_width="wrap_content"
@@ -203,8 +207,6 @@
                     android:src="@drawable/selector_detail_dialog" />
 
             </LinearLayout>
-
-
 
 
         </LinearLayout>
@@ -236,6 +238,7 @@
                 android:gravity="right|center_vertical"
                 android:hint=""
                 android:lines="1"
+                android:maxLength="20"
                 android:paddingLeft="@dimen/dp_10"
                 android:paddingRight="@dimen/dp_10"
                 android:singleLine="true"
@@ -273,6 +276,7 @@
                 android:gravity="right|center_vertical"
                 android:hint=""
                 android:lines="1"
+                android:maxLength="20"
                 android:paddingLeft="@dimen/dp_10"
                 android:paddingRight="@dimen/dp_10"
                 android:singleLine="true"
@@ -310,6 +314,7 @@
                 android:gravity="right|center_vertical"
                 android:hint=""
                 android:lines="1"
+                android:maxLength="20"
                 android:paddingLeft="@dimen/dp_10"
                 android:paddingRight="@dimen/dp_10"
                 android:singleLine="true"
@@ -347,6 +352,7 @@
                 android:gravity="right|center_vertical"
                 android:hint=""
                 android:lines="1"
+                android:maxLength="10"
                 android:paddingLeft="@dimen/dp_10"
                 android:paddingRight="@dimen/dp_10"
                 android:singleLine="true"
@@ -384,6 +390,7 @@
                 android:gravity="right|center_vertical"
                 android:hint=""
                 android:lines="1"
+                android:maxLength="100"
                 android:paddingLeft="@dimen/dp_10"
                 android:paddingRight="@dimen/dp_10"
                 android:singleLine="true"
@@ -423,8 +430,8 @@
                 <com.hjq.widget.view.ClearEditText
                     android:id="@+id/et_03_ming_zu"
                     android:layout_width="0dp"
-                    android:layout_weight="1"
                     android:layout_height="@dimen/dp_35"
+                    android:layout_weight="1"
                     android:background="@null"
                     android:focusable="false"
                     android:gravity="right|center_vertical"
@@ -434,9 +441,11 @@
                     android:paddingRight="@dimen/dp_10"
                     android:singleLine="true"
                     android:text=""
+                    android:maxLength="32"
                     android:textColor="@color/black80"
                     android:textColorHint="@color/black20"
                     android:textSize="@dimen/sp_14" />
+
                 <ImageView
                     android:id="@+id/iv_03_ming_zu"
                     android:layout_width="wrap_content"
@@ -446,7 +455,6 @@
                     android:src="@drawable/selector_detail_dialog" />
 
             </LinearLayout>
-
 
 
         </LinearLayout>
@@ -478,10 +486,10 @@
 
 
                 <com.hjq.widget.view.ClearEditText
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
                     android:id="@+id/et_03_is_married"
+                    android:layout_width="0dp"
                     android:layout_height="@dimen/dp_35"
+                    android:layout_weight="1"
                     android:background="@null"
                     android:focusable="false"
                     android:gravity="right|center_vertical"
@@ -491,6 +499,7 @@
                     android:paddingRight="@dimen/dp_10"
                     android:singleLine="true"
                     android:text=""
+                    android:maxLength="10"
                     android:textColor="@color/black80"
                     android:textColorHint="@color/black20"
                     android:textSize="@dimen/sp_14" />
@@ -504,7 +513,6 @@
                     android:src="@drawable/selector_detail_dialog" />
 
             </LinearLayout>
-
 
 
         </LinearLayout>
@@ -540,6 +548,7 @@
                 android:paddingRight="@dimen/dp_10"
                 android:singleLine="true"
                 android:text=""
+                android:maxLength="50"
                 android:textColor="@color/black80"
                 android:textColorHint="@color/black20"
                 android:textSize="@dimen/sp_14" />
@@ -577,6 +586,7 @@
                 android:paddingRight="@dimen/dp_10"
                 android:singleLine="true"
                 android:text=""
+                android:maxLength="200"
                 android:textColor="@color/black80"
                 android:textColorHint="@color/black20"
                 android:textSize="@dimen/sp_14" />
@@ -613,6 +623,7 @@
                 android:paddingLeft="@dimen/dp_10"
                 android:paddingRight="@dimen/dp_10"
                 android:singleLine="true"
+                android:maxLength="20"
                 android:text=""
                 android:textColor="@color/black80"
                 android:textColorHint="@color/black20"
@@ -671,7 +682,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/dp_10"
                 app:classic_maxCount="800"
-                app:classic_showPositive="true"/>
+                app:classic_showPositive="true" />
 
             <!--            <com.hjq.widget.view.ClearEditText-->
             <!--                android:id="@+id/et_03_case_history"-->
@@ -763,7 +774,6 @@
 
 
         </LinearLayout>
-
 
 
         <View

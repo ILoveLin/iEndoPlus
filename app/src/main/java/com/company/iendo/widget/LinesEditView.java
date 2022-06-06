@@ -70,7 +70,7 @@ public class LinesEditView extends LinearLayout {
 
         TypedArray typedArray = context.obtainStyledAttributes(attrs,
                 R.styleable.LinesEditView);
-        MAX_COUNT = typedArray.getInteger(R.styleable.LinesEditView_classic_maxCount, 100);
+        MAX_COUNT = typedArray.getInteger(R.styleable.LinesEditView_classic_maxCount, 200);
         ignoreCnOrEn = typedArray.getBoolean(R.styleable.LinesEditView_classic_ignoreCnOrEn, true);
         showPositive = typedArray.getBoolean(R.styleable.LinesEditView_classic_showPositive, true);
         hintText = typedArray.getString(R.styleable.LinesEditView_classic_hintText);
@@ -153,24 +153,24 @@ public class LinesEditView extends LinearLayout {
             // 先去掉监听器，否则会出现栈溢出
             id_et_input.removeTextChangedListener(mTextWatcher);
 
-//            try {
-//                if (ignoreCnOrEn) {
-//                    //当输入字符个数超过限制的大小时，进行截断操作
-//                    while (calculateLengthIgnoreCnOrEn(editable.toString()) > MAX_COUNT) {
-//                        editable.delete(editStart - 1, editEnd);
-//                        editStart--;
-//                        editEnd--;
-//                    }
-//                } else {
-//                    // 因为是中英文混合，单个字符而言，calculateLength函数都会返回1
-//                    while (calculateLength(editable.toString()) > MAX_COUNT) { // 当输入字符个数超过限制的大小时，进行截断操作
-//                        editable.delete(editStart - 1, editEnd);
-//                        editStart--;
-//                        editEnd--;
-//                    }
-//                }
-//            }catch (Exception e){
-//            }
+            try {
+                if (ignoreCnOrEn) {
+                    //当输入字符个数超过限制的大小时，进行截断操作
+                    while (calculateLengthIgnoreCnOrEn(editable.toString()) > MAX_COUNT) {
+                        editable.delete(editStart - 1, editEnd);
+                        editStart--;
+                        editEnd--;
+                    }
+                } else {
+                    // 因为是中英文混合，单个字符而言，calculateLength函数都会返回1
+                    while (calculateLength(editable.toString()) > MAX_COUNT) { // 当输入字符个数超过限制的大小时，进行截断操作
+                        editable.delete(editStart - 1, editEnd);
+                        editStart--;
+                        editEnd--;
+                    }
+                }
+            }catch (Exception e){
+            }
 
 
 
