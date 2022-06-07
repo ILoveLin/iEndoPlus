@@ -15,7 +15,19 @@ public class Constants {
     public static final String Is_Logined = "is_logined";          //是否已经登入   false  未登录
 
     /**
-     * socket通讯配置信息
+     * #### 神州医疗Socket通讯端口配置信息
+     * #### CMEPlayer项目
+     * #### 广播服务端口8006
+     * #### 本地监听端口8005
+     * #### Socket通讯服务器端口授权设备返回的socket端口值-->Stp:socke udp接收端口;
+     * #### 不管是广播还是socket通讯,本地都是监听默认值端口
+     * ####
+     * ####
+     * #### iEndo项目
+     * #### 广播服务端口7006
+     * #### 本地监听端口7005
+     * #### Socket通讯服务器端口授权设备返回的socket端口值-->Stp:socke udp接收端口;
+     * #### 不管是广播还是socket通讯,本地都是监听默认值端口
      */
     public static final String BROADCASTER = "szcme";                //广播发起者名称--暂时固定szcme
     //    public static final String BROADCAST_IP = "192.168.135.255";      //广播地址
