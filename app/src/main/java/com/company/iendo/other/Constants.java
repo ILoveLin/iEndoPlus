@@ -14,32 +14,37 @@ public class Constants {
     public static final String Sp_UserAgreement_Tag = "sp_useragreement_tag";  //用户是否同意了----用户协议的标识,默认flase
     public static final String Is_Logined = "is_logined";          //是否已经登入   false  未登录
 
-
+    /**
+     * socket通讯配置信息
+     */
     public static final String BROADCASTER = "szcme";                //广播发起者名称--暂时固定szcme
     //    public static final String BROADCAST_IP = "192.168.135.255";      //广播地址
     public static final String BROADCAST_IP = "255.255.255.255";      //广播地址
     //默认值都是一样的
-    public static final int BROADCAST_PORT = 7006;               //广播约定端口--->默认值
-    public static final int SEND_PORT = 7006;                    //发送端口--->默认值
-    public static final int RECEIVE_PORT = 7006;                 //本地监听端口--->默认值
+    public static final int BROADCAST_SERVER_PORT = 7006;                     //广播服务端端口--->默认值
+    public static final int LOCAL_RECEIVE_PORT = 7005;                        //本地监听端口--->默认值
 
     /**
      * MMKV  存储的Key
+     * 说明:
+     * 未登录的情况下-->iEnd项目本地监听端口设置为默认值7005,服务端通讯端口默认值设置为7006
+     * <p>
+     * 登录的情况下-->iEnd项目本地监听端口设置为授权之后返回的(Stp:socke udp接收端口；),并且服务端通讯和本地监听都是公用这个端口
+     *
+     * 需要注意的是,退出的时候,需要手动吧KEY_LOCAL_RECEIVE_PORT的值设置为默认值7005,再切换监听线程
      */
 
-    /**
-     * 手动设置本地广播端口的port之后,服务器发送消息到app也是这个port,
-     * 也就是说BROADCAST_PORT==RECEIVE_PORT,本地需要开启新的线程socket(广播端口)接收消息
-     */
+    //广播约定端口  iend设定为7006 CMEPlayer设定为8005 -->广播的时候本地监听端口可以随意,但是发送固定的     MMKV的Key
+    public static final String KEY_BROADCAST_SERVER_PORT = "KEY_BROADCAST_SERVER_PORT";
 
-    //广播约定端口  只有在设备搜索的时候进行了设置才会更改这个值                                           MMKV的Key
-    public static final String KEY_BROADCAST_PORT = "KEY_BROADCAST_PORT";
-    //(登入后------退出前)这个时间段监听的本地监听端口,并且这个值,是时刻更新的不管是搜索还是登入之后          MMKV的Key
-    public static final String KEY_RECEIVE_PORT = "KEY_RECEIVE_PORT";
-    //(设备搜索的时候)监听的本地监听端口,并且这个值,只在搜索的时候设置端口变化                              MMKV的Key
-    public static final String KEY_RECEIVE_PORT_BY_SEARCH = "KEY_RECEIVE_PORT_BY_SEARCH";
+    //本地监听的端口                                                                                  MMKV的Key
+    public static final String KEY_LOCAL_RECEIVE_PORT = "KEY_LOCAL_RECEIVE_PORT";
+
     //第一次开启接收线程 避免初始化的时候开启多次线程                                                    MMKV的Key
     public static final String KEY_SOCKET_RECEIVE_FIRST_IN = "KEY_SOCKET_RECEIVE_FIRST_IN";
+
+
+
 
 
     /**
@@ -150,7 +155,6 @@ public class Constants {
     public static final String TAG_QUEUE_OVER = "TAG_QUEUE_OVER";                   //当前下载队列,true表示下载完毕,false 表示下载中
 
 
-
     public static final String STATUE_COMPLETED_DES = "已下载";                     //成功
     public static final String STATUE_ERROR_DES = "失败";                               //失败
     public static final String STATUE_START_DES = "开始";                             //开始
@@ -159,9 +163,7 @@ public class Constants {
     public static final String STATUE_CANCELED_DES = "暂停";                        //暂停
 
 
-
     public static final String STATUE_CANCELED_TAG = "STATUE_CANCELED_TAG";         //当前暂停的tag 标题
-
 
 
     /**

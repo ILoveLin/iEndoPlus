@@ -162,8 +162,7 @@ public class SettingOfflineFragment extends TitleBarFragment<MainActivity> {
                             mAppIP = getIpString(wifiInfo.getIpAddress());
                         }
                         MMKV kv = MMKV.defaultMMKV();
-                        int port = kv.decodeInt(Constants.KEY_BROADCAST_PORT);
-                        int searchPort = kv.decodeInt(Constants.KEY_RECEIVE_PORT_BY_SEARCH);
+                        int searchPort = kv.decodeInt(Constants.KEY_BROADCAST_SERVER_PORT);
 
                         if ("".equals(searchPort)) {
                             toast("本地广播发送端口不能为空");

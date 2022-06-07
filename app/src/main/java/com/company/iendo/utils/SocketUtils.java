@@ -43,6 +43,7 @@ public class SocketUtils {
 
         //申请广播开启
 //        lock.acquire();
+
         InetAddress mAddress = null;
         //点对点消息,握手
         try {
@@ -59,16 +60,17 @@ public class SocketUtils {
                 try {
 //                    byte[] sendData = data.getBytes();
                     MMKV kv = MMKV.defaultMMKV();
-                    int mCastSendPort = kv.decodeInt(Constants.KEY_BROADCAST_PORT);
+                    int mServerSendPort = kv.decodeInt(Constants.KEY_BROADCAST_SERVER_PORT);
+                    int mLocalReceivePort = kv.decodeInt(Constants.KEY_LOCAL_RECEIVE_PORT);
 
-                    DatagramPacket mSendPacket = new DatagramPacket(data, data.length, finalMAddress, mCastSendPort);
+                    DatagramPacket mSendPacket = new DatagramPacket(data, data.length, finalMAddress, mServerSendPort);
                     for (int i = 0; i < 5; i++) {
-                        LogUtils.e(TAG + "广播消息--->发送第:"+ i + "次广播,端口:" + mCastSendPort);
+                        LogUtils.e(TAG + "广播消息--->发送第:"+ i + "次广播,端口:" + mServerSendPort+"本地监听端口:"+mLocalReceivePort);
                         Thread.sleep(500);
                         //固定端口
                         DatagramSocket mSendBroadcastSocket = new DatagramSocket(null);
                         mSendBroadcastSocket.setReuseAddress(true);
-                        mSendBroadcastSocket.bind(new InetSocketAddress(mCastSendPort));
+                        mSendBroadcastSocket.bind(new InetSocketAddress(mLocalReceivePort));
                         mSendBroadcastSocket.send(mSendPacket);
                         mSendBroadcastSocket.setBroadcast(true);
                         mSendBroadcastSocket.close();
@@ -96,12 +98,15 @@ public class SocketUtils {
      *
      * @param data        协议完整的hexString数据
      * @param ip          目标地址
-     * @param receivePort 目标端口
+     * @param serverReceivePort 目标端口
      */
-    public static void startSendHandMessage(byte[] data, String ip, int receivePort, Context mContext) {
+    public static void startSendHandMessage(byte[] data, String ip, int serverReceivePort, Context mContext) {
 //        WifiManager manager = (WifiManager) mContext.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 //        WifiManager.MulticastLock lock = manager.createMulticastLock("test wifi");
 //        lock.acquire();    //申请开启
+
+        MMKV mmkv = MMKV.defaultMMKV();
+        int mLocalReceivePort= mmkv.decodeInt(Constants.KEY_LOCAL_RECEIVE_PORT);
         InetAddress mAddress = null;
         //点对点消息,握手
         try {
@@ -116,8 +121,8 @@ public class SocketUtils {
                 super.run();
                 try {
 
-                    LogUtils.e(TAG + "hand消息--->"+"发送,ip:" + finalMAddress+",port:" + receivePort+",data:" + data);
-                    DatagramPacket mSendPacket = new DatagramPacket(data, data.length, finalMAddress, receivePort);
+                    LogUtils.e(TAG + "hand消息--->"+"发送,ip:" + finalMAddress+",port:" + serverReceivePort+",data:" + data);
+                    DatagramPacket mSendPacket = new DatagramPacket(data, data.length, finalMAddress, serverReceivePort);
 //                    for (int i = 0; i < 5; i++) {
                     //随机端口
 //                    DatagramSocket mSendSocket = new DatagramSocket();
@@ -126,7 +131,7 @@ public class SocketUtils {
                     //固定端口
                     DatagramSocket mSendSocket = new DatagramSocket(null);
                     mSendSocket.setReuseAddress(true);
-                    mSendSocket.bind(new InetSocketAddress(receivePort));
+                    mSendSocket.bind(new InetSocketAddress(mLocalReceivePort));
                     mSendSocket.send(mSendPacket);
                     mSendSocket.close();
 
@@ -143,14 +148,17 @@ public class SocketUtils {
     /**
      * @param data        字节数组
      * @param ip          ip
-     * @param receivePort 接收端的port
+     * @param serverReceivePort 接收端的port
      *                    广播 授权,使用的是设置的端口,其他的点对点消息,按照协议data的port的走
      */
-    public static void startSendPointMessage(byte[] data, String ip, int receivePort, Context mContext) {
+    public static void startSendPointMessage(byte[] data, String ip, int serverReceivePort, Context mContext) {
 //        WifiManager manager = (WifiManager) mContext.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 //        WifiManager.MulticastLock lock = manager.createMulticastLock("test wifi");
 //        申请开启
 //        lock.acquire();
+
+        MMKV mmkv = MMKV.defaultMMKV();
+        int mLocalReceivePort= mmkv.decodeInt(Constants.KEY_LOCAL_RECEIVE_PORT);
 
         InetAddress mAddress = null;
         //点对点消息,握手
@@ -166,8 +174,9 @@ public class SocketUtils {
                 super.run();
                 try {
 //                    byte[] sendData = data.getBytes();
-                    LogUtils.e(TAG + "point消息--->"+"发送,ip:" + finalMAddress+",port:" + receivePort+",data:" + data);
-                    DatagramPacket mSendPacket = new DatagramPacket(data, data.length, finalMAddress, receivePort);
+                    LogUtils.e(TAG + "point消息--->"+"发送,ip:" + finalMAddress+",port:" + serverReceivePort+",本地告知上位机Port:" + mLocalReceivePort+",data:"+data);
+//                         Socket发送消息===point消息--->发送,ip:/192.168.31.223,port:7006,data:[B @56ac9cd
+                    DatagramPacket mSendPacket = new DatagramPacket(data, data.length, finalMAddress, serverReceivePort);
 //                    for (int i = 0; i < 5; i++) {
                     //随机端口
 //                    DatagramSocket mSendSocket = new DatagramSocket();
@@ -176,7 +185,7 @@ public class SocketUtils {
                     //固定端口
                     DatagramSocket mSendSocket = new DatagramSocket(null);
                     mSendSocket.setReuseAddress(true);
-                    mSendSocket.bind(new InetSocketAddress(receivePort));
+                    mSendSocket.bind(new InetSocketAddress(mLocalReceivePort));
                     mSendSocket.send(mSendPacket);
                     mSendSocket.close();
                     //释放资源

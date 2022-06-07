@@ -6,6 +6,7 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.IBinder;
 
+import com.company.iendo.R;
 import com.company.iendo.bean.UserReloChanged;
 import com.company.iendo.bean.event.SocketRefreshEvent;
 import com.company.iendo.bean.socket.DeleteUserBean;
@@ -35,7 +36,6 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
-import java.util.ArrayList;
 
 import io.reactivex.disposables.Disposable;
 
@@ -154,13 +154,19 @@ public class ReceiveSocketService extends AbsWorkService {
 
     }
 
+    public String getAppName(Context context) {
+
+        return context.getString(R.string.app_name);
+
+    }
+
     /**
      * 此为接收线程具体解析
      * ip 本地app的ip地址
      * port 本地监听的端口
      */
     public class ReceiveThread extends Thread {
-        private int settingReceivePort;
+        private int mLocalReceivePort;
         private int count = 0;
         private String AppIP;
         private Context context;
@@ -168,7 +174,7 @@ public class ReceiveSocketService extends AbsWorkService {
         DatagramPacket mSettingDataPacket = null;
 
         public ReceiveThread(String ip, int port, Context context) {
-            this.settingReceivePort = port;
+            this.mLocalReceivePort = port;
             this.AppIP = ip;
             this.context = context;
             mGson = GsonFactory.getSingletonGson();
@@ -181,7 +187,10 @@ public class ReceiveSocketService extends AbsWorkService {
                 if (mSettingDataSocket == null) {
                     mSettingDataSocket = new DatagramSocket(null);
                     mSettingDataSocket.setReuseAddress(true);
-                    mSettingDataSocket.bind(new InetSocketAddress(settingReceivePort));
+                    mSettingDataSocket.bind(new InetSocketAddress(mLocalReceivePort));
+//                    mSettingDataSocket = new DatagramSocket(null);
+//                    mSettingDataSocket.setReuseAddress(true);
+//                    mSettingDataSocket.bind(new InetSocketAddress(settingReceivePort));
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -203,376 +212,387 @@ public class ReceiveSocketService extends AbsWorkService {
                             mSettingDataSocket.receive(mSettingDataPacket);
                             int localPort = mSettingDataSocket.getLocalPort();
                             MMKV mmkv = MMKV.defaultMMKV();
-                            int stringint = mmkv.decodeInt(Constants.KEY_RECEIVE_PORT);
+                            int stringint = mmkv.decodeInt(Constants.KEY_LOCAL_RECEIVE_PORT);
                             /**
                              * 此处做处理
                              * 实时获取当前本地设置的监听端口和服务器端口是否一致,不一致关闭多余线程,优化性能
                              */
-                            if (stringint == mSettingDataPacket.getPort()) {
-                                String rec = CalculateUtils.byteArrayToHexString(mSettingDataPacket.getData()).trim();
-                                //过滤不是发送给我的消息全部不接受
-                                int length = mSettingDataPacket.getLength() * 2;
-                                String resultData = rec.substring(0, length);
+//                            if (stringint == mSettingDataPacket.getPort()) {
+                            String rec = CalculateUtils.byteArrayToHexString(mSettingDataPacket.getData()).trim();
+                            //过滤不是发送给我的消息全部不接受
+                            int length = mSettingDataPacket.getLength() * 2;
+                            String resultData = rec.substring(0, length);
 
 //                                937a5f204dc43a14                   设备码   数据库存入的
 //                                39333761356632303464633433613134   设备码   广播接收到的
-                                if (mSettingDataPacket != null) {
-                                    String hostAddressIP = mSettingDataPacket.getAddress().getHostAddress();
-                                    int port = mSettingDataPacket.getPort();
-                                    String deviceType = CalculateUtils.getSendDeviceType(resultData);
-                                    String deviceOnlyCode = CalculateUtils.getSendDeviceOnlyCode(resultData);
-                                    String currentCMD = CalculateUtils.getCMD(resultData);
-                                    SocketRefreshEvent event = new SocketRefreshEvent();
-                                    //设置接收端口
-                                    event.setReceivePort(settingReceivePort + "");
-                                    Boolean dataIfForMe = CalculateUtils.getDataIfForMe(resultData, context);
-                                    String dataString = CalculateUtils.getReceiveDataString(resultData);
-                                    LogUtils.e(TAG + "命令CMD==:" + currentCMD);
-                                    LogUtils.e(TAG + "上位机ip==:" + hostAddressIP);
-                                    LogUtils.e(TAG + "上位机port==:" + port);
-                                    LogUtils.e(TAG + "上位机deviceType==:" + deviceType);
-                                    LogUtils.e(TAG + "上位机deviceCode==:" + deviceOnlyCode);
-                                    //16进制直接转换成为字符串
-                                    String str = CalculateUtils.hexStr2Str(dataString);
-                                    LogUtils.e(TAG + "接收数据 ?? ==:" + dataIfForMe);
-                                    LogUtils.e(TAG + "协议String==:" + resultData);
-                                    LogUtils.e(TAG + "协议 data ==:" + dataString);
-                                    if (dataIfForMe) {
-                                        switch (currentCMD) {
-                                            case Constants.UDP_HAND://握手
-                                                try {
-                                                    LogUtils.e(TAG + "回调形式:--->握手");
-                                                    //判断数据是否是发个自己的
-                                                    Long startTime = System.currentTimeMillis();
-                                                    //设备在线握手成功
-                                                    event.setTga(true);
-                                                    event.setData(startTime + "");
-                                                    event.setIp(hostAddressIP);
-                                                    event.setReceivePort(settingReceivePort + "");
-                                                    event.setUdpCmd(Constants.UDP_HAND);
-                                                    EventBus.getDefault().postSticky(event);
-//                                                HandService.UDP_HAND_GLOBAL_TAG = true;
-                                                } catch (Exception e) {
-                                                    LogUtils.e(TAG + "回调形式:--->握手==Exception====");
-                                                }
-                                                break;
-
-                                            case Constants.UDP_FD: //广播
-                                                try {
-                                                    LogUtils.e(TAG + "回调形式:--->广播");
-                                                    event.setTga(true);
-                                                    event.setData(resultData);
-                                                    event.setIp(hostAddressIP);
-                                                    event.setUdpCmd(Constants.UDP_FD);
-                                                    EventBus.getDefault().postSticky(event);
-                                                } catch (Exception e) {
-                                                    LogUtils.e(TAG + "回调形式:--->广播==Exception====");
-                                                }
-                                                break;
-                                            case Constants.UDP_FC://授权接入
-                                                try {
-                                                    LogUtils.e(TAG + "回调形式:--->授权接入");
-                                                    //获取到病例的ID是十六进制的,需要转成十进制
-                                                    event.setTga(true);
-                                                    event.setData(resultData);
-                                                    event.setIp(hostAddressIP);
-                                                    event.setUdpCmd(Constants.UDP_FC);
-                                                    EventBus.getDefault().postSticky(event);
-                                                } catch (Exception e) {
-                                                    LogUtils.e(TAG + "回调形式:--->授权接入==Exception====");
-                                                }
-
-                                                break;
-                                            case Constants.UDP_F0://获取当前病例
-                                                try {
-                                                    LogUtils.e(TAG + "回调形式:--->获取当前病例==str==" + str);
-                                                    //获取到病例的ID是十六进制的,需要转成十进制
-//                                                    String jsonID = CalculateUtils.hex16To10(dataString) + "";
-                                                    UserIDBean mUserIDBean = mGson.fromJson(str, UserIDBean.class);
-//                                                    LogUtils.e("======GetPictureActivity==回调形式:--->=CMD=jsonID==" + jsonID);
-                                                    String jsonID = CalculateUtils.hex16To10(mUserIDBean.getRecordid()) + "";
-                                                    //必须从新取数据不然会错乱
-                                                    String spCaseID = MMKV.defaultMMKV().decodeString(Constants.KEY_CurrentCaseID);
-                                                    if (spCaseID.equals(jsonID)) {
-                                                        //id相等才能操作截图等功能
-                                                        event.setData("true");
-                                                    } else {
-                                                        event.setData("false");
-                                                    }
-                                                    event.setTga(true);
-                                                    event.setIp(hostAddressIP);
-                                                    event.setUdpCmd(Constants.UDP_F0);
-                                                    EventBus.getDefault().postSticky(event);
-                                                } catch (Exception e) {
-                                                    LogUtils.e(TAG + "回调形式:--->获取当前病例==Exception==str==" + str);
-                                                }
-
-                                                break;
-                                            case Constants.UDP_F3://冻结与解冻:00冻结，01解冻,未调试
-                                                try {
-                                                    LogUtils.e(TAG + "回调形式:--->冻结与解冻");
-                                                    ColdPictureBean mColdBean = mGson.fromJson(str, ColdPictureBean.class);
-                                                    String jsonString = CalculateUtils.hex16To10(mColdBean.getFreeze()) + "";
-                                                    event.setTga(true);
-                                                    event.setData(jsonString);
-                                                    event.setIp(hostAddressIP);
-                                                    event.setUdpCmd(Constants.UDP_F3);
-                                                    EventBus.getDefault().postSticky(event);
-                                                } catch (Exception e) {
-                                                    LogUtils.e(TAG + "回调形式:--->冻结与解冻==Exception====");
-                                                }
-
-                                                break;
-                                            case Constants.UDP_F1://预览报告
-                                                try {
-                                                    LogUtils.e(TAG + "回调形式:--->预览报告");
-                                                    LookReportBean lookBean = mGson.fromJson(str, LookReportBean.class);
-                                                    event.setTga(true);
-                                                    event.setData(lookBean.getReporturl());
-                                                    event.setIp(hostAddressIP);
-                                                    event.setUdpCmd(Constants.UDP_F1);
-                                                    EventBus.getDefault().postSticky(event);
-                                                } catch (Exception e) {
-                                                    LogUtils.e(TAG + "回调形式:--->预览报告==Exception==str==" + str);
-                                                }
-
-                                                break;
-                                            case Constants.UDP_F2://打印报告
-                                                try {
-                                                    LogUtils.e(TAG + "回调形式:--->打印报告");
-                                                    PrintReportBean portBean = mGson.fromJson(str, PrintReportBean.class);
-                                                    event.setTga(true);
-                                                    event.setData(portBean.getPrintcode());
-                                                    event.setIp(hostAddressIP);
-                                                    event.setUdpCmd(Constants.UDP_F2);
-                                                    EventBus.getDefault().postSticky(event);
-                                                } catch (Exception e) {
-                                                    LogUtils.e(TAG + "回调形式:--->打印报告==Exception==str==" + str);
-                                                }
-
-                                                break;
-                                            case Constants.UDP_18://录像
-                                                try {
-                                                    LogUtils.e(TAG + "回调形式:--->录像");
-                                                    RecodeBean recodeBean = mGson.fromJson(str, RecodeBean.class);
-                                                    event.setTga(true);
-                                                    event.setData(recodeBean.getQrycode());
-                                                    event.setIp(CalculateUtils.hex16To10(recodeBean.getRecordid()) + "");//16进制转10进制
-                                                    event.setUdpCmd(Constants.UDP_18);
-                                                    EventBus.getDefault().postSticky(event);
-                                                } catch (Exception e) {
-                                                    LogUtils.e(TAG + "回调形式:--->录像==Exception==str==" + str);
-                                                }
-
-                                                break;
-                                            case Constants.UDP_13://更新病例
-                                                try {
-                                                    LogUtils.e(TAG + "回调形式:--->更新病例");
-                                                    UpdateCaseBean updateBean = mGson.fromJson(str, UpdateCaseBean.class);
-                                                    //hex转成十进制
-                                                    String caseID = CalculateUtils.hex16To10(updateBean.getRecordid()) + "";
-                                                    event.setTga(true);
-                                                    event.setData(caseID);
-                                                    event.setIp(hostAddressIP);
-                                                    event.setUdpCmd(Constants.UDP_13);
-                                                    EventBus.getDefault().postSticky(event);
-                                                } catch (Exception e) {
-                                                    LogUtils.e(TAG + "回调形式:--->更新病例==Exception==str==" + str);
-                                                }
-
-                                                break;
-                                            case Constants.UDP_15://采图
-                                                try {
-                                                    LogUtils.e(TAG + "回调形式:--->采图");
-                                                    ShotPictureCallBlackBean pictureCallBlackBean = mGson.fromJson(str, ShotPictureCallBlackBean.class);
-                                                    //hex转成十进制
-                                                    String picCaseID = CalculateUtils.hex16To10(pictureCallBlackBean.getRecordid()) + "";
-                                                    String imageID = CalculateUtils.hex16To10(pictureCallBlackBean.getImageid()) + "";
-                                                    event.setTga(true);
-                                                    event.setData(picCaseID);//只回调病例ID,回调的病例ID和当前App操作的病例ID 不同的时候不作处理
-                                                    event.setIp(hostAddressIP);
-                                                    event.setUdpCmd(Constants.UDP_15);
-                                                    EventBus.getDefault().postSticky(event);
-                                                } catch (Exception e) {
-                                                    LogUtils.e(TAG + "回调形式:--->采图==Exception==str==" + str);
-                                                }
-
-                                                break;
-                                            case Constants.UDP_16://删除图片
-                                                try {
-                                                    LogUtils.e(TAG + "回调形式:--->删除图片");
-                                                    DeletedPictureBean deletePictureBean = mGson.fromJson(str, DeletedPictureBean.class);
-                                                    //hex转成十进制
-                                                    String deleteBeanID = CalculateUtils.hex16To10(deletePictureBean.getRecordid()) + "";
-                                                    //必须从新取数据不然会错乱
-                                                    String mkCurrentID = MMKV.defaultMMKV().decodeString(Constants.KEY_CurrentCaseID);
-                                                    if (mkCurrentID.equals(deleteBeanID)) {
-                                                        //id相等才能操作截图等功能
-                                                        event.setData("true");
-                                                        event.setData(deleteBeanID);
-                                                        event.setIp(hostAddressIP);
-                                                        event.setUdpCmd(Constants.UDP_16);
-                                                        EventBus.getDefault().postSticky(event);
-                                                    }
-                                                } catch (Exception e) {
-                                                    LogUtils.e(TAG + "回调形式:--->删除图片==Exception==str==" + str);
-                                                }
-                                                break;
-                                            case Constants.UDP_20://删除视频
-                                                try {
-                                                    LogUtils.e(TAG + "回调形式:--->删除视频");
-                                                    DeletedVideoBean videoBean = mGson.fromJson(str, DeletedVideoBean.class);
-                                                    //hex转成十进制
-                                                    String deleteVideoBeanID = CalculateUtils.hex16To10(videoBean.getRecordid()) + "";
-                                                    //必须从新取数据不然会错乱
-                                                    String mkCurrentVideoID = MMKV.defaultMMKV().decodeString(Constants.KEY_CurrentCaseID);
-                                                    if (mkCurrentVideoID.equals(deleteVideoBeanID)) {
-                                                        //id相等才能操作截图等功能
-                                                        event.setData("true");
-                                                        event.setData(mkCurrentVideoID);
-                                                        event.setIp(hostAddressIP);
-                                                        event.setUdpCmd(Constants.UDP_20);
-                                                        EventBus.getDefault().postSticky(event);
-                                                    }
-                                                } catch (Exception e) {
-                                                    LogUtils.e(TAG + "回调形式:--->删除视频==Exception==str==" + str);
-                                                }
-
-                                                break;
-                                            case Constants.UDP_17://编辑图片
-                                                try {
-                                                    LogUtils.e(TAG + "回调形式:--->编辑图片");
-                                                    EditPictureBean editBean = mGson.fromJson(str, EditPictureBean.class);
-                                                    //hex转成十进制
-                                                    String editCaseID = CalculateUtils.hex16To10(editBean.getRecordid()) + "";
-                                                    String editCaseImageID = CalculateUtils.hex16To10(editBean.getImageid()) + "";
-                                                    event.setTga(true);
-                                                    event.setData(editCaseID);//只回调病例ID,回调的病例ID和当前App操作的病例ID 不同的时候不作处理
-                                                    event.setIp(editCaseImageID);  //此处设置为图片ID
-                                                    event.setUdpCmd(Constants.UDP_17);
-                                                    EventBus.getDefault().postSticky(event);
-                                                } catch (Exception e) {
-                                                    LogUtils.e(TAG + "回调形式:--->编辑图片==Exception==str==" + str);
-                                                }
-
-                                                break;
-                                            case Constants.UDP_14://删除病例
-                                                try {
-                                                    LogUtils.e(TAG + "回调形式:--->删除病例");
-                                                    DeleteUserBean deleteBean = mGson.fromJson(str, DeleteUserBean.class);
-                                                    //hex转成十进制
-                                                    String deleteCaseID = CalculateUtils.hex16To10(deleteBean.getRecordid()) + "";
-                                                    event.setTga(true);
-                                                    event.setData(deleteCaseID);//只回调病例ID,回调的病例ID和当前App操作的病例ID 不同的时候不作处理
-                                                    event.setIp(hostAddressIP);  //此处设置为图片ID
-                                                    event.setUdpCmd(Constants.UDP_14);
-                                                    EventBus.getDefault().postSticky(event);
-                                                } catch (Exception e) {
-                                                    LogUtils.e(TAG + "回调形式:--->删除病例==Exception==str==" + str);
-                                                }
-
-                                                break;
-                                            case Constants.UDP_12://新增病例
-                                                try {
-                                                    LogUtils.e(TAG + "回调形式:--->新增病例");
-                                                    DeleteUserBean addBean = mGson.fromJson(str, DeleteUserBean.class);
-                                                    //hex转成十进制
-                                                    String addBeanCaseID = CalculateUtils.hex16To10(addBean.getRecordid()) + "";
-                                                    event.setTga(true);
-                                                    event.setData(addBeanCaseID);//只回调病例ID,回调的病例ID和当前App操作的病例ID 不同的时候不作处理
-                                                    event.setIp(hostAddressIP);
-                                                    event.setUdpCmd(Constants.UDP_12);
-                                                    EventBus.getDefault().postSticky(event);
-                                                } catch (Exception e) {
-                                                    LogUtils.e(TAG + "回调形式:--->新增病例==Exception==str==" + str);
-                                                }
-
-                                                break;
-                                            case Constants.UDP_F4://语音接入
-                                                try {
-                                                    LogUtils.e(TAG + "回调形式:--->语音接入");
-                                                    MicResponseBean micResponseBean = mGson.fromJson(str, MicResponseBean.class);
-                                                    event.setTga(true);
-                                                    event.setData(micResponseBean.getUrl());//传递url
-                                                    event.setIp(micResponseBean.getOnline());//传递是否在线(0：离线 1:上线)
-                                                    event.setUdpCmd(Constants.UDP_F4);
-                                                    EventBus.getDefault().postSticky(event);
-                                                } catch (Exception e) {
-                                                    LogUtils.e(TAG + "回调形式:--->语音接入==Exception==str==" + str);
-                                                }
-
-                                                break;
-                                            case Constants.UDP_F5://查询设备参数
-                                                try {
-                                                    LogUtils.e(TAG + "回调形式:--->查询设备参数");
-                                                    event.setTga(true);
-                                                    event.setData(str);//此处直接把数据bean的string回传到GetPictureActivity界面
-                                                    event.setIp(hostAddressIP);
-                                                    event.setUdpCmd(Constants.UDP_F5);
-                                                    EventBus.getDefault().postSticky(event);
-                                                } catch (Exception e) {
-                                                    LogUtils.e(TAG + "回调形式:--->查询设备参数==Exception==str==" + str);
-                                                }
-
-                                                break;
-                                            case Constants.UDP_F7://通知权限变动
-                                                try {
-                                                    LogUtils.e(TAG + "回调形式:--->通知权限变动");
-                                                    String mLoginUserName = MMKV.defaultMMKV().decodeString(Constants.KEY_CurrentLoginUserName);
-                                                    UserReloChanged reloBean = mGson.fromJson(str, UserReloChanged.class);
-                                                    if (mLoginUserName.equals(reloBean.getUsername())) {
-                                                        event.setTga(true);
-                                                    } else {
-                                                        event.setTga(false);
-                                                    }
-                                                    event.setData(str);//此处直接把数据bean的string回传到GetPictureActivity界面
-                                                    event.setIp(hostAddressIP);
-                                                    event.setUdpCmd(Constants.UDP_F7);
-                                                    EventBus.getDefault().postSticky(event);
-                                                } catch (Exception e) {
-                                                    LogUtils.e(TAG + "回调形式:--->通知权限变动==Exception==str==" + str);
-                                                }
-
-                                                break;
-                                            case Constants.UDP_40://刷新医院信息
-                                                try {
-                                                    LogUtils.e(TAG + "回调形式:--->刷新医院信息");
-                                                    event.setTga(true);
-                                                    event.setData(str);//此处直接把数据bean的string回传到GetPictureActivity界面
-                                                    event.setIp(hostAddressIP);
-                                                    event.setUdpCmd(Constants.UDP_40);
-                                                    EventBus.getDefault().postSticky(event);
-                                                } catch (Exception e) {
-                                                    LogUtils.e(TAG + "回调形式:--->刷新医院信息==Exception==str==");
-                                                }
-                                                break;
-
-                                        }
-                                    }
-                                    LogUtils.e(TAG + "                                                                                      ");
-                                    LogUtils.e(TAG + "!=======================华丽的分割线===========================!");
-                                    LogUtils.e(TAG + "!*******************************************************************************!");
-                                    LogUtils.e(TAG + "!*******************************************************************************!");
-                                    LogUtils.e(TAG + "!=======================华丽的分割线===========================!");
-
-                                }
-                                //及时释放资源不然次数多了会报错
-//                            lock.release();
-                            } else {
+                            if (mSettingDataPacket != null) {
+                                String hostAddressIP = mSettingDataPacket.getAddress().getHostAddress();
+                                int port = mSettingDataPacket.getPort();
+                                String deviceType = CalculateUtils.getSendDeviceType(resultData);
+                                String deviceOnlyCode = CalculateUtils.getSendDeviceOnlyCode(resultData);
+                                String currentCMD = CalculateUtils.getCMD(resultData);
                                 SocketRefreshEvent event = new SocketRefreshEvent();
-                                event.setUdpCmd(Constants.UDP_CUSTOM_TOAST);
-                                HandService.UDP_HAND_GLOBAL_TAG = false;
-                                event.setData("");
-                                event.setData("code=0,监听port端口不一致,退出多余的监听线程!!");
-                                EventBus.getDefault().postSticky(event);
-                                LogUtils.e(TAG + "code=0,监听port端口不一致,退出多余的监听线程!!");
-//                                SocketRefreshEvent event1 = new SocketRefreshEvent();
-//                                event1.setUdpCmd(Constants.UDP_CUSTOM_RESTART);
-//                                EventBus.getDefault().postSticky(event1);
-                                LogUtils.e(TAG + "异常-->code=0,监听port端口不一致,退出多余的监听线程!!");
+                                //设置接收端口
+                                event.setReceivePort(mLocalReceivePort + "");
+                                Boolean dataIfForMe = CalculateUtils.getDataIfForMe(resultData, context);
+                                String dataString = CalculateUtils.getReceiveDataString(resultData);
+                                String appName = getAppName(context);
+                                int currentLocalReceivePort = mmkv.decodeInt(Constants.KEY_LOCAL_RECEIVE_PORT, 7005);  //实时记录本地监听的端口
+                                 if (currentLocalReceivePort == mLocalReceivePort) {
+                                } else {
+                                     LogUtils.e(TAG + "线程设置的监听的port=:" + mLocalReceivePort + ",当前需要监听的port==:" + currentLocalReceivePort);
+                                     LogUtils.e(TAG + "线程,两者监听端口不一致" + "线程:" + currentThread().getName() + "退出!");
+                                    break;
+                                }
+                                LogUtils.e(TAG + "AppName==:" + appName);
+                                LogUtils.e(TAG + "线程名字(当前)==" + currentThread().getName());
+                                LogUtils.e(TAG + "本地监听port==:" + mLocalReceivePort);
+                                LogUtils.e(TAG + "命令CMD==:" + currentCMD);
+                                LogUtils.e(TAG + "上位机ip==:" + hostAddressIP);
+                                LogUtils.e(TAG + "上位机port==:" + port);
+                                LogUtils.e(TAG + "上位机deviceType==:" + deviceType);
+                                LogUtils.e(TAG + "上位机deviceCode==:" + deviceOnlyCode);
+                                //16进制直接转换成为字符串
+                                String str = CalculateUtils.hexStr2Str(dataString);
+                                LogUtils.e(TAG + "接收数据 ?? ==:" + dataIfForMe);
+                                LogUtils.e(TAG + "协议String==:" + resultData);
+                                LogUtils.e(TAG + "协议 data ==:" + dataString);
+                                if (dataIfForMe) {
+                                    switch (currentCMD) {
+                                        case Constants.UDP_HAND://握手
+                                            try {
+                                                LogUtils.e(TAG + "回调形式:--->握手");
+                                                //判断数据是否是发个自己的
+                                                Long startTime = System.currentTimeMillis();
+                                                //设备在线握手成功
+                                                event.setTga(true);
+                                                event.setData(startTime + "");
+                                                event.setIp(hostAddressIP);
+                                                event.setReceivePort(mLocalReceivePort + "");
+                                                event.setUdpCmd(Constants.UDP_HAND);
+                                                EventBus.getDefault().postSticky(event);
+//                                                HandService.UDP_HAND_GLOBAL_TAG = true;
+                                            } catch (Exception e) {
+                                                LogUtils.e(TAG + "回调形式:--->握手==Exception====");
+                                            }
+                                            break;
 
-                                break;//不相等的直接跳出接收,关闭线程
+                                        case Constants.UDP_FD: //广播
+                                            try {
+                                                LogUtils.e(TAG + "回调形式:--->广播");
+                                                event.setTga(true);
+                                                event.setData(resultData);
+                                                event.setIp(hostAddressIP);
+                                                event.setUdpCmd(Constants.UDP_FD);
+                                                EventBus.getDefault().postSticky(event);
+                                            } catch (Exception e) {
+                                                LogUtils.e(TAG + "回调形式:--->广播==Exception====");
+                                            }
+                                            break;
+                                        case Constants.UDP_FC://授权接入
+                                            try {
+                                                LogUtils.e(TAG + "回调形式:--->授权接入");
+                                                //获取到病例的ID是十六进制的,需要转成十进制
+                                                event.setTga(true);
+                                                event.setData(resultData);
+                                                event.setIp(hostAddressIP);
+                                                event.setUdpCmd(Constants.UDP_FC);
+                                                EventBus.getDefault().postSticky(event);
+                                            } catch (Exception e) {
+                                                LogUtils.e(TAG + "回调形式:--->授权接入==Exception====");
+                                            }
+
+                                            break;
+                                        case Constants.UDP_F0://获取当前病例
+                                            try {
+                                                LogUtils.e(TAG + "回调形式:--->获取当前病例==str==" + str);
+                                                //获取到病例的ID是十六进制的,需要转成十进制
+//                                                    String jsonID = CalculateUtils.hex16To10(dataString) + "";
+                                                UserIDBean mUserIDBean = mGson.fromJson(str, UserIDBean.class);
+//                                                    LogUtils.e("======GetPictureActivity==回调形式:--->=CMD=jsonID==" + jsonID);
+                                                String jsonID = CalculateUtils.hex16To10(mUserIDBean.getRecordid()) + "";
+                                                //必须从新取数据不然会错乱
+                                                String spCaseID = MMKV.defaultMMKV().decodeString(Constants.KEY_CurrentCaseID);
+                                                if (spCaseID.equals(jsonID)) {
+                                                    //id相等才能操作截图等功能
+                                                    event.setData("true");
+                                                } else {
+                                                    event.setData("false");
+                                                }
+                                                event.setTga(true);
+                                                event.setIp(hostAddressIP);
+                                                event.setUdpCmd(Constants.UDP_F0);
+                                                EventBus.getDefault().postSticky(event);
+                                            } catch (Exception e) {
+                                                LogUtils.e(TAG + "回调形式:--->获取当前病例==Exception==str==" + str);
+                                            }
+
+                                            break;
+                                        case Constants.UDP_F3://冻结与解冻:00冻结，01解冻,未调试
+                                            try {
+                                                LogUtils.e(TAG + "回调形式:--->冻结与解冻");
+                                                ColdPictureBean mColdBean = mGson.fromJson(str, ColdPictureBean.class);
+                                                String jsonString = CalculateUtils.hex16To10(mColdBean.getFreeze()) + "";
+                                                event.setTga(true);
+                                                event.setData(jsonString);
+                                                event.setIp(hostAddressIP);
+                                                event.setUdpCmd(Constants.UDP_F3);
+                                                EventBus.getDefault().postSticky(event);
+                                            } catch (Exception e) {
+                                                LogUtils.e(TAG + "回调形式:--->冻结与解冻==Exception====");
+                                            }
+
+                                            break;
+                                        case Constants.UDP_F1://预览报告
+                                            try {
+                                                LogUtils.e(TAG + "回调形式:--->预览报告");
+                                                LookReportBean lookBean = mGson.fromJson(str, LookReportBean.class);
+                                                event.setTga(true);
+                                                event.setData(lookBean.getReporturl());
+                                                event.setIp(hostAddressIP);
+                                                event.setUdpCmd(Constants.UDP_F1);
+                                                EventBus.getDefault().postSticky(event);
+                                            } catch (Exception e) {
+                                                LogUtils.e(TAG + "回调形式:--->预览报告==Exception==str==" + str);
+                                            }
+
+                                            break;
+                                        case Constants.UDP_F2://打印报告
+                                            try {
+                                                LogUtils.e(TAG + "回调形式:--->打印报告");
+                                                PrintReportBean portBean = mGson.fromJson(str, PrintReportBean.class);
+                                                event.setTga(true);
+                                                event.setData(portBean.getPrintcode());
+                                                event.setIp(hostAddressIP);
+                                                event.setUdpCmd(Constants.UDP_F2);
+                                                EventBus.getDefault().postSticky(event);
+                                            } catch (Exception e) {
+                                                LogUtils.e(TAG + "回调形式:--->打印报告==Exception==str==" + str);
+                                            }
+
+                                            break;
+                                        case Constants.UDP_18://录像
+                                            try {
+                                                LogUtils.e(TAG + "回调形式:--->录像");
+                                                RecodeBean recodeBean = mGson.fromJson(str, RecodeBean.class);
+                                                event.setTga(true);
+                                                event.setData(recodeBean.getQrycode());
+                                                event.setIp(CalculateUtils.hex16To10(recodeBean.getRecordid()) + "");//16进制转10进制
+                                                event.setUdpCmd(Constants.UDP_18);
+                                                EventBus.getDefault().postSticky(event);
+                                            } catch (Exception e) {
+                                                LogUtils.e(TAG + "回调形式:--->录像==Exception==str==" + str);
+                                            }
+
+                                            break;
+                                        case Constants.UDP_13://更新病例
+                                            try {
+                                                LogUtils.e(TAG + "回调形式:--->更新病例");
+                                                UpdateCaseBean updateBean = mGson.fromJson(str, UpdateCaseBean.class);
+                                                //hex转成十进制
+                                                String caseID = CalculateUtils.hex16To10(updateBean.getRecordid()) + "";
+                                                event.setTga(true);
+                                                event.setData(caseID);
+                                                event.setIp(hostAddressIP);
+                                                event.setUdpCmd(Constants.UDP_13);
+                                                EventBus.getDefault().postSticky(event);
+                                            } catch (Exception e) {
+                                                LogUtils.e(TAG + "回调形式:--->更新病例==Exception==str==" + str);
+                                            }
+
+                                            break;
+                                        case Constants.UDP_15://采图
+                                            try {
+                                                LogUtils.e(TAG + "回调形式:--->采图");
+                                                ShotPictureCallBlackBean pictureCallBlackBean = mGson.fromJson(str, ShotPictureCallBlackBean.class);
+                                                //hex转成十进制
+                                                String picCaseID = CalculateUtils.hex16To10(pictureCallBlackBean.getRecordid()) + "";
+                                                String imageID = CalculateUtils.hex16To10(pictureCallBlackBean.getImageid()) + "";
+                                                event.setTga(true);
+                                                event.setData(picCaseID);//只回调病例ID,回调的病例ID和当前App操作的病例ID 不同的时候不作处理
+                                                event.setIp(hostAddressIP);
+                                                event.setUdpCmd(Constants.UDP_15);
+                                                EventBus.getDefault().postSticky(event);
+                                            } catch (Exception e) {
+                                                LogUtils.e(TAG + "回调形式:--->采图==Exception==str==" + str);
+                                            }
+
+                                            break;
+                                        case Constants.UDP_16://删除图片
+                                            try {
+                                                LogUtils.e(TAG + "回调形式:--->删除图片");
+                                                DeletedPictureBean deletePictureBean = mGson.fromJson(str, DeletedPictureBean.class);
+                                                //hex转成十进制
+                                                String deleteBeanID = CalculateUtils.hex16To10(deletePictureBean.getRecordid()) + "";
+                                                //必须从新取数据不然会错乱
+                                                String mkCurrentID = MMKV.defaultMMKV().decodeString(Constants.KEY_CurrentCaseID);
+                                                if (mkCurrentID.equals(deleteBeanID)) {
+                                                    //id相等才能操作截图等功能
+                                                    event.setData("true");
+                                                    event.setData(deleteBeanID);
+                                                    event.setIp(hostAddressIP);
+                                                    event.setUdpCmd(Constants.UDP_16);
+                                                    EventBus.getDefault().postSticky(event);
+                                                }
+                                            } catch (Exception e) {
+                                                LogUtils.e(TAG + "回调形式:--->删除图片==Exception==str==" + str);
+                                            }
+                                            break;
+                                        case Constants.UDP_20://删除视频
+                                            try {
+                                                LogUtils.e(TAG + "回调形式:--->删除视频");
+                                                DeletedVideoBean videoBean = mGson.fromJson(str, DeletedVideoBean.class);
+                                                //hex转成十进制
+                                                String deleteVideoBeanID = CalculateUtils.hex16To10(videoBean.getRecordid()) + "";
+                                                //必须从新取数据不然会错乱
+                                                String mkCurrentVideoID = MMKV.defaultMMKV().decodeString(Constants.KEY_CurrentCaseID);
+                                                if (mkCurrentVideoID.equals(deleteVideoBeanID)) {
+                                                    //id相等才能操作截图等功能
+                                                    event.setData("true");
+                                                    event.setData(mkCurrentVideoID);
+                                                    event.setIp(hostAddressIP);
+                                                    event.setUdpCmd(Constants.UDP_20);
+                                                    EventBus.getDefault().postSticky(event);
+                                                }
+                                            } catch (Exception e) {
+                                                LogUtils.e(TAG + "回调形式:--->删除视频==Exception==str==" + str);
+                                            }
+
+                                            break;
+                                        case Constants.UDP_17://编辑图片
+                                            try {
+                                                LogUtils.e(TAG + "回调形式:--->编辑图片");
+                                                EditPictureBean editBean = mGson.fromJson(str, EditPictureBean.class);
+                                                //hex转成十进制
+                                                String editCaseID = CalculateUtils.hex16To10(editBean.getRecordid()) + "";
+                                                String editCaseImageID = CalculateUtils.hex16To10(editBean.getImageid()) + "";
+                                                event.setTga(true);
+                                                event.setData(editCaseID);//只回调病例ID,回调的病例ID和当前App操作的病例ID 不同的时候不作处理
+                                                event.setIp(editCaseImageID);  //此处设置为图片ID
+                                                event.setUdpCmd(Constants.UDP_17);
+                                                EventBus.getDefault().postSticky(event);
+                                            } catch (Exception e) {
+                                                LogUtils.e(TAG + "回调形式:--->编辑图片==Exception==str==" + str);
+                                            }
+
+                                            break;
+                                        case Constants.UDP_14://删除病例
+                                            try {
+                                                LogUtils.e(TAG + "回调形式:--->删除病例");
+                                                DeleteUserBean deleteBean = mGson.fromJson(str, DeleteUserBean.class);
+                                                //hex转成十进制
+                                                String deleteCaseID = CalculateUtils.hex16To10(deleteBean.getRecordid()) + "";
+                                                event.setTga(true);
+                                                event.setData(deleteCaseID);//只回调病例ID,回调的病例ID和当前App操作的病例ID 不同的时候不作处理
+                                                event.setIp(hostAddressIP);  //此处设置为图片ID
+                                                event.setUdpCmd(Constants.UDP_14);
+                                                EventBus.getDefault().postSticky(event);
+                                            } catch (Exception e) {
+                                                LogUtils.e(TAG + "回调形式:--->删除病例==Exception==str==" + str);
+                                            }
+
+                                            break;
+                                        case Constants.UDP_12://新增病例
+                                            try {
+                                                LogUtils.e(TAG + "回调形式:--->新增病例");
+                                                DeleteUserBean addBean = mGson.fromJson(str, DeleteUserBean.class);
+                                                //hex转成十进制
+                                                String addBeanCaseID = CalculateUtils.hex16To10(addBean.getRecordid()) + "";
+                                                event.setTga(true);
+                                                event.setData(addBeanCaseID);//只回调病例ID,回调的病例ID和当前App操作的病例ID 不同的时候不作处理
+                                                event.setIp(hostAddressIP);
+                                                event.setUdpCmd(Constants.UDP_12);
+                                                EventBus.getDefault().postSticky(event);
+                                            } catch (Exception e) {
+                                                LogUtils.e(TAG + "回调形式:--->新增病例==Exception==str==" + str);
+                                            }
+
+                                            break;
+                                        case Constants.UDP_F4://语音接入
+                                            try {
+                                                LogUtils.e(TAG + "回调形式:--->语音接入");
+                                                MicResponseBean micResponseBean = mGson.fromJson(str, MicResponseBean.class);
+                                                event.setTga(true);
+                                                event.setData(micResponseBean.getUrl());//传递url
+                                                event.setIp(micResponseBean.getOnline());//传递是否在线(0：离线 1:上线)
+                                                event.setUdpCmd(Constants.UDP_F4);
+                                                EventBus.getDefault().postSticky(event);
+                                            } catch (Exception e) {
+                                                LogUtils.e(TAG + "回调形式:--->语音接入==Exception==str==" + str);
+                                            }
+
+                                            break;
+                                        case Constants.UDP_F5://查询设备参数
+                                            try {
+                                                LogUtils.e(TAG + "回调形式:--->查询设备参数");
+                                                event.setTga(true);
+                                                event.setData(str);//此处直接把数据bean的string回传到GetPictureActivity界面
+                                                event.setIp(hostAddressIP);
+                                                event.setUdpCmd(Constants.UDP_F5);
+                                                EventBus.getDefault().postSticky(event);
+                                            } catch (Exception e) {
+                                                LogUtils.e(TAG + "回调形式:--->查询设备参数==Exception==str==" + str);
+                                            }
+
+                                            break;
+                                        case Constants.UDP_F7://通知权限变动
+                                            try {
+                                                LogUtils.e(TAG + "回调形式:--->通知权限变动");
+                                                String mLoginUserName = MMKV.defaultMMKV().decodeString(Constants.KEY_CurrentLoginUserName);
+                                                UserReloChanged reloBean = mGson.fromJson(str, UserReloChanged.class);
+                                                if (mLoginUserName.equals(reloBean.getUsername())) {
+                                                    event.setTga(true);
+                                                } else {
+                                                    event.setTga(false);
+                                                }
+                                                event.setData(str);//此处直接把数据bean的string回传到GetPictureActivity界面
+                                                event.setIp(hostAddressIP);
+                                                event.setUdpCmd(Constants.UDP_F7);
+                                                EventBus.getDefault().postSticky(event);
+                                            } catch (Exception e) {
+                                                LogUtils.e(TAG + "回调形式:--->通知权限变动==Exception==str==" + str);
+                                            }
+
+                                            break;
+                                        case Constants.UDP_40://刷新医院信息
+                                            try {
+                                                LogUtils.e(TAG + "回调形式:--->刷新医院信息");
+                                                event.setTga(true);
+                                                event.setData(str);//此处直接把数据bean的string回传到GetPictureActivity界面
+                                                event.setIp(hostAddressIP);
+                                                event.setUdpCmd(Constants.UDP_40);
+                                                EventBus.getDefault().postSticky(event);
+                                            } catch (Exception e) {
+                                                LogUtils.e(TAG + "回调形式:--->刷新医院信息==Exception==str==");
+                                            }
+                                            break;
+
+                                    }
+                                }
+                                LogUtils.e(TAG + "                                                                                      ");
+                                LogUtils.e(TAG + "!=======================华丽的分割线===========================!");
+                                LogUtils.e(TAG + "!*******************************************************************************!");
+                                LogUtils.e(TAG + "!*******************************************************************************!");
+                                LogUtils.e(TAG + "!=======================华丽的分割线===========================!");
+
                             }
+                            //及时释放资源不然次数多了会报错
+//                            lock.release();
+//                            } else {
+//                                SocketRefreshEvent event = new SocketRefreshEvent();
+//                                event.setUdpCmd(Constants.UDP_CUSTOM_TOAST);
+//                                HandService.UDP_HAND_GLOBAL_TAG = false;
+//                                event.setData("");
+//                                event.setData("code=0,监听port端口不一致,退出多余的监听线程!!");
+//                                EventBus.getDefault().postSticky(event);
+//                                LogUtils.e(TAG + "code=0,监听port端口不一致,退出多余的监听线程!!");
+////                                SocketRefreshEvent event1 = new SocketRefreshEvent();
+////                                event1.setUdpCmd(Constants.UDP_CUSTOM_RESTART);
+////                                EventBus.getDefault().postSticky(event1);
+//                                LogUtils.e(TAG + "异常-->code=0,监听port端口不一致,退出多余的监听线程!!");
+//
+//                                break;//不相等的直接跳出接收,关闭线程
+//                            }
 
                         }
 
@@ -592,7 +612,7 @@ public class ReceiveSocketService extends AbsWorkService {
 //                        HandService.UDP_HAND_GLOBAL_TAG = false;
                         LogUtils.e(TAG + "异常-->code=1,循环监听解析,异常:");
                         e.printStackTrace();
-//                        break;//捕获到异常之后，执行break跳出循环
+//
                     }
 
                 }
@@ -609,21 +629,15 @@ public class ReceiveSocketService extends AbsWorkService {
      */
     public void initFirstThread(String currentIP) {
         MMKV kv = MMKV.defaultMMKV();
-        int mDefaultReceivePort = kv.decodeInt(Constants.KEY_RECEIVE_PORT);
-        int mReceivePort = kv.decodeInt(Constants.KEY_RECEIVE_PORT_BY_SEARCH);
-        int mDefaultCastSendPort = kv.decodeInt(Constants.KEY_BROADCAST_PORT);
+        int mLocalReceivePort = kv.decodeInt(Constants.KEY_LOCAL_RECEIVE_PORT);//默认7005
         //是否开启过接收线程,开启过为true,避免初始化的时候创建三个接受线程
         boolean b = kv.decodeBool(Constants.KEY_SOCKET_RECEIVE_FIRST_IN);
-
         if (!b) {
-            LogUtils.e(TAG + "第一次初始化监听服务,ip=:" + currentIP + ",port=" + mReceivePort);
-            kv.encode(Constants.KEY_RECEIVE_PORT_BY_SEARCH, mReceivePort); //当前设置的,本地监听端口
+            LogUtils.e(TAG + "第一次初始化监听服务,ip=:" + currentIP + ",本地监听的port=" + mLocalReceivePort);
+            kv.encode(Constants.KEY_LOCAL_RECEIVE_PORT, mLocalReceivePort); //当前设置的,本地广播监听端口
             kv.encode(Constants.KEY_SOCKET_RECEIVE_FIRST_IN, true);
-            kv.encode(Constants.KEY_RECEIVE_PORT, mReceivePort); //设置的,本地监听端口,不管是广播还是通讯都需要设置
-            ReceiveThread receiveThread = new ReceiveThread(currentIP, mReceivePort, this);
+            ReceiveThread receiveThread = new ReceiveThread(currentIP, mLocalReceivePort, this);
             receiveThread.start();
-
-
         }
 
     }
@@ -631,19 +645,18 @@ public class ReceiveSocketService extends AbsWorkService {
     /**
      * 用户设置可广播端口开启的接收线程
      *
-     * @param currentIP          本地app的ip
-     * @param settingReceivePort 设置的发送接收端口
-     * @param context            上下文
+     * @param localAppIp       本地app的ip
+     * @param localReceivePort 设置本地监听端口
+     * @param context          上下文
      */
-    public void setSettingReceiveThread(String currentIP, int settingReceivePort, Context context) {
+    public void setSettingReceiveThread(String localAppIp, int localReceivePort, Context context) {
         //获取当前开启的接收端口
-        ReceiveThread receiveThread = new ReceiveThread(currentIP, settingReceivePort, context);
+        ReceiveThread receiveThread = new ReceiveThread(localAppIp, localReceivePort, context);
         receiveThread.start();
         MMKV kv = MMKV.defaultMMKV();
-        kv.encode(Constants.KEY_SOCKET_RECEIVE_FIRST_IN, true);
-        kv.encode(Constants.KEY_RECEIVE_PORT, settingReceivePort); //设置的,本地监听端口
-        int i = kv.decodeInt(Constants.KEY_RECEIVE_PORT);
-        LogUtils.e(TAG + "用户设置,重新开启监听服务,ip=:" + currentIP + ",port=" + settingReceivePort);
+        kv.encode(Constants.KEY_SOCKET_RECEIVE_FIRST_IN, true);   //第一次开启接收线程 避免初始化的时候开启多次线程
+        kv.encode(Constants.KEY_LOCAL_RECEIVE_PORT, localReceivePort); //设置的,本地监听端口
+        LogUtils.e(TAG + "用户设置,重新开启监听服务,localAppIp=:" + localAppIp + ",localReceivePort=" + localReceivePort);
 
     }
 

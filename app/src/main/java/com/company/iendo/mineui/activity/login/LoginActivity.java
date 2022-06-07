@@ -362,7 +362,7 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
 
         List queryBeanBySelected = DeviceDBUtils.getQueryBeanBySelected(LoginActivity.this, true);
 
-        if (queryBeanBySelected.size()==0){
+        if (queryBeanBySelected.size() == 0) {
             return;
         }
         showLoading(getString(R.string.common_loading_user_list));
@@ -682,26 +682,12 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                                     kv.encode(Constants.KEY_HospitalInfo, purviewBean.isHospitalInfo());//医院信息(不能进入医院信息界面)
 
                                 }
-
                                 //存入用户表
                                 saveRememberPassword(mBean);
                                 /**
                                  * 登入成功的时候切换成监听 当前设备授权登入的socket端口--->Constants.KEY_RECEIVE_PORT
                                  * 退出登入的时候切换成监听 当前广播发送端口(或者设置设备搜索界面设置成功赋值)----->Constants.KEY_RECEIVE_PORT_BY_SEARCH
                                  */
-                                ReceiveSocketService receiveSocketService = new ReceiveSocketService();
-                                WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-                                if (wifiManager.isWifiEnabled()) {
-                                    WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-                                    mAppIP = getIpString(wifiInfo.getIpAddress());
-                                }
-                                mSocketPort = (String) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Current_SocketPort, "7006");
-                                if ("".equals(mSocketPort) || null == mSocketPort) {
-                                    toast("通讯接收端口不能为空");
-                                    return;
-                                } else {
-                                    receiveSocketService.setSettingReceiveThread(mAppIP, Integer.parseInt(mSocketPort), LoginActivity.this);
-                                }
                                 MainActivity.start(getContext(), CaseManageFragment.class);
                                 //初始化握手保活服务
                                 initHandService();
@@ -806,7 +792,7 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
         /**
          * 查询当前设备下,当前用户名的用户表,校验密码
          */
-        List<UserDBBean> userList = UserDBUtils.getQueryBeanByTow(getActivity(), mCurrentReceiveDeviceCode,username);
+        List<UserDBBean> userList = UserDBUtils.getQueryBeanByTow(getActivity(), mCurrentReceiveDeviceCode, username);
         if (null != userList && userList.size() > 0) {
             UserDBBean bean = userList.get(0);
             String password1 = bean.getPassword();

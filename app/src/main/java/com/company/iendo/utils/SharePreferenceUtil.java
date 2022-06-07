@@ -54,7 +54,7 @@ public class SharePreferenceUtil {
 
     public static final String Current_IP = "Current_IP";                            //设备ip    直播和通讯的ip
     public static final String Current_HttpPort = "Current_HttpPort";                //设备http端口
-    public static final String Current_SocketPort = "Current_SocketPort";            //socket端口
+    public static final String Current_SocketPort = "Current_SocketPort";            //socket端口,授权接入之后,本地监听的端口和发送的端口
     public static final String Current_LivePort = "Current_LivePort";                //直播端口
     public static final String Current_MicPort = "Current_MicPort";                  //语音端口
     public static final String Current_DeviceUsername = "Current_DeviceUsername";    //设备账号(直播)

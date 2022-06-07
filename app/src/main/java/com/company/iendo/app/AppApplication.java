@@ -225,18 +225,23 @@ public final class AppApplication extends Application {
         MMKV kv = MMKV.defaultMMKV();
         //设置第一次启动App的时候,是否第一次初始化过接收线程
         kv.encode(Constants.KEY_SOCKET_RECEIVE_FIRST_IN, false);
-        int i = kv.decodeInt(Constants.KEY_RECEIVE_PORT);
-        int i2 = kv.decodeInt(Constants.KEY_BROADCAST_PORT);
-        int i3 = kv.decodeInt(Constants.KEY_RECEIVE_PORT_BY_SEARCH);
+//        int i = kv.decodeInt(Constants.KEY_BROADCAST_RECEIVE_PORT);
+//        int i3 = kv.decodeInt(Constants.KEY_LOGIN_RECEIVE_PORT);
+
+        int i2 = kv.decodeInt(Constants.KEY_BROADCAST_SERVER_PORT);
+        int i4 = kv.decodeInt(Constants.KEY_LOCAL_RECEIVE_PORT);  //实时记录本地监听的端口
 //
-        if ("".equals(i + "") || i == 0) {
-            kv.encode(Constants.KEY_RECEIVE_PORT, Constants.RECEIVE_PORT);
-        }
+//        if ("".equals(i + "") || i == 0) {
+//            kv.encode(Constants.KEY_BROADCAST_RECEIVE_PORT, Constants.BROADCAST_RECEIVE_PORT);
+//        }
         if ("".equals(i2 + "") || i2 == 0) {
-            kv.encode(Constants.KEY_BROADCAST_PORT, Constants.BROADCAST_PORT);
+            kv.encode(Constants.KEY_BROADCAST_SERVER_PORT, Constants.BROADCAST_SERVER_PORT);
         }
-        if ("".equals(i3 + "") || i3 == 0) {
-            kv.encode(Constants.KEY_RECEIVE_PORT_BY_SEARCH, Constants.RECEIVE_PORT);
+//        if ("".equals(i3 + "") || i3 == 0) {
+//            kv.encode(Constants.KEY_LOGIN_RECEIVE_PORT, Constants.KEY_LOGIN_RECEIVE_PORT);
+//        }
+        if ("".equals(i4 + "") || i4 == 0) {
+            kv.encode(Constants.KEY_LOCAL_RECEIVE_PORT, Constants.LOCAL_RECEIVE_PORT); //默认给广播接收的端口
         }
 
 

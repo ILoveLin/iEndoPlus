@@ -20,6 +20,7 @@ import com.company.iendo.R;
 import com.company.iendo.action.StatusAction;
 import com.company.iendo.aop.SingleClick;
 import com.company.iendo.app.AppActivity;
+import com.company.iendo.bean.socket.HandBean;
 import com.company.iendo.service.ReceiveSocketService;
 import com.company.iendo.bean.RefreshEvent;
 import com.company.iendo.bean.event.SocketRefreshEvent;
@@ -143,7 +144,7 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
         byte[] sendByteData = CalculateUtils.getSendByteData(DeviceSearchActivity.this, mGson.toJson(bean), "FF",
                 "0000000000000000", "FD");
         //发送广播消息
-        if (("".equals(Constants.BROADCAST_PORT))) {
+        if (("".equals(Constants.BROADCAST_SERVER_PORT))) {
             toast("通讯端口不能为空!");
             return;
         }
@@ -168,11 +169,10 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
     private static final String TAG = "Socket发送===";
 
     private void showSettingDialog() {
-        MMKV kv = MMKV.defaultMMKV();
-        int mCurrentReceivePort = kv.decodeInt(Constants.KEY_RECEIVE_PORT_BY_SEARCH);
+        int mCurrentServerPort = mMMKVInstace.decodeInt(Constants.KEY_BROADCAST_SERVER_PORT);
         new Input2SettingDialog.Builder(getActivity())
                 .setTitle("配置信息")
-                .set2Content(mCurrentReceivePort + "")
+                .set2Content(mCurrentServerPort + "")
                 .setCancel("取消")
                 .setConfirm("确定")
                 .setListener(new Input2SettingDialog.OnListener() {
@@ -188,20 +188,14 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
                             toast("本地广播发送端口不能为空");
                             return;
                         } else {
-
-
-                            MMKV kv = MMKV.defaultMMKV();
                             //获取当前开启的接收端口
-                            if (mCurrentReceivePort == Integer.parseInt(settingPort)) {//相等,此时不需要开启新的线程
+                            if (mCurrentServerPort == Integer.parseInt(settingPort)) {//相等,此时不需要开启新的线程
                                 toast("此端口已配置,请勿重复操作!");
                             } else {
-                                //存入当前广播发送的port
-                                kv.encode(Constants.KEY_SOCKET_RECEIVE_FIRST_IN, true);
-                                kv.encode(Constants.KEY_RECEIVE_PORT, Integer.parseInt(settingPort)); //设置的,本地监听端口
-                                kv.encode(Constants.KEY_RECEIVE_PORT_BY_SEARCH, Integer.parseInt(settingPort)); //设置的,广播本地监听端口
-                                kv.encode(Constants.KEY_BROADCAST_PORT, Integer.parseInt(settingPort));
-                                int mDefaultCastSendPort = kv.decodeInt(Constants.KEY_BROADCAST_PORT);
-                                receiveSocketService.setSettingReceiveThread(mAppIP, Integer.parseInt(settingPort), DeviceSearchActivity.this);
+                                mMMKVInstace.encode(Constants.KEY_SOCKET_RECEIVE_FIRST_IN, true);
+                                //服务器端口
+                                mMMKVInstace.encode(Constants.KEY_BROADCAST_SERVER_PORT, Integer.parseInt(settingPort));
+                                receiveSocketService.setSettingReceiveThread(mAppIP, Constants.LOCAL_RECEIVE_PORT, DeviceSearchActivity.this);
                                 //再次打开搜索动画
                                 showSearchDialog();
                             }
@@ -437,7 +431,7 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
         PutInBean putBean = new PutInBean();
         //点击对话框的时候在存入pinAccess密码
         putBean.setBroadcaster(Constants.BROADCASTER);                              //设备名字
-        putBean.setSpt(Constants.RECEIVE_PORT + "");
+        putBean.setSpt(Constants.LOCAL_RECEIVE_PORT + "");
         //存入数据库的标识;endotype(数字)+devicecode(36位设备码)+devicetype(中文说明)
         String tag = item.getEndotype() + item.getDeviceCode() + item.getDeviceType();
 
@@ -737,7 +731,7 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
 
         // 广播 授权,使用的是设置的端口,其他的点对点消息,按照协议data的返回的port的通讯
         MMKV kv = MMKV.defaultMMKV();
-        int mSendPort = kv.decodeInt(Constants.KEY_BROADCAST_PORT);
+        int mSendPort = kv.decodeInt(Constants.KEY_BROADCAST_SERVER_PORT);
         SocketUtils.startSendPointMessage(sendByteData, ip, mSendPort, this);
 
 //        SocketManage.startSendMessageBySocket(sendByteData, ip, Constants.BROADCAST_PORT, false);

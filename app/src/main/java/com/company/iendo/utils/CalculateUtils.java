@@ -251,26 +251,23 @@ public class CalculateUtils {
             LogUtils.e(TAG + "sendType=="+sendType);
             //android发送给android的 直接过滤
             if (("A1".equals(sendType))) {
-                LogUtils.e(TAG + "sendType=="+sendType);
-
-                LogUtils.e(TAG + "直接过滤:返回false-->android发送给android");
+                LogUtils.e(TAG + "发送类型=="+sendType);
+                LogUtils.e(TAG + "直接过滤:返回false-->Android发送给Android的消息");
 
                 return false;
             }
             //获取接收的设备id 必须本机的设备id相同,返回false
 
             if (!(currentDeviceID.equals(substring))) {
-                LogUtils.e(TAG + "currentDeviceID=="+currentDeviceID);
-                LogUtils.e(TAG + "substring=="+substring);
+                LogUtils.e(TAG + "iPad_ID_本机=="+currentDeviceID);
+                LogUtils.e(TAG + "iPad_ID_协议=="+substring);
                 LogUtils.e(TAG + "直接过滤:返回false-->接收的设备id 必须本机的设备id相同");
                 return false;
             }
             //接收方不是android-A1 返回false
             if (!("A1".equals(str))) {
-                LogUtils.e(TAG + "str=="+str);
-
+                LogUtils.e(TAG + "iPad_type=="+str);
                 LogUtils.e(TAG + "直接过滤:返回false-->接收方不是android");
-
                 return false;
 
             }

@@ -17,7 +17,6 @@ import com.company.iendo.app.TitleBarFragment;
 import com.company.iendo.bean.UserDeletedBean;
 import com.company.iendo.bean.socket.HandBean;
 import com.company.iendo.mineui.activity.MainActivity;
-import com.company.iendo.mineui.activity.UserListActivity;
 import com.company.iendo.mineui.activity.login.LoginActivity;
 import com.company.iendo.mineui.activity.setting.HospitalActivity;
 import com.company.iendo.other.Constants;
@@ -29,6 +28,7 @@ import com.company.iendo.ui.dialog.TipsDialog;
 import com.company.iendo.ui.dialog.WaitDialog;
 import com.company.iendo.utils.CalculateUtils;
 import com.company.iendo.utils.FileUtil;
+import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.MD5ChangeUtil;
 import com.company.iendo.utils.SharePreferenceUtil;
 import com.company.iendo.utils.SocketUtils;
@@ -190,23 +190,12 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
                         sendProgramExitMessage();
                         SharePreferenceUtil.put(getActivity(), Constants.Is_Logined, false);
                         startActivity(LoginActivity.class);
-                        //开启默认监听端口
-                        ReceiveSocketService receiveSocketService = new ReceiveSocketService();
-                        WifiManager wifiManager = (WifiManager) getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-                        if (wifiManager.isWifiEnabled()) {
-                            WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-                            mAppIP = getIpString(wifiInfo.getIpAddress());
-                        }
-                        MMKV kv = MMKV.defaultMMKV();
-                        int port = kv.decodeInt(Constants.KEY_BROADCAST_PORT);
-                        int searchPort = kv.decodeInt(Constants.KEY_RECEIVE_PORT_BY_SEARCH);
-                        if ("".equals(searchPort)) {
-                            toast("本地广播发送端口不能为空");
-                            return;
-                        } else {
-                            receiveSocketService.setSettingReceiveThread(mAppIP, searchPort, getAttachActivity());
 
-                        }
+                        /**
+                         * 判断是否需要切换监听线程
+                         */
+                        MMKV kv = MMKV.defaultMMKV();
+
                         //退出的时候,重置所有用户权限
                         kv.encode(Constants.KEY_UserMan, false);//用户管理(用户管理界面能不能进)
                         kv.encode(Constants.KEY_CanPsw, false);//设置口令(修改别人密码)
