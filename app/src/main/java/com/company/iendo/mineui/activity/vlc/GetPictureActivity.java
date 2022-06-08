@@ -80,7 +80,7 @@ import okhttp3.Call;
  * author : Android 轮子哥
  * github : https://github.com/getActivity/AndroidProject
  * time   : 2018/10/18
- * desc   : 获取图片界面
+ * desc   : 图像采集界面
  * 放大倍数  1-2.5 显示的数字    传的的值是1--15
  */
 public final class GetPictureActivity extends AppActivity implements StatusAction, OnRangeChangedListener,
@@ -241,6 +241,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
     private TextView m02ZoomDesc;
     private TextView mCurrentCheckPatientInfo;
     private TextView mCurrentSocketStatue;
+    private LinearLayout mLinearStatueView;
 
     /**
      * eventbus 刷新socket数据
@@ -249,6 +250,10 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
     public void SocketRefreshEvent(SocketRefreshEvent event) {
         String data = event.getData();
         switch (event.getUdpCmd()) {
+            case Constants.UDP_HAND://握手
+                mCurrentSocketStatue.setTextColor(getResources().getColor(R.color.color_25A5FF));
+                mCurrentSocketStatue.setText(Constants.SOCKET_STATUE_ONLINE);
+                break;
             case Constants.UDP_CUSTOM_TOAST://吐司
                 toast("" + data);
                 break;
@@ -593,6 +598,9 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         mUrlMap.put("标清SD", currentUrl1);
         responseListener();
 
+        //设置socket长显示的通讯状态
+        setSocketStatue(mCurrentSocketStatue);
+
 
     }
 
@@ -784,20 +792,21 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
 
     public void setProcessData(String type, RangeSeekBar mSeekBar, TextView mTvDesc, int maxData, int minData) {
         int progress = (int) mSeekBar.getLeftSeekBar().getProgress();
-        if (progress == minData) {
-            toast("已经是最小值了");
-            return;
-        }
-        if (progress == maxData) {
-            toast("已经是最大值了");
-            return;
-        }
         //加
         if (type.equals("add")) {
+
+            if (progress == maxData) {
+                toast("已经是最大值了");
+                return;
+            }
             //本地进度条设置
             mSeekBar.setProgress(progress + 1);
             setProcessDataByAddOrBlack(mSeekBar, mTvDesc);
-        } else {
+        } else {//减
+            if (progress == minData) {
+                toast("已经是最小值了");
+                return;
+            }
             //本地进度条设置
             mSeekBar.setProgress(progress - 1);
             //设置摄像机参数,发送摄像机bean的消息
@@ -1264,6 +1273,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             Drawable record_end = getResources().getDrawable(mID);
             mChangeFull.setCompoundDrawablesWithIntrinsicBounds(record_end, null, null, null);
             mTitleBar.setVisibility(View.GONE);
+            mLinearStatueView.setVisibility(View.GONE);
             mLinearBottom.setVisibility(View.GONE);
             RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT);//工具类哦
@@ -1276,6 +1286,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             Drawable record_end = getResources().getDrawable(mID);
             mChangeFull.setCompoundDrawablesWithIntrinsicBounds(record_end, null, null, null);
             mTitleBar.setVisibility(View.VISIBLE);
+            mLinearStatueView.setVisibility(View.VISIBLE);
             mLinearBottom.setVisibility(View.VISIBLE);
             mTitleName.setVisibility(View.VISIBLE);
             mImageBack.setVisibility(View.INVISIBLE);
@@ -1317,6 +1328,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         mMic = findViewById(R.id.linear_mic);
         mRecordMsg = findViewById(R.id.case_record);
 
+        mLinearStatueView = findViewById(R.id.relative_statue);
         mCurrentCheckPatientInfo = findViewById(R.id.current_patient_info);
         mCurrentSocketStatue = findViewById(R.id.current_socket_statue);
         //亮度

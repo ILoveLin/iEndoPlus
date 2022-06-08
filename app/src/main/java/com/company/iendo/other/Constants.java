@@ -111,7 +111,7 @@ public class Constants {
      * toast 提示语
      */
 
-    public static final String UDP_CASE_ID_DIFFERENT = "当前检查病人非本病历病人,不允许截取图片!\n请与检查室确认当前检查病人信息!";                 //当前病例ID和操作病例ID不相等,不能操作!
+    public static final String UDP_CASE_ID_DIFFERENT = "当前检查病人非本病历病人,不允许截图!\n请与检查室确认当前检查病人信息!";                 //当前病例ID和操作病例ID不相等,不能操作!
     public static final String HAVE_NO_PERMISSION = "暂无权限";
     public static final String HAVE_HAND_FAIL_OFFLINE = "远程设备连接失败,信息可能无法同步";
 
@@ -124,6 +124,8 @@ public class Constants {
     public static final String CONNECT_STATUE_CURRENT_CASE_INFO = "正在检查的病人";
     public static final String CONNECT_STATUE_CHECKROOM_MIN_ONLINE = "与检查室通话保持连接中";
     public static final String CONNECT_STATUE_CHECKROOM_PICTURE_OFFLINE = "检查室图像已停止连接...";
+    public static final String SOCKET_STATUE_ONLINE = "远程设备通讯已连接";
+    public static final String SOCKET_STATUE_OFFLINE = "远程设备通讯已断开";
 
 
     /**

@@ -7,12 +7,14 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.company.iendo.bean.event.SocketRefreshEvent;
 import com.company.iendo.other.Constants;
+import com.company.iendo.service.HandService;
 import com.company.iendo.utils.SharePreferenceUtil;
 import com.google.gson.Gson;
 import com.gyf.immersionbar.ImmersionBar;
@@ -175,5 +177,16 @@ public abstract class TitleBarFragment<A extends AppActivity> extends AppFragmen
             return activity.getResources().getDimensionPixelSize(resourceId);
         }
         return 0;
+    }
+
+    public void setSocketStatue(TextView mCurrentSocketStatue){
+        //握手成功
+        if (HandService.UDP_HAND_GLOBAL_TAG) {
+            mCurrentSocketStatue.setTextColor(getResources().getColor(R.color.color_25A5FF));
+            mCurrentSocketStatue.setText(Constants.SOCKET_STATUE_ONLINE);
+        }else {
+            mCurrentSocketStatue.setTextColor(getResources().getColor(R.color.red));
+            mCurrentSocketStatue.setText(Constants.SOCKET_STATUE_OFFLINE);
+        }
     }
 }

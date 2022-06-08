@@ -58,7 +58,7 @@ import okhttp3.Call;
  * company：江西神州医疗设备有限公司
  * author： LoveLin
  * time：2021/11/4 13:58
- * desc：详情界面---主架构界面
+ * desc：病例详情界面---主架构界面
  */
 public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabListener, ViewPager.OnPageChangeListener {
     private NestedViewPager mViewPager;
@@ -140,8 +140,6 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
         mCurrentCheckPatientInfo = findViewById(R.id.current_patient_info);
         mCurrentSocketStatue = findViewById(R.id.current_socket_statue);
         mFatherExit = false;
-
-
         FragmentPagerAdapter mPagerAdapter = new FragmentPagerAdapter<>(this);
         mPagerAdapter.addFragment(DetailFragment.newInstance(), "详情");
         mPagerAdapter.addFragment(PictureFragment.newInstance(), "图片");
@@ -455,6 +453,10 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
     public void SocketRefreshEvent(SocketRefreshEvent event) {
         String data = event.getData();
         switch (event.getUdpCmd()) {
+            case Constants.UDP_HAND://握手
+                mCurrentSocketStatue.setTextColor(getResources().getColor(R.color.color_25A5FF));
+                mCurrentSocketStatue.setText(Constants.SOCKET_STATUE_ONLINE);
+                break;
             case Constants.UDP_F0://获取上位机当前病例ID,然后获取详情,用于状态的长显
                 //获取上位机病人ID
                 if ("true".equals(data)) {//当前病例相同才能操作
@@ -647,6 +649,8 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
         mTabAdapter.addItem("图片");
         mTabAdapter.addItem("视频");
         mTabAdapter.setOnTabListener(this);
+        //设置socket长显示的通讯状态
+        setSocketStatue(mCurrentSocketStatue);
         sendRequest();
 
 
@@ -834,7 +838,7 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
                             CaseDetailBean.DataDTO data = mBean.getData();
                             LogUtils.e("上位机病例详情====" + mBean.toString());
                             if (0 == mBean.getCode()) {  //成功
-                                mCurrentCheckPatientInfo.setText(data.getCaseNo()+" | "+data.getName()+" |");
+                                mCurrentCheckPatientInfo.setText(data.getCaseNo() + " | " + data.getName() + " |");
                             } else {
 
                             }
@@ -844,7 +848,6 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
                     }
                 });
     }
-
 
 
     @NonNull

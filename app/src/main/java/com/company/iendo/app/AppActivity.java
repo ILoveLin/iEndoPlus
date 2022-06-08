@@ -438,4 +438,16 @@ public abstract class AppActivity extends BaseActivity
         }
 
     }
+
+
+    public void setSocketStatue(TextView mCurrentSocketStatue){
+        //握手成功
+        if (HandService.UDP_HAND_GLOBAL_TAG) {
+            mCurrentSocketStatue.setTextColor(getResources().getColor(R.color.color_25A5FF));
+            mCurrentSocketStatue.setText(Constants.SOCKET_STATUE_ONLINE);
+        }else {
+            mCurrentSocketStatue.setTextColor(getResources().getColor(R.color.red));
+            mCurrentSocketStatue.setText(Constants.SOCKET_STATUE_OFFLINE);
+        }
+    }
 }

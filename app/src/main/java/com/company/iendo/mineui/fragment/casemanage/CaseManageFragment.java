@@ -179,7 +179,8 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
 //        mRecyclerView.addItemDecoration(new GridSpaceItemDecoration(2, 30, true));
 //        mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setAdapter(mAdapter);
-
+        //设置socket长显示的通讯状态
+        setSocketStatue(mCurrentSocketStatue);
 //        mRecyclerView.addItemDecoration(new MyItemDecoration(getActivity(), 1, R.drawable.shape_divideritem_decoration));
 
 
@@ -356,8 +357,6 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
             }
             SocketUtils.startSendPointMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), getAttachActivity());
         } else {
-            toast(Constants.HAVE_HAND_FAIL_OFFLINE);
-
 
         }
 
@@ -405,6 +404,10 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
     public void SocketRefreshEvent(SocketRefreshEvent event) {
         String data = event.getData();
         switch (event.getUdpCmd()) {
+            case Constants.UDP_HAND://握手
+                mCurrentSocketStatue.setTextColor(getResources().getColor(R.color.color_25A5FF));
+                mCurrentSocketStatue.setText(Constants.SOCKET_STATUE_ONLINE);
+                break;
             case Constants.UDP_F0://获取上位机当前病例ID,然后获取详情,用于状态的长显
                 //获取上位机病人ID
                 String mServerCaseID = event.getIp();
