@@ -42,7 +42,7 @@ public class Constants {
      * 未登录的情况下-->iEnd项目本地监听端口设置为默认值7005,服务端通讯端口默认值设置为7006
      * <p>
      * 登录的情况下-->iEnd项目本地监听端口设置为授权之后返回的(Stp:socke udp接收端口；),并且服务端通讯和本地监听都是公用这个端口
-     *
+     * <p>
      * 需要注意的是,退出的时候,需要手动吧KEY_LOCAL_RECEIVE_PORT的值设置为默认值7005,再切换监听线程
      */
 
@@ -54,9 +54,6 @@ public class Constants {
 
     //第一次开启接收线程 避免初始化的时候开启多次线程                                                    MMKV的Key
     public static final String KEY_SOCKET_RECEIVE_FIRST_IN = "KEY_SOCKET_RECEIVE_FIRST_IN";
-
-
-
 
 
     /**
@@ -114,10 +111,19 @@ public class Constants {
      * toast 提示语
      */
 
-    public static final String UDP_CASE_ID_DIFFERENT = "两设备之间选择病历不一致，请重新确认";                 //当前病例ID和操作病例ID不相等,不能操作!
+    public static final String UDP_CASE_ID_DIFFERENT = "当前检查病人非本病历病人,不允许截取图片!\n请与检查室确认当前检查病人信息!";                 //当前病例ID和操作病例ID不相等,不能操作!
     public static final String HAVE_NO_PERMISSION = "暂无权限";
-    //    public static final String HAVE_HAND_FAIL = "暂无权限";
     public static final String HAVE_HAND_FAIL_OFFLINE = "远程设备连接失败,信息可能无法同步";
+
+
+    /**
+     * 与上位机互联,长显信息提示语
+     */
+    public static final String CONNECT_STATUE_OK = "服务器主机通讯已连接!";
+    //正在检查的病人:  szcme27 | 测试 | 男
+    public static final String CONNECT_STATUE_CURRENT_CASE_INFO = "正在检查的病人";
+    public static final String CONNECT_STATUE_CHECKROOM_MIN_ONLINE = "与检查室通话保持连接中";
+    public static final String CONNECT_STATUE_CHECKROOM_PICTURE_OFFLINE = "检查室图像已停止连接...";
 
 
     /**

@@ -7,18 +7,69 @@
     android:orientation="vertical"
     tools:context="com.company.iendo.ui.activity.CopyActivity">
 
+
     <com.hjq.bar.TitleBar
         android:id="@+id/titlebar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:rightTitle="编辑"
         app:title="病历详情" />
+    <!--远程设备数据互联,状态和数据长显示-->
+    <LinearLayout
+        android:id="@+id/relative_statue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/titlebar"
+        android:background="@color/white"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingTop="@dimen/dp_10"
+        android:paddingBottom="@dimen/dp_5">
+
+        <LinearLayout
+            android:id="@+id/rlative_statue_top"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/current_patient_dec"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="正在检查病人:"
+                android:textSize="@dimen/sp_13" />
+
+            <TextView
+                android:id="@+id/current_patient_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="szcme28 | 张三 |"
+                android:textSize="@dimen/sp_13" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal"
+            android:paddingTop="@dimen/dp_6">
+
+            <TextView
+                android:id="@+id/current_socket_statue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="远程设备通讯已断开"
+                android:textColor="@color/red"
+                android:textSize="@dimen/sp_12" />
+        </LinearLayout>
+
+    </LinearLayout>
 
     <com.scwang.smart.refresh.layout.SmartRefreshLayout
         android:id="@+id/smartRefresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/titlebar"
+        android:layout_below="@+id/relative_statue"
         app:srlAccentColor="@color/gray"
         app:srlEnableNestedScrolling="false"
         app:srlEnablePureScrollMode="true">

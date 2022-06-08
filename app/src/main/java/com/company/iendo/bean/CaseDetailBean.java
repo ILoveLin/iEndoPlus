@@ -18,6 +18,15 @@ public class CaseDetailBean {
     @SerializedName("msg")
     private String msg;
 
+    @Override
+    public String toString() {
+        return "CaseDetailBean{" +
+                "data=" + data +
+                ", code=" + code +
+                ", msg='" + msg + '\'' +
+                '}';
+    }
+
     public DataDTO getData() {
         return data;
     }

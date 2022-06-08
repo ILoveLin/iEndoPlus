@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.company.iendo.R;
 import com.company.iendo.action.StatusAction;
 import com.company.iendo.app.TitleBarFragment;
+import com.company.iendo.bean.CaseDetailBean;
 import com.company.iendo.bean.CaseManageListBean;
 import com.company.iendo.bean.UserReloBean;
 import com.company.iendo.bean.event.SocketRefreshEvent;
@@ -22,12 +23,15 @@ import com.company.iendo.mineui.activity.MainActivity;
 import com.company.iendo.mineui.activity.casemanage.AddCaseActivity;
 import com.company.iendo.mineui.activity.casemanage.DetailCaseActivity;
 import com.company.iendo.mineui.activity.search.SearchSelectedActivity;
+import com.company.iendo.mineui.activity.vlc.GetPictureActivity;
 import com.company.iendo.mineui.fragment.casemanage.adapter.CaseManageAdapter;
 import com.company.iendo.other.Constants;
 import com.company.iendo.other.HttpConstant;
+import com.company.iendo.service.HandService;
 import com.company.iendo.ui.dialog.DateDialog;
 import com.company.iendo.utils.CalculateUtils;
 import com.company.iendo.utils.DateUtil;
+import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.SharePreferenceUtil;
 import com.company.iendo.utils.SocketUtils;
 import com.company.iendo.widget.StatusLayout;
@@ -73,6 +77,8 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
     private ImageView mAnim;
     private String imageCounts;
     private TextView statusBarView;
+    private TextView mCurrentCheckPatientInfo;
+    private TextView mCurrentSocketStatue;
 
     public static CaseManageFragment newInstance() {
         return new CaseManageFragment();
@@ -93,6 +99,8 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
         mAnim = findViewById(R.id.iv_tag_anim);
         statusBarView = findViewById(R.id.viewtop);
         mStatusLayout = findViewById(R.id.b_hint);
+        mCurrentCheckPatientInfo = findViewById(R.id.current_patient_info);
+        mCurrentSocketStatue = findViewById(R.id.current_socket_statue);
         mTitle.setText(DateUtil.getSystemDate());
         currentChoseDate = mTitle.getText().toString().trim();
         setOnClickListener(R.id.ib_right, R.id.ib_left, R.id.tv_title, R.id.iv_tag_anim, R.id.iv_tag_anim);
@@ -325,7 +333,33 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
         }
 //        sendRequest("2022-04-24");
         sendHandLinkMessage();
+        sendSocketPointMessage(Constants.UDP_F0);
 
+
+    }
+
+    /**
+     * 发送点对点消息,必须握手成功
+     *
+     * @param CMDCode 命令cmd
+     */
+    public void sendSocketPointMessage(String CMDCode) {
+        if (HandService.UDP_HAND_GLOBAL_TAG) {
+            HandBean handBean = new HandBean();
+            handBean.setHelloPc("");
+            handBean.setComeFrom("");
+            byte[] sendByteData = CalculateUtils.getSendByteData(getAttachActivity(), mGson.toJson(handBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
+                    CMDCode);
+            if (("".equals(mSocketPort))) {
+                toast("通讯端口不能为空");
+                return;
+            }
+            SocketUtils.startSendPointMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), getAttachActivity());
+        } else {
+            toast(Constants.HAVE_HAND_FAIL_OFFLINE);
+
+
+        }
 
     }
 
@@ -371,6 +405,12 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
     public void SocketRefreshEvent(SocketRefreshEvent event) {
         String data = event.getData();
         switch (event.getUdpCmd()) {
+            case Constants.UDP_F0://获取上位机当前病例ID,然后获取详情,用于状态的长显
+                //获取上位机病人ID
+                String mServerCaseID = event.getIp();
+                sendRequestToGetServerCaseInfo(mServerCaseID);
+                break;
+
             case Constants.UDP_CUSTOM_TOAST://吐司
                 toast("" + data);
                 break;
@@ -430,5 +470,33 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
                 });
     }
 
+    //获取当前上位机正在检查的病例
+    private void sendRequestToGetServerCaseInfo(String mCaseID) {
+        OkHttpUtils.get()
+                .url(mBaseUrl + HttpConstant.CaseManager_CaseInfo)
+                .addParams("ID", mCaseID)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
 
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        if ("" != response) {
+                            CaseDetailBean mBean = mGson.fromJson(response, CaseDetailBean.class);
+                            CaseDetailBean.DataDTO data = mBean.getData();
+                            LogUtils.e("上位机病例详情====" + mBean.toString());
+                            if (0 == mBean.getCode()) {  //成功
+                                mCurrentCheckPatientInfo.setText(data.getCaseNo() + " | " + data.getName() + " |");
+                            } else {
+
+                            }
+                        } else {
+
+                        }
+                    }
+                });
+    }
 }

@@ -320,7 +320,7 @@ public class ReceiveSocketService extends AbsWorkService {
                                                     event.setData("false");
                                                 }
                                                 event.setTga(true);
-                                                event.setIp(hostAddressIP);
+                                                event.setIp(jsonID);
                                                 event.setUdpCmd(Constants.UDP_F0);
                                                 EventBus.getDefault().postSticky(event);
                                             } catch (Exception e) {

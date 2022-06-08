@@ -2167,8 +2167,8 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 //        String deviceType = CalculateUtils.getSendDeviceType(event.getData());
 //        String deviceOnlyCode = CalculateUtils.getSendDeviceOnlyCode(event.getData());
 //        String currentCMD = CalculateUtils.getCMD(event.getData());
-        String data = event.getData();
         switch (event.getUdpCmd()) {
+
             case Constants.UDP_15://截图
                 if (mCaseID.equals(event.getData())) {
                     sendImageRequest(mCaseID);

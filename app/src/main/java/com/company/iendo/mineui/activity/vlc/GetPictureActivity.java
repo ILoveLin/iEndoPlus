@@ -239,6 +239,8 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
     private TextView m02SaturationDesc;
     private TextView m02DefinitionDesc;
     private TextView m02ZoomDesc;
+    private TextView mCurrentCheckPatientInfo;
+    private TextView mCurrentSocketStatue;
 
     /**
      * eventbus 刷新socket数据
@@ -250,13 +252,16 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             case Constants.UDP_CUSTOM_TOAST://吐司
                 toast("" + data);
                 break;
-            case Constants.UDP_F0://获取当前病例
+            case Constants.UDP_F0://获取上位机当前病例ID,然后获取详情,用于状态的长显
+                //获取上位机病人ID
                 if ("true".equals(data)) {//当前病例相同才能操作
                     UDP_EQUALS_ID = true;
                     //获取当前病例ID
                 } else {
                     UDP_EQUALS_ID = false;
                 }
+                String mServerCaseID = event.getIp();
+                sendRequestToGetServerCaseInfo(mServerCaseID);
                 break;
             case Constants.UDP_14://删除病例了
                 if (data.equals(mCaseID)) {//被删除的病例ID和当前的病例ID相同,退出该界面
@@ -1311,6 +1316,9 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
 //        LinearLayout mCold = findViewById(R.id.linear_cold);
         mMic = findViewById(R.id.linear_mic);
         mRecordMsg = findViewById(R.id.case_record);
+
+        mCurrentCheckPatientInfo = findViewById(R.id.current_patient_info);
+        mCurrentSocketStatue = findViewById(R.id.current_socket_statue);
         //亮度
         mRangeBar01Light = findViewById(R.id.sb_01_range_light);
         m01LightBlack = findViewById(R.id.tv_01_light_black);
@@ -1641,6 +1649,35 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         }
     }
 
+    //获取当前上位机正在检查的病例
+    private void sendRequestToGetServerCaseInfo(String mCaseID) {
+        OkHttpUtils.get()
+                .url(mBaseUrl + HttpConstant.CaseManager_CaseInfo)
+                .addParams("ID", mCaseID)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        if ("" != response) {
+                            CaseDetailBean mBean = mGson.fromJson(response, CaseDetailBean.class);
+                            CaseDetailBean.DataDTO data = mBean.getData();
+                            LogUtils.e("上位机病例详情====" + mBean.toString());
+                            if (0 == mBean.getCode()) {  //成功
+                                mCurrentCheckPatientInfo.setText(data.getCaseNo() + " | " + data.getName() + " |");
+                            } else {
+
+                            }
+                        } else {
+
+                        }
+                    }
+                });
+    }
 
     /**
      * rtmp推流 音频

@@ -83,6 +83,8 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
     private String imageCounts;
     private MessageDialog.Builder existBuilder;
     private TextView mCaseDownVideo;
+    private TextView mCurrentCheckPatientInfo;
+    private TextView mCurrentSocketStatue;
 
     @Override
     protected int getLayoutId() {
@@ -135,7 +137,11 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
         mCaseDown = findViewById(R.id.case_down);
         mCaseDownVideo = findViewById(R.id.case_down_video);
         mDelete = findViewById(R.id.case_delete);
+        mCurrentCheckPatientInfo = findViewById(R.id.current_patient_info);
+        mCurrentSocketStatue = findViewById(R.id.current_socket_statue);
         mFatherExit = false;
+
+
         FragmentPagerAdapter mPagerAdapter = new FragmentPagerAdapter<>(this);
         mPagerAdapter.addFragment(DetailFragment.newInstance(), "详情");
         mPagerAdapter.addFragment(PictureFragment.newInstance(), "图片");
@@ -154,17 +160,17 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
 
     private void responseListener() {
         //默认没有下载中
-        mMMKVInstace.encode(Constants.KEY_Picture_Downing,false);
+        mMMKVInstace.encode(Constants.KEY_Picture_Downing, false);
         sendGetEditStatueRequest();
         setOnClickListener(R.id.linear_get_picture, R.id.linear_get_report, R.id.linear_delete, R.id.linear_down, R.id.linear_down_video);
         mTitlebar.setOnTitleBarListener(new OnTitleBarListener() {
             @Override
             public void onLeftClick(View view) {
                 boolean downStatue = mMMKVInstace.decodeBool(Constants.KEY_Picture_Downing, false);
-                LogUtils.e("下载图片的时候(downStatue),downStatue()=="+downStatue);
+                LogUtils.e("下载图片的时候(downStatue),downStatue()==" + downStatue);
 
                 //如果下载病历中,退出界面提示用户
-                if (mCaseDown.getText().equals("下载中..") ||downStatue) {
+                if (mCaseDown.getText().equals("下载中..") || downStatue) {
                     // 消息对话框
                     existBuilder = new MessageDialog.Builder(getActivity());
                     existBuilder.setTitle("是否返回")
@@ -445,10 +451,22 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
     /**
      * eventbus 刷新socket数据
      */
-    @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void SocketRefreshEvent(SocketRefreshEvent event) {
         String data = event.getData();
         switch (event.getUdpCmd()) {
+            case Constants.UDP_F0://获取上位机当前病例ID,然后获取详情,用于状态的长显
+                //获取上位机病人ID
+                if ("true".equals(data)) {//当前病例相同才能操作
+                    UDP_EQUALS_ID = true;
+                    //获取当前病例ID
+                } else {
+                    UDP_EQUALS_ID = false;
+                }
+                String mServerCaseID = event.getIp();
+                sendRequestToGetServerCaseInfo(mServerCaseID);
+                break;
+
             case Constants.UDP_CUSTOM_DOWN_OVER://图片下载的提示
                 if ("true".equals(data)) {//下载完毕,显示:已下载  未下载的话显示:下载病历,下载中显示:下载中..
                     mCaseDown.setText("已下载");
@@ -470,14 +488,6 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
                 postDelayed(() -> {
                     finish();
                 }, 100);
-                break;
-            case Constants.UDP_F0://获取当前病例
-                if ("true".equals(data)) {//当前病例相同才能操作
-                    UDP_EQUALS_ID = true;
-                    //获取当前病例ID
-                } else {
-                    UDP_EQUALS_ID = false;
-                }
                 break;
             case Constants.UDP_CUSTOM14://自定义命令---->在图像采集界面,接受到删除病例,需要退到病例列表界面而不是回退病例详情界面
                 if (Constants.UDP_CUSTOM14.equals(data)) {//当前病例相同才能操作
@@ -804,6 +814,37 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
         void onDownVideo();
 
     }
+
+    //获取当前上位机正在检查的病例
+    private void sendRequestToGetServerCaseInfo(String mCaseID) {
+        OkHttpUtils.get()
+                .url(mBaseUrl + HttpConstant.CaseManager_CaseInfo)
+                .addParams("ID", mCaseID)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        if ("" != response) {
+                            CaseDetailBean mBean = mGson.fromJson(response, CaseDetailBean.class);
+                            CaseDetailBean.DataDTO data = mBean.getData();
+                            LogUtils.e("上位机病例详情====" + mBean.toString());
+                            if (0 == mBean.getCode()) {  //成功
+                                mCurrentCheckPatientInfo.setText(data.getCaseNo()+" | "+data.getName()+" |");
+                            } else {
+
+                            }
+                        } else {
+
+                        }
+                    }
+                });
+    }
+
 
 
     @NonNull

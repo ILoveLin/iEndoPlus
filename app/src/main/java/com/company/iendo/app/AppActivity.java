@@ -18,8 +18,13 @@ import androidx.annotation.StringRes;
 
 import com.company.iendo.bean.RefreshEvent;
 import com.company.iendo.bean.event.SocketRefreshEvent;
+import com.company.iendo.bean.socket.HandBean;
+import com.company.iendo.mineui.activity.vlc.GetPictureActivity;
 import com.company.iendo.other.Constants;
+import com.company.iendo.service.HandService;
+import com.company.iendo.utils.CalculateUtils;
 import com.company.iendo.utils.SharePreferenceUtil;
+import com.company.iendo.utils.SocketUtils;
 import com.didichuxing.doraemonkit.util.LogUtils;
 import com.google.gson.Gson;
 import com.gyf.immersionbar.ImmersionBar;
@@ -353,8 +358,6 @@ public abstract class AppActivity extends BaseActivity
         }
         return 0;
     }
-
-
 
 
 
