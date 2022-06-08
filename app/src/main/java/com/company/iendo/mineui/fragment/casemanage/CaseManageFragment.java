@@ -1,7 +1,10 @@
 package com.company.iendo.mineui.fragment.casemanage;
 
 import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Message;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -30,6 +33,7 @@ import com.company.iendo.other.HttpConstant;
 import com.company.iendo.service.HandService;
 import com.company.iendo.ui.dialog.DateDialog;
 import com.company.iendo.utils.CalculateUtils;
+import com.company.iendo.utils.CommonUtil;
 import com.company.iendo.utils.DateUtil;
 import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.SharePreferenceUtil;
@@ -41,6 +45,7 @@ import com.hjq.base.BaseDialog;
 import com.hjq.gson.factory.GsonFactory;
 import com.hjq.widget.layout.WrapRecyclerView;
 import com.scwang.smart.refresh.layout.SmartRefreshLayout;
+import com.tencent.bugly.proguard.H;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -79,6 +84,18 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
     private TextView statusBarView;
     private TextView mCurrentCheckPatientInfo;
     private TextView mCurrentSocketStatue;
+    private LinearLayout mLinearStatueView;
+    @SuppressLint("HandlerLeak")
+    private Handler mHandler = new Handler() {
+        @SuppressLint("NewApi")
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            LogUtils.e("病例列表====获取上位机当前病例ID===mHandler");
+            sendSocketPointMessage(Constants.UDP_F0);
+
+        }
+    };
 
     public static CaseManageFragment newInstance() {
         return new CaseManageFragment();
@@ -99,6 +116,7 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
         mAnim = findViewById(R.id.iv_tag_anim);
         statusBarView = findViewById(R.id.viewtop);
         mStatusLayout = findViewById(R.id.b_hint);
+        mLinearStatueView = findViewById(R.id.relative_statue);
         mCurrentCheckPatientInfo = findViewById(R.id.current_patient_info);
         mCurrentSocketStatue = findViewById(R.id.current_socket_statue);
         mTitle.setText(DateUtil.getSystemDate());
@@ -179,6 +197,7 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
 //        mRecyclerView.addItemDecoration(new GridSpaceItemDecoration(2, 30, true));
 //        mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setAdapter(mAdapter);
+        mHandler.sendEmptyMessageDelayed(1,1000);
         //设置socket长显示的通讯状态
         setSocketStatue(mCurrentSocketStatue);
 //        mRecyclerView.addItemDecoration(new MyItemDecoration(getActivity(), 1, R.drawable.shape_divideritem_decoration));
@@ -253,6 +272,7 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
                             if ("" != response) {
                                 mGson = GsonFactory.getSingletonGson();
                                 CaseManageListBean mBean = mGson.fromJson(response, CaseManageListBean.class);
+                                LogUtils.e("病例列表====获取上位机当前病例ID===正常请求完毕");
                                 if (0 == mBean.getCode()) {  //成功
                                     if (mBean.getData().size() != 0) {
                                         mDataLest.clear();
@@ -332,15 +352,13 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
         } else {
             sendRequest(currentChoseDate);
         }
-//        sendRequest("2022-04-24");
         sendHandLinkMessage();
         sendSocketPointMessage(Constants.UDP_F0);
-
-
     }
 
     /**
      * 发送点对点消息,必须握手成功
+     * 这里多次请求是xml渲染延迟,获取不到上位机病历信息
      *
      * @param CMDCode 命令cmd
      */
@@ -409,6 +427,7 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
                 mCurrentSocketStatue.setText(Constants.SOCKET_STATUE_ONLINE);
                 break;
             case Constants.UDP_F0://获取上位机当前病例ID,然后获取详情,用于状态的长显
+                LogUtils.e("病例列表====获取上位机当前病例ID");
                 //获取上位机病人ID
                 String mServerCaseID = event.getIp();
                 sendRequestToGetServerCaseInfo(mServerCaseID);
@@ -490,8 +509,9 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
                         if ("" != response) {
                             CaseDetailBean mBean = mGson.fromJson(response, CaseDetailBean.class);
                             CaseDetailBean.DataDTO data = mBean.getData();
-                            LogUtils.e("上位机病例详情====" + mBean.toString());
                             if (0 == mBean.getCode()) {  //成功
+                                LogUtils.e("病例列表====获取上位机当前病例ID==请求回调"+mBean.toString());
+
                                 mCurrentCheckPatientInfo.setText(data.getCaseNo() + " | " + data.getName() + " |");
                             } else {
 

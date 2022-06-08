@@ -251,6 +251,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         String data = event.getData();
         switch (event.getUdpCmd()) {
             case Constants.UDP_HAND://握手
+                LogUtils.e("握手服务===="+HandService.UDP_HAND_GLOBAL_TAG);
                 mCurrentSocketStatue.setTextColor(getResources().getColor(R.color.color_25A5FF));
                 mCurrentSocketStatue.setText(Constants.SOCKET_STATUE_ONLINE);
                 break;
@@ -1041,17 +1042,12 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
 
     private void responseListener() {
 //        R.id.linear_mic, R.id.linear_cold,
-//        setOnClickListener(R.id.linear_light_tab, R.id.linear_device_tab, R.id.linear_record, R.id.linear_picture, R.id.full_change,
-//                R.id.lock_screen, R.id.root_layout_vlc, R.id.video_back, R.id.control_start_view, R.id.linear_mic,
-//                R.id.tv_01_light_black, R.id.tv_01_light_add, R.id.tv_02_light_black, R.id.tv_02_light_add,
-//                R.id.tv_02_saturation_black, R.id.tv_02_saturation_add, R.id.tv_02_definition_black, R.id.tv_02_definition_add,
-//                R.id.tv_02_zoom_black, R.id.tv_02_zoom_add);
-
         setOnClickListener(R.id.linear_light_tab, R.id.linear_device_tab, R.id.linear_record, R.id.linear_picture, R.id.full_change,
                 R.id.lock_screen, R.id.root_layout_vlc, R.id.video_back, R.id.control_start_view, R.id.linear_mic,
-//                R.id.tv_01_light_black, R.id.tv_01_light_add, R.id.tv_02_light_black, R.id.tv_02_light_add,
+                R.id.tv_01_light_black, R.id.tv_01_light_add, R.id.tv_02_light_black, R.id.tv_02_light_add,
                 R.id.tv_02_saturation_black, R.id.tv_02_saturation_add, R.id.tv_02_definition_black, R.id.tv_02_definition_add,
                 R.id.tv_02_zoom_black, R.id.tv_02_zoom_add);
+//
 
         //设置拖动条监听
         mRangeBar01Light.setOnRangeChangedListener(this);
@@ -1064,10 +1060,6 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         mSwitchBlood.setOnCheckedChangeListener(this);
         mSwitchVertical.setOnCheckedChangeListener(this);
         mSwitchHorizontal.setOnCheckedChangeListener(this);
-        m01LightBlack.setOnClickListener(this);
-        m01LightAdd.setOnClickListener(this);
-        m02LightBlack.setOnClickListener(this);
-        m02LightAdd.setOnClickListener(this);
 
         mVLCView.setMediaListenerEvent(new MediaListenerEvent() {
             @Override
@@ -1678,7 +1670,6 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                         if ("" != response) {
                             CaseDetailBean mBean = mGson.fromJson(response, CaseDetailBean.class);
                             CaseDetailBean.DataDTO data = mBean.getData();
-                            LogUtils.e("上位机病例详情====" + mBean.toString());
                             if (0 == mBean.getCode()) {  //成功
                                 mCurrentCheckPatientInfo.setText(data.getCaseNo() + " | " + data.getName() + " |");
                             } else {

@@ -836,7 +836,6 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
                         if ("" != response) {
                             CaseDetailBean mBean = mGson.fromJson(response, CaseDetailBean.class);
                             CaseDetailBean.DataDTO data = mBean.getData();
-                            LogUtils.e("上位机病例详情====" + mBean.toString());
                             if (0 == mBean.getCode()) {  //成功
                                 mCurrentCheckPatientInfo.setText(data.getCaseNo() + " | " + data.getName() + " |");
                             } else {

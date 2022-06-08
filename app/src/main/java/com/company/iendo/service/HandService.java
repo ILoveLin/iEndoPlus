@@ -97,7 +97,7 @@ public class HandService extends AbsWorkService {
 
     private void start60STask() {
         sDisposable60s = Observable
-                .interval(60, TimeUnit.SECONDS)//定时器操作符，这里三秒打印一个log
+                .interval(30, TimeUnit.SECONDS)//定时器操作符，这里三秒打印一个log
                 //取消任务时取消定时唤醒
                 .doOnDispose(() -> {
 //                    cancelJobAlarmSub();
@@ -140,7 +140,7 @@ public class HandService extends AbsWorkService {
 //        observeOn是来设定我们的观察者的操作是在哪个线程执行   AndroidSchedulers.mainThread()
 
         sDisposable10s = Observable
-                .interval(30, TimeUnit.SECONDS)//定时器操作符，这里三秒打印一个log
+                .interval(5, TimeUnit.SECONDS)//定时器操作符，这里三秒打印一个log
                 //取消任务时取消定时唤醒
                 .doOnDispose(() -> {
 //                    cancelJobAlarmSub();
