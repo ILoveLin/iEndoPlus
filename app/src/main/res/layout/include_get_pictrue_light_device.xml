@@ -68,9 +68,9 @@
     <!--TAB对应的布局-->
 
     <androidx.core.widget.NestedScrollView
-        android:scrollbars="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:scrollbars="vertical">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -113,6 +113,16 @@
                         android:layout_height="1px"
                         android:layout_weight="1" />
 
+                    <TextView
+                        android:id="@+id/tv_01_light_desc"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:paddingLeft="@dimen/dp_10"
+                        android:paddingRight="@dimen/dp_15"
+                        android:text=""
+                        android:textSize="@dimen/sp_12" />
+
 
                 </LinearLayout>
 
@@ -126,16 +136,21 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/dp_10"
                     android:layout_marginTop="@dimen/dp_5"
                     android:layout_marginBottom="@dimen/dp_5"
-                    android:layout_marginRight="@dimen/dp_10"
                     android:gravity="center"
                     android:orientation="horizontal">
 
                     <TextView
+                        android:id="@+id/tv_01_light_black"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:drawableLeft="@drawable/ic_device_icon_params_minus"
+                        android:drawablePadding="@dimen/dp_5"
+                        android:gravity="center_vertical"
+                        android:paddingLeft="@dimen/dp_10"
+                        android:paddingRight="@dimen/dp_5"
                         android:text="0"
                         android:textColor="@color/color_9A9A9A"
                         android:textSize="@dimen/sp_11" />
@@ -162,28 +177,35 @@
                         android:id="@+id/sb_01_range_light"
                         android:layout_width="0dp"
                         android:layout_height="@dimen/dp_12"
-                        app:rsb_thumb_width="@dimen/dp_10"
-                        app:rsb_thumb_height="@dimen/dp_10"
                         android:layout_weight="1"
                         app:rsb_gravity="center"
                         app:rsb_indicator_background_color="@color/color_25A5FF"
                         app:rsb_indicator_height="1dp"
                         app:rsb_indicator_radius="5dp"
-
                         app:rsb_indicator_show_mode="alwaysHide"
                         app:rsb_indicator_text_size="@dimen/sp_10"
+
                         app:rsb_max="100"
                         app:rsb_min="0"
                         app:rsb_mode="single"
                         app:rsb_progress_color="@color/color_25A5FF"
                         app:rsb_progress_default_color="@color/rsbColorSeekBarDefault"
                         app:rsb_thumb_drawable="@drawable/thumb_activated"
+                        app:rsb_thumb_height="@dimen/dp_10"
                         app:rsb_thumb_inactivated_drawable="@drawable/thumb_inactivated"
+                        app:rsb_thumb_width="@dimen/dp_10"
                         app:rsb_tick_mark_mode="number" />
 
                     <TextView
+                        android:id="@+id/tv_01_light_add"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/dp_5"
+                        android:clickable="true"
+                        android:drawableRight="@drawable/ic_device_icon_params_plus"
+                        android:drawablePadding="@dimen/dp_5"
+                        android:gravity="center"
+                        android:paddingRight="@dimen/dp_10"
                         android:text="100"
                         android:textColor="@color/color_9A9A9A"
                         android:textSize="@dimen/sp_11" />
@@ -237,7 +259,15 @@
                             android:layout_height="1px"
                             android:layout_weight="1" />
 
-
+                        <TextView
+                            android:id="@+id/tv_02_light_desc"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:paddingLeft="@dimen/dp_10"
+                            android:paddingRight="@dimen/dp_15"
+                            android:text=""
+                            android:textSize="@dimen/sp_12" />
 
                     </LinearLayout>
 
@@ -251,16 +281,21 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/dp_10"
                         android:layout_marginTop="@dimen/dp_5"
                         android:layout_marginBottom="@dimen/dp_5"
-                        android:layout_marginRight="@dimen/dp_10"
                         android:gravity="center"
                         android:orientation="horizontal">
 
                         <TextView
+                            android:id="@+id/tv_02_light_black"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginRight="@dimen/dp_5"
+                            android:clickable="true"
+                            android:drawableLeft="@drawable/ic_device_icon_params_minus"
+                            android:drawablePadding="@dimen/dp_5"
+                            android:gravity="center"
+                            android:paddingLeft="@dimen/dp_10"
                             android:text="0"
                             android:textColor="@color/color_9A9A9A"
                             android:textSize="@dimen/sp_11" />
@@ -268,11 +303,9 @@
                         <com.jaygoo.widget.RangeSeekBar
                             android:id="@+id/sb_02_range_light"
                             android:layout_width="0dp"
+                            android:layout_height="@dimen/dp_12"
                             android:layout_weight="1"
                             app:rsb_gravity="center"
-                            android:layout_height="@dimen/dp_12"
-                            app:rsb_thumb_width="@dimen/dp_10"
-                            app:rsb_thumb_height="@dimen/dp_10"
                             app:rsb_indicator_background_color="@color/color_25A5FF"
                             app:rsb_indicator_height="2dp"
                             app:rsb_indicator_padding_bottom="@dimen/dp_5"
@@ -287,12 +320,21 @@
                             app:rsb_progress_color="@color/color_25A5FF"
                             app:rsb_progress_default_color="@color/rsbColorSeekBarDefault"
                             app:rsb_thumb_drawable="@drawable/thumb_activated"
+                            app:rsb_thumb_height="@dimen/dp_10"
                             app:rsb_thumb_inactivated_drawable="@drawable/thumb_inactivated"
+                            app:rsb_thumb_width="@dimen/dp_10"
                             app:rsb_tick_mark_mode="number" />
 
                         <TextView
+                            android:id="@+id/tv_02_light_add"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/dp_5"
+                            android:clickable="true"
+                            android:drawableRight="@drawable/ic_device_icon_params_plus"
+                            android:drawablePadding="@dimen/dp_5"
+                            android:gravity="center"
+                            android:paddingRight="@dimen/dp_10"
                             android:text="63"
                             android:textColor="@color/color_9A9A9A"
                             android:textSize="@dimen/sp_11" />
@@ -336,6 +378,15 @@
                             android:layout_height="1px"
                             android:layout_weight="1" />
 
+                        <TextView
+                            android:id="@+id/tv_02_saturation_desc"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:paddingLeft="@dimen/dp_10"
+                            android:paddingRight="@dimen/dp_15"
+                            android:text=""
+                            android:textSize="@dimen/sp_12" />
 
                     </LinearLayout>
 
@@ -349,16 +400,21 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/dp_10"
                         android:layout_marginTop="@dimen/dp_5"
                         android:layout_marginBottom="@dimen/dp_5"
-                        android:layout_marginRight="@dimen/dp_10"
                         android:gravity="center"
                         android:orientation="horizontal">
 
                         <TextView
+                            android:id="@+id/tv_02_saturation_black"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginRight="@dimen/dp_5"
+                            android:clickable="true"
+                            android:drawableLeft="@drawable/ic_device_icon_params_minus"
+                            android:drawablePadding="@dimen/dp_5"
+                            android:gravity="center"
+                            android:paddingLeft="@dimen/dp_10"
                             android:text="0"
                             android:textColor="@color/color_9A9A9A"
                             android:textSize="@dimen/sp_11" />
@@ -366,11 +422,9 @@
                         <com.jaygoo.widget.RangeSeekBar
                             android:id="@+id/sb_02_range_saturation"
                             android:layout_width="0dp"
+                            android:layout_height="@dimen/dp_12"
                             android:layout_weight="1"
                             app:rsb_gravity="center"
-                            android:layout_height="@dimen/dp_12"
-                            app:rsb_thumb_width="@dimen/dp_10"
-                            app:rsb_thumb_height="@dimen/dp_10"
                             app:rsb_indicator_background_color="@color/color_25A5FF"
                             app:rsb_indicator_height="2dp"
                             app:rsb_indicator_padding_bottom="@dimen/dp_5"
@@ -385,12 +439,20 @@
                             app:rsb_progress_color="@color/color_25A5FF"
                             app:rsb_progress_default_color="@color/rsbColorSeekBarDefault"
                             app:rsb_thumb_drawable="@drawable/thumb_activated"
+                            app:rsb_thumb_height="@dimen/dp_10"
                             app:rsb_thumb_inactivated_drawable="@drawable/thumb_inactivated"
+                            app:rsb_thumb_width="@dimen/dp_10"
                             app:rsb_tick_mark_mode="number" />
 
                         <TextView
+                            android:id="@+id/tv_02_saturation_add"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/dp_5"
+                            android:drawableRight="@drawable/ic_device_icon_params_plus"
+                            android:drawablePadding="@dimen/dp_5"
+                            android:gravity="center"
+                            android:paddingRight="@dimen/dp_10"
                             android:text="64"
                             android:textColor="@color/color_9A9A9A"
                             android:textSize="@dimen/sp_11" />
@@ -435,6 +497,15 @@
                             android:layout_height="1px"
                             android:layout_weight="1" />
 
+                        <TextView
+                            android:id="@+id/tv_02_definition_desc"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:paddingLeft="@dimen/dp_10"
+                            android:paddingRight="@dimen/dp_15"
+                            android:text=""
+                            android:textSize="@dimen/sp_12" />
 
                     </LinearLayout>
 
@@ -448,16 +519,21 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/dp_10"
                         android:layout_marginTop="@dimen/dp_5"
                         android:layout_marginBottom="@dimen/dp_5"
-                        android:layout_marginRight="@dimen/dp_10"
                         android:gravity="center"
                         android:orientation="horizontal">
 
                         <TextView
+                            android:id="@+id/tv_02_definition_black"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginRight="@dimen/dp_5"
+                            android:clickable="true"
+                            android:drawableLeft="@drawable/ic_device_icon_params_minus"
+                            android:drawablePadding="@dimen/dp_5"
+                            android:gravity="center"
+                            android:paddingLeft="@dimen/dp_10"
                             android:text="0"
                             android:textColor="@color/color_9A9A9A"
                             android:textSize="@dimen/sp_11" />
@@ -465,11 +541,9 @@
                         <com.jaygoo.widget.RangeSeekBar
                             android:id="@+id/sb_02_range_definition"
                             android:layout_width="0dp"
+                            android:layout_height="@dimen/dp_12"
                             android:layout_weight="1"
                             app:rsb_gravity="center"
-                            android:layout_height="@dimen/dp_12"
-                            app:rsb_thumb_width="@dimen/dp_10"
-                            app:rsb_thumb_height="@dimen/dp_10"
                             app:rsb_indicator_background_color="@color/color_25A5FF"
                             app:rsb_indicator_height="2dp"
                             app:rsb_indicator_padding_bottom="@dimen/dp_5"
@@ -484,12 +558,21 @@
                             app:rsb_progress_color="@color/color_25A5FF"
                             app:rsb_progress_default_color="@color/rsbColorSeekBarDefault"
                             app:rsb_thumb_drawable="@drawable/thumb_activated"
+                            app:rsb_thumb_height="@dimen/dp_10"
                             app:rsb_thumb_inactivated_drawable="@drawable/thumb_inactivated"
+                            app:rsb_thumb_width="@dimen/dp_10"
                             app:rsb_tick_mark_mode="number" />
 
                         <TextView
+                            android:id="@+id/tv_02_definition_add"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/dp_5"
+                            android:clickable="true"
+                            android:drawableRight="@drawable/ic_device_icon_params_plus"
+                            android:drawablePadding="@dimen/dp_5"
+                            android:gravity="center"
+                            android:paddingRight="@dimen/dp_10"
                             android:text="31"
                             android:textColor="@color/color_9A9A9A"
                             android:textSize="@dimen/sp_11" />
@@ -534,6 +617,16 @@
                             android:layout_height="1px"
                             android:layout_weight="1" />
 
+                        <TextView
+                            android:id="@+id/tv_02_zoom_desc"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:paddingLeft="@dimen/dp_10"
+                            android:paddingRight="@dimen/dp_15"
+                            android:text=""
+                            android:textSize="@dimen/sp_12" />
+
 
                     </LinearLayout>
 
@@ -547,16 +640,21 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/dp_10"
                         android:layout_marginTop="@dimen/dp_5"
                         android:layout_marginBottom="@dimen/dp_5"
-                        android:layout_marginRight="@dimen/dp_10"
                         android:gravity="center"
                         android:orientation="horizontal">
 
                         <TextView
+                            android:id="@+id/tv_02_zoom_black"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/dp_10"
+                            android:layout_marginRight="@dimen/dp_5"
+                            android:clickable="true"
+                            android:drawableLeft="@drawable/ic_device_icon_params_minus"
+                            android:drawablePadding="@dimen/dp_5"
+                            android:gravity="center"
                             android:text="1"
                             android:textColor="@color/color_9A9A9A"
                             android:textSize="@dimen/sp_11" />
@@ -564,11 +662,9 @@
                         <com.jaygoo.widget.RangeSeekBar
                             android:id="@+id/sb_02_range_zoom"
                             android:layout_width="0dp"
+                            android:layout_height="@dimen/dp_12"
                             android:layout_weight="1"
                             app:rsb_gravity="center"
-                            android:layout_height="@dimen/dp_12"
-                            app:rsb_thumb_width="@dimen/dp_10"
-                            app:rsb_thumb_height="@dimen/dp_10"
                             app:rsb_indicator_background_color="@color/color_25A5FF"
                             app:rsb_indicator_height="2dp"
                             app:rsb_indicator_padding_bottom="@dimen/dp_5"
@@ -584,12 +680,21 @@
                             app:rsb_progress_color="@color/color_25A5FF"
                             app:rsb_progress_default_color="@color/rsbColorSeekBarDefault"
                             app:rsb_thumb_drawable="@drawable/thumb_activated"
+                            app:rsb_thumb_height="@dimen/dp_10"
                             app:rsb_thumb_inactivated_drawable="@drawable/thumb_inactivated"
+                            app:rsb_thumb_width="@dimen/dp_10"
                             app:rsb_tick_mark_mode="number" />
 
                         <TextView
+                            android:id="@+id/tv_02_zoom_add"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/dp_5"
+                            android:layout_marginRight="@dimen/dp_10"
+                            android:clickable="true"
+                            android:drawableRight="@drawable/ic_device_icon_params_plus"
+                            android:drawablePadding="@dimen/dp_5"
+                            android:gravity="center"
                             android:text="2.5"
                             android:textColor="@color/color_9A9A9A"
                             android:textSize="@dimen/sp_11" />

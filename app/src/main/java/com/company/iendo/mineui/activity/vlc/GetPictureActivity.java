@@ -8,13 +8,9 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -35,23 +31,22 @@ import com.company.iendo.bean.socket.MicRequestBean;
 import com.company.iendo.bean.socket.RecodeBean;
 import com.company.iendo.bean.socket.getpicture.ShotPictureBean;
 import com.company.iendo.bean.socket.params.DeviceParamsBean;
-import com.company.iendo.bean.socket.params.Type02Bean;
 import com.company.iendo.bean.socket.params.Type01Bean;
+import com.company.iendo.bean.socket.params.Type02Bean;
 import com.company.iendo.other.Constants;
-
 import com.company.iendo.other.HttpConstant;
 import com.company.iendo.service.HandService;
 import com.company.iendo.ui.dialog.SelectDialog;
 import com.company.iendo.utils.CalculateUtils;
 import com.company.iendo.utils.CommonUtil;
+import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.ScreenSizeUtil;
-import com.company.iendo.utils.SharePreferenceUtil;
 import com.company.iendo.utils.SocketUtils;
 import com.company.iendo.utils.SystemUtil;
+import com.company.iendo.widget.StatusLayout;
 import com.company.iendo.widget.vlc.ENDownloadView;
 import com.company.iendo.widget.vlc.ENPlayView;
 import com.company.iendo.widget.vlc.MyVlcVideoView;
-import com.company.iendo.widget.StatusLayout;
 import com.gyf.immersionbar.ImmersionBar;
 import com.hjq.bar.OnTitleBarListener;
 import com.hjq.bar.TitleBar;
@@ -59,7 +54,6 @@ import com.hjq.base.BaseDialog;
 import com.hjq.permissions.OnPermissionCallback;
 import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
-import com.hjq.widget.view.ClearEditText;
 import com.hjq.widget.view.SwitchButton;
 import com.jaygoo.widget.OnRangeChangedListener;
 import com.jaygoo.widget.RangeSeekBar;
@@ -79,8 +73,6 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import okhttp3.Call;
 
@@ -232,11 +224,26 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
     private TextView mTitleName;
     private String mName;
     private String mCaseNo;
+    private TextView m01LightBlack;
+    private TextView m01LightAdd;
+    private TextView m02LightBlack;
+    private TextView m02LightAdd;
+    private TextView m02SaturationBlack;
+    private TextView m02SaturationAdd;
+    private TextView m02DefinitionBlack;
+    private TextView m02DefinitionAdd;
+    private TextView m02ZoomBlack;
+    private TextView m02ZoomAdd;
+    private TextView m01LightDesc;
+    private TextView m02LightDesc;
+    private TextView m02SaturationDesc;
+    private TextView m02DefinitionDesc;
+    private TextView m02ZoomDesc;
 
     /**
      * eventbus 刷新socket数据
      */
-    @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void SocketRefreshEvent(SocketRefreshEvent event) {
         String data = event.getData();
         switch (event.getUdpCmd()) {
@@ -455,23 +462,27 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         isFirstInitData = true;
         DeviceParamsBean.Type01 type01 = deviceParamsBean.getType01(); //摄像机
         DeviceParamsBean.Type02 type02 = deviceParamsBean.getType02(); //光源
-        if (type02 != null) {
+        if (type02 != null) {//光源
+            //光源调节
             mRangeBar01Light.setProgress(Integer.parseInt(type02.getBrightness()));
+            m01LightDesc.setText(Integer.parseInt(type02.getBrightness()) + "");
         }
-        if (type01 != null) {
-            //光源
+        if (type01 != null) {//影像
+            //亮度
             mRangeBar02Light.setProgress(Integer.parseInt(type01.getBrightness()));
-
+            m02LightDesc.setText(Integer.parseInt(type01.getBrightness()) + "");
             //饱和度
             mRangeBar02Saturation.setProgress(Integer.parseInt(type01.getSaturation()));
+            m02SaturationDesc.setText(Integer.parseInt(type01.getSaturation()) + "");
 
             //清晰度
             mRangeBar02Definition.setProgress(Integer.parseInt(type01.getSharpness()));
+            m02DefinitionDesc.setText(Integer.parseInt(type01.getSharpness()) + "");
 
             //放大倍数           //显示是1到2.5倍,传值是0--15
-            float rangeBarNeedSetData = CommonUtil.getRangeBarNeedSetData(type01.getZoomrate());
+            float rangeBarNeedSetData = CommonUtil.getRangeBarData(type01.getZoomrate());
             mRangeBar02Zoom.setProgress(rangeBarNeedSetData);
-
+            m02ZoomDesc.setText(rangeBarNeedSetData + "");
             //:影像翻转取值：  0（无翻转），1（水平翻转），2（垂直翻转），3（水平翻转+垂直翻转）
 
             switch (type01.getReversal()) {
@@ -506,133 +517,6 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         }
 
 
-    }
-
-    @SingleClick
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.linear_light_tab:        //点击光源tab
-                setLightTab();
-                break;
-            case R.id.linear_device_tab:        //点击摄像机tab
-                setDeviceTab();
-                break;
-            case R.id.video_back:               //全屏的时候退出界面
-                //此处应该是缩小播放界面
-                isFullscreen = false;
-                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);//竖屏动态转换
-                setVideoViewFull(R.drawable.nur_ic_fangda, "竖屏");
-                break;
-            case R.id.root_layout_vlc:          //点击控制播放界面
-                changeControlStatus();
-                break;
-            case R.id.control_start_view:       //重新开始链接直播
-                startLive(path);
-                break;
-            case R.id.linear_record:            //录像,本地不做,socket通讯机子做操作
-                //有权限才去做录像操作
-                if (mMMKVInstace.decodeBool(Constants.KEY_SnapVideoRecord)) {
-                    sendSocketPointRecodeStatusMessage(Constants.UDP_18, "0");
-                    if (UDP_EQUALS_ID) {
-                        mHandler.sendEmptyMessageDelayed(Record_Request, 200);
-                    } else {
-                        toast(Constants.UDP_CASE_ID_DIFFERENT);
-                    }
-                } else {
-                    toast(Constants.HAVE_NO_PERMISSION);
-                }
-
-
-//                if (isPlayering) {
-//                    if (mVLCView.isPrepare()) {
-//                        if ("录像".equals(mRecordMsg.getText())) {
-//                            mFlagRecord = true;
-//                            mHandler.sendEmptyMessage(Record_Start);
-////                        vlcVideoView.getMediaPlayer().record(directory);
-//                            LogUtils.e("path=====录像--开始:=====" + directory); //   /storage/emulated/0/1604026573438.mp4
-//                            recordEvent.startRecord(mVLCView.getMediaPlayer(), directory, "cme.mp4");
-//                        } else {
-//                            vlcRecordOver();
-//                        }
-//                    } else {
-//                        vlcRecordOver();
-//                    }
-//                } else {
-//                    toast("只有在播放的时候才能录像!");
-//                }
-                break;
-            case R.id.linear_picture:           //截图,本地不做,socket通讯机子做操作
-                if (HandService.UDP_HAND_GLOBAL_TAG) {
-                    if (UDP_EQUALS_ID) {
-                        if (mMMKVInstace.decodeBool(Constants.KEY_SnapVideoRecord)) {
-                            sendSocketPointShotMessage(Constants.UDP_15);
-                        } else {
-                            toast(Constants.HAVE_NO_PERMISSION);
-                        }
-                    } else {
-                        toast(Constants.UDP_CASE_ID_DIFFERENT);
-                    }
-                } else {
-                    toast(Constants.HAVE_HAND_FAIL_OFFLINE);
-                }
-//                if (isPlayering) {
-//                    if (mVLCView.isPrepare()) {
-//                        Media.VideoTrack videoTrack = mVLCView.getVideoTrack();
-//                        if (videoTrack != null) {
-//                            toast("截图成功");
-//                            //原图
-//                            LogUtils.e("path=====截图地址:=====" + shotFile.getAbsolutePath());
-//                            File localFile = new File(shotFile.getAbsolutePath());
-//                            if (!localFile.exists()) {
-//                                localFile.mkdir();
-//                            }
-//                            recordEvent.takeSnapshot(mVLCView.getMediaPlayer(), shotFile.getAbsolutePath(), 0, 0);
-//                            //插入相册 解决了华为截图显示问题
-//                            MediaStore.Images.Media.insertImage(getContentResolver(), mVLCView.getBitmap(), "", "");
-//                            //原图的一半
-//                            //recordEvent.takeSnapshot(vlcVideoView.getMediaPlayer(), takeSnapshotFile.getAbsolutePath(), videoTrack.width / 2, 0);
-//                        }
-//                    }
-//                    //这个就是截图 保存Bitmap就行了
-//                    //thumbnail.setImageBitmap(vlcVideoView.getBitmap());
-//                    //Bitmap bitmap = vlcVideoView.getBitmap();
-//                    //saveBitmap("", bitmap);
-//                } else {
-//                    toast("只有在播放的时候才能截图!");
-//                }
-                break;
-//            case R.id.linear_cold:              //冻结
-//                sendSocketPointMessage(Constants.UDP_F3);
-//                break;
-            case R.id.linear_mic:               //麦克风
-                getMicPermission();
-                break;
-            case R.id.lock_screen:  //锁屏
-                if (mLockScreen.getTag().equals("lock")) {   //解锁
-                    mHandler.sendEmptyMessage(Unlock);
-                    mLockScreen.setTag("unLock");
-                } else {
-                    mLockScreen.setTag("lock");     //锁屏
-                    mHandler.sendEmptyMessage(Lock);
-                }
-                break;
-            case R.id.full_change:
-                isFullscreen = !isFullscreen;
-                if (isFullscreen) {
-                    getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE); //横屏动态转换
-                    setVideoViewFull(R.drawable.nur_ic_fangxiao, "横屏");
-
-                } else {
-                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);//竖屏动态转换
-                    setVideoViewFull(R.drawable.nur_ic_fangda, "竖屏");
-
-                }
-                break;
-        }
     }
 
     private void setDeviceTab() {
@@ -893,14 +777,268 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
     }
 
 
+    public void setProcessData(String type, RangeSeekBar mSeekBar, TextView mTvDesc, int maxData, int minData) {
+        int progress = (int) mSeekBar.getLeftSeekBar().getProgress();
+        if (progress == minData) {
+            toast("已经是最小值了");
+            return;
+        }
+        if (progress == maxData) {
+            toast("已经是最大值了");
+            return;
+        }
+        //加
+        if (type.equals("add")) {
+            //本地进度条设置
+            mSeekBar.setProgress(progress + 1);
+            setProcessDataByAddOrBlack(mSeekBar, mTvDesc);
+        } else {
+            //本地进度条设置
+            mSeekBar.setProgress(progress - 1);
+            //设置摄像机参数,发送摄像机bean的消息
+            setProcessDataByAddOrBlack(mSeekBar, mTvDesc);
+        }
+
+
+    }
+
+    /**
+     * 设置数据,点击拖动条,增或者减发消息,然后设置数据,
+     *
+     * @param mSeekBar
+     * @param mTvDesc
+     */
+    private void setProcessDataByAddOrBlack(RangeSeekBar mSeekBar, TextView mTvDesc) {
+        //设置摄像机参数,发送摄像机bean的消息
+        if (View.VISIBLE == mDevicePart.getVisibility()) {
+            //创建摄像机数据bean
+            Type01Bean bean = new Type01Bean();
+            Type01Bean.Type01 typeBean = new Type01Bean.Type01();
+
+            float progressData = mSeekBar.getLeftSeekBar().getProgress();
+            String round = (Math.round(progressData) + "").replace(".", "");
+            typeBean.setBrightness(round);
+            bean.setType01(typeBean);
+            sendSocketPointVideoDevice(Constants.UDP_F6, bean);
+            mTvDesc.setText((int) mSeekBar.getLeftSeekBar().getProgress() + "");
+        } else {
+            //发送光源socket消息
+            float progress2 = mSeekBar.getLeftSeekBar().getProgress();
+            String round2 = (Math.round(progress2) + "").replace(".", "");
+            sendSocketPointLight(Constants.UDP_F6, "" + round2);
+            mTvDesc.setText((int) mSeekBar.getLeftSeekBar().getProgress() + "");
+
+        }
+    }
+
     /**
      * ***************************************************************************通讯模块**************************************************************************
      */
+    @SingleClick
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.linear_light_tab:        //点击光源tab
+                setLightTab();
+                break;
+            case R.id.tv_01_light_black:        //亮度,点击 -
+                LogUtils.e("参数设置====,亮度01===black");
+                setProcessData("black", mRangeBar01Light, m01LightDesc, 100, 0);
+                break;
+            case R.id.tv_01_light_add:        //亮度,点击 +
+                setProcessData("add", mRangeBar01Light, m01LightDesc, 100, 0);
+                break;
+            case R.id.linear_device_tab:        //点击摄像机tab
+                setDeviceTab();
+                break;
+            case R.id.tv_02_light_black:        //亮度,点击 -
+                setProcessData("black", mRangeBar02Light, m02LightDesc, 63, 0);
+                break;
+            case R.id.tv_02_light_add:        //亮度,点击 +
+                setProcessData("add", mRangeBar02Light, m02LightDesc, 63, 0);
+                break;
+            case R.id.tv_02_saturation_black://饱和度,点击 -
+                setProcessData("black", mRangeBar02Saturation, m02SaturationDesc, 64, 0);
+                break;
+            case R.id.tv_02_saturation_add://饱和度,点击 +
+                setProcessData("add", mRangeBar02Saturation, m02SaturationDesc, 64, 0);
+                break;
+            case R.id.tv_02_definition_black://清晰度,点击 -
+                setProcessData("black", mRangeBar02Definition, m02DefinitionDesc, 31, 0);
+                break;
+            case R.id.tv_02_definition_add://清晰度,点击 +
+                setProcessData("add", mRangeBar02Definition, m02DefinitionDesc, 31, 0);
+                break;
+            case R.id.tv_02_zoom_black://放大倍数,点击 -
+                //放大倍数           //显示是1到2.5倍,传值是0--15
+
+                float s = mRangeBar02Zoom.getLeftSeekBar().getProgress();//editText设置的值
+                if (s == 1) {
+                    toast("已经是最小值了");
+                } else {
+                    Type01Bean bean = new Type01Bean();
+                    Type01Bean.Type01 typeBean = new Type01Bean.Type01();
+                    float progress = ((mRangeBar02Zoom.getLeftSeekBar().getProgress()) * 10) - 10;
+                    int round = Math.round(progress - 1); //传的值
+                    typeBean.setZoomrate(round + "");
+                    bean.setType01(typeBean);
+                    sendSocketPointVideoDevice(Constants.UDP_F6, bean);
+                    float rangeBarNeedSetData = CommonUtil.getRangeBarData(round + "");
+                    mRangeBar02Zoom.setProgress(rangeBarNeedSetData);
+                    m02ZoomDesc.setText(rangeBarNeedSetData + "");
+                }
+                break;
+            case R.id.tv_02_zoom_add://放大倍数,点击 +
+                //放大倍数           //显示是1到2.5倍,通讯传值是0--15
+                float s2 = mRangeBar02Zoom.getLeftSeekBar().getProgress();//editText设置的值
+                if (2.5 == s2) {
+                    toast("已经是最大值了");
+                } else {
+                    Type01Bean bean = new Type01Bean();
+                    Type01Bean.Type01 typeBean = new Type01Bean.Type01();
+                    //获取当原本进度条值,此处把1-1.5 转换成0-15socket通讯值
+                    float progress = ((mRangeBar02Zoom.getLeftSeekBar().getProgress()) * 10) - 10;
+                    int round = Math.round(progress + 1); //传的值
+                    typeBean.setZoomrate(round + "");
+                    bean.setType01(typeBean);
+                    sendSocketPointVideoDevice(Constants.UDP_F6, bean);
+                    float rangeBarNeedSetData = CommonUtil.getRangeBarData(round + "");
+                    mRangeBar02Zoom.setProgress(rangeBarNeedSetData);
+                    m02ZoomDesc.setText(rangeBarNeedSetData + "");
+
+                }
+                break;
+            case R.id.video_back:               //全屏的时候退出界面
+                //此处应该是缩小播放界面
+                isFullscreen = false;
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);//竖屏动态转换
+                setVideoViewFull(R.drawable.nur_ic_fangda, "竖屏");
+                break;
+            case R.id.root_layout_vlc:          //点击控制播放界面
+                changeControlStatus();
+                break;
+            case R.id.control_start_view:       //重新开始链接直播
+                startLive(path);
+                break;
+            case R.id.linear_record:            //录像,本地不做,socket通讯机子做操作
+                //有权限才去做录像操作
+                if (mMMKVInstace.decodeBool(Constants.KEY_SnapVideoRecord)) {
+                    sendSocketPointRecodeStatusMessage(Constants.UDP_18, "0");
+                    if (UDP_EQUALS_ID) {
+                        mHandler.sendEmptyMessageDelayed(Record_Request, 200);
+                    } else {
+                        toast(Constants.UDP_CASE_ID_DIFFERENT);
+                    }
+                } else {
+                    toast(Constants.HAVE_NO_PERMISSION);
+                }
+
+
+//                if (isPlayering) {
+//                    if (mVLCView.isPrepare()) {
+//                        if ("录像".equals(mRecordMsg.getText())) {
+//                            mFlagRecord = true;
+//                            mHandler.sendEmptyMessage(Record_Start);
+////                        vlcVideoView.getMediaPlayer().record(directory);
+//                            LogUtils.e("path=====录像--开始:=====" + directory); //   /storage/emulated/0/1604026573438.mp4
+//                            recordEvent.startRecord(mVLCView.getMediaPlayer(), directory, "cme.mp4");
+//                        } else {
+//                            vlcRecordOver();
+//                        }
+//                    } else {
+//                        vlcRecordOver();
+//                    }
+//                } else {
+//                    toast("只有在播放的时候才能录像!");
+//                }
+                break;
+            case R.id.linear_picture:           //截图,本地不做,socket通讯机子做操作
+                if (HandService.UDP_HAND_GLOBAL_TAG) {
+                    if (UDP_EQUALS_ID) {
+                        if (mMMKVInstace.decodeBool(Constants.KEY_SnapVideoRecord)) {
+                            sendSocketPointShotMessage(Constants.UDP_15);
+                        } else {
+                            toast(Constants.HAVE_NO_PERMISSION);
+                        }
+                    } else {
+                        toast(Constants.UDP_CASE_ID_DIFFERENT);
+                    }
+                } else {
+                    toast(Constants.HAVE_HAND_FAIL_OFFLINE);
+                }
+//                if (isPlayering) {
+//                    if (mVLCView.isPrepare()) {
+//                        Media.VideoTrack videoTrack = mVLCView.getVideoTrack();
+//                        if (videoTrack != null) {
+//                            toast("截图成功");
+//                            //原图
+//                            LogUtils.e("path=====截图地址:=====" + shotFile.getAbsolutePath());
+//                            File localFile = new File(shotFile.getAbsolutePath());
+//                            if (!localFile.exists()) {
+//                                localFile.mkdir();
+//                            }
+//                            recordEvent.takeSnapshot(mVLCView.getMediaPlayer(), shotFile.getAbsolutePath(), 0, 0);
+//                            //插入相册 解决了华为截图显示问题
+//                            MediaStore.Images.Media.insertImage(getContentResolver(), mVLCView.getBitmap(), "", "");
+//                            //原图的一半
+//                            //recordEvent.takeSnapshot(vlcVideoView.getMediaPlayer(), takeSnapshotFile.getAbsolutePath(), videoTrack.width / 2, 0);
+//                        }
+//                    }
+//                    //这个就是截图 保存Bitmap就行了
+//                    //thumbnail.setImageBitmap(vlcVideoView.getBitmap());
+//                    //Bitmap bitmap = vlcVideoView.getBitmap();
+//                    //saveBitmap("", bitmap);
+//                } else {
+//                    toast("只有在播放的时候才能截图!");
+//                }
+                break;
+//            case R.id.linear_cold:              //冻结
+//                sendSocketPointMessage(Constants.UDP_F3);
+//                break;
+            case R.id.linear_mic:               //麦克风
+                getMicPermission();
+                break;
+            case R.id.lock_screen:  //锁屏
+                if (mLockScreen.getTag().equals("lock")) {   //解锁
+                    mHandler.sendEmptyMessage(Unlock);
+                    mLockScreen.setTag("unLock");
+                } else {
+                    mLockScreen.setTag("lock");     //锁屏
+                    mHandler.sendEmptyMessage(Lock);
+                }
+                break;
+            case R.id.full_change:
+                isFullscreen = !isFullscreen;
+                if (isFullscreen) {
+                    getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE); //横屏动态转换
+                    setVideoViewFull(R.drawable.nur_ic_fangxiao, "横屏");
+
+                } else {
+                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);//竖屏动态转换
+                    setVideoViewFull(R.drawable.nur_ic_fangda, "竖屏");
+
+                }
+                break;
+        }
+    }
 
     private void responseListener() {
 //        R.id.linear_mic, R.id.linear_cold,
-        setOnClickListener(R.id.linear_light_tab, R.id.linear_device_tab, R.id.linear_record, R.id.linear_picture,
-                R.id.full_change, R.id.lock_screen, R.id.root_layout_vlc, R.id.video_back, R.id.control_start_view, R.id.linear_mic);
+//        setOnClickListener(R.id.linear_light_tab, R.id.linear_device_tab, R.id.linear_record, R.id.linear_picture, R.id.full_change,
+//                R.id.lock_screen, R.id.root_layout_vlc, R.id.video_back, R.id.control_start_view, R.id.linear_mic,
+//                R.id.tv_01_light_black, R.id.tv_01_light_add, R.id.tv_02_light_black, R.id.tv_02_light_add,
+//                R.id.tv_02_saturation_black, R.id.tv_02_saturation_add, R.id.tv_02_definition_black, R.id.tv_02_definition_add,
+//                R.id.tv_02_zoom_black, R.id.tv_02_zoom_add);
+
+        setOnClickListener(R.id.linear_light_tab, R.id.linear_device_tab, R.id.linear_record, R.id.linear_picture, R.id.full_change,
+                R.id.lock_screen, R.id.root_layout_vlc, R.id.video_back, R.id.control_start_view, R.id.linear_mic,
+//                R.id.tv_01_light_black, R.id.tv_01_light_add, R.id.tv_02_light_black, R.id.tv_02_light_add,
+                R.id.tv_02_saturation_black, R.id.tv_02_saturation_add, R.id.tv_02_definition_black, R.id.tv_02_definition_add,
+                R.id.tv_02_zoom_black, R.id.tv_02_zoom_add);
+
         //设置拖动条监听
         mRangeBar01Light.setOnRangeChangedListener(this);
         mRangeBar02Light.setOnRangeChangedListener(this);
@@ -912,8 +1050,10 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         mSwitchBlood.setOnCheckedChangeListener(this);
         mSwitchVertical.setOnCheckedChangeListener(this);
         mSwitchHorizontal.setOnCheckedChangeListener(this);
-
-
+        m01LightBlack.setOnClickListener(this);
+        m01LightAdd.setOnClickListener(this);
+        m02LightBlack.setOnClickListener(this);
+        m02LightAdd.setOnClickListener(this);
 
         mVLCView.setMediaListenerEvent(new MediaListenerEvent() {
             @Override
@@ -1173,16 +1313,35 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         mRecordMsg = findViewById(R.id.case_record);
         //亮度
         mRangeBar01Light = findViewById(R.id.sb_01_range_light);
+        m01LightBlack = findViewById(R.id.tv_01_light_black);
+        m01LightAdd = findViewById(R.id.tv_01_light_add);
+        m01LightDesc = findViewById(R.id.tv_01_light_desc);
 
         mRangeBar01Light.setStepsAutoBonding(false);
         //亮度
         mRangeBar02Light = findViewById(R.id.sb_02_range_light);
+        m02LightBlack = findViewById(R.id.tv_02_light_black);
+        m02LightAdd = findViewById(R.id.tv_02_light_add);
+        m02LightDesc = findViewById(R.id.tv_02_light_desc);
+
         //饱和度
         mRangeBar02Saturation = findViewById(R.id.sb_02_range_saturation);
+        m02SaturationBlack = findViewById(R.id.tv_02_saturation_black);
+        m02SaturationAdd = findViewById(R.id.tv_02_saturation_add);
+        m02SaturationDesc = findViewById(R.id.tv_02_saturation_desc);
+
         //清晰度
         mRangeBar02Definition = findViewById(R.id.sb_02_range_definition);
+        m02DefinitionBlack = findViewById(R.id.tv_02_definition_black);
+        m02DefinitionAdd = findViewById(R.id.tv_02_definition_add);
+        m02DefinitionDesc = findViewById(R.id.tv_02_definition_desc);
+
         //放大倍数
         mRangeBar02Zoom = findViewById(R.id.sb_02_range_zoom);
+        m02ZoomBlack = findViewById(R.id.tv_02_zoom_black);
+        m02ZoomAdd = findViewById(R.id.tv_02_zoom_add);
+        m02ZoomDesc = findViewById(R.id.tv_02_zoom_desc);
+
         //水平翻转
         mSwitchHorizontal = findViewById(R.id.sb_find_switch_horizontal);
         //垂直翻转
@@ -1297,7 +1456,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                                 mPictureDes.setText("采图(" + imageCount + ")");
                                 mCaseNo = mBean.getData().getCaseNo();
                                 mName = mBean.getData().getName();
-                                mTitleName.setText(mName+"-"+mCaseNo);
+                                mTitleName.setText(mName + "-" + mCaseNo);
 
 
                             } else {
@@ -1438,39 +1597,49 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         Type01Bean bean = new Type01Bean();
         Type01Bean.Type01 typeBean = new Type01Bean.Type01();
 
+
         switch (view.getId()) {
-            case R.id.sb_01_range_light:  //冷光源,亮度
+            case R.id.sb_01_range_light:  //光源,亮度
+//                type02Bean.setBrightness(round);
+//                bean02.setType02(type02Bean);
+//                sendSocketPointLight(Constants.UDP_F6, "" + bean02);
                 sendSocketPointLight(Constants.UDP_F6, "" + round);
+                m01LightDesc.setText((int) view.getLeftSeekBar().getProgress() + "");
                 break;
             case R.id.sb_02_range_light://摄像机,亮度
                 typeBean.setBrightness(round);
                 bean.setType01(typeBean);
                 sendSocketPointVideoDevice(Constants.UDP_F6, bean);
-
+                m02LightDesc.setText((int) view.getLeftSeekBar().getProgress() + "");
                 break;
             case R.id.sb_02_range_saturation://摄像机,饱和度
                 typeBean.setSaturation(round);
                 bean.setType01(typeBean);
                 sendSocketPointVideoDevice(Constants.UDP_F6, bean);
+                m02SaturationDesc.setText((int) view.getLeftSeekBar().getProgress() + "");
                 break;
             case R.id.sb_02_range_definition://摄像机,清晰度
                 typeBean.setSharpness(round);
                 bean.setType01(typeBean);
                 sendSocketPointVideoDevice(Constants.UDP_F6, bean);
+                m02DefinitionDesc.setText((int) view.getLeftSeekBar().getProgress() + "");
+
                 break;
             case R.id.sb_02_range_zoom://摄像机,放大倍数
                 //显示是1到2.5倍,传值是0--15
                 float progress1 = ((view.getLeftSeekBar().getProgress()) * 10) - 10;
                 int round2 = Math.round(progress1); //传的值
-                String s = view.getLeftSeekBar().getProgress() + ""; //editText设置的值
+                String s = (int) view.getLeftSeekBar().getProgress() + ""; //editText设置的值
                 typeBean.setZoomrate(round2 + "");
                 bean.setType01(typeBean);
                 sendSocketPointVideoDevice(Constants.UDP_F6, bean);
+                //放大倍数           //显示是1到2.5倍,通讯传值是0--15
+                float rangeBarNeedSetData = CommonUtil.getRangeBarData(round2 + "");//传的值
+                m02ZoomDesc.setText(rangeBarNeedSetData + "");
                 break;
 
         }
     }
-
 
 
     /**

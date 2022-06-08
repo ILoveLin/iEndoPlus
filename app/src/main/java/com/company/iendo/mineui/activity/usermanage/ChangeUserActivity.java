@@ -18,14 +18,18 @@ import com.company.iendo.action.StatusAction;
 import com.company.iendo.app.AppActivity;
 import com.company.iendo.bean.UserDeletedBean;
 import com.company.iendo.bean.UserDetailBean;
+import com.company.iendo.bean.UserListBean;
+import com.company.iendo.bean.event.RefreshUserListEvent;
 import com.company.iendo.other.Constants;
 import com.company.iendo.other.HttpConstant;
 import com.company.iendo.ui.dialog.InputDialog;
+import com.company.iendo.ui.dialog.MessageDialog;
 import com.company.iendo.ui.dialog.SelectDialog;
 import com.company.iendo.utils.MD5ChangeUtil;
 import com.company.iendo.utils.SharePreferenceUtil;
 import com.company.iendo.widget.StatusLayout;
 import com.gyf.immersionbar.ImmersionBar;
+import com.hjq.bar.OnTitleBarListener;
 import com.hjq.bar.TitleBar;
 import com.hjq.base.BaseDialog;
 import com.hjq.widget.layout.WrapRecyclerView;
@@ -34,6 +38,8 @@ import com.scwang.smart.refresh.layout.SmartRefreshLayout;
 import com.tencent.mmkv.MMKV;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -724,6 +730,23 @@ public final class ChangeUserActivity extends AppActivity implements StatusActio
         //获取当前用户权限数据
         sendGetDataRequest();
 
+        mTitleBar.setOnTitleBarListener(new OnTitleBarListener() {
+            @Override
+            public void onLeftClick(View view) {
+                finish();
+            }
+
+            @Override
+            public void onTitleClick(View view) {
+
+            }
+
+            @Override
+            public void onRightClick(View view) {
+                showDeleteDialog();
+            }
+        });
+
         mIVReloType.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1002,6 +1025,75 @@ public final class ChangeUserActivity extends AppActivity implements StatusActio
 
     }
 
+    /**
+     * 删除对话框
+     *
+     */
+    private void showDeleteDialog() {
+        new MessageDialog.Builder(this)
+                .setTitle("提示")
+                .setMessage("确定删除用户吗?")
+                .setConfirm("确定")
+                .setCancel("取消")
+                .setListener(new MessageDialog.OnListener() {
+                    @Override
+                    public void onConfirm(BaseDialog dialog) {
+                        sendDeleteRequest();
+                    }
+
+                    @Override
+                    public void onCancel(BaseDialog dialog) {
+                    }
+                }).show();
+
+    }
+
+    /**
+     * 删除请求
+     *
+     */
+    private void sendDeleteRequest() {
+        showLoading();
+        OkHttpUtils.post()
+                .url(mBaseUrl + HttpConstant.UserManager_Delete)
+                .addParams("DeleteUserID",cUserID)//被删除用户的ID
+                .addParams("CurrentUserID", mUserID)//当前用户ID
+                .addParams("CurrentRelo", mLoginRole + "")//当前用户权限
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        showError(new StatusLayout.OnRetryListener() {
+                            @Override
+                            public void onRetry(StatusLayout layout) {
+                                toast("请求错误");
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        showComplete();
+                        if ("" != response) {
+                            UserDeletedBean mBean = mGson.fromJson(response, UserDeletedBean.class);
+                            if (mBean.getCode().equals("0")) {
+                                toast(""+mBean.getMsg());
+                                EventBus.getDefault().post(new RefreshUserListEvent(true));
+                                finish();
+                            }else {
+                                toast(""+mBean.getMsg());
+                            }
+
+                        } else {
+                            showError(listener -> {
+                                sendRequest();
+                            });
+                        }
+                    }
+                });
+
+
+    }
     @Override
     public StatusLayout getStatusLayout() {
         return mStatusLayout;

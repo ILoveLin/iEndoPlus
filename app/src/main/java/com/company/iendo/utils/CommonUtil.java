@@ -32,13 +32,15 @@ public class CommonUtil {
     private static long lastClickTime;
 
     /**
+     * seekbar数值范围1-2.5
+     * socket传值是0-15
      * 获取需要设置到bar里面去的数值   更具获取到的设备参数
      * /显示是1到2.5倍,传值是0--15
      *
      * @param str 0--15  socket获取到的设备参数
      * @return RangeBar 需要设置的值
      */
-    public static float getRangeBarNeedSetData(String str) {
+    public static float getRangeBarData(String str) {
         switch (str) {
             case "0":
                 return 1;
@@ -61,17 +63,17 @@ public class CommonUtil {
             case "9":
                 return (float) 1.9;
             case "10":
-                return 10;
+                return 2.0f;
             case "11":
-                return 11;
+                return 2.1f;
             case "12":
-                return 12;
+                return 2.2f;
             case "13":
-                return 13;
+                return 2.3f;
             case "14":
-                return 14;
+                return 2.4f;
             case "15":
-                return 15;
+                return 2.5f;
 
 
         }
@@ -81,15 +83,21 @@ public class CommonUtil {
 
 
     /**
+     *      * seekbar数值范围1-2.5
+     *      * socket传值是0-15
      * 获取需要设置到bar里面去的数值   更具获取到的设备参数
      * /显示是1到2.5倍,传值是0--15
      *
      * @param str 0--15  1-2.5
      * @return 发送socket需要传输的数据0--15
      */
-    public static int getEditDataToSend(String str) {
+    public static int getSocketToSendData(String str) {
         switch (str) {
+            case "0":
+                return 0;
             case "1":
+                return 0;
+            case "1.0":
                 return 0;
             case "1.1":
                 return 1;

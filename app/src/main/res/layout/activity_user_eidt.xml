@@ -10,7 +10,10 @@
         android:id="@+id/userlist_titlebar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:rightTitleSize="@dimen/dp_16"
+        app:rightTitleSize="@dimen/dp_14"
+        app:rightTitleColor="@color/red"
+        app:rightTitle="删除用户"
+
         app:title="用户管理" />
     <!--    <androidx.core.widget.NestedScrollView-->
     <!--        android:layout_width="match_parent"-->

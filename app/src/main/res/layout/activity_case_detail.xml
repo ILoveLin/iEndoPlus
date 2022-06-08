@@ -179,7 +179,7 @@
                             android:layout_marginLeft="@dimen/dp_5"
                             android:layout_marginRight="@dimen/dp_10"
                             android:layout_weight="1"
-                            android:background="@drawable/shape_detail_bg_04"
+                            android:background="@drawable/shape_detail_bg_05"
                             android:gravity="center"
                             android:orientation="vertical">
 
@@ -187,7 +187,7 @@
                                 android:layout_width="@dimen/dp_40"
                                 android:layout_height="@dimen/dp_40"
                                 android:paddingTop="@dimen/dp_10"
-                                android:src="@drawable/ic_icon_detail_down_cases" />
+                                android:src="@drawable/ic_case_icon_videodownload" />
 
                             <TextView
                                 android:id="@+id/case_down_video"
