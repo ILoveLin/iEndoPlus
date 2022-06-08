@@ -857,7 +857,6 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                 setLightTab();
                 break;
             case R.id.tv_01_light_black:        //亮度,点击 -
-                LogUtils.e("参数设置====,亮度01===black");
                 setProcessData("black", mRangeBar01Light, m01LightDesc, 100, 0);
                 break;
             case R.id.tv_01_light_add:        //亮度,点击 +

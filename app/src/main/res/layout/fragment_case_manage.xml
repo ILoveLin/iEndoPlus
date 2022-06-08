@@ -60,10 +60,10 @@
 
             <ImageView
                 android:id="@+id/iv_tag_anim"
-                android:layout_marginLeft="@dimen/dp_5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:layout_marginLeft="@dimen/dp_5"
                 android:src="@drawable/ic_case_select_down_nor_manager" />
 
         </LinearLayout>
@@ -137,6 +137,7 @@
         </LinearLayout>
 
     </LinearLayout>
+
     <com.company.iendo.widget.StatusLayout
         android:id="@+id/b_hint"
         android:layout_width="match_parent"
@@ -158,8 +159,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/white"
-                tools:listCount="10"
                 android:scrollbars="vertical"
+                tools:listCount="10"
                 tools:listitem="@layout/picker_item" />
         </com.scwang.smart.refresh.layout.SmartRefreshLayout>
     </com.company.iendo.widget.StatusLayout>

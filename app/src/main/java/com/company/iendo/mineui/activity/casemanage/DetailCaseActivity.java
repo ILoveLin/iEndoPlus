@@ -166,7 +166,6 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
             public void onLeftClick(View view) {
                 boolean downStatue = mMMKVInstace.decodeBool(Constants.KEY_Picture_Downing, false);
                 LogUtils.e("下载图片的时候(downStatue),downStatue()==" + downStatue);
-
                 //如果下载病历中,退出界面提示用户
                 if (mCaseDown.getText().equals("下载中..") || downStatue) {
                     // 消息对话框

@@ -91,7 +91,6 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
         @Override
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
-            LogUtils.e("病例列表====获取上位机当前病例ID===mHandler");
             sendSocketPointMessage(Constants.UDP_F0);
 
         }
@@ -272,7 +271,6 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
                             if ("" != response) {
                                 mGson = GsonFactory.getSingletonGson();
                                 CaseManageListBean mBean = mGson.fromJson(response, CaseManageListBean.class);
-                                LogUtils.e("病例列表====获取上位机当前病例ID===正常请求完毕");
                                 if (0 == mBean.getCode()) {  //成功
                                     if (mBean.getData().size() != 0) {
                                         mDataLest.clear();
@@ -427,7 +425,6 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
                 mCurrentSocketStatue.setText(Constants.SOCKET_STATUE_ONLINE);
                 break;
             case Constants.UDP_F0://获取上位机当前病例ID,然后获取详情,用于状态的长显
-                LogUtils.e("病例列表====获取上位机当前病例ID");
                 //获取上位机病人ID
                 String mServerCaseID = event.getIp();
                 sendRequestToGetServerCaseInfo(mServerCaseID);
@@ -510,8 +507,6 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
                             CaseDetailBean mBean = mGson.fromJson(response, CaseDetailBean.class);
                             CaseDetailBean.DataDTO data = mBean.getData();
                             if (0 == mBean.getCode()) {  //成功
-                                LogUtils.e("病例列表====获取上位机当前病例ID==请求回调"+mBean.toString());
-
                                 mCurrentCheckPatientInfo.setText(data.getCaseNo() + " | " + data.getName() + " |");
                             } else {
 
