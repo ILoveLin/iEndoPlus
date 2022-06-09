@@ -43,6 +43,7 @@ import com.hjq.bar.TitleBar;
 import com.hjq.base.BaseDialog;
 import com.hjq.base.FragmentPagerAdapter;
 import com.hjq.widget.layout.NestedViewPager;
+import com.tencent.mmkv.MMKV;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -820,6 +821,10 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
 
     //获取当前上位机正在检查的病例
     private void sendRequestToGetServerCaseInfo(String mCaseID) {
+        if ("0".equals(mCaseID)){
+            mCurrentCheckPatientInfo.setText("无");
+            return;
+        }
         OkHttpUtils.get()
                 .url(mBaseUrl + HttpConstant.CaseManager_CaseInfo)
                 .addParams("ID", mCaseID)
@@ -836,10 +841,18 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
                             CaseDetailBean mBean = mGson.fromJson(response, CaseDetailBean.class);
                             CaseDetailBean.DataDTO data = mBean.getData();
                             if (0 == mBean.getCode()) {  //成功
-                                mCurrentCheckPatientInfo.setText(data.getCaseNo() + " | " + data.getName() + " |");
+                                String longSeeCase = MMKV.defaultMMKV().decodeString(Constants.KEY_CurrentLongSeeCaseID);
+                                if (longSeeCase.equals("0")){
+                                    mCurrentCheckPatientInfo.setText("无");
+                                }else {
+                                    mCurrentCheckPatientInfo.setText(data.getCaseNo() + " | " + data.getName() + " |"+data.getSex());
+                                }
+
                             } else {
 
                             }
+
+
                         } else {
 
                         }

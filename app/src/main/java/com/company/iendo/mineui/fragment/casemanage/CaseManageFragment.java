@@ -46,6 +46,7 @@ import com.hjq.gson.factory.GsonFactory;
 import com.hjq.widget.layout.WrapRecyclerView;
 import com.scwang.smart.refresh.layout.SmartRefreshLayout;
 import com.tencent.bugly.proguard.H;
+import com.tencent.mmkv.MMKV;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -196,7 +197,7 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
 //        mRecyclerView.addItemDecoration(new GridSpaceItemDecoration(2, 30, true));
 //        mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setAdapter(mAdapter);
-        mHandler.sendEmptyMessageDelayed(1,1000);
+//        mHandler.sendEmptyMessageDelayed(1,1000);
         //设置socket长显示的通讯状态
         setSocketStatue(mCurrentSocketStatue);
 //        mRecyclerView.addItemDecoration(new MyItemDecoration(getActivity(), 1, R.drawable.shape_divideritem_decoration));
@@ -490,7 +491,15 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
     }
 
     //获取当前上位机正在检查的病例
-    private void sendRequestToGetServerCaseInfo(String mCaseID) {
+    private void sendRequestToGetServerCaseInfo(String mCaseID) {//589
+
+        LogUtils.e("病例列表=....====mCaseID===" + mCaseID);
+        LogUtils.e("病例列表=....====mCaseID===" + mCaseID);
+
+        if ("0".equals(mCaseID)){
+            mCurrentCheckPatientInfo.setText("无");
+            return;
+        }
         OkHttpUtils.get()
                 .url(mBaseUrl + HttpConstant.CaseManager_CaseInfo)
                 .addParams("ID", mCaseID)
@@ -506,8 +515,15 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
                         if ("" != response) {
                             CaseDetailBean mBean = mGson.fromJson(response, CaseDetailBean.class);
                             CaseDetailBean.DataDTO data = mBean.getData();
+                            LogUtils.e("病例列表=....====结果===" + mBean.toString());
                             if (0 == mBean.getCode()) {  //成功
-                                mCurrentCheckPatientInfo.setText(data.getCaseNo() + " | " + data.getName() + " |");
+                                String longSeeCase = MMKV.defaultMMKV().decodeString(Constants.KEY_CurrentLongSeeCaseID);
+                                if (longSeeCase.equals("0")){
+                                    mCurrentCheckPatientInfo.setText("无");
+                                }else {
+                                    mCurrentCheckPatientInfo.setText(data.getCaseNo() + " | " + data.getName() + " |"+data.getSex());
+                                }
+
                             } else {
 
                             }

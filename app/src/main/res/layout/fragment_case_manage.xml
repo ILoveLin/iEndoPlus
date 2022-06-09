@@ -120,7 +120,7 @@
                 android:id="@+id/current_patient_info"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text=" "
+                android:text="无"
                 android:textSize="@dimen/sp_13" />
         </LinearLayout>
 

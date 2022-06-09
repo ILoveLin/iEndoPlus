@@ -58,6 +58,7 @@ import com.hjq.widget.view.SwitchButton;
 import com.jaygoo.widget.OnRangeChangedListener;
 import com.jaygoo.widget.RangeSeekBar;
 import com.pedro.rtplibrary.rtmp.RtmpOnlyAudio;
+import com.tencent.mmkv.MMKV;
 import com.vlc.lib.RecordEvent;
 import com.vlc.lib.VlcVideoView;
 import com.vlc.lib.listener.MediaListenerEvent;
@@ -1654,6 +1655,10 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
 
     //获取当前上位机正在检查的病例
     private void sendRequestToGetServerCaseInfo(String mCaseID) {
+        if ("0".equals(mCaseID)){
+            mCurrentCheckPatientInfo.setText("无");
+            return;
+        }
         OkHttpUtils.get()
                 .url(mBaseUrl + HttpConstant.CaseManager_CaseInfo)
                 .addParams("ID", mCaseID)
@@ -1670,7 +1675,13 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                             CaseDetailBean mBean = mGson.fromJson(response, CaseDetailBean.class);
                             CaseDetailBean.DataDTO data = mBean.getData();
                             if (0 == mBean.getCode()) {  //成功
-                                mCurrentCheckPatientInfo.setText(data.getCaseNo() + " | " + data.getName() + " |");
+                                String longSeeCase = MMKV.defaultMMKV().decodeString(Constants.KEY_CurrentLongSeeCaseID);
+                                if (longSeeCase.equals("0")){
+                                    mCurrentCheckPatientInfo.setText("无");
+                                }else {
+                                    mCurrentCheckPatientInfo.setText(data.getCaseNo() + " | " + data.getName() + " |"+data.getSex());
+                                }
+
                             } else {
 
                             }

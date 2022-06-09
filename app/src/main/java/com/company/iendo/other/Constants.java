@@ -98,7 +98,8 @@ public class Constants {
     /**
      * 接受线程需要实时获取的数据
      */
-    public static final String KEY_CurrentCaseID = "KEY_CurrentCaseID";                     //当前选中的病例ID
+    public static final String KEY_CurrentCaseID = "KEY_CurrentCaseID";                        //当前选中的病例ID
+    public static final String KEY_CurrentLongSeeCaseID = "KEY_CurrentLongSeeCaseID";          //当前需要长显的病例ID
     public static final String KEY_CurrentLoginUserName = "KEY_CurrentLoginUserName";            //当前登录的用户名
 
     /**

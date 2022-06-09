@@ -311,6 +311,8 @@ public class ReceiveSocketService extends AbsWorkService {
                                                 UserIDBean mUserIDBean = mGson.fromJson(str, UserIDBean.class);
 //                                                    LogUtils.e("======GetPictureActivity==回调形式:--->=CMD=jsonID==" + jsonID);
                                                 String jsonID = CalculateUtils.hex16To10(mUserIDBean.getRecordid()) + "";
+                                                //避免上位机多次切换,长显错乱bug
+                                                MMKV.defaultMMKV().encode(Constants.KEY_CurrentLongSeeCaseID,jsonID);
                                                 //必须从新取数据不然会错乱
                                                 String spCaseID = MMKV.defaultMMKV().decodeString(Constants.KEY_CurrentCaseID);
                                                 if (spCaseID.equals(jsonID)) {
@@ -322,6 +324,8 @@ public class ReceiveSocketService extends AbsWorkService {
                                                 event.setTga(true);
                                                 event.setIp(jsonID);
                                                 event.setUdpCmd(Constants.UDP_F0);
+                                                LogUtils.e("病例列表=....==接收==mCaseID===" + jsonID);
+                                                LogUtils.e("病例列表=....==接收==mCaseID===" + jsonID);
                                                 EventBus.getDefault().postSticky(event);
                                             } catch (Exception e) {
                                                 LogUtils.e(TAG + "回调形式:--->获取当前病例==Exception==str==" + str);
