@@ -18,6 +18,15 @@ public class UserDetailBean {
     @SerializedName("msg")
     private String msg;
 
+    @Override
+    public String toString() {
+        return "UserDetailBean{" +
+                "data=" + data +
+                ", code=" + code +
+                ", msg='" + msg + '\'' +
+                '}';
+    }
+
     public DataDTO getData() {
         return data;
     }
@@ -47,6 +56,14 @@ public class UserDetailBean {
         private UserDTO user;
         @SerializedName("purview")
         private PurviewDTO purview;
+
+        @Override
+        public String toString() {
+            return "DataDTO{" +
+                    "user=" + user +
+                    ", purview=" + purview +
+                    '}';
+        }
 
         public UserDTO getUser() {
             return user;
@@ -81,6 +98,20 @@ public class UserDetailBean {
             private boolean CanUSE;
             @SerializedName("Role")
             private int Role;
+
+            @Override
+            public String toString() {
+                return "UserDTO{" +
+                        "UserID='" + UserID + '\'' +
+                        ", UserName='" + UserName + '\'' +
+                        ", Des='" + Des + '\'' +
+                        ", CreatedAt='" + CreatedAt + '\'' +
+                        ", LastLoginAt='" + LastLoginAt + '\'' +
+                        ", LoginTimes=" + LoginTimes +
+                        ", CanUSE=" + CanUSE +
+                        ", Role=" + Role +
+                        '}';
+            }
 
             public String getUserID() {
                 return UserID;
@@ -202,6 +233,39 @@ public class UserDetailBean {
             private boolean LiveStream;
             @SerializedName("Role")
             private int Role;
+
+            @Override
+            public String toString() {
+                return "PurviewDTO{" +
+                        "UserID='" + UserID + '\'' +
+                        ", UserMan=" + UserMan +
+                        ", CanPsw=" + CanPsw +
+                        ", CanNew=" + CanNew +
+                        ", CanEdit=" + CanEdit +
+                        ", CanDelete=" + CanDelete +
+                        ", CanPrint=" + CanPrint +
+                        ", ReportStyle=" + ReportStyle +
+                        ", DictsMan=" + DictsMan +
+                        ", GlossaryMan=" + GlossaryMan +
+                        ", TempletMan=" + TempletMan +
+                        ", HospitalInfo=" + HospitalInfo +
+                        ", CanBackup=" + CanBackup +
+                        ", ViewBackup=" + ViewBackup +
+                        ", VideoSet=" + VideoSet +
+                        ", OnlySelf=" + OnlySelf +
+                        ", UnPrinted=" + UnPrinted +
+                        ", FtpSet=" + FtpSet +
+                        ", ChangeDepartment=" + ChangeDepartment +
+                        ", ExportRecord=" + ExportRecord +
+                        ", ExportImage=" + ExportImage +
+                        ", ExportVideo=" + ExportVideo +
+                        ", DeviceSet=" + DeviceSet +
+                        ", SeatAdjust=" + SeatAdjust +
+                        ", SnapVideoRecord=" + SnapVideoRecord +
+                        ", LiveStream=" + LiveStream +
+                        ", Role=" + Role +
+                        '}';
+            }
 
             public String getUserID() {
                 return UserID;

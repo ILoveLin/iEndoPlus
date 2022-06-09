@@ -624,6 +624,7 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
         String mUrl = (String) SharePreferenceUtil.get(LoginActivity.this, SharePreferenceUtil.Current_BaseUrl, "http://192.168.1.200:3000");
 //                登录按钮动画
         showLoading(getString(R.string.common_loading_login));
+
 //        requestReloSaveToApp();
         OkHttpUtils.post()
                 .url(mUrl + HttpConstant.UserManager_Login)

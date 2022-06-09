@@ -371,7 +371,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                                                 sendSocketPointMicMessage("0");
                                             }
                                         } else {
-                                            toast(Constants.HAVE_HAND_FAIL_OFFLINE);
+                                             LogUtils.e(Constants.HAVE_HAND_FAIL_OFFLINE);
                                         }
 
 
@@ -392,7 +392,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                                                 sendSocketPointMicMessage("0");
                                             }
                                         } else {
-                                            toast(Constants.HAVE_HAND_FAIL_OFFLINE);
+                                             LogUtils.e(Constants.HAVE_HAND_FAIL_OFFLINE);
                                         }
 
 
@@ -404,7 +404,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
 
 
                             } else {
-                                toast(Constants.HAVE_HAND_FAIL_OFFLINE);
+                                 LogUtils.e(Constants.HAVE_HAND_FAIL_OFFLINE);
                             }
 
                         }
@@ -635,7 +635,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             }
             SocketUtils.startSendPointMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), GetPictureActivity.this);
         } else {
-            toast(Constants.HAVE_HAND_FAIL_OFFLINE);
+             LogUtils.e(Constants.HAVE_HAND_FAIL_OFFLINE);
 
         }
 
@@ -659,7 +659,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             }
             SocketUtils.startSendPointMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), GetPictureActivity.this);
         } else {
-            toast(Constants.HAVE_HAND_FAIL_OFFLINE);
+             LogUtils.e(Constants.HAVE_HAND_FAIL_OFFLINE);
 
 
         }
@@ -707,7 +707,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             }
             SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), GetPictureActivity.this);
         } else {
-            toast(Constants.HAVE_HAND_FAIL_OFFLINE);
+             LogUtils.e(Constants.HAVE_HAND_FAIL_OFFLINE);
 
         }
 
@@ -733,7 +733,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             }
             SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), GetPictureActivity.this);
         } else {
-            toast(Constants.HAVE_HAND_FAIL_OFFLINE);
+             LogUtils.e(Constants.HAVE_HAND_FAIL_OFFLINE);
 
         }
 
@@ -761,8 +761,8 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             }
             SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), GetPictureActivity.this);
         } else {
-            toast(Constants.HAVE_HAND_FAIL_OFFLINE);
-            toast(Constants.HAVE_HAND_FAIL_OFFLINE);
+             LogUtils.e(Constants.HAVE_HAND_FAIL_OFFLINE);
+             LogUtils.e(Constants.HAVE_HAND_FAIL_OFFLINE);
 
         }
 
@@ -784,7 +784,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             }
             SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), GetPictureActivity.this);
         } else {
-            toast(Constants.HAVE_HAND_FAIL_OFFLINE);
+             LogUtils.e(Constants.HAVE_HAND_FAIL_OFFLINE);
 
         }
 
@@ -979,7 +979,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                         toast(Constants.UDP_CASE_ID_DIFFERENT);
                     }
                 } else {
-                    toast(Constants.HAVE_HAND_FAIL_OFFLINE);
+                     LogUtils.e(Constants.HAVE_HAND_FAIL_OFFLINE);
                 }
 //                if (isPlayering) {
 //                    if (mVLCView.isPrepare()) {

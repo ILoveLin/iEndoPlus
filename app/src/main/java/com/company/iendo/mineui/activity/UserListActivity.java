@@ -1,9 +1,7 @@
 package com.company.iendo.mineui.activity;
 
-import android.text.Editable;
 import android.view.View;
 
-import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.company.iendo.R;
@@ -11,8 +9,7 @@ import com.company.iendo.action.StatusAction;
 import com.company.iendo.app.AppActivity;
 import com.company.iendo.bean.UserDeletedBean;
 import com.company.iendo.bean.UserListBean;
-import com.company.iendo.manager.ActivityManager;
-import com.company.iendo.mineui.activity.login.device.DeviceActivity;
+import com.company.iendo.bean.event.RefreshUserListEvent;
 import com.company.iendo.mineui.activity.usermanage.UserListAdapter;
 import com.company.iendo.other.Constants;
 import com.company.iendo.other.HttpConstant;
@@ -31,11 +28,13 @@ import com.hjq.base.BaseDialog;
 import com.hjq.widget.layout.WrapRecyclerView;
 import com.hjq.widget.view.ClearEditText;
 import com.scwang.smart.refresh.layout.SmartRefreshLayout;
-import com.scwang.smart.refresh.layout.api.RefreshLayout;
-import com.scwang.smart.refresh.layout.listener.OnRefreshLoadMoreListener;
 import com.tencent.mmkv.MMKV;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,7 +46,8 @@ import okhttp3.Call;
  * company：江西神州医疗设备有限公司
  * author： LoveLin
  * time：2021/11/18 14:39
- * desc：
+ * desc：已经废弃  不使用了
+ *
  */
 public class UserListActivity extends AppActivity implements StatusAction, BaseAdapter.OnItemClickListener, BaseAdapter.OnChildClickListener {
     private List<UserListBean.DataDTO> mDataLest = new ArrayList<>();
@@ -74,6 +74,7 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
     }
     @Override
     protected void initView() {
+        EventBus.getDefault().register(this);
         mStatusLayout = findViewById(R.id.status_hint);
         mTitleBar = findViewById(R.id.userlist_titlebar);
         mSmartRefreshLayout = findViewById(R.id.rl_userlist_refresh);
@@ -94,6 +95,13 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
         mRecyclerView.setAdapter(mAdapter);
         sendRequest();
 //        响应删除,修改权限,修改密码等事件
+    }
+
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
+    public void RefreshUserListEvent(RefreshUserListEvent event){
+        sendRequest();
     }
 
     private void responseListener() {
@@ -552,6 +560,13 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
                     }
                 });
 
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
 
     }
 }

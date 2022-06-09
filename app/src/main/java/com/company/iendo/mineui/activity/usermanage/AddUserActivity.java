@@ -4,6 +4,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import androidx.annotation.NonNull;
@@ -15,10 +16,12 @@ import com.company.iendo.app.AppActivity;
 import com.company.iendo.bean.UserDeletedBean;
 import com.company.iendo.bean.event.RefreshUserListEvent;
 import com.company.iendo.other.HttpConstant;
+import com.company.iendo.ui.dialog.MessageDialog;
 import com.company.iendo.ui.dialog.SelectDialog;
 import com.company.iendo.utils.SharePreferenceUtil;
 import com.company.iendo.widget.StatusLayout;
 import com.gyf.immersionbar.ImmersionBar;
+import com.hjq.bar.OnTitleBarListener;
 import com.hjq.bar.TitleBar;
 import com.hjq.base.BaseDialog;
 import com.hjq.widget.layout.WrapRecyclerView;
@@ -64,7 +67,10 @@ public final class AddUserActivity extends AppActivity implements StatusAction, 
     private ImageView mIVReloType;
     private String Role;
     private Button mBtnCommit;
+    private RadioButton mRadioOpen;
+    private RadioButton mRadioClose;
 
+    private boolean setDefaultReloData=false;   //默认false,true表示是设置默认值
     @Override
     protected int getLayoutId() {
         return R.layout.activity_user_add;
@@ -86,7 +92,10 @@ public final class AddUserActivity extends AppActivity implements StatusAction, 
         mReloType = findViewById(R.id.user_et_relo_type);
         mUserDesc = findViewById(R.id.user_msg);
         //状态
+
         mRadioGroup = findViewById(R.id.radio_add_group);
+        mRadioOpen = findViewById(R.id.radio_btn_add_open);
+        mRadioClose = findViewById(R.id.radio_btn_add_close);
         //权限相关
 
         userMan01 = findViewById(R.id.cb_01_manager);
@@ -249,7 +258,10 @@ public final class AddUserActivity extends AppActivity implements StatusAction, 
                 }
                 break;
         }
-
+        if (!setDefaultReloData){
+            Role = "3";
+            mReloType.setText(  "自定义");
+        }
     }
 
     @Override
@@ -264,6 +276,14 @@ public final class AddUserActivity extends AppActivity implements StatusAction, 
     private void getRequestParamsToSendRequest() {
         String UserID = (String) SharePreferenceUtil.get(AddUserActivity.this, SharePreferenceUtil.Current_Login_UserID, "");
         mParamsMap = new HashMap<>();
+
+        //是否激活
+        if (mRadioOpen.isChecked()) {
+            CanUSE = "1";
+        }else if (mRadioClose.isChecked()){
+            CanUSE = "0";
+        }
+
         //用户管理
         if (userMan01.isChecked()) {
             UserMan = "1";
@@ -448,11 +468,14 @@ public final class AddUserActivity extends AppActivity implements StatusAction, 
                             showComplete();
                             if ("" != response) {
                                 UserDeletedBean mBean = mGson.fromJson(response, UserDeletedBean.class);
-                                toast("添加成功");
                                 if (mBean.getCode().equals("0")) {
                                     EventBus.getDefault().post(new RefreshUserListEvent(true));
-
+                                    toast("添加成功");
+                                    finish();
+                                }else {
+                                    toast(""+mBean.getMsg());
                                 }
+
                             } else {
                                 showError(listener -> {
                                     sendRequest();
@@ -583,7 +606,22 @@ public final class AddUserActivity extends AppActivity implements StatusAction, 
         HospitalInfo06.setOnCheckedChangeListener(this);
         ReportStyle06.setOnCheckedChangeListener(this);
         SeatAdjust07.setOnCheckedChangeListener(this);
+        mTitleBar.setOnTitleBarListener(new OnTitleBarListener() {
+            @Override
+            public void onLeftClick(View view) {
+                showExitActivityDialog();
+            }
 
+            @Override
+            public void onTitleClick(View view) {
+
+            }
+
+            @Override
+            public void onRightClick(View view) {
+
+            }
+        });
         mIVReloType.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -605,13 +643,16 @@ public final class AddUserActivity extends AppActivity implements StatusAction, 
                                 String str = data.get(Integer.parseInt(position));
                                 Role = position;
                                 mReloType.setText(str + "");
+                                setDefaultReloData=true;
                                 setDefaultReloData(str);
                                 startDialogIconAnim(false, mIVReloType);
+                                setDefaultReloData=false;
 
                             }
 
                             @Override
                             public void onCancel(BaseDialog dialog) {
+                                setDefaultReloData=false;
                                 startDialogIconAnim(false, mIVReloType);
                             }
                         })
@@ -641,6 +682,50 @@ public final class AddUserActivity extends AppActivity implements StatusAction, 
                 sendRequest();
             }
         });
+    }
+
+    private void showExitActivityDialog() {
+
+        //账户,密码
+        mAccount = findViewById(R.id.user_account);
+        mPassword = findViewById(R.id.user_password);
+        //角色,描述
+        mIVReloType = findViewById(R.id.user_iv_relo_type);
+        mReloType = findViewById(R.id.user_et_relo_type);
+        mUserDesc = findViewById(R.id.user_msg);
+        //状态
+        mRadioGroup = findViewById(R.id.radio_add_group);
+
+        String string = mAccount.getText().toString();
+        String string2 = mPassword.getText().toString();
+        String string3 = mReloType.getText().toString();
+        String string4 = mUserDesc.getText().toString();
+        if (!string.equals("")||!string2.equals("")||!string3.equals("")||!string4.equals("")){
+            // 消息对话框
+            new MessageDialog.Builder(getActivity())
+                    // 标题可以不用填写
+                    .setTitle("提示")
+                    // 内容必须要填写
+                    .setMessage("用户未保存，是否保存?")
+                    // 确定按钮文本
+                    .setConfirm(getString(R.string.common_confirm))
+                    // 设置 null 表示不显示取消按钮
+                    .setCancel(getString(R.string.common_cancel))
+                    // 设置点击按钮后不关闭对话框
+                    //.setAutoDismiss(false)
+                    .setListener(new MessageDialog.OnListener() {
+
+                        @Override
+                        public void onConfirm(BaseDialog dialog) {
+                        }
+
+                        @Override
+                        public void onCancel(BaseDialog dialog) {
+                            finish();
+                        }
+                    })
+                    .show();
+        }
     }
 
 

@@ -915,7 +915,7 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
         mEditList.add(et_03_section);
         mEditList.add(et_03_device);
         mEditList.add(et_03_ming_zu);
-        mEditList.add(et_03_is_married);
+//        mEditList.add(et_03_is_married);
         mEditList.add(edit_03_case_history);
         mEditList.add(edit_03_family_case_history);
         mEditList.add(edit_01_i_tell_you);

@@ -1,7 +1,5 @@
 package com.company.iendo.mineui.activity.usermanage;
 
-import android.animation.Animator;
-import android.animation.ObjectAnimator;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -18,13 +16,13 @@ import com.company.iendo.action.StatusAction;
 import com.company.iendo.app.AppActivity;
 import com.company.iendo.bean.UserDeletedBean;
 import com.company.iendo.bean.UserDetailBean;
-import com.company.iendo.bean.UserListBean;
 import com.company.iendo.bean.event.RefreshUserListEvent;
 import com.company.iendo.other.Constants;
 import com.company.iendo.other.HttpConstant;
 import com.company.iendo.ui.dialog.InputDialog;
 import com.company.iendo.ui.dialog.MessageDialog;
 import com.company.iendo.ui.dialog.SelectDialog;
+import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.MD5ChangeUtil;
 import com.company.iendo.utils.SharePreferenceUtil;
 import com.company.iendo.widget.StatusLayout;
@@ -521,6 +519,14 @@ public final class ChangeUserActivity extends AppActivity implements StatusActio
     private void getRequestParamsToSendRequest() {
 
         mParamsMap = new HashMap<>();
+
+        //是否激活
+        if (mRadioOpen.isChecked()) {
+            CanUSE = "1";
+        }else if (mRadioClose.isChecked()){
+            CanUSE = "0";
+        }
+
         //用户管理
         if (userMan01.isChecked()) {
             UserMan = "1";
@@ -687,12 +693,15 @@ public final class ChangeUserActivity extends AppActivity implements StatusActio
                         public void onResponse(String response, int id) {
                             showComplete();
                             if ("" != response) {
+
                                 UserDeletedBean mBean = mGson.fromJson(response, UserDeletedBean.class);
+                                LogUtils.e("用户管理===编辑="+mBean.toString());
                                 if (mBean.getCode().equals("0")) {
                                     toast("修改成功");
                                 } else {
                                     toast("修改失败");
                                 }
+                                EventBus.getDefault().post(new RefreshUserListEvent(true));
                             } else {
                                 showError(listener -> {
                                     sendRequest();
@@ -941,6 +950,8 @@ public final class ChangeUserActivity extends AppActivity implements StatusActio
                         showComplete();
                         if ("" != response) {
                             UserDetailBean mBean = mGson.fromJson(response, UserDetailBean.class);
+
+                            LogUtils.e("用户管理===获取详情="+mBean.toString());
                             String code = mBean.getCode() + "";
                             if (code.equals("0")) {
                                 setLayoutData(mBean);

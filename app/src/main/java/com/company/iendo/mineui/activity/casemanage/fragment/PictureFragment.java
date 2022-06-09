@@ -108,6 +108,9 @@ public class PictureFragment extends TitleBarFragment<MainActivity> implements S
                 if (currentItemCaseID.equals(event.getData())) {
                     sendRequest(currentItemCaseID);
                 }
+
+            case Constants.UDP_16://删除图片
+                sendRequest(currentItemCaseID);
                 break;
         }
     }

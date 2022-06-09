@@ -114,6 +114,7 @@ public final class UserManagerListActivity extends AppActivity implements Status
     }
 
     private void sendRequest() {
+        showLoading();
         OkHttpUtils.get()
                 .url(mBaseUrl + HttpConstant.UserManager_List)
                 .addParams("type", "manager")
@@ -124,6 +125,7 @@ public final class UserManagerListActivity extends AppActivity implements Status
                         showError(new StatusLayout.OnRetryListener() {
                             @Override
                             public void onRetry(StatusLayout layout) {
+                                showEmpty();
                                 toast("请求错误");
                             }
                         });

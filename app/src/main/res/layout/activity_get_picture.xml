@@ -18,11 +18,15 @@
 
     <!--远程设备数据互联,状态和数据长显示-->
     <LinearLayout
+        android:layout_marginTop="@dimen/dp_5"
+        android:layout_marginBottom="@dimen/dp_5"
+        android:layout_marginRight="@dimen/dp_10"
+        android:layout_marginLeft="@dimen/dp_10"
+        android:background="@drawable/shape_long_statue"
         android:id="@+id/relative_statue"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/titlebar"
-        android:background="@color/white"
         android:gravity="center_horizontal"
         android:orientation="vertical"
         android:paddingTop="@dimen/dp_10"
@@ -45,7 +49,7 @@
                 android:id="@+id/current_patient_info"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="szcme28 | 张三 |"
+                android:text=" "
                 android:textSize="@dimen/sp_13" />
         </LinearLayout>
 
@@ -219,7 +223,7 @@
                             android:gravity="bottom"
                             android:paddingLeft="@dimen/dp_10"
                             android:text="00:00"
-                            android:textColor="@color/red" />
+                            android:textColor="@color/white" />
 
                         <TextView
                             android:id="@+id/full_change"

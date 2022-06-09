@@ -1918,7 +1918,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         mEditList.add(et_03_case_bed_num);
         mEditList.add(et_03_native_place);
         mEditList.add(et_03_ming_zu);
-        mEditList.add(et_03_is_married);
+//        mEditList.add(et_03_is_married);
         mEditList.add(et_03_tel);
         mEditList.add(et_03_address);
         mEditList.add(et_03_my_id_num);
@@ -2228,7 +2228,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 
             SocketUtils.startSendPointMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), getAttachActivity());
         } else {
-            toast(Constants.HAVE_HAND_FAIL_OFFLINE);
+             LogUtils.e(Constants.HAVE_HAND_FAIL_OFFLINE);
         }
 
     }
@@ -2253,7 +2253,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 
             SocketUtils.startSendPointMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), getAttachActivity());
         } else {
-            toast(Constants.HAVE_HAND_FAIL_OFFLINE);
+            LogUtils.e(Constants.HAVE_HAND_FAIL_OFFLINE);
         }
 
     }

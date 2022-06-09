@@ -87,6 +87,8 @@ public class VideoFragment extends TitleBarFragment<MainActivity> implements Sta
                         sendRequest(currentItemCaseID);
                     }
                 }
+            case Constants.UDP_20://删除图片
+                sendRequest(currentItemCaseID);
                 break;
         }
     }

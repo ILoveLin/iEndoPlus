@@ -277,7 +277,7 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
                 if (HandService.UDP_HAND_GLOBAL_TAG) {
                     sendSocketPointMessage(Constants.UDP_F2);
                 } else {
-                    toast(Constants.HAVE_HAND_FAIL_OFFLINE);
+                    LogUtils.e(Constants.HAVE_HAND_FAIL_OFFLINE);
                 }
             }
         });
@@ -613,7 +613,7 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
 //            SocketManage.startSendMessageBySocket(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), false);
 
         } else {
-            toast(Constants.HAVE_HAND_FAIL_OFFLINE);
+            LogUtils.e(Constants.HAVE_HAND_FAIL_OFFLINE);
         }
 
     }

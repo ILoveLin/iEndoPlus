@@ -18,6 +18,15 @@ public class UserDeletedBean {
     @SerializedName("msg")
     private String msg;
 
+    @Override
+    public String toString() {
+        return "UserDeletedBean{" +
+                "code='" + code + '\'' +
+                ", data=" + data +
+                ", msg='" + msg + '\'' +
+                '}';
+    }
+
     public String getCode() {
         return code;
     }
@@ -45,6 +54,13 @@ public class UserDeletedBean {
     public static class DataDTO {
         @SerializedName("data")
         private String data;
+
+        @Override
+        public String toString() {
+            return "DataDTO{" +
+                    "data='" + data + '\'' +
+                    '}';
+        }
 
         public String getData() {
             return data;
