@@ -282,14 +282,14 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                 mCurrentChoseDialog.setTitle("添加设备")
                         // 内容可以不用填写
                         .setDeviceNameContent(Constants.Type_FuKeTable)
-                        .setDeviceNoteContent("妇科治疗台备注信息")
-                        .setDeviceIPContent("192.168.1.200")
-                        .setAccountContent("root")
-                        .setPasswordContent("root")
-                        .setHttpPortContent("7001")
-                        .setLivePortContent("7788")
-                        .setSocketPortContent("8005")
-                        .setMicPortContent("7789")
+                        .setDeviceNoteContent(Constants.Type_FuKeTable_Remark)
+                        .setDeviceIPContent(Constants.Type_FuKeTable_ip)
+                        .setAccountContent(Constants.Type_FuKeTable_Account)
+                        .setPasswordContent(Constants.Type_FuKeTable_Password)
+                        .setHttpPortContent(Constants.Type_FuKeTable_HttpPort)
+                        .setLivePortContent(Constants.Type_FuKeTable_LivePort)
+                        .setSocketPortContent(Constants.Type_FuKeTable_SocketPort)
+                        .setMicPortContent(Constants.Type_FuKeTable_MicPort)
                         .setTypeContent(Constants.Type_FuKeTable)
                         // 提示可以不用填写
                         // 确定按钮文本
@@ -341,7 +341,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                 et.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        showModifyTypeDialog(et.getText().toString(), "添加类型");
+                        showModifyTypeDialog(et.getText().toString(), Constants.Dialog_Type_Add);
                     }
                 });
 
@@ -354,14 +354,14 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                 mCurrentChoseDialog.setTitle("添加设备")
                         // 内容可以不用填写
                         .setDeviceNameContent(Constants.Type_V1_YiTiJi)
-                        .setDeviceNoteContent("一代一体机备注信息")
-                        .setDeviceIPContent("192.168.1.200")
-                        .setAccountContent("root")
-                        .setPasswordContent("root")
-                        .setHttpPortContent("7001")
-                        .setLivePortContent("7788")
-                        .setSocketPortContent("8005")
-                        .setMicPortContent("7789")
+                        .setDeviceNoteContent(Constants.Type_V1_YiTiJi_Remark)
+                        .setDeviceIPContent(Constants.Type_V1_YiTiJi_ip)
+                        .setAccountContent(Constants.Type_V1_YiTiJi_Account)
+                        .setPasswordContent(Constants.Type_V1_YiTiJi_Password)
+                        .setHttpPortContent(Constants.Type_V1_YiTiJi_HttpPort)
+                        .setLivePortContent(Constants.Type_V1_YiTiJi_LivePort)
+                        .setSocketPortContent(Constants.Type_V1_YiTiJi_SocketPort)
+                        .setMicPortContent(Constants.Type_V1_YiTiJi_MicPort)
                         .setTypeContent(Constants.Type_V1_YiTiJi)
                         // 提示可以不用填写
                         // 确定按钮文本
@@ -410,7 +410,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                 oneDeviceDialog.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        showModifyTypeDialog(oneDeviceDialog.getText().toString(), "添加类型");
+                        showModifyTypeDialog(oneDeviceDialog.getText().toString(), Constants.Dialog_Type_Add);
                     }
                 });
                 break;
@@ -420,15 +420,14 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                 mCurrentChoseDialog.setTitle("添加设备")
                         // 内容可以不用填写
                         .setDeviceNameContent(Constants.Type_EarNoseTable)
-                        .setDeviceNoteContent("耳鼻喉治疗台备注信息")
-                        .setDeviceIPContent("192.168.1.200")
-                        .setAccountContent("root")
-                        .setPasswordContent("root")
-                        .setHttpPortContent("7001")
-                        .setLivePortContent("7788")
-                        .setSocketPortContent("8005")
-
-                        .setMicPortContent("7789")
+                        .setDeviceNoteContent(Constants.Type_EarNoseTable_Remark)
+                        .setDeviceIPContent(Constants.Type_EarNoseTable_ip)
+                        .setAccountContent(Constants.Type_EarNoseTable_Account)
+                        .setPasswordContent(Constants.Type_EarNoseTable_Password)
+                        .setHttpPortContent(Constants.Type_EarNoseTable_HttpPort)
+                        .setLivePortContent(Constants.Type_EarNoseTable_LivePort)
+                        .setSocketPortContent(Constants.Type_EarNoseTable_SocketPort)
+                        .setMicPortContent(Constants.Type_EarNoseTable_MicPort)
                         .setTypeContent(Constants.Type_EarNoseTable)
                         // 提示可以不用填写
                         // 确定按钮文本
@@ -478,7 +477,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                 eyeProjectDialog.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        showModifyTypeDialog(eyeProjectDialog.getText().toString(), "添加类型");
+                        showModifyTypeDialog(eyeProjectDialog.getText().toString(), Constants.Dialog_Type_Add);
                     }
                 });
                 break;
@@ -488,14 +487,14 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                 mCurrentChoseDialog.setTitle("添加设备")
                         // 内容可以不用填写
                         .setDeviceNameContent(Constants.Type_MiNiaoTable)
-                        .setDeviceNoteContent("泌尿治疗台备注信息")
-                        .setDeviceIPContent("192.168.1.200")
-                        .setAccountContent("root")
-                        .setPasswordContent("root")
-                        .setHttpPortContent("7001")
-                        .setLivePortContent("7788")
-                        .setSocketPortContent("8005")
-                        .setMicPortContent("7789")
+                        .setDeviceNoteContent(Constants.Type_MiNiaoTable_Remark)
+                        .setDeviceIPContent(Constants.Type_MiNiaoTable_ip)
+                        .setAccountContent(Constants.Type_MiNiaoTable_Account)
+                        .setPasswordContent(Constants.Type_MiNiaoTable_Password)
+                        .setHttpPortContent(Constants.Type_MiNiaoTable_HttpPort)
+                        .setLivePortContent(Constants.Type_MiNiaoTable_LivePort)
+                        .setSocketPortContent(Constants.Type_MiNiaoTable_SocketPort)
+                        .setMicPortContent(Constants.Type_MiNiaoTable_MicPort)
                         .setTypeContent(Constants.Type_MiNiaoTable)
                         // 提示可以不用填写
                         // 确定按钮文本
@@ -545,7 +544,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                 ett.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        showModifyTypeDialog(ett.getText().toString(), "添加类型");
+                        showModifyTypeDialog(ett.getText().toString(), Constants.Dialog_Type_Add);
                     }
                 });
                 break;
@@ -652,7 +651,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
         deviceTypeView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showModifyTypeDialog(deviceTypeView.getText().toString(), "修改类型");
+                showModifyTypeDialog(deviceTypeView.getText().toString(), Constants.Dialog_Type_Change);
             }
         });
 
@@ -712,120 +711,121 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
         }
         switch (str) {
             case Constants.Type_FuKeTable:
-                if ("修改类型".equals(type)) {
+                if (Constants.Dialog_Type_Change.equals(type)) {
                     mChangeDialog.setDeviceNameContent(Constants.Type_FuKeTable)
                             .setDeviceNoteContent("")
                             .setDeviceCodeContent(code + "")//当修改的时候,选择切换设备类型时候,还是选择同一设备类型,默认使用之前该设备类型的deviceCode
-                            .setDeviceNoteContent("妇科治疗台备注信息")
-                            .setDeviceIPContent("192.168.1.200")
-                            .setAccountContent("root")
-                            .setPasswordContent("root")
-                            .setHttpPortContent("7001")
-                            .setLivePortContent("7788")
-                            .setSocketPortContent("8005")
-                            .setMicPortContent("7789")
+                            .setDeviceNoteContent(Constants.Type_FuKeTable_Remark)
+                            .setDeviceIPContent(Constants.Type_FuKeTable_ip)
+                            .setAccountContent(Constants.Type_FuKeTable_Account)
+                            .setPasswordContent(Constants.Type_FuKeTable_Password)
+                            .setHttpPortContent(Constants.Type_FuKeTable_HttpPort)
+                            .setLivePortContent(Constants.Type_FuKeTable_LivePort)
+                            .setSocketPortContent(Constants.Type_FuKeTable_SocketPort)
+                            .setMicPortContent(Constants.Type_FuKeTable_MicPort)
                             .setTypeContent(Constants.Type_FuKeTable)
                             .show();
                 } else {
                     mCurrentChoseDialog.setDeviceNameContent(Constants.Type_FuKeTable)
-                            .setDeviceNoteContent("妇科治疗台备注信息")
-                            .setDeviceIPContent("192.168.1.200")
-                            .setAccountContent("root")
-                            .setPasswordContent("root")
-                            .setHttpPortContent("7001")
-                            .setLivePortContent("7788")
-                            .setSocketPortContent("8005")
-                            .setMicPortContent("7789")
+                            .setDeviceNoteContent(Constants.Type_FuKeTable_Remark)
+                            .setDeviceIPContent(Constants.Type_FuKeTable_ip)
+                            .setAccountContent(Constants.Type_FuKeTable_Account)
+                            .setPasswordContent(Constants.Type_FuKeTable_Password)
+                            .setHttpPortContent(Constants.Type_FuKeTable_HttpPort)
+                            .setLivePortContent(Constants.Type_FuKeTable_LivePort)
+                            .setSocketPortContent(Constants.Type_FuKeTable_SocketPort)
+                            .setMicPortContent(Constants.Type_FuKeTable_MicPort)
                             .setTypeContent(Constants.Type_FuKeTable)
                             .show();
                 }
 
                 break;
             case Constants.Type_MiNiaoTable:
-                if ("修改类型".equals(type)) {
+                if (Constants.Dialog_Type_Change.equals(type)) {
                     mChangeDialog.setDeviceNameContent(Constants.Type_MiNiaoTable)
                             .setDeviceNoteContent("")
                             .setDeviceCodeContent(code + "")
-                            .setDeviceNoteContent("泌尿治疗台备注信息")
-                            .setDeviceIPContent("192.168.1.200")
-                            .setAccountContent("root")
-                            .setPasswordContent("root")
-                            .setHttpPortContent("7001")
-                            .setLivePortContent("7788")
-                            .setSocketPortContent("8005")
-                            .setMicPortContent("7789")
+                            .setDeviceNoteContent(Constants.Type_MiNiaoTable_Remark)
+                            .setDeviceIPContent(Constants.Type_MiNiaoTable_ip)
+                            .setAccountContent(Constants.Type_MiNiaoTable_Account)
+                            .setPasswordContent(Constants.Type_MiNiaoTable_Password)
+                            .setHttpPortContent(Constants.Type_MiNiaoTable_HttpPort)
+                            .setLivePortContent(Constants.Type_MiNiaoTable_LivePort)
+                            .setSocketPortContent(Constants.Type_MiNiaoTable_SocketPort)
+                            .setMicPortContent(Constants.Type_MiNiaoTable_MicPort)
                             .setTypeContent(Constants.Type_MiNiaoTable)
                             .show();
                 } else {
                     mCurrentChoseDialog.setDeviceNameContent(Constants.Type_MiNiaoTable)
-                            .setDeviceNoteContent("泌尿治疗台备注信息")
-                            .setDeviceIPContent("192.168.1.200")
-                            .setAccountContent("root")
-                            .setPasswordContent("root")
-                            .setHttpPortContent("7001")
-                            .setLivePortContent("7788")
-                            .setSocketPortContent("8005")
-                            .setMicPortContent("7789")
+                            .setDeviceNoteContent(Constants.Type_MiNiaoTable_Remark)
+                            .setDeviceIPContent(Constants.Type_MiNiaoTable_ip)
+                            .setAccountContent(Constants.Type_MiNiaoTable_Account)
+                            .setPasswordContent(Constants.Type_MiNiaoTable_Password)
+                            .setHttpPortContent(Constants.Type_MiNiaoTable_HttpPort)
+                            .setLivePortContent(Constants.Type_MiNiaoTable_LivePort)
+                            .setSocketPortContent(Constants.Type_MiNiaoTable_SocketPort)
+                            .setMicPortContent(Constants.Type_MiNiaoTable_MicPort)
                             .setTypeContent(Constants.Type_MiNiaoTable)
                             .show();
                 }
 
                 break;
             case Constants.Type_V1_YiTiJi:
-                if ("修改类型".equals(type)) {
+                if (Constants.Dialog_Type_Change.equals(type)) {
                     mChangeDialog.setDeviceNameContent(Constants.Type_V1_YiTiJi)
                             .setDeviceNoteContent("")
                             .setDeviceCodeContent(code + "")
-                            .setDeviceNoteContent("一代一体机备注信息")
-                            .setDeviceIPContent("192.168.1.200")
-                            .setAccountContent("root")
-                            .setPasswordContent("root")
-                            .setHttpPortContent("7001")
-                            .setLivePortContent("7788")
-                            .setSocketPortContent("8005")
-                            .setMicPortContent("7789")
+                            .setDeviceNoteContent(Constants.Type_V1_YiTiJi_Remark)
+                            .setDeviceIPContent(Constants.Type_V1_YiTiJi_ip)
+                            .setAccountContent(Constants.Type_V1_YiTiJi_Account)
+                            .setPasswordContent(Constants.Type_V1_YiTiJi_Password)
+                            .setHttpPortContent(Constants.Type_V1_YiTiJi_HttpPort)
+                            .setLivePortContent(Constants.Type_V1_YiTiJi_LivePort)
+                            .setSocketPortContent(Constants.Type_V1_YiTiJi_SocketPort)
+                            .setMicPortContent(Constants.Type_V1_YiTiJi_MicPort)
                             .setTypeContent(Constants.Type_V1_YiTiJi)
                             .show();
                 } else {
                     mCurrentChoseDialog.setDeviceNameContent(Constants.Type_V1_YiTiJi)
-                            .setDeviceNoteContent("一代一体机备注信息")
-                            .setDeviceIPContent("192.168.1.200")
-                            .setAccountContent("root")
-                            .setPasswordContent("root")
-                            .setHttpPortContent("7001")
-                            .setLivePortContent("7788")
-                            .setSocketPortContent("8005")
-                            .setMicPortContent("7789")
+                            .setDeviceNoteContent(Constants.Type_V1_YiTiJi_Remark)
+                            .setDeviceIPContent(Constants.Type_V1_YiTiJi_ip)
+                            .setAccountContent(Constants.Type_V1_YiTiJi_Account)
+                            .setPasswordContent(Constants.Type_V1_YiTiJi_Password)
+                            .setHttpPortContent(Constants.Type_V1_YiTiJi_HttpPort)
+                            .setLivePortContent(Constants.Type_V1_YiTiJi_LivePort)
+                            .setSocketPortContent(Constants.Type_V1_YiTiJi_SocketPort)
+                            .setMicPortContent(Constants.Type_V1_YiTiJi_MicPort)
                             .setTypeContent(Constants.Type_V1_YiTiJi)
                             .show();
                 }
 
                 break;
             case Constants.Type_EarNoseTable:
-                if ("修改类型".equals(type)) {
+                if (Constants.Dialog_Type_Change.equals(type)) {
                     mChangeDialog.setDeviceNameContent(Constants.Type_EarNoseTable)
                             .setDeviceNoteContent("")
                             .setDeviceCodeContent(code + "")
-                            .setDeviceNoteContent("耳鼻喉治疗台备注信息")
-                            .setDeviceIPContent("192.168.1.200")
-                            .setAccountContent("root")
-                            .setPasswordContent("root")
-                            .setHttpPortContent("7001")
-                            .setLivePortContent("7788")
-                            .setSocketPortContent("8005")
-                            .setMicPortContent("7789")
+                            .setDeviceNoteContent(Constants.Type_EarNoseTable_Remark)
+                            .setDeviceIPContent(Constants.Type_EarNoseTable_ip)
+                            .setAccountContent(Constants.Type_EarNoseTable_Account)
+                            .setPasswordContent(Constants.Type_EarNoseTable_Password)
+                            .setHttpPortContent(Constants.Type_EarNoseTable_HttpPort)
+                            .setLivePortContent(Constants.Type_EarNoseTable_LivePort)
+                            .setSocketPortContent(Constants.Type_EarNoseTable_SocketPort)
+                            .setMicPortContent(Constants.Type_EarNoseTable_MicPort)
                             .setTypeContent(Constants.Type_EarNoseTable)
                             .show();
                 } else {
                     mCurrentChoseDialog.setDeviceNameContent(Constants.Type_EarNoseTable)
-                            .setDeviceNoteContent("耳鼻喉治疗台备注信息")
-                            .setDeviceIPContent("192.168.1.200")
-                            .setAccountContent("root")
-                            .setPasswordContent("root")
-                            .setHttpPortContent("7001")
-                            .setLivePortContent("7788")
-                            .setSocketPortContent("8005")
-                            .setMicPortContent("7789")
+                            .setDeviceNoteContent(Constants.Type_EarNoseTable_Remark)
+                            .setDeviceIPContent(Constants.Type_EarNoseTable_ip)
+                            .setAccountContent(Constants.Type_EarNoseTable_Account)
+                            .setPasswordContent(Constants.Type_EarNoseTable_Password)
+                            .setHttpPortContent(Constants.Type_EarNoseTable_HttpPort)
+                            .setLivePortContent(Constants.Type_EarNoseTable_LivePort)
+                            .setSocketPortContent(Constants.Type_EarNoseTable_SocketPort)
+                            .setMicPortContent(Constants.Type_EarNoseTable_MicPort)
+                            .setTypeContent(Constants.Type_EarNoseTable)
                             .setTypeContent(Constants.Type_EarNoseTable)
                             .show();
                 }

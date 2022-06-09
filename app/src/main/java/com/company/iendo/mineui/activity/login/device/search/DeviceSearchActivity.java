@@ -241,7 +241,7 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
         /**
          * 获取接收socket的数据--随机数之后到data结尾的String
          * @param str 传入接收指令所有长度的,16进制的string
-         * @return  返回-->随机数结尾,CMD_ID开始+发送设备+......+Data结尾,整个十六进制字符串(不包含Check_Sum,和DD)
+         * @return 返回-->随机数结尾,CMD_ID开始+发送设备+......+Data结尾,整个十六进制字符串(不包含Check_Sum,和DD)
          * random
          * getRandomEndData2DataEndResultHexString
          */
@@ -265,14 +265,14 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
                 break;
             case Constants.UDP_FC://授权接入
                 int size = mReceivePointList.size();
-                LogUtils.e("设备搜索界面==授权接入==" );
-                LogUtils.e("设备搜索界面==授权接入=="+size );
+                LogUtils.e("设备搜索界面==授权接入==");
+                LogUtils.e("设备搜索界面==授权接入==" + size);
 
                 if (!mReceivePointList.contains(mRandom2DataResultData)) {
                     mReceivePointList.add(mRandom2DataResultData + "==" + event.getIp());
                     //发消息,存入数据库,并且刷新设备搜索界面
-                    LogUtils.e("设备搜索界面==授权接入==mRandom2DataResultData="+mRandom2DataResultData );
-                    LogUtils.e("设备搜索界面==授权接入==getIp="+event.getIp() );
+                    LogUtils.e("设备搜索界面==授权接入==mRandom2DataResultData=" + mRandom2DataResultData);
+                    LogUtils.e("设备搜索界面==授权接入==getIp=" + event.getIp());
                     mHandler.sendEmptyMessage(UDP_Point_Over);
 
                 }
@@ -436,10 +436,10 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
         String tag = item.getEndotype() + item.getDeviceCode() + item.getDeviceType();
 
 
-        LogUtils.e("设备搜索界面==getDataInsertDB=item.getEndotype()===="+item.getEndotype() );
-        LogUtils.e("设备搜索界面==getDataInsertDB=item.getDeviceCode()===="+item.getDeviceCode() );
-        LogUtils.e("设备搜索界面==getDataInsertDB=item.getDeviceType()===="+item.getDeviceType() );
-        LogUtils.e("设备搜索界面==getDataInsertDB=item.getIp()===="+item.getIp() );
+        LogUtils.e("设备搜索界面==getDataInsertDB=item.getEndotype()====" + item.getEndotype());
+        LogUtils.e("设备搜索界面==getDataInsertDB=item.getDeviceCode()====" + item.getDeviceCode());
+        LogUtils.e("设备搜索界面==getDataInsertDB=item.getDeviceType()====" + item.getDeviceType());
+        LogUtils.e("设备搜索界面==getDataInsertDB=item.getIp()====" + item.getIp());
 
 
         String endotype = item.getEndotype();
@@ -591,13 +591,13 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
          */
         for (int i = 0; i < mReceivePointList.size(); i++) {
 
-            LogUtils.e("设备搜索界面==getDataInsertDB=currentItemPosition===="+currentItemPosition );
+            LogUtils.e("设备搜索界面==getDataInsertDB=currentItemPosition====" + currentItemPosition);
 
 
-            LogUtils.e("设备搜索界面==getDataInsertDB==size=="+mReceivePointList.size() );
+            LogUtils.e("设备搜索界面==getDataInsertDB==size==" + mReceivePointList.size());
             String str = mReceivePointList.get(i);
-            LogUtils.e("设备搜索界面==getDataInsertDB==i=="+i );
-            LogUtils.e("设备搜索界面==getDataInsertDB==str=="+str );
+            LogUtils.e("设备搜索界面==getDataInsertDB==i==" + i);
+            LogUtils.e("设备搜索界面==getDataInsertDB==str==" + str);
 
             String receiveDataStringFromRoom = CalculateUtils.getReceiveDataStringFromRoomForPoint(str);
             String s = receiveDataStringFromRoom.toUpperCase();
@@ -609,8 +609,8 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
             PutInDeviceMsgBean bean = mGson.fromJson(s1, PutInDeviceMsgBean.class);
             String retcode = bean.getRetcode();
             String devicecode11 = CalculateUtils.hexStr2Str(deviceOnlyCodeFromRoom);
-            LogUtils.e("设备搜索界面==getDataInsertDB==deviceOnlyCodeFromRoom=="+devicecode11 );
-            LogUtils.e("设备搜索界面==getDataInsertDB==bean=="+bean );
+            LogUtils.e("设备搜索界面==getDataInsertDB==deviceOnlyCodeFromRoom==" + devicecode11);
+            LogUtils.e("设备搜索界面==getDataInsertDB==bean==" + bean);
             LogUtils.e("设备搜索界面==getDataInsertDB======================================");
 
             if ("0".equals(retcode)) {
@@ -640,16 +640,20 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
         int i = Integer.parseInt(bean.getType());
         switch (i) {
             case Constants.Type_07:  //（一代一体机）         扫码的结果对应数字是07
-                bean.setType("一代一体机");        //设置设备类型
+//                bean.setType("一代一体机");        //设置设备类型
+                bean.setType(Constants.Type_V1_YiTiJi);        //设置设备类型
                 break;
             case Constants.Type_08: //（耳鼻喉治疗台）     扫码的结果对应数字是8   这里需要统一添加0
-                bean.setType("耳鼻喉治疗台");
+//                bean.setType("耳鼻喉治疗台");
+                bean.setType(Constants.Type_EarNoseTable);        //设置设备类型
                 break;
             case Constants.Type_09://（妇科治疗台）                扫码的结果对应数字是9  这里需要统一添加0
-                bean.setType("妇科治疗台");
+//                bean.setType("妇科治疗台");
+                bean.setType(Constants.Type_FuKeTable);        //设置设备类型
                 break;
             case Constants.Type_0A://（泌尿治疗台）             扫码的结果对应数字是10
-                bean.setType("泌尿治疗台");
+//                bean.setType("泌尿治疗台");
+                bean.setType(Constants.Type_MiNiaoTable);        //设置设备类型
                 break;
         }
         String tag = bean.getEt() + deviceOnlyCodeFromRoom + bean.getType();
@@ -806,13 +810,13 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
      * @return
      */
     public String getDeviceTypeNum(String str) {
-        if ("一代一体机".equals(str)) {
+        if (Constants.Type_V1_YiTiJi.equals(str)) {
             return Constants.Type_07 + "";
-        } else if ("耳鼻喉治疗台".equals(str)) {
+        } else if (Constants.Type_EarNoseTable.equals(str)) {
             return Constants.Type_08 + "";
-        } else if ("妇科治疗台".equals(str)) {
+        } else if (Constants.Type_FuKeTable.equals(str)) {
             return Constants.Type_09 + "";
-        } else if ("泌尿治疗台".equals(str)) {
+        } else if (Constants.Type_MiNiaoTable.equals(str)) {
             return Constants.Type_0A + "";
         }
         return Constants.Type_07 + "";
