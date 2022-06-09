@@ -49,31 +49,31 @@ public class CalculateUtils {
             int i = hex16To10(str);
             String result = null;
             if (Constants.Type_00 == i) {
-                result = "工作站";
+                result = Constants.Type_00_DESC;
             } else if (Constants.Type_01 == i) {
-                result = "HD3摄像机";
+                result = Constants.Type_01_DESC;
             } else if (Constants.Type_02 == i) {
-                result = "冷光源";
+                result = Constants.Type_02_DESC;
             } else if (Constants.Type_03 == i) {
-                result = "气腹机";
+                result = Constants.Type_03_DESC;
             } else if (Constants.Type_04 == i) {
-                result = "冲洗机";
+                result = Constants.Type_04_DESC;
             } else if (Constants.Type_05 == i) {
-                result = "4K摄像机";
+                result =Constants.Type_05_DESC;
             } else if (Constants.Type_06 == i) {
-                result = "耳鼻喉控制板";
+                result = Constants.Type_06_DESC;
             } else if (Constants.Type_07 == i) {
-                result = "一代一体机";
+                result =Constants.Type_07_DESC;
             } else if (Constants.Type_08 == i) {
-                result = "耳鼻喉治疗台";
+                result = Constants.Type_08_DESC;
             } else if (Constants.Type_09 == i) {
-                result = "妇科治疗台";
+                result = Constants.Type_09_DESC;
             } else if (Constants.Type_0A == i) {
-                result = "泌尿治疗台";
+                result = Constants.Type_0A_DESC;
             } else if (Constants.Type_A0 == i) {
-                result = "iOS";
+                result = Constants.Type_A0_DESC;
             } else if (Constants.Type_A1 == i) {
-                result = "Android";
+                result = Constants.Type_A1_DESC;
             }
 //            if (Constants.Type_00.equals(str)) {
 //                result = "工作站";

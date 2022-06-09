@@ -243,20 +243,39 @@ public class Constants {
      * 协议里面设备类型,文档里面和传输都用16进制表示
      * int用十六进制表示
      * 统一用十六进制表示 协议返回的也是16进制
+     * 备注:
+     * 所有设备类型的数字用int表示
+     * 所有设备类型的数字用int表示
+     * 所有设备类型的数字用int表示
      */
 
-    public static final int Type_00 = 0x00;     //"工作站";
-    public static final int Type_01 = 0x01;     //"HD3摄像机";
-    public static final int Type_02 = 0x02;     //冷光源
-    public static final int Type_03 = 0x03;     //气腹机
-    public static final int Type_04 = 0x04;     //冲洗机
-    public static final int Type_05 = 0x05;     //4K摄像机
-    public static final int Type_06 = 0x06;     //耳鼻喉控制板
-    public static final int Type_07 = 0x07;     //一代一体机
-    public static final int Type_08 = 0x08;     //耳鼻喉治疗台
-    public static final int Type_09 = 0x09;     //妇科治疗台
-    public static final int Type_0A = 0x0A;     //泌尿治疗台
-    public static final int Type_A0 = 0xA0;     //iOS
-    public static final int Type_A1 = 0xA1;     //Android
+    public static final int Type_00 = 0x00;                                                       //工作站
+    public static final int Type_01 = 0x01;                                                       //HD3摄像机
+    public static final int Type_02 = 0x02;                                                       //冷光源
+    public static final int Type_03 = 0x03;                                                       //气腹机
+    public static final int Type_04 = 0x04;                                                       //冲洗机
+    public static final int Type_05 = 0x05;                                                       //4K摄像机
+    public static final int Type_06 = 0x06;                                                       //耳鼻喉控制板
+    public static final int Type_07 = 0x07;                                                       //一代一体机
+    public static final int Type_08 = 0x08;                                                       //耳鼻喉治疗台
+    public static final int Type_09 = 0x09;                                                       //妇科治疗台
+    public static final int Type_0A = 0x0A;                                                       //泌尿治疗台
+    public static final int Type_A0 = 0xA0;                                                       //iOS
+    public static final int Type_A1 = 0xA1;                                                       //Android
+
+
+    public static final String Type_00_DESC = "工作站";                                           //0x00
+    public static final String Type_01_DESC = "HD3摄像机";                                        //0x01
+    public static final String Type_02_DESC = "冷光源";                                           //0x02
+    public static final String Type_03_DESC = "气腹机";                                           //0x03
+    public static final String Type_04_DESC = "冲洗机";                                           //0x04
+    public static final String Type_05_DESC = "4K摄像机";                                         //0x05
+    public static final String Type_06_DESC = "耳鼻喉控制板";                                      //0x06
+    public static final String Type_07_DESC = "一代一体机";                                        //0x07
+    public static final String Type_08_DESC = "耳鼻喉治疗台";                                      //0x08
+    public static final String Type_09_DESC = "妇科治疗台";                                        //0x09
+    public static final String Type_0A_DESC = "泌尿治疗台";                                        //0x0A
+    public static final String Type_A0_DESC = "iOS";                                              //0xA0
+    public static final String Type_A1_DESC = "Android";                                          //0xA1
 
 }
