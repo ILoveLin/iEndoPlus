@@ -32,6 +32,7 @@ import com.company.iendo.app.AppActivity;
 import com.company.iendo.bean.CaseDetailBean;
 import com.company.iendo.bean.CaseManageListBean;
 import com.company.iendo.bean.UserReloBean;
+import com.company.iendo.bean.event.RefreshCaseMsgEvent;
 import com.company.iendo.bean.event.SocketRefreshEvent;
 import com.company.iendo.bean.socket.HandBean;
 import com.company.iendo.bean.socket.MicRequestBean;
@@ -1035,6 +1036,11 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                 //实时获取当前上位机,录像的状态
                 sendSocketPointRecodeStatusMessage(Constants.UDP_18, "0");
                 showCloseChangeCaseAnim();
+                //存入MMKV
+                mMMKVInstace.encode(Constants.KEY_CurrentCaseID,mCaseID + "");
+                //此处还需要给详情界面发送个消息让他刷新界面,不然返回详情界面还是上一个病例的信息
+                EventBus.getDefault().post(new RefreshCaseMsgEvent(mCaseID));
+
                 break;
             case R.id.tv_left:              //切换病例界面,退出的事件
                 showCloseChangeCaseAnim();

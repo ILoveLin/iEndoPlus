@@ -19,6 +19,7 @@ import com.company.iendo.mineui.fragment.casemanage.CaseManageFragment;
 import com.company.iendo.mineui.fragment.setting.SettingFragment;
 import com.company.iendo.mineui.offline.fragment.CaseManageOfflineFragment;
 import com.company.iendo.mineui.offline.fragment.SettingOfflineFragment;
+import com.company.iendo.other.Constants;
 import com.company.iendo.other.DoubleClickHelper;
 import com.company.iendo.ui.adapter.NavigationAdapter;
 import com.company.iendo.ui.fragment.HomeFragment;
@@ -28,6 +29,7 @@ import com.hjq.base.FragmentPagerAdapter;
 import com.hjq.permissions.OnPermissionCallback;
 import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
+import com.tencent.mmkv.MMKV;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -236,7 +238,9 @@ public class MainActivity extends AppActivity implements NavigationAdapter.OnNav
 
 
     public static String getCurrentItemID() {
-        return mCurrentItemID;
+        MMKV mmkv = MMKV.defaultMMKV();
+        String string = mmkv.decodeString(Constants.KEY_CurrentCaseID, "1");
+        return string;
     }
 
     public void setCurrentItemID(String mCurrentItemID) {

@@ -21,6 +21,7 @@ import com.company.iendo.app.AppActivity;
 import com.company.iendo.bean.CaseDetailBean;
 import com.company.iendo.bean.ReportExistBean;
 import com.company.iendo.bean.UserReloBean;
+import com.company.iendo.bean.event.RefreshCaseMsgEvent;
 import com.company.iendo.bean.event.SocketRefreshEvent;
 import com.company.iendo.bean.socket.getpicture.ShotPictureBean;
 import com.company.iendo.manager.ActivityManager;
@@ -54,6 +55,8 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.HashMap;
 
 import okhttp3.Call;
+
+import static com.company.iendo.mineui.activity.MainActivity.getCurrentItemID;
 
 /**
  * company：江西神州医疗设备有限公司
@@ -603,7 +606,7 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
             String spCaseID = mMMKVInstace.decodeString(Constants.KEY_CurrentCaseID);
             String s = CalculateUtils.hex10To16Result4(Integer.parseInt(spCaseID));
             shotPictureBean.setRecordid(s);
-            byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(shotPictureBean), mCurrentTypeNum+"", mCurrentReceiveDeviceCode,
+            byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(shotPictureBean), mCurrentTypeNum + "", mCurrentReceiveDeviceCode,
                     CMDCode);
             if (("".equals(mSocketPort))) {
                 toast("通讯端口不能为空");
@@ -623,6 +626,17 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
     /**
      * ***************************************************************************通讯模块**************************************************************************
      */
+
+    /**
+     * 切换病例 刷新数据
+     *
+     * @param event
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    public void RefreshCaseMsgEvent(RefreshCaseMsgEvent event) {
+        currentItemID = event.getCaseID();
+        sendImageRequest(currentItemID);
+    }
 
     @Override
     protected void onResume() {
@@ -821,7 +835,7 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
 
     //获取当前上位机正在检查的病例
     private void sendRequestToGetServerCaseInfo(String mCaseID) {
-        if ("0".equals(mCaseID)){
+        if ("0".equals(mCaseID)) {
             mCurrentCheckPatientInfo.setText("无");
             return;
         }
@@ -842,10 +856,10 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
                             CaseDetailBean.DataDTO data = mBean.getData();
                             if (0 == mBean.getCode()) {  //成功
                                 String longSeeCase = MMKV.defaultMMKV().decodeString(Constants.KEY_CurrentLongSeeCaseID);
-                                if (longSeeCase.equals("0")){
+                                if (longSeeCase.equals("0")) {
                                     mCurrentCheckPatientInfo.setText("无");
-                                }else {
-                                    mCurrentCheckPatientInfo.setText(data.getCaseNo() + " | " + data.getName() + " |"+data.getSex());
+                                } else {
+                                    mCurrentCheckPatientInfo.setText(data.getCaseNo() + " | " + data.getName() + " |" + data.getSex());
                                 }
 
                             } else {

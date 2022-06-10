@@ -28,6 +28,7 @@ import com.company.iendo.bean.DetailPictureBean;
 import com.company.iendo.bean.DetailVideoBean;
 import com.company.iendo.bean.DialogItemBean;
 import com.company.iendo.bean.ListDialogDateBean;
+import com.company.iendo.bean.event.RefreshCaseMsgEvent;
 import com.company.iendo.bean.event.SocketRefreshEvent;
 import com.company.iendo.bean.socket.HandBean;
 import com.company.iendo.bean.socket.UpdateCaseBean;
@@ -75,6 +76,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import okhttp3.Call;
+
+import static com.company.iendo.mineui.activity.MainActivity.getCurrentItemID;
 
 /**
  * company：江西神州医疗设备有限公司
@@ -210,12 +213,12 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         mDeviceCode = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_DeviceCode, "");
         mUserID = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_Login_UserID, "");
         mUserName = mLoginUserName;
-        currentItemCaseID = MainActivity.getCurrentItemID();
+        currentItemCaseID = getCurrentItemID();
         initLayoutViewDate();
         setEditStatus();
         responseListener();
         //请求界面数据
-        sendRequest(currentItemCaseID);
+        sendRequest(getCurrentItemID());
         //判断该病例信息是否下载过
         checkCaseIsDown();
 
@@ -263,7 +266,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                                 if (mBean.getData().size() != 0) {
                                     for (int i = 0; i < mBean.getData().size(); i++) {
                                         String imageName = mBean.getData().get(i).getImagePath();
-                                        String url = mBaseUrl + "/" + MainActivity.getCurrentItemID() + "/" + imageName;
+                                        String url = mBaseUrl + "/" + getCurrentItemID() + "/" + imageName;
                                         //例如imageName=001.jpg  url=http://192.168.64.56:7001/3/001.jpg
                                         mPathMap.put(imageName, url);
 
@@ -516,7 +519,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
     @Override
     public void onDown(boolean userInfo, boolean userPicture) {
         //下载的时候就去请求,获取Video视频数目和标题
-        sendGetVideoPathListRequest(currentItemCaseID);
+        sendGetVideoPathListRequest(getCurrentItemID());
         String mCaseDownStr = DetailCaseActivity.mCaseDown.getText().toString();
         if (("已下载").equals(mCaseDownStr)) {
             //下载图片
@@ -556,7 +559,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
             //跳转下载界面
             Intent intent = new Intent(getAttachActivity(), DownVideoSelectedActivity.class);
 //            Intent intent = new Intent(getAttachActivity(), DownSelectedVideoActivity.class);
-            intent.putExtra("currentItemCaseID", currentItemCaseID);
+            intent.putExtra("currentItemCaseID", getCurrentItemID());
             intent.putExtra("mDeviceCode", mDeviceCode);
             startActivity(intent);
         } else {
@@ -572,7 +575,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
          * 本地文件夹命名规则:文件夹（设备ID_病例ID）
          */
         //创建本地的/MyDownImages/mID文件夹  再把图片下载到这个文件夹下  文件夹（设备ID-病例ID）
-        String dirName = Environment.getExternalStorageDirectory() + "/MyDownImages/" + mDeviceCode + "_" + currentItemCaseID;
+        String dirName = Environment.getExternalStorageDirectory() + "/MyDownImages/" + mDeviceCode + "_" + getCurrentItemID();
         File toLocalFile = new File(dirName);
         //此处做校验,本文件夹创建过,并且里面的图片数量和请求结果数量一直,表示下载过
         boolean FileExists = toLocalFile.exists();
@@ -593,7 +596,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
          * 本地文件夹命名规则:文件夹（设备ID_病例ID）
          */
         //创建本地的/MyDownImages/mID文件夹  再把图片下载到这个文件夹下  文件夹（设备ID-病例ID）
-        String dirName = Environment.getExternalStorageDirectory() + "/MyDownImages/" + mDeviceCode + "_" + currentItemCaseID;
+        String dirName = Environment.getExternalStorageDirectory() + "/MyDownImages/" + mDeviceCode + "_" + getCurrentItemID();
         File toLocalFile = new File(dirName);
         //此处做校验,本文件夹创建过,并且里面的图片数量和请求结果数量一直,表示下载过
         boolean FileExists = toLocalFile.exists();
@@ -687,7 +690,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
          * 再次请求数据获取最新更改的UserBean和CaseBean,再存入数据库,避免bug
          */
 
-        sendCaseInfoRequest(currentItemCaseID, true, toLocalFile);
+        sendCaseInfoRequest(getCurrentItemID(), true, toLocalFile);
 
 
     }
@@ -753,7 +756,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
          * true表示 当前下载病例的时候,编辑了病例,需要获取最新的bean
          * 再次请求数据获取最新更改的UserBean和CaseBean,再存入数据库,避免bug
          */
-        sendCaseInfoRequest(currentItemCaseID, true, toLocalFile);
+        sendCaseInfoRequest(getCurrentItemID(), true, toLocalFile);
 
 
     }
@@ -1042,17 +1045,17 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
             //不管存在不存在,都需要校验和存储被下载着名单列表
             //当前情况是病例被下载过,所以需要校验被下载着名单,是否有当前登入用户,有就不操作,没有就存入,下载者名单列表中
             List<DownloadedNameListBean> mDownloadNameList = currentDBBean.getDownloadedNameList();
-            DownloadedNameListBean  tagBean = new DownloadedNameListBean();
+            DownloadedNameListBean tagBean = new DownloadedNameListBean();
             tagBean.setDownloadedByName(mLoginUserName);
-            if (mDownloadNameList.size()!=0){
+            if (mDownloadNameList.size() != 0) {
                 //下载者名单中没有包含了,此用户
                 boolean contains = mDownloadNameList.contains(tagBean);
-                if (!contains){
-                   DownloadedNameListBean nameBean = new DownloadedNameListBean();
-                   nameBean.setDownloadedByName(mLoginUserName);
-                   mDownloadNameList.add(nameBean);
-                   caseDBBean.setDownloadedNameList(mDownloadNameList);
-               }else {
+                if (!contains) {
+                    DownloadedNameListBean nameBean = new DownloadedNameListBean();
+                    nameBean.setDownloadedByName(mLoginUserName);
+                    mDownloadNameList.add(nameBean);
+                    caseDBBean.setDownloadedNameList(mDownloadNameList);
+                } else {
                     caseDBBean.setDownloadedNameList(mDownloadNameList);
                 }
             }
@@ -1236,8 +1239,8 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
          * 本地文件夹命名规则:文件夹（设备ID_病例ID）
          */
         //创建本地的/MyDownImages/mID文件夹  再把图片下载到这个文件夹下  文件夹（设备ID-病例ID）
-        String dirNameImages = Environment.getExternalStorageDirectory() + "/MyDownImages/" + mDeviceCode + "_" + currentItemCaseID;
-        String dirNameVideos = Environment.getExternalStorageDirectory() + "/MyDownVideos/" + mDeviceCode + "_" + currentItemCaseID;
+        String dirNameImages = Environment.getExternalStorageDirectory() + "/MyDownImages/" + mDeviceCode + "_" + getCurrentItemID();
+        String dirNameVideos = Environment.getExternalStorageDirectory() + "/MyDownVideos/" + mDeviceCode + "_" + getCurrentItemID();
         //删除本地图片文件夹以及图片
         File mImagesFile = new File(dirNameImages);
         if (mImagesFile.exists()) {
@@ -2035,7 +2038,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         //添加三个必须添加的参数
         String UserName = mLoginUserName;
         String EndoType = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_EndoType, "3");
-        mParamsMap.put("ID", MainActivity.getCurrentItemID());
+        mParamsMap.put("ID", getCurrentItemID());
         mParamsMap.put("Name", et_01_name.getText().toString().trim());
         mParamsMap.put("CaseNo", et_01_check_num.getText().toString().trim());
         mParamsMap.put("UserName", UserName);
@@ -2156,7 +2159,18 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
     /**
      * ***************************************************************************通讯模块**************************************************************************
      */
+    /**
+     * 切换病例 刷新数据
+     *
+     * @param event
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    public void RefreshCaseMsgEvent(RefreshCaseMsgEvent event) {
+        String caseID = event.getCaseID();
+        String c1aseID = event.getCaseID();
+        sendRequest(getCurrentItemID());
 
+    }
 
     /**
      * eventbus 刷新socket数据
@@ -2168,7 +2182,6 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 //        String deviceOnlyCode = CalculateUtils.getSendDeviceOnlyCode(event.getData());
 //        String currentCMD = CalculateUtils.getCMD(event.getData());
         switch (event.getUdpCmd()) {
-
             case Constants.UDP_15://截图
                 if (mCaseID.equals(event.getData())) {
                     sendImageRequest(mCaseID);
@@ -2189,14 +2202,13 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                     if ("2".equals(tag) || "4".equals(tag)) {
                         sendImageRequest(mCaseID);
                     }
-
                 }
                 break;
             case Constants.UDP_13://有病例,并且当前病例id==回调病例id则更新界面数据
                 if (event.getTga()) {
-                    if (currentItemCaseID.equals(event.getData())) {
+                    if (getCurrentItemID().equals(event.getData())) {
                         //请求界面数据
-                        sendRequest(currentItemCaseID);
+                        sendRequest(getCurrentItemID());
                     }
                 }
                 break;
@@ -2219,7 +2231,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                 bean.setRecordid(hexStringID);
             }
 
-            byte[] sendByteData = CalculateUtils.getSendByteData(getAttachActivity(), mGson.toJson(bean), mCurrentTypeNum+"", mCurrentReceiveDeviceCode,
+            byte[] sendByteData = CalculateUtils.getSendByteData(getAttachActivity(), mGson.toJson(bean), mCurrentTypeNum + "", mCurrentReceiveDeviceCode,
                     CMDCode);
             if (("".equals(mSocketPort))) {
                 toast("通讯端口不能为空");
@@ -2228,7 +2240,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 
             SocketUtils.startSendPointMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), getAttachActivity());
         } else {
-             LogUtils.e(Constants.HAVE_HAND_FAIL_OFFLINE);
+            LogUtils.e(Constants.HAVE_HAND_FAIL_OFFLINE);
         }
 
     }
@@ -2244,7 +2256,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
             HandBean handBean = new HandBean();
             handBean.setHelloPc("");
             handBean.setComeFrom("");
-            byte[] sendByteData = CalculateUtils.getSendByteData(getAttachActivity(), mGson.toJson(handBean), mCurrentTypeNum+"", mCurrentReceiveDeviceCode,
+            byte[] sendByteData = CalculateUtils.getSendByteData(getAttachActivity(), mGson.toJson(handBean), mCurrentTypeNum + "", mCurrentReceiveDeviceCode,
                     CMDCode);
             if (("".equals(mSocketPort))) {
                 toast("通讯端口不能为空");
