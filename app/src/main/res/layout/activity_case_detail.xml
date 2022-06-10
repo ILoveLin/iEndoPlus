@@ -16,10 +16,10 @@
         app:title="病历详情" />
     <!--远程设备数据互联,状态和数据长显示-->
     <LinearLayout
-        android:layout_marginTop="@dimen/dp_5"
-        android:layout_marginBottom="@dimen/dp_5"
-        android:layout_marginRight="@dimen/dp_10"
-        android:layout_marginLeft="@dimen/dp_10"
+        android:layout_marginTop="@dimen/dp_3"
+        android:layout_marginBottom="@dimen/dp_3"
+        android:layout_marginRight="@dimen/dp_5"
+        android:layout_marginLeft="@dimen/dp_5"
         android:background="@drawable/shape_long_statue"
         android:id="@+id/relative_statue"
         android:layout_width="match_parent"
@@ -27,8 +27,8 @@
         android:layout_below="@+id/titlebar"
         android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:paddingTop="@dimen/dp_10"
-        android:paddingBottom="@dimen/dp_5">
+        android:paddingTop="@dimen/dp_3"
+        android:paddingBottom="@dimen/dp_3">
 
         <LinearLayout
             android:id="@+id/rlative_statue_top"
@@ -41,14 +41,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="正在检查病人:"
-                android:textSize="@dimen/sp_13" />
+                android:textSize="@dimen/sp_11" />
 
             <TextView
                 android:id="@+id/current_patient_info"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="无"
-                android:textSize="@dimen/sp_13" />
+                android:textSize="@dimen/sp_11" />
         </LinearLayout>
 
         <LinearLayout
@@ -56,7 +56,7 @@
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:orientation="horizontal"
-            android:paddingTop="@dimen/dp_6">
+            android:paddingTop="@dimen/dp_3">
 
             <TextView
                 android:id="@+id/current_socket_statue"
@@ -64,7 +64,7 @@
                 android:layout_height="wrap_content"
                 android:text="远程设备通讯已断开"
                 android:textColor="@color/red"
-                android:textSize="@dimen/sp_12" />
+                android:textSize="@dimen/sp_10" />
         </LinearLayout>
 
     </LinearLayout>
