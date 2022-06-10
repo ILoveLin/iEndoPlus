@@ -187,6 +187,8 @@ public class CaseManageListBean {
         @SerializedName("CheckDiagnosis")
         private String CheckDiagnosis;
 
+        private boolean isSelected;              //自定义字段,为了切换病例的时候,显示或者隐藏选择框
+
         @Override
         public String toString() {
             return "DataDTO{" +
@@ -256,7 +258,16 @@ public class CaseManageListBean {
                     ", ClinicalDiagnosis='" + ClinicalDiagnosis + '\'' +
                     ", CheckContent='" + CheckContent + '\'' +
                     ", CheckDiagnosis='" + CheckDiagnosis + '\'' +
+                    ", isSelected=" + isSelected +
                     '}';
+        }
+
+        public boolean isSelected() {
+            return isSelected;
+        }
+
+        public void setSelected(boolean selected) {
+            isSelected = selected;
         }
 
         public String getCheck_date() {

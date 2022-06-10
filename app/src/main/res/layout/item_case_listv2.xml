@@ -14,13 +14,18 @@
         android:orientation="vertical"
         app:cardBackgroundColor="@color/white"
         app:cardCornerRadius="@dimen/dp_10"
-        app:cardElevation="@dimen/dp_5">
 
+        app:cardElevation="@dimen/dp_5">
+<!--        android:background="@drawable/R.drawable.shape_bg_chose_picture_pre"-->
+<!--        android:layout_marginTop="@dimen/dp_10"-->
+<!--        android:layout_marginBottom="@dimen/dp_10"-->
         <RelativeLayout
+            android:id="@+id/relative_item_all"
+            android:background="@drawable/shape_bg_chose_picture_pre"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/dp_10"
-            android:layout_marginBottom="@dimen/dp_10"
+            android:paddingTop="@dimen/dp_10"
+            android:paddingBottom="@dimen/dp_10"
             android:gravity="center"
             android:orientation="vertical">
 

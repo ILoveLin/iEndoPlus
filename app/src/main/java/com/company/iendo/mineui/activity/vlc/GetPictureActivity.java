@@ -1,5 +1,8 @@
 package com.company.iendo.mineui.activity.vlc;
 
+import android.animation.Animator;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
@@ -12,18 +15,22 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.company.iendo.R;
 import com.company.iendo.action.StatusAction;
 import com.company.iendo.aop.SingleClick;
 import com.company.iendo.app.AppActivity;
 import com.company.iendo.bean.CaseDetailBean;
+import com.company.iendo.bean.CaseManageListBean;
 import com.company.iendo.bean.UserReloBean;
 import com.company.iendo.bean.event.SocketRefreshEvent;
 import com.company.iendo.bean.socket.HandBean;
@@ -33,12 +40,15 @@ import com.company.iendo.bean.socket.getpicture.ShotPictureBean;
 import com.company.iendo.bean.socket.params.DeviceParamsBean;
 import com.company.iendo.bean.socket.params.Type01Bean;
 import com.company.iendo.bean.socket.params.Type02Bean;
+import com.company.iendo.mineui.fragment.casemanage.adapter.CaseManageAdapter;
 import com.company.iendo.other.Constants;
 import com.company.iendo.other.HttpConstant;
 import com.company.iendo.service.HandService;
+import com.company.iendo.ui.dialog.DateDialog;
 import com.company.iendo.ui.dialog.SelectDialog;
 import com.company.iendo.utils.CalculateUtils;
 import com.company.iendo.utils.CommonUtil;
+import com.company.iendo.utils.DateUtil;
 import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.ScreenSizeUtil;
 import com.company.iendo.utils.SocketUtils;
@@ -50,10 +60,13 @@ import com.company.iendo.widget.vlc.MyVlcVideoView;
 import com.gyf.immersionbar.ImmersionBar;
 import com.hjq.bar.OnTitleBarListener;
 import com.hjq.bar.TitleBar;
+import com.hjq.base.BaseAdapter;
 import com.hjq.base.BaseDialog;
+import com.hjq.gson.factory.GsonFactory;
 import com.hjq.permissions.OnPermissionCallback;
 import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
+import com.hjq.widget.layout.WrapRecyclerView;
 import com.hjq.widget.view.SwitchButton;
 import com.jaygoo.widget.OnRangeChangedListener;
 import com.jaygoo.widget.RangeSeekBar;
@@ -72,6 +85,9 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
@@ -85,7 +101,7 @@ import okhttp3.Call;
  * 放大倍数  1-2.5 显示的数字    传的的值是1--15
  */
 public final class GetPictureActivity extends AppActivity implements StatusAction, OnRangeChangedListener,
-        SwitchButton.OnCheckedChangeListener, ConnectCheckerRtmp {
+        SwitchButton.OnCheckedChangeListener, ConnectCheckerRtmp, BaseAdapter.OnItemClickListener {
     public static String path = "http://9890.vod.myqcloud.com/9890_4e292f9a3dd011e6b4078980237cc3d3.f20.mp4";
     public static String path1 = "rtsp://184.72.239.149/vod/mp4://BigBuckBunny_175k.mov";
     public boolean isFullscreen = false;
@@ -119,6 +135,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
     private RtmpOnlyAudio rtmpOnlyAudio;
     private String itemID;
     private String mTypeText = "高清HD";
+    private List<CaseManageListBean.DataDTO> mDataLest = new ArrayList<>();      //切换界面的list数据
 
     private String currentUrl0, currentUrl1;  //0是高清,1是标清
     private RelativeLayout mTopControl;
@@ -243,6 +260,18 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
     private TextView mCurrentCheckPatientInfo;
     private TextView mCurrentSocketStatue;
     private LinearLayout mLinearStatueView;
+    private RelativeLayout mRelativeChangeAll;
+    private TextView mTvLiftFinish;
+    private LinearLayout mLinearTitleAll;
+    private ImageView mChangeAnimImage;
+    private DateDialog.Builder mDateDialog;
+    private CaseManageAdapter mAdapter;
+    private WrapRecyclerView mRecyclerView;
+    private TextView mRecycleEmpty;
+    private TextView mChangeTitleData;
+    private Button mBtnSureChange;
+    private String itemCaseID;
+    private CaseManageListBean.DataDTO itemBean;
 
     /**
      * eventbus 刷新socket数据
@@ -252,7 +281,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         String data = event.getData();
         switch (event.getUdpCmd()) {
             case Constants.UDP_HAND://握手
-                LogUtils.e("握手服务===="+HandService.UDP_HAND_GLOBAL_TAG);
+                LogUtils.e("握手服务====" + HandService.UDP_HAND_GLOBAL_TAG);
                 mCurrentSocketStatue.setTextColor(getResources().getColor(R.color.color_25A5FF));
                 mCurrentSocketStatue.setText(Constants.SOCKET_STATUE_ONLINE);
                 break;
@@ -372,7 +401,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                                                 sendSocketPointMicMessage("0");
                                             }
                                         } else {
-                                             LogUtils.e(Constants.HAVE_HAND_FAIL_OFFLINE);
+                                            LogUtils.e(Constants.HAVE_HAND_FAIL_OFFLINE);
                                         }
 
 
@@ -393,7 +422,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                                                 sendSocketPointMicMessage("0");
                                             }
                                         } else {
-                                             LogUtils.e(Constants.HAVE_HAND_FAIL_OFFLINE);
+                                            LogUtils.e(Constants.HAVE_HAND_FAIL_OFFLINE);
                                         }
 
 
@@ -405,7 +434,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
 
 
                             } else {
-                                 LogUtils.e(Constants.HAVE_HAND_FAIL_OFFLINE);
+                                LogUtils.e(Constants.HAVE_HAND_FAIL_OFFLINE);
                             }
 
                         }
@@ -603,7 +632,26 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         //设置socket长显示的通讯状态
         setSocketStatue(mCurrentSocketStatue);
 
+        //手动把切换病例的,整体布局缩放,方便打开的时候播放从小到大的动画
+        mRelativeChangeAll.setVisibility(View.INVISIBLE);
+        showCloseChangeCaseAnim();
 
+        //设置切换界面的列表数据
+        mAdapter = new CaseManageAdapter(GetPictureActivity.this);
+        mAdapter.setOnItemClickListener(this);
+        mAdapter.setData(mDataLest);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 2);
+        mRecyclerView.setLayoutManager(gridLayoutManager);
+
+//        mRecyclerView.addItemDecoration(new GridSpaceItemDecoration(2, 30, true));
+//        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setAdapter(mAdapter);
+        //病例列表初始化
+        if (!mChangeTitleData.getText().toString().trim().isEmpty()) {
+            sendDataRequest(mChangeTitleData.getText().toString().trim());
+        } else {
+            sendDataRequest("2022-03-28");
+        }
     }
 
 
@@ -628,7 +676,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             } else {
                 bean.setRecordid("");
             }
-            byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(bean), mCurrentTypeNum+"", mCurrentReceiveDeviceCode,
+            byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(bean), mCurrentTypeNum + "", mCurrentReceiveDeviceCode,
                     CMDCode);
             if (("".equals(mSocketPort))) {
                 toast("通讯端口不能为空");
@@ -636,7 +684,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             }
             SocketUtils.startSendPointMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), GetPictureActivity.this);
         } else {
-             LogUtils.e(Constants.HAVE_HAND_FAIL_OFFLINE);
+            LogUtils.e(Constants.HAVE_HAND_FAIL_OFFLINE);
 
         }
 
@@ -652,7 +700,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             HandBean handBean = new HandBean();
             handBean.setHelloPc("");
             handBean.setComeFrom("");
-            byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(handBean), mCurrentTypeNum+"", mCurrentReceiveDeviceCode,
+            byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(handBean), mCurrentTypeNum + "", mCurrentReceiveDeviceCode,
                     CMDCode);
             if (("".equals(mSocketPort))) {
                 toast("通讯端口不能为空");
@@ -660,7 +708,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             }
             SocketUtils.startSendPointMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), GetPictureActivity.this);
         } else {
-             LogUtils.e(Constants.HAVE_HAND_FAIL_OFFLINE);
+            LogUtils.e(Constants.HAVE_HAND_FAIL_OFFLINE);
 
 
         }
@@ -679,7 +727,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         micRequestBean.setCalltype("rtmp");
         micRequestBean.setServicemode("1");
         micRequestBean.setOnline(onLineStatus);
-        byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(micRequestBean), mCurrentTypeNum+"", mCurrentReceiveDeviceCode,
+        byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(micRequestBean), mCurrentTypeNum + "", mCurrentReceiveDeviceCode,
                 Constants.UDP_F4);
 
         if (("".equals(mSocketPort))) {
@@ -700,7 +748,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             String spCaseID = mMMKVInstace.decodeString(Constants.KEY_CurrentCaseID);
             String hexID = CalculateUtils.numToHex16(Integer.parseInt(spCaseID));
             bean.setRecordid(hexID);
-            byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(bean), mCurrentTypeNum+"", mCurrentReceiveDeviceCode,
+            byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(bean), mCurrentTypeNum + "", mCurrentReceiveDeviceCode,
                     CMDCode);
             if (("".equals(mSocketPort))) {
                 toast("通讯端口不能为空");
@@ -708,7 +756,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             }
             SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), GetPictureActivity.this);
         } else {
-             LogUtils.e(Constants.HAVE_HAND_FAIL_OFFLINE);
+            LogUtils.e(Constants.HAVE_HAND_FAIL_OFFLINE);
 
         }
 
@@ -726,7 +774,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             Type02Bean.Type02 Type02 = new Type02Bean.Type02();
             Type02.setBrightness("");
             bean.setType02(Type02);
-            byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(bean), mCurrentTypeNum+"", mCurrentReceiveDeviceCode,
+            byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(bean), mCurrentTypeNum + "", mCurrentReceiveDeviceCode,
                     CMDCode);
             if (("".equals(mSocketPort))) {
                 toast("通讯端口不能为空");
@@ -734,7 +782,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             }
             SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), GetPictureActivity.this);
         } else {
-             LogUtils.e(Constants.HAVE_HAND_FAIL_OFFLINE);
+            LogUtils.e(Constants.HAVE_HAND_FAIL_OFFLINE);
 
         }
 
@@ -754,7 +802,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             typeBean.setBrightness(data);
             bean.setType02(typeBean);
 
-            byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(bean), mCurrentTypeNum+"", mCurrentReceiveDeviceCode,
+            byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(bean), mCurrentTypeNum + "", mCurrentReceiveDeviceCode,
                     CMDCode);
             if (("".equals(mSocketPort))) {
                 toast("通讯端口不能为空");
@@ -762,8 +810,8 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             }
             SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), GetPictureActivity.this);
         } else {
-             LogUtils.e(Constants.HAVE_HAND_FAIL_OFFLINE);
-             LogUtils.e(Constants.HAVE_HAND_FAIL_OFFLINE);
+            LogUtils.e(Constants.HAVE_HAND_FAIL_OFFLINE);
+            LogUtils.e(Constants.HAVE_HAND_FAIL_OFFLINE);
 
         }
 
@@ -777,7 +825,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
      */
     public void sendSocketPointVideoDevice(String CMDCode, Type01Bean bean) {
         if (HandService.UDP_HAND_GLOBAL_TAG) {
-            byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(bean), mCurrentTypeNum+"", mCurrentReceiveDeviceCode,
+            byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(bean), mCurrentTypeNum + "", mCurrentReceiveDeviceCode,
                     CMDCode);
             if (("".equals(mSocketPort))) {
                 toast("通讯端口不能为空");
@@ -785,7 +833,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             }
             SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), GetPictureActivity.this);
         } else {
-             LogUtils.e(Constants.HAVE_HAND_FAIL_OFFLINE);
+            LogUtils.e(Constants.HAVE_HAND_FAIL_OFFLINE);
 
         }
 
@@ -847,6 +895,114 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         }
     }
 
+    private void showDataSelectedDialog() {
+        // 日期选择对话框
+        mDateDialog = new DateDialog.Builder(getActivity());
+        mDateDialog.setTitle("请选择日期")
+                .setConfirm(getString(R.string.common_confirm))
+                .setCancel(getString(R.string.common_cancel))
+                .addOnDismissListener(new BaseDialog.OnDismissListener() {
+                    @Override
+                    public void onDismiss(BaseDialog dialog) {
+                        startDialogIconAnim(false, mChangeAnimImage);
+
+                    }
+                })
+                .setListener(new DateDialog.OnListener() {
+                    @Override
+                    public void onSelected(BaseDialog dialog, int year, int month, int day) {
+                        // 如果不指定时分秒则默认为现在的时间
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.set(Calendar.YEAR, year);
+                        // 月份从零开始，所以需要减 1
+                        calendar.set(Calendar.MONTH, month - 1);
+                        calendar.set(Calendar.DAY_OF_MONTH, day);
+                        String mDate = new SimpleDateFormat("yyyy年MM月dd日").format(calendar.getTime());
+                        String mChoiceDate = mDate.replace("年", "-").replace("月", "-").replace("日", "");
+                        mChangeTitleData.setText(mChoiceDate + "");
+                        sendDataRequest(mChoiceDate);
+                        startDialogIconAnim(false, mChangeAnimImage);
+                    }
+
+                    @Override
+                    public void onCancel(BaseDialog dialog) {
+                        startDialogIconAnim(false, mChangeAnimImage);
+
+                    }
+                }).show();
+
+
+    }
+
+    /**
+     * 切换病例界面,选择时间,请求数据
+     *
+     * @param mChoiceDate
+     */
+    private void sendDataRequest(String mChoiceDate) {
+        OkHttpUtils.get()
+                .url(mBaseUrl + HttpConstant.CaseManager_List)
+                .addParams("datetime", mChoiceDate)
+//                .addParams("EndoType", "4")  //目前默认是3  耳鼻喉治疗台
+                .addParams("EndoType", endoType)  //目前默认是3  耳鼻喉治疗台
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        showError(listener -> {
+                            sendRequest(mChoiceDate);
+                        });
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        try {
+                            showComplete();
+                            if ("" != response) {
+                                mGson = GsonFactory.getSingletonGson();
+                                CaseManageListBean mBean = mGson.fromJson(response, CaseManageListBean.class);
+                                if (0 == mBean.getCode()) {  //成功
+                                    if (mBean.getData().size() != 0) {
+                                        mRecycleEmpty.setVisibility(View.INVISIBLE);
+                                        mRecyclerView.setVisibility(View.VISIBLE);
+                                        mDataLest.clear();
+                                        mDataLest.addAll(mBean.getData());
+                                        //判断当前选择的病例,设置边框
+                                        for (int i = 0; i < mDataLest.size(); i++) {
+                                            CaseManageListBean.DataDTO bean = mDataLest.get(i);
+                                            String caseID = bean.getID() + "";
+                                            //mCaseID
+                                            if (caseID.equals(mCaseID)) {
+                                                bean.setSelected(true);
+                                            } else {
+                                                bean.setSelected(false);
+                                            }
+                                        }
+                                        mAdapter.setData(mDataLest);
+                                    } else {
+                                        mRecycleEmpty.setVisibility(View.VISIBLE);
+                                        mRecyclerView.setVisibility(View.INVISIBLE);
+                                    }
+                                } else {
+                                    showError(listener -> {
+                                        sendRequest(mChoiceDate);
+                                    });
+                                }
+                            } else {
+                                showError(listener -> {
+                                    sendRequest(mChoiceDate);
+                                });
+                            }
+                        } catch (Exception e) {
+                            toast("数据解析错误");
+
+                        }
+
+
+                    }
+                });
+    }
+
     /**
      * ***************************************************************************通讯模块**************************************************************************
      */
@@ -854,6 +1010,35 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.tv_title_name:        //切换病例
+                showStartChangeCaseAnim();
+                break;
+            case R.id.linear_title_all:        //切换病例界面,切换时间的事件
+                startDialogIconAnim(true, mChangeAnimImage);
+                showDataSelectedDialog();
+                break;
+            case R.id.btn_sure_change:              //确定切换
+                //重新初始化这个界面(直播地址不需要)
+                //当前选中的CaseID复制个当前界面的mCaseID
+                if (itemCaseID.equals(mCaseID)) {
+                    return;
+                }
+                mCaseID = itemCaseID;
+                isFirstIn = true;
+//                isFirstInitData = true;
+                //握手通讯
+                sendRequest(mCaseID);
+//                //获取当前设备参数
+//                getSocketLightData(Constants.UDP_F5);
+                //获取当前病例ID
+                sendSocketPointMessage(Constants.UDP_F0);
+                //实时获取当前上位机,录像的状态
+                sendSocketPointRecodeStatusMessage(Constants.UDP_18, "0");
+                showCloseChangeCaseAnim();
+                break;
+            case R.id.tv_left:              //切换病例界面,退出的事件
+                showCloseChangeCaseAnim();
+                break;
             case R.id.linear_light_tab:        //点击光源tab
                 setLightTab();
                 break;
@@ -980,7 +1165,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                         toast(Constants.UDP_CASE_ID_DIFFERENT);
                     }
                 } else {
-                     LogUtils.e(Constants.HAVE_HAND_FAIL_OFFLINE);
+                    LogUtils.e(Constants.HAVE_HAND_FAIL_OFFLINE);
                 }
 //                if (isPlayering) {
 //                    if (mVLCView.isPrepare()) {
@@ -1040,13 +1225,14 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         }
     }
 
+
     private void responseListener() {
-//        R.id.linear_mic, R.id.linear_cold,
+//        R.id.linear_mic, R.id.linear_cold,linear_title_all
         setOnClickListener(R.id.linear_light_tab, R.id.linear_device_tab, R.id.linear_record, R.id.linear_picture, R.id.full_change,
                 R.id.lock_screen, R.id.root_layout_vlc, R.id.video_back, R.id.control_start_view, R.id.linear_mic,
                 R.id.tv_01_light_black, R.id.tv_01_light_add, R.id.tv_02_light_black, R.id.tv_02_light_add,
                 R.id.tv_02_saturation_black, R.id.tv_02_saturation_add, R.id.tv_02_definition_black, R.id.tv_02_definition_add,
-                R.id.tv_02_zoom_black, R.id.tv_02_zoom_add);
+                R.id.tv_02_zoom_black, R.id.tv_02_zoom_add, R.id.tv_title_name, R.id.linear_title_all, R.id.btn_sure_change, R.id.tv_left);
 //
 
         //设置拖动条监听
@@ -1060,6 +1246,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         mSwitchBlood.setOnCheckedChangeListener(this);
         mSwitchVertical.setOnCheckedChangeListener(this);
         mSwitchHorizontal.setOnCheckedChangeListener(this);
+
 
         mVLCView.setMediaListenerEvent(new MediaListenerEvent() {
             @Override
@@ -1314,9 +1501,20 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         mStartView = findViewById(R.id.control_start_view);
         mImageBack = findViewById(R.id.video_back);
         mRightLiveTypeControl = findViewById(R.id.change_live_type);
-//        LinearLayout mRecord = findViewById(R.id.linear_record);
-//        LinearLayout mShot = findViewById(R.id.linear_picture);
-//        LinearLayout mCold = findViewById(R.id.linear_cold);
+
+        //切换病例的界面
+        mRelativeChangeAll = findViewById(R.id.relative_change_anim);//整体切换病例界面
+        mTvLiftFinish = findViewById(R.id.tv_left);//退出切换病例
+        mLinearTitleAll = findViewById(R.id.linear_title_all);//切换时间的点击事件
+        mChangeAnimImage = findViewById(R.id.iv_change_case_tag_anim);//切换需要转动图标的动画
+        mChangeTitleData = findViewById(R.id.tv_change_case_title);//切换的日期
+        mChangeTitleData.setText(DateUtil.getSystemDate());
+        mRecyclerView = findViewById(R.id.rv_b_recyclerview);
+        mBtnSureChange = findViewById(R.id.btn_sure_change);
+        mRecycleEmpty = findViewById(R.id.tv_recycle_empty);
+
+        mRecycleEmpty.setVisibility(View.INVISIBLE);
+        mRecyclerView.setVisibility(View.VISIBLE);
         mMic = findViewById(R.id.linear_mic);
         mRecordMsg = findViewById(R.id.case_record);
 
@@ -1368,6 +1566,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         mDevicePart = findViewById(R.id.linear_device_part);
         //默认选中光源tab
         setLightTab();
+        mRelativeChangeAll.setVisibility(View.INVISIBLE);
         mImageBack.setVisibility(View.INVISIBLE);
         rootView = mPlayer.getRootView();                         //点击控制锁显示和隐藏的
         onTouchVideoListener = mPlayer.getOnTouchVideoListener();
@@ -1468,6 +1667,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                                 mPictureDes.setText("采图(" + imageCount + ")");
                                 mCaseNo = mBean.getData().getCaseNo();
                                 mName = mBean.getData().getName();
+                                mTitleName.setText(mName + "-" + mCaseNo);
                                 mTitleName.setText(mName + "-" + mCaseNo);
 
 
@@ -1655,7 +1855,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
 
     //获取当前上位机正在检查的病例
     private void sendRequestToGetServerCaseInfo(String mCaseID) {
-        if ("0".equals(mCaseID)){
+        if ("0".equals(mCaseID)) {
             mCurrentCheckPatientInfo.setText("无");
             return;
         }
@@ -1676,10 +1876,10 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                             CaseDetailBean.DataDTO data = mBean.getData();
                             if (0 == mBean.getCode()) {  //成功
                                 String longSeeCase = MMKV.defaultMMKV().decodeString(Constants.KEY_CurrentLongSeeCaseID);
-                                if (longSeeCase.equals("0")){
+                                if (longSeeCase.equals("0")) {
                                     mCurrentCheckPatientInfo.setText("无");
-                                }else {
-                                    mCurrentCheckPatientInfo.setText(data.getCaseNo() + " | " + data.getName() + " |"+data.getSex());
+                                } else {
+                                    mCurrentCheckPatientInfo.setText(data.getCaseNo() + " | " + data.getName() + " |" + data.getSex());
                                 }
 
                             } else {
@@ -1690,6 +1890,103 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                         }
                     }
                 });
+    }
+
+    /**
+     * 关闭获取报告动画
+     */
+    private void showCloseChangeCaseAnim() {
+        mRelativeChangeAll.setBackgroundResource(R.color.white);
+        ObjectAnimator animator = ObjectAnimator.ofFloat(mRelativeChangeAll, "scaleY", 1f, 0.01f);
+        ObjectAnimator animator2 = ObjectAnimator.ofFloat(mRelativeChangeAll, "scaleX", 1f, 0.01f);
+        AnimatorSet animSet = new AnimatorSet();
+        animSet.play(animator).with(animator2);
+        animSet.setDuration(450);
+        animSet.start();
+        animSet.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                mRelativeChangeAll.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
+    }
+
+    /**
+     * 开启获取报告动画
+     */
+    private void showStartChangeCaseAnim() {
+        ObjectAnimator animator = ObjectAnimator.ofFloat(mRelativeChangeAll, "scaleY", 1f, 0.01f);
+        ObjectAnimator animator2 = ObjectAnimator.ofFloat(mRelativeChangeAll, "scaleX", 1f, 0.01f);
+        ObjectAnimator animator3 = ObjectAnimator.ofFloat(mRelativeChangeAll, "scaleY", 0.01f, 1f);
+        ObjectAnimator animator4 = ObjectAnimator.ofFloat(mRelativeChangeAll, "scaleX", 0.01f, 1f);
+        AnimatorSet animSet2 = new AnimatorSet();
+        AnimatorSet animSet = new AnimatorSet();
+        animSet.play(animator).with(animator2);
+        animSet.setDuration(50);//100
+        animSet.start();
+        animSet.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                mRelativeChangeAll.setVisibility(View.VISIBLE);
+                animSet2.play(animator3).with(animator4);
+                animSet2.setDuration(450);//300
+                animSet2.start();
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
+
+        animSet2.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                mRelativeChangeAll.setBackgroundResource(R.color.gray);
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
+
+
     }
 
     /**
@@ -1776,4 +2073,27 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
 
     }
 
+    /**
+     * 切换病例列表的点击事件
+     *
+     * @param recyclerView RecyclerView 对象
+     * @param itemView     被点击的条目对象
+     * @param position     被点击的条目位置
+     */
+    @Override
+    public void onItemClick(RecyclerView recyclerView, View itemView, int position) {
+        itemBean = mAdapter.getItem(position);
+        itemCaseID = itemBean.getID() + "";
+        for (int i = 0; i < mDataLest.size(); i++) {
+            CaseManageListBean.DataDTO bean = mDataLest.get(i);
+            String caseID = bean.getID() + "";
+            //mCaseID
+            if (caseID.equals(itemCaseID)) {
+                bean.setSelected(true);
+            } else {
+                bean.setSelected(false);
+            }
+        }
+        mAdapter.notifyDataSetChanged();
+    }
 }

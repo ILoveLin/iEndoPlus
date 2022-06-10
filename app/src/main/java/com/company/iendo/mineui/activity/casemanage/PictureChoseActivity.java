@@ -104,6 +104,7 @@ public final class PictureChoseActivity extends AppActivity implements StatusAct
         currentItemID = MainActivity.getCurrentItemID();
         sendRequest(currentItemID);
         responseListener();
+
     }
 
     private void responseListener() {
