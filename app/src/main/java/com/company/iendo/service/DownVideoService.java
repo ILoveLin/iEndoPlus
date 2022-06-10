@@ -42,7 +42,6 @@ import java.util.Map;
 
 import io.reactivex.disposables.Disposable;
 
-
 /**
  * 保活的Service通讯服务
  * <p>

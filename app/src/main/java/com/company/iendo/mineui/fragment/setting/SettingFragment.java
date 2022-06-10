@@ -223,7 +223,7 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
         HandBean handBean = new HandBean();
         handBean.setHelloPc("");
         handBean.setComeFrom("");
-        byte[] sendByteData = CalculateUtils.getSendByteData(getAttachActivity(), mGson.toJson(handBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
+        byte[] sendByteData = CalculateUtils.getSendByteData(getAttachActivity(), mGson.toJson(handBean), mCurrentTypeNum+"", mCurrentReceiveDeviceCode,
                 Constants.UDP_FE);
 
         if (("".equals(mSocketPort))) {

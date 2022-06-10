@@ -535,7 +535,7 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
         codeBean.setLivePort(codeBean.getLivePort());//设置直播端口号；
         codeBean.setSocketPort(codeBean.getSocketPort());  //设置接收端口；
         codeBean.setMsg(bean.getRemark());      //设置备注-描述信息
-        codeBean.setType_num(bean.getReceiveType());   //设置设备中文说明对应的数字,比如type=一代一体机  数字对应07
+        codeBean.setType_num(Integer.parseInt(bean.getReceiveType()));   //设置设备中文说明对应的数字,比如type=一代一体机  数字对应07
         codeBean.setHttpPort(codeBean.getHttpPort());    //设置node js 服务端口  ===httpPort
         codeBean.setType(bean.getDeviceType());
         codeBean.setEndoType(bean.getEndotype());   //设置科室类型---endoType
@@ -809,17 +809,17 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
      * @param str
      * @return
      */
-    public String getDeviceTypeNum(String str) {
+    public int getDeviceTypeNum(String str) {
         if (Constants.Type_V1_YiTiJi.equals(str)) {
-            return Constants.Type_07 + "";
+            return Constants.Type_07 ;
         } else if (Constants.Type_EarNoseTable.equals(str)) {
-            return Constants.Type_08 + "";
+            return Constants.Type_08 ;
         } else if (Constants.Type_FuKeTable.equals(str)) {
-            return Constants.Type_09 + "";
+            return Constants.Type_09 ;
         } else if (Constants.Type_MiNiaoTable.equals(str)) {
-            return Constants.Type_0A + "";
+            return Constants.Type_0A;
         }
-        return Constants.Type_07 + "";
+        return Constants.Type_07;
     }
 
     @Override

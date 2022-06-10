@@ -628,7 +628,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             } else {
                 bean.setRecordid("");
             }
-            byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(bean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
+            byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(bean), mCurrentTypeNum+"", mCurrentReceiveDeviceCode,
                     CMDCode);
             if (("".equals(mSocketPort))) {
                 toast("通讯端口不能为空");
@@ -652,7 +652,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             HandBean handBean = new HandBean();
             handBean.setHelloPc("");
             handBean.setComeFrom("");
-            byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(handBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
+            byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(handBean), mCurrentTypeNum+"", mCurrentReceiveDeviceCode,
                     CMDCode);
             if (("".equals(mSocketPort))) {
                 toast("通讯端口不能为空");
@@ -679,7 +679,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         micRequestBean.setCalltype("rtmp");
         micRequestBean.setServicemode("1");
         micRequestBean.setOnline(onLineStatus);
-        byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(micRequestBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
+        byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(micRequestBean), mCurrentTypeNum+"", mCurrentReceiveDeviceCode,
                 Constants.UDP_F4);
 
         if (("".equals(mSocketPort))) {
@@ -700,7 +700,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             String spCaseID = mMMKVInstace.decodeString(Constants.KEY_CurrentCaseID);
             String hexID = CalculateUtils.numToHex16(Integer.parseInt(spCaseID));
             bean.setRecordid(hexID);
-            byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(bean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
+            byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(bean), mCurrentTypeNum+"", mCurrentReceiveDeviceCode,
                     CMDCode);
             if (("".equals(mSocketPort))) {
                 toast("通讯端口不能为空");
@@ -726,7 +726,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             Type02Bean.Type02 Type02 = new Type02Bean.Type02();
             Type02.setBrightness("");
             bean.setType02(Type02);
-            byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(bean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
+            byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(bean), mCurrentTypeNum+"", mCurrentReceiveDeviceCode,
                     CMDCode);
             if (("".equals(mSocketPort))) {
                 toast("通讯端口不能为空");
@@ -754,7 +754,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             typeBean.setBrightness(data);
             bean.setType02(typeBean);
 
-            byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(bean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
+            byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(bean), mCurrentTypeNum+"", mCurrentReceiveDeviceCode,
                     CMDCode);
             if (("".equals(mSocketPort))) {
                 toast("通讯端口不能为空");
@@ -777,7 +777,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
      */
     public void sendSocketPointVideoDevice(String CMDCode, Type01Bean bean) {
         if (HandService.UDP_HAND_GLOBAL_TAG) {
-            byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(bean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
+            byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(bean), mCurrentTypeNum+"", mCurrentReceiveDeviceCode,
                     CMDCode);
             if (("".equals(mSocketPort))) {
                 toast("通讯端口不能为空");

@@ -2219,7 +2219,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
                 bean.setRecordid(hexStringID);
             }
 
-            byte[] sendByteData = CalculateUtils.getSendByteData(getAttachActivity(), mGson.toJson(bean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
+            byte[] sendByteData = CalculateUtils.getSendByteData(getAttachActivity(), mGson.toJson(bean), mCurrentTypeNum+"", mCurrentReceiveDeviceCode,
                     CMDCode);
             if (("".equals(mSocketPort))) {
                 toast("通讯端口不能为空");
@@ -2244,7 +2244,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
             HandBean handBean = new HandBean();
             handBean.setHelloPc("");
             handBean.setComeFrom("");
-            byte[] sendByteData = CalculateUtils.getSendByteData(getAttachActivity(), mGson.toJson(handBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
+            byte[] sendByteData = CalculateUtils.getSendByteData(getAttachActivity(), mGson.toJson(handBean), mCurrentTypeNum+"", mCurrentReceiveDeviceCode,
                     CMDCode);
             if (("".equals(mSocketPort))) {
                 toast("通讯端口不能为空");

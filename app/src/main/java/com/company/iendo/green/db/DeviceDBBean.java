@@ -126,7 +126,7 @@ public class DeviceDBBean {
      * 07-一代一体机，8-耳鼻喉治疗台，9-妇科治疗台，10-泌尿治疗台
      * A0-iOS，A1-Android，FF-所有设备
      */
-    private String type_num;  //!!!!此处是设备中文说明对应的数字,比如type=一代一体机  数字对应07   备注:type和endotype不是相等的
+    private int type_num;  //!!!!此处是设备中文说明对应的数字,比如type=一代一体机  数字对应07   备注:type和endotype不是相等的
     //工作站类型
     private String endoType;//
     ////mDeviceCode  这个是智能搜索之后返回过来的设备码
@@ -140,10 +140,10 @@ public class DeviceDBBean {
     //是否被选中
     private String acceptAndInsertDB;   //授权接入是否存入DB的标识---->存入之后把bean.toString()字符串存入这个字段之中----PutInDeviceMsgBean的数据bean,标识数据在数据库的唯一性
 
-    @Generated(hash = 1394608202)
-    public DeviceDBBean(Long id, String deviceID, String deviceCode, String ip, String LiveIp, String httpPort, String socketPort, String livePort,
-                        String micPort, String username, String password, String title, String msg, String type, String type_num, String endoType, String deviceName,
-                        String usemsg01, String usemsg02, Boolean mSelected, String acceptAndInsertDB) {
+    @Generated(hash = 1426691525)
+    public DeviceDBBean(Long id, String deviceID, String deviceCode, String ip, String LiveIp, String httpPort, String socketPort, String livePort, String micPort,
+            String username, String password, String title, String msg, String type, int type_num, String endoType, String deviceName, String usemsg01,
+            String usemsg02, Boolean mSelected, String acceptAndInsertDB) {
         this.id = id;
         this.deviceID = deviceID;
         this.deviceCode = deviceCode;
@@ -360,11 +360,11 @@ public class DeviceDBBean {
         this.acceptAndInsertDB = acceptAndInsertDB;
     }
 
-    public String getType_num() {
+    public int getType_num() {
         return this.type_num;
     }
 
-    public void setType_num(String type_num) {
+    public void setType_num(int type_num) {
         this.type_num = type_num;
     }
 

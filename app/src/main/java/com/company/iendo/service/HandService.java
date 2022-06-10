@@ -182,7 +182,7 @@ public class HandService extends AbsWorkService {
     /**
      * eventbus 刷新数据
      */
-    @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void SocketRefreshEvent(SocketRefreshEvent event) {
         switch (event.getUdpCmd()) {
             case Constants.UDP_HAND://握手
@@ -200,7 +200,7 @@ public class HandService extends AbsWorkService {
      */
     public void sendHandLinkMessage() {
         MMKV mmkv = MMKV.defaultMMKV();
-        String mCurrentTypeNum = mmkv.decodeString(Constants.KEY_Device_Type_Num);
+        int mCurrentTypeNum = mmkv.decodeInt(Constants.KEY_Device_Type_Num, 0x07);
         Boolean mLoginTag = mmkv.decodeBool(Constants.KEY_Login_Tag);
         String mCurrentReceiveDeviceCode = mmkv.decodeString(Constants.KEY_DeviceCode);
         String mSocketPort = mmkv.decodeString(Constants.KEY_Device_SocketPort);
@@ -211,8 +211,8 @@ public class HandService extends AbsWorkService {
             HandBean handBean = new HandBean();
             handBean.setHelloPc("");
             handBean.setComeFrom("");
-            if (!"".equals(mCurrentTypeNum) && !"".equals(mCurrentReceiveDeviceCode) && !("".equals(mSocketPort))) {
-                byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(handBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
+            if (!"".equals(mCurrentTypeNum + "") && !"".equals(mCurrentReceiveDeviceCode) && !("".equals(mSocketPort))) {
+                byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(handBean), mCurrentTypeNum+"", mCurrentReceiveDeviceCode,
                         Constants.UDP_HAND);
                 startTime = System.currentTimeMillis();
                 if (null != sendByteData) {

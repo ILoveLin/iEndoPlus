@@ -622,7 +622,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                                           String mLivePort, String mMicPort, String mDeviceType) {
                         //不管是更换还是不变都update 数据库,再次刷新界面
                         item.setDeviceName(mDeviceName);  //设备名
-                        item.setUsername(mDeviceCode); //设备码
+                        item.setDeviceCode(mDeviceCode); //设备码
                         item.setMsg(mDeviceNoteMessage);//备注信息
                         item.setIp(mDeviceIP);          //ip
                         item.setUsername(mDeviceAccount);//设备账号
@@ -950,23 +950,23 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
      * 07-一代一体机，8-耳鼻喉治疗台，9-妇科治疗台，10-泌尿治疗台
      * A0-iOS，A1-Android，FF-所有设备
      */
-    public String getTypeNum(String str) {
+    public int getTypeNum(String str) {
         if (Constants.Type_FuKeTable.equals(str)) {
-            return "9";
+            return Constants.Type_09;
         } else if (Constants.Type_V1_YiTiJi.equals(str)) {
-            return "07";
+            return  Constants.Type_07;
 
         } else if (Constants.Type_EarNoseTable.equals(str)) {
-            return "8";
+            return Constants.Type_08;
 
         } else if (Constants.Type_MiNiaoTable.equals(str)) {
-            return "10";
+            return  Constants.Type_0A;
 
         } else if (Constants.Type_FuKeTable.equals(str)) {
-            return "9";
+            return Constants.Type_09;
 
         }
-        return "07";
+        return Constants.Type_07;
     }
 
     /**

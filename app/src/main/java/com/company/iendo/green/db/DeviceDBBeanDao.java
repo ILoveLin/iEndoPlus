@@ -36,7 +36,7 @@ public class DeviceDBBeanDao extends AbstractDao<DeviceDBBean, Long> {
         public final static Property Title = new Property(11, String.class, "title", false, "TITLE");
         public final static Property Msg = new Property(12, String.class, "msg", false, "MSG");
         public final static Property Type = new Property(13, String.class, "type", false, "TYPE");
-        public final static Property Type_num = new Property(14, String.class, "type_num", false, "TYPE_NUM");
+        public final static Property Type_num = new Property(14, int.class, "type_num", false, "TYPE_NUM");
         public final static Property EndoType = new Property(15, String.class, "endoType", false, "ENDO_TYPE");
         public final static Property DeviceName = new Property(16, String.class, "deviceName", false, "DEVICE_NAME");
         public final static Property Usemsg01 = new Property(17, String.class, "usemsg01", false, "USEMSG01");
@@ -72,7 +72,7 @@ public class DeviceDBBeanDao extends AbstractDao<DeviceDBBean, Long> {
                 "\"TITLE\" TEXT," + // 11: title
                 "\"MSG\" TEXT," + // 12: msg
                 "\"TYPE\" TEXT," + // 13: type
-                "\"TYPE_NUM\" TEXT," + // 14: type_num
+                "\"TYPE_NUM\" INTEGER NOT NULL ," + // 14: type_num
                 "\"ENDO_TYPE\" TEXT," + // 15: endoType
                 "\"DEVICE_NAME\" TEXT," + // 16: deviceName
                 "\"USEMSG01\" TEXT," + // 17: usemsg01
@@ -160,11 +160,7 @@ public class DeviceDBBeanDao extends AbstractDao<DeviceDBBean, Long> {
         if (type != null) {
             stmt.bindString(14, type);
         }
- 
-        String type_num = entity.getType_num();
-        if (type_num != null) {
-            stmt.bindString(15, type_num);
-        }
+        stmt.bindLong(15, entity.getType_num());
  
         String endoType = entity.getEndoType();
         if (endoType != null) {
@@ -270,11 +266,7 @@ public class DeviceDBBeanDao extends AbstractDao<DeviceDBBean, Long> {
         if (type != null) {
             stmt.bindString(14, type);
         }
- 
-        String type_num = entity.getType_num();
-        if (type_num != null) {
-            stmt.bindString(15, type_num);
-        }
+        stmt.bindLong(15, entity.getType_num());
  
         String endoType = entity.getEndoType();
         if (endoType != null) {
@@ -329,7 +321,7 @@ public class DeviceDBBeanDao extends AbstractDao<DeviceDBBean, Long> {
             cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11), // title
             cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12), // msg
             cursor.isNull(offset + 13) ? null : cursor.getString(offset + 13), // type
-            cursor.isNull(offset + 14) ? null : cursor.getString(offset + 14), // type_num
+            cursor.getInt(offset + 14), // type_num
             cursor.isNull(offset + 15) ? null : cursor.getString(offset + 15), // endoType
             cursor.isNull(offset + 16) ? null : cursor.getString(offset + 16), // deviceName
             cursor.isNull(offset + 17) ? null : cursor.getString(offset + 17), // usemsg01
@@ -356,7 +348,7 @@ public class DeviceDBBeanDao extends AbstractDao<DeviceDBBean, Long> {
         entity.setTitle(cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11));
         entity.setMsg(cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12));
         entity.setType(cursor.isNull(offset + 13) ? null : cursor.getString(offset + 13));
-        entity.setType_num(cursor.isNull(offset + 14) ? null : cursor.getString(offset + 14));
+        entity.setType_num(cursor.getInt(offset + 14));
         entity.setEndoType(cursor.isNull(offset + 15) ? null : cursor.getString(offset + 15));
         entity.setDeviceName(cursor.isNull(offset + 16) ? null : cursor.getString(offset + 16));
         entity.setUsemsg01(cursor.isNull(offset + 17) ? null : cursor.getString(offset + 17));

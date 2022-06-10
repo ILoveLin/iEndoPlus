@@ -170,7 +170,7 @@ public final class ZXingActivity extends AppActivity implements QRCodeView.Deleg
         deviceDBBean.setDeviceID("" + mBean.getDeviceID());//
         deviceDBBean.setDeviceCode("" + mBean.getDeviceID());//
         deviceDBBean.setEndoType("" + mBean.getEndoType());//PC端 对应的endotype  比如我们这边耳鼻喉治疗台是3   这个对应是8
-        deviceDBBean.setType_num("" +mBean.getDeviceType());//PC端 对呀的设备类型比如07 对应一代一体机    此处typeNum是数字表示:07
+        deviceDBBean.setType_num(mBean.getDeviceType());//PC端 对呀的设备类型比如07 对应一代一体机    此处typeNum是数字表示:07
         deviceDBBean.setType("" + deviceTypeString);//PC端 对呀的设备类型比如07 对应一代一体机    此处type是中文表示:一代一体机
         deviceDBBean.setDeviceName("" + mBean.getTitle());//设备名字
         deviceDBBean.setHttpPort("" + mBean.getHttpPort());//

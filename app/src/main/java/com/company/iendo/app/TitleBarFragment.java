@@ -48,7 +48,7 @@ public abstract class TitleBarFragment<A extends AppActivity> extends AppFragmen
     public String mBaseUrl;  //当前用户的头部url
     public String mUserID;
     public String mCurrentTypeDes;    //当前选择设备的==比如:一代一体机==07,此处mCurrentTypeDes==一代一体机
-    public String mCurrentTypeNum;    //当前选择设备的==比如:一代一体机==07,此处mCurrentTypeNum==07
+    public int mCurrentTypeNum;    //当前选择设备的==比如:一代一体机==07,此处mCurrentTypeNum==07
     public String mCurrentReceiveDeviceCode; //当前选择设备的==唯一设备码
     public String mSocketOrLiveIP;       //socket或者直播通讯的ip
     public String mSocketPort;           //socket通讯端口
@@ -80,7 +80,7 @@ public abstract class TitleBarFragment<A extends AppActivity> extends AppFragmen
         endoType = (String) SharePreferenceUtil.get(getAttachActivity(), SharePreferenceUtil.Current_EndoType, "3");
         mUserID = (String) SharePreferenceUtil.get(getAttachActivity(), SharePreferenceUtil.Current_Login_UserID, "3");
         mCurrentTypeDes = (String) SharePreferenceUtil.get(getAttachActivity(), SharePreferenceUtil.Current_Type, "妇科治疗台");
-        mCurrentTypeNum = (String) SharePreferenceUtil.get(getAttachActivity(), SharePreferenceUtil.Current_Type_Num, "07");
+        mCurrentTypeNum = (int) SharePreferenceUtil.get(getAttachActivity(), SharePreferenceUtil.Current_Type_Num, 0x07);
         mCurrentReceiveDeviceCode = (String) SharePreferenceUtil.get(getAttachActivity(), SharePreferenceUtil.Current_DeviceCode, "00000000000000000000000000000000");
         mSocketOrLiveIP = (String) SharePreferenceUtil.get(getAttachActivity(), SharePreferenceUtil.Current_IP, "192.168.132.102");
         mSocketPort = (String) SharePreferenceUtil.get(getAttachActivity(), SharePreferenceUtil.Current_SocketPort, "8005");

@@ -603,7 +603,7 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
             String spCaseID = mMMKVInstace.decodeString(Constants.KEY_CurrentCaseID);
             String s = CalculateUtils.hex10To16Result4(Integer.parseInt(spCaseID));
             shotPictureBean.setRecordid(s);
-            byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(shotPictureBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
+            byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(shotPictureBean), mCurrentTypeNum+"", mCurrentReceiveDeviceCode,
                     CMDCode);
             if (("".equals(mSocketPort))) {
                 toast("通讯端口不能为空");

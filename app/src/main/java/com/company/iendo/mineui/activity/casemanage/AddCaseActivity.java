@@ -410,7 +410,7 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
             HandBean handBean = new HandBean();
             handBean.setHelloPc("");
             handBean.setComeFrom("");
-            byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(handBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
+            byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(handBean), mCurrentTypeNum+"", mCurrentReceiveDeviceCode,
                     CMDCode);
             if (("".equals(mSocketPort))) {
                 toast("通讯端口不能为空");

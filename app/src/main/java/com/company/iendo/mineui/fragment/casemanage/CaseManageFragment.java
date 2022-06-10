@@ -366,7 +366,7 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
             HandBean handBean = new HandBean();
             handBean.setHelloPc("");
             handBean.setComeFrom("");
-            byte[] sendByteData = CalculateUtils.getSendByteData(getAttachActivity(), mGson.toJson(handBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
+            byte[] sendByteData = CalculateUtils.getSendByteData(getAttachActivity(), mGson.toJson(handBean), mCurrentTypeNum+"", mCurrentReceiveDeviceCode,
                     CMDCode);
             if (("".equals(mSocketPort))) {
                 toast("通讯端口不能为空");
@@ -389,7 +389,7 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
         handBean.setHelloPc("");
         handBean.setComeFrom("");
 
-        byte[] sendByteData = CalculateUtils.getSendByteData(getAttachActivity(), mGson.toJson(handBean), mCurrentTypeNum, mCurrentReceiveDeviceCode,
+        byte[] sendByteData = CalculateUtils.getSendByteData(getAttachActivity(), mGson.toJson(handBean), mCurrentTypeNum+"", mCurrentReceiveDeviceCode,
                 Constants.UDP_HAND);
 
         if (("".equals(mSocketPort))) {

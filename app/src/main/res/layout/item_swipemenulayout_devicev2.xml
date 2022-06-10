@@ -105,6 +105,9 @@
 
         </LinearLayout>
         <LinearLayout
+            android:layout_marginLeft="@dimen/dp_2"
+            android:layout_marginRight="@dimen/dp_2"
+            android:layout_marginBottom="@dimen/dp_2"
             android:id="@+id/linear_status"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
