@@ -63,14 +63,17 @@ public class VlcVideoView extends TextureView implements MediaPlayerControl, Vid
         }
         ArrayList<String> options = new ArrayList<String>();
         //正式参数配置
-        options.add("--network-caching=300");//网络缓存
+        //播放网络视频流时网络延时参数设置
+        options.add(":file-caching=300");//文件缓存
+        options.add("--network-caching=300");//网络缓存,这个值越小，实时性越好，当然太小了播放会很卡，或者设置的值失效，一般建议在100-300之间
+        options.add("--codec=mediacodec,iomx,all");//文件缓存
+        options.add(":demux=h264");        //值越大，缓存越大，延迟越大
+
         options.add("--rtsp-caching=300");//
         options.add("--tcp-caching=300");//
         options.add("--tcp-caching=300");//
         options.add("--realrtsp-caching=300");//文件缓存
-        options.add(":file-caching=300");//文件缓存
         options.add(":live-cacheing=300");//直播缓存
-        options.add("--file-caching");//文件缓存
         options.add("--sout-mux-caching=300");//输出缓存
         options.add("--no-drop-late-frames");//关闭丢弃晚的帧 (默认打开)
         options.add("--no-skip-frames");//关闭跳过帧 (默认打开)

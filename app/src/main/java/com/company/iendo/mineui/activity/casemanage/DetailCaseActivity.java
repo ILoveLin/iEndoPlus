@@ -457,6 +457,7 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
         String data = event.getData();
         switch (event.getUdpCmd()) {
             case Constants.UDP_HAND://握手
+                mCurrentSocketStatue = findViewById(R.id.current_socket_statue);
                 mCurrentSocketStatue.setTextColor(getResources().getColor(R.color.color_25A5FF));
                 mCurrentSocketStatue.setText(Constants.SOCKET_STATUE_ONLINE);
                 break;

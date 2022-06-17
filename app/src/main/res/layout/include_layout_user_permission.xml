@@ -89,7 +89,7 @@
                 android:layout_height="wrap_content"
                 android:lines="1"
                 android:paddingLeft="@dimen/dp_4"
-                android:text="拍照录像拍照录"
+                android:text="拍照录像"
                 android:textColor="@color/black50"
                 android:textSize="@dimen/sp_12" />
         </LinearLayout>
@@ -113,7 +113,6 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center_vertical"
-
             android:orientation="horizontal">
 
             <androidx.appcompat.widget.AppCompatCheckBox
@@ -124,12 +123,19 @@
                 android:checked="false"
                 app:buttonCompat="@drawable/checkbox_selector" />
 
+<!--            // 耳鼻喉治疗台-->
+<!--            //喷吸吹设置-->
+<!--            // 妇科治疗台、泌尿治疗台-->
+<!--            //冲洗设置-->
+<!--            //其他-->
+<!--            //设备设置-->
             <TextView
+                android:id="@+id/pen_xi_setting"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:lines="1"
                 android:paddingLeft="@dimen/dp_4"
-                android:text="喷洗吹设置"
+                android:text="喷吸吹设置"
                 android:textColor="@color/black50"
                 android:textSize="@dimen/sp_12" />
         </LinearLayout>

@@ -6,6 +6,7 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatCheckBox;
@@ -15,6 +16,7 @@ import com.company.iendo.action.StatusAction;
 import com.company.iendo.app.AppActivity;
 import com.company.iendo.bean.UserDeletedBean;
 import com.company.iendo.bean.event.RefreshUserListEvent;
+import com.company.iendo.other.Constants;
 import com.company.iendo.other.HttpConstant;
 import com.company.iendo.ui.dialog.MessageDialog;
 import com.company.iendo.ui.dialog.SelectDialog;
@@ -70,7 +72,9 @@ public final class AddUserActivity extends AppActivity implements StatusAction, 
     private RadioButton mRadioOpen;
     private RadioButton mRadioClose;
 
-    private boolean setDefaultReloData=false;   //默认false,true表示是设置默认值
+    private boolean setDefaultReloData = false;   //默认false,true表示是设置默认值
+    private TextView mPenXiSetting;
+
     @Override
     protected int getLayoutId() {
         return R.layout.activity_user_add;
@@ -97,7 +101,7 @@ public final class AddUserActivity extends AppActivity implements StatusAction, 
         mRadioOpen = findViewById(R.id.radio_btn_add_open);
         mRadioClose = findViewById(R.id.radio_btn_add_close);
         //权限相关
-
+        mPenXiSetting = findViewById(R.id.pen_xi_setting);
         userMan01 = findViewById(R.id.cb_01_manager);
         CanPsw01 = findViewById(R.id.cb_01_setting_kouling);
         SnapVideoRecord01 = findViewById(R.id.cb_01_record_shot);
@@ -258,14 +262,29 @@ public final class AddUserActivity extends AppActivity implements StatusAction, 
                 }
                 break;
         }
-        if (!setDefaultReloData){
+        if (!setDefaultReloData) {
             Role = "3";
-            mReloType.setText(  "自定义");
+            mReloType.setText("自定义");
         }
     }
 
     @Override
     protected void initData() {
+
+        // 耳鼻喉治疗台
+        //喷吸吹设置
+        // 妇科治疗台、泌尿治疗台
+        //冲洗设置
+        //其他
+        //设备设置
+        if(mCurrentTypeDes.equals(Constants.Type_EarNoseTable)){
+            mPenXiSetting.setText("喷吸吹设置");
+        }else if (mCurrentTypeDes.equals(Constants.Type_MiNiaoTable)||mCurrentTypeDes.equals(Constants.Type_FuKeTable)){
+            mPenXiSetting.setText("冲洗设置");
+        }else {
+            mPenXiSetting.setText("设备设置");
+        }
+
         responseListener();
     }
 
@@ -280,7 +299,7 @@ public final class AddUserActivity extends AppActivity implements StatusAction, 
         //是否激活
         if (mRadioOpen.isChecked()) {
             CanUSE = "1";
-        }else if (mRadioClose.isChecked()){
+        } else if (mRadioClose.isChecked()) {
             CanUSE = "0";
         }
 
@@ -472,8 +491,8 @@ public final class AddUserActivity extends AppActivity implements StatusAction, 
                                     EventBus.getDefault().post(new RefreshUserListEvent(true));
                                     toast("添加成功");
                                     finish();
-                                }else {
-                                    toast(""+mBean.getMsg());
+                                } else {
+                                    toast("" + mBean.getMsg());
                                 }
 
                             } else {
@@ -643,16 +662,16 @@ public final class AddUserActivity extends AppActivity implements StatusAction, 
                                 String str = data.get(Integer.parseInt(position));
                                 Role = position;
                                 mReloType.setText(str + "");
-                                setDefaultReloData=true;
+                                setDefaultReloData = true;
                                 setDefaultReloData(str);
                                 startDialogIconAnim(false, mIVReloType);
-                                setDefaultReloData=false;
+                                setDefaultReloData = false;
 
                             }
 
                             @Override
                             public void onCancel(BaseDialog dialog) {
-                                setDefaultReloData=false;
+                                setDefaultReloData = false;
                                 startDialogIconAnim(false, mIVReloType);
                             }
                         })
@@ -700,7 +719,7 @@ public final class AddUserActivity extends AppActivity implements StatusAction, 
         String string2 = mPassword.getText().toString();
         String string3 = mReloType.getText().toString();
         String string4 = mUserDesc.getText().toString();
-        if (!string.equals("")||!string2.equals("")||!string3.equals("")||!string4.equals("")){
+        if (!string.equals("") || !string2.equals("") || !string3.equals("") || !string4.equals("")) {
             // 消息对话框
             new MessageDialog.Builder(getActivity())
                     // 标题可以不用填写
@@ -725,6 +744,8 @@ public final class AddUserActivity extends AppActivity implements StatusAction, 
                         }
                     })
                     .show();
+        } else {
+            finish();
         }
     }
 

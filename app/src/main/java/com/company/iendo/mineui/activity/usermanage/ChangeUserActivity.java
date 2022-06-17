@@ -697,7 +697,12 @@ public final class ChangeUserActivity extends AppActivity implements StatusActio
                                 UserDeletedBean mBean = mGson.fromJson(response, UserDeletedBean.class);
                                 LogUtils.e("用户管理===编辑="+mBean.toString());
                                 if (mBean.getCode().equals("0")) {
-                                    toast("修改成功");
+                                    String typeRelo = mReloType.getText().toString();
+                                    if ("超级管理员".equals(typeRelo)){
+                                        toast("超级管理员不能被修改");
+                                    }else {
+                                        toast("修改成功");
+                                    }
                                 } else {
                                     toast("修改失败");
                                 }
@@ -1088,7 +1093,7 @@ public final class ChangeUserActivity extends AppActivity implements StatusActio
                         if ("" != response) {
                             UserDeletedBean mBean = mGson.fromJson(response, UserDeletedBean.class);
                             if (mBean.getCode().equals("0")) {
-                                toast(""+mBean.getMsg());
+                                toast("删除成功");
                                 EventBus.getDefault().post(new RefreshUserListEvent(true));
                                 finish();
                             }else {

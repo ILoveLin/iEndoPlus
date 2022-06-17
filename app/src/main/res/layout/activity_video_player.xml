@@ -40,22 +40,6 @@
                     android:clickable="true" />
 
 
-                <!--                <ImageView-->
-                <!--                    android:id="@+id/lock_screen"-->
-                <!--                    android:layout_width="@dimen/dp_20"-->
-                <!--                    android:layout_height="@dimen/dp_20"-->
-                <!--                    android:layout_alignParentLeft="true"-->
-                <!--                    android:layout_centerVertical="true"-->
-                <!--                    android:layout_marginLeft="@dimen/dp_10"-->
-                <!--                    android:layout_marginRight="50dp"-->
-                <!--                    android:background="@drawable/shape_bg_vlc_lock"-->
-                <!--                    android:padding="@dimen/dp_2"-->
-                <!--                    android:scaleType="centerInside"-->
-                <!--                    android:src="@drawable/video_lock_open_ic"-->
-                <!--                    android:tag="unLock"-->
-                <!--                    android:visibility="visible" />-->
-
-
                 <com.company.iendo.widget.vlc.ENDownloadView
                     android:id="@+id/control_load_view"
                     android:layout_width="28dp"
