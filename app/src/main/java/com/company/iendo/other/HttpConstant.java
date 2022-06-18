@@ -29,7 +29,7 @@ public class HttpConstant {
      * get
      */
 //    http://192.168.64.28:7001/case/list
-    public static final String CaseManager_List ="/case/list";
+    public static final String CaseManager_List = "/case/list";
 
 
     /**
@@ -99,6 +99,11 @@ public class HttpConstant {
      */
     public static final String CaseManager_CaseUpdateHospitalInfo = "/case/updateHospitalInfo";
 
+    /**
+     * 2.0  获取当前语音通话的voiceID    255或者加入设备列表之后返回的voiceID一致,开启视频流声音
+     * voiceID 表示分配给移动端拨号号码，由设备分配，移动端需保存
+     */
+    public static final String UserManager_getVoiceID = "/case/serverStatus";
     /**
      * 2.2 上传医院徽标
      * post uploadHospitalLogo
@@ -173,7 +178,7 @@ public class HttpConstant {
      */
     public static final String UserManager_changePurviewDetail = "/users/changePurviewDetail";
 
-  /**
+    /**
      * 1.9 用户详情
      */
     public static final String UserManager_userDetail = "/users/detail";

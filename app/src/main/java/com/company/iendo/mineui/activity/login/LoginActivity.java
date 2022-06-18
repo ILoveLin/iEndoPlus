@@ -36,6 +36,7 @@ import com.company.iendo.bean.LoginBean;
 import com.company.iendo.bean.RefreshEvent;
 import com.company.iendo.bean.UserListBean;
 import com.company.iendo.bean.UserReloBean;
+import com.company.iendo.bean.socket.HandBean;
 import com.company.iendo.green.db.DeviceDBUtils;
 import com.company.iendo.green.db.UserDBBean;
 import com.company.iendo.green.db.UserDBUtils;
@@ -59,6 +60,7 @@ import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.MD5ChangeUtil;
 import com.company.iendo.utils.ScreenSizeUtil;
 import com.company.iendo.utils.SharePreferenceUtil;
+import com.company.iendo.utils.SocketUtils;
 import com.gyf.immersionbar.ImmersionBar;
 import com.hjq.base.BaseDialog;
 import com.hjq.base.BasePopupWindow;
@@ -692,6 +694,19 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                                 MainActivity.start(getContext(), CaseManageFragment.class);
                                 //初始化握手保活服务
                                 initHandService();
+                                //发送登录命令
+                                HandBean handBean = new HandBean();
+                                handBean.setHelloPc("");
+                                handBean.setComeFrom("");
+                                byte[] sendByteData = CalculateUtils.getSendByteData(LoginActivity.this, mGson.toJson(handBean), mCurrentTypeNum+"", mCurrentReceiveDeviceCode,
+                                        Constants.UDP_43);
+
+                                if (("".equals(mSocketPort))) {
+                                    toast("通讯端口不能为空");
+                                    return;
+                                }
+
+                                SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), LoginActivity.this);
                                 finish();
                             } else {
                                 toast("密码错误");

@@ -12,7 +12,7 @@ import com.company.iendo.bean.event.SocketRefreshEvent;
 import com.company.iendo.bean.socket.DeleteUserBean;
 import com.company.iendo.bean.socket.DeletedPictureBean;
 import com.company.iendo.bean.socket.DeletedVideoBean;
-import com.company.iendo.bean.socket.MicResponseBean;
+import com.company.iendo.bean.socket.MicSocketResponseBean;
 import com.company.iendo.bean.socket.RecodeBean;
 import com.company.iendo.bean.socket.UpdateCaseBean;
 import com.company.iendo.bean.socket.getpicture.ColdPictureBean;
@@ -238,10 +238,10 @@ public class ReceiveSocketService extends AbsWorkService {
                                 String dataString = CalculateUtils.getReceiveDataString(resultData);
                                 String appName = getAppName(context);
                                 int currentLocalReceivePort = mmkv.decodeInt(Constants.KEY_LOCAL_RECEIVE_PORT, 7005);  //实时记录本地监听的端口
-                                 if (currentLocalReceivePort == mLocalReceivePort) {
+                                if (currentLocalReceivePort == mLocalReceivePort) {
                                 } else {
-                                     LogUtils.e(TAG + "线程设置的监听的port=:" + mLocalReceivePort + ",当前需要监听的port==:" + currentLocalReceivePort);
-                                     LogUtils.e(TAG + "线程,两者监听端口不一致" + "线程:" + currentThread().getName() + "退出!");
+                                    LogUtils.e(TAG + "线程设置的监听的port=:" + mLocalReceivePort + ",当前需要监听的port==:" + currentLocalReceivePort);
+                                    LogUtils.e(TAG + "线程,两者监听端口不一致" + "线程:" + currentThread().getName() + "退出!");
                                     break;
                                 }
                                 LogUtils.e(TAG + "AppName==:" + appName);
@@ -312,7 +312,7 @@ public class ReceiveSocketService extends AbsWorkService {
 //                                                    LogUtils.e("======GetPictureActivity==回调形式:--->=CMD=jsonID==" + jsonID);
                                                 String jsonID = CalculateUtils.hex16To10(mUserIDBean.getRecordid()) + "";
                                                 //避免上位机多次切换,长显错乱bug
-                                                MMKV.defaultMMKV().encode(Constants.KEY_CurrentLongSeeCaseID,jsonID);
+                                                MMKV.defaultMMKV().encode(Constants.KEY_CurrentLongSeeCaseID, jsonID);
                                                 //必须从新取数据不然会错乱
                                                 String spCaseID = MMKV.defaultMMKV().decodeString(Constants.KEY_CurrentCaseID);
                                                 if (spCaseID.equals(jsonID)) {
@@ -512,14 +512,28 @@ public class ReceiveSocketService extends AbsWorkService {
                                             }
 
                                             break;
-                                        case Constants.UDP_F4://语音接入
+                                        case Constants.UDP_41://语音接入
                                             try {
-                                                LogUtils.e(TAG + "回调形式:--->语音接入");
-                                                MicResponseBean micResponseBean = mGson.fromJson(str, MicResponseBean.class);
+                                                LogUtils.e(TAG + "回调形式:--->语音接入:" + str);
+                                                MicSocketResponseBean micSocketResponseBean = mGson.fromJson(str, MicSocketResponseBean.class);
+                                                mmkv.encode(Constants.KET_MIC_VOICE_ID_FOR_ME, micSocketResponseBean.getVoiceID()+"");
                                                 event.setTga(true);
-                                                event.setData(micResponseBean.getUrl());//传递url
-                                                event.setIp(micResponseBean.getOnline());//传递是否在线(0：离线 1:上线)
-                                                event.setUdpCmd(Constants.UDP_F4);
+                                                event.setData(micSocketResponseBean.getUrl());
+                                                event.setIp(micSocketResponseBean.getOperation());
+                                                event.setUdpCmd(Constants.UDP_41);
+                                                EventBus.getDefault().postSticky(event);
+                                            } catch (Exception e) {
+                                                LogUtils.e(TAG + "回调形式:--->语音接入==Exception==str==" + str);
+                                            }
+
+                                            break;
+                                        case Constants.UDP_42://语音接入,语音广播通知命令,监听到重新获取vioceID
+                                            try {
+                                                LogUtils.e(TAG + "回调形式:--->语音接入,语音广播通知命令:" + str);
+                                                event.setTga(true);
+                                                event.setData("");
+                                                event.setIp("");
+                                                event.setUdpCmd(Constants.UDP_42);
                                                 EventBus.getDefault().postSticky(event);
                                             } catch (Exception e) {
                                                 LogUtils.e(TAG + "回调形式:--->语音接入==Exception==str==" + str);

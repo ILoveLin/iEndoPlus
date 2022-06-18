@@ -240,9 +240,20 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/ff_player_all"
-                        android:layout_marginTop="@dimen/dp_10"
                         android:orientation="vertical">
                         <!--录像 采图 冻结 语音-->
+                        <TextView
+                            android:id="@+id/tv_mic_statue"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginTop="@dimen/dp_5"
+                            android:layout_marginRight="@dimen/dp_10"
+                            android:layout_marginBottom="@dimen/dp_5"
+                            android:gravity="end|center"
+                            android:text="语音通话已连接"
+                            android:textSize="@dimen/sp_11" />
+
                         <RelativeLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content">
@@ -347,7 +358,7 @@
                                     android:layout_marginBottom="@dimen/dp_6"
                                     android:gravity="center"
                                     android:tag="stopStream"
-                                    android:text="语音通话"
+                                    android:text="开启麦克风"
                                     android:textColor="@color/white"
                                     android:textSize="@dimen/sp_14" />
                             </LinearLayout>
@@ -526,58 +537,58 @@
                 <!--刷新和加载更多设置-->
                 <!--app:srlEnableAutoLoadMore="false"-->
                 <!--app:srlEnableLoadMore="true"-->
-<!--                <com.scwang.smart.refresh.layout.SmartRefreshLayout-->
-<!--                    android:id="@+id/rl_b_refresh"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="match_parent"-->
-<!--                    app:srlEnablePureScrollMode="true">-->
+                <!--                <com.scwang.smart.refresh.layout.SmartRefreshLayout-->
+                <!--                    android:id="@+id/rl_b_refresh"-->
+                <!--                    android:layout_width="match_parent"-->
+                <!--                    android:layout_height="match_parent"-->
+                <!--                    app:srlEnablePureScrollMode="true">-->
 
 
-                    <RelativeLayout
+                <RelativeLayout
 
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/tv_recycle_empty"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent">
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="暂无数据!"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/sp_14"
+                        android:visibility="invisible" />
 
-                        <TextView
-                            android:id="@+id/tv_recycle_empty"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:gravity="center"
-                            android:text="暂无数据!"
-                            android:textColor="@color/black"
-                            android:textSize="@dimen/sp_14"
-                            android:visibility="invisible" />
-
-                        <com.hjq.widget.layout.WrapRecyclerView
-                            android:id="@+id/rv_b_recyclerview"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:background="@color/white"
-                            android:scrollbars="vertical"
-                            android:visibility="visible"
-                            tools:listCount="10"
-                            tools:listitem="@layout/picker_item" />
+                    <com.hjq.widget.layout.WrapRecyclerView
+                        android:id="@+id/rv_b_recyclerview"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@color/white"
+                        android:scrollbars="vertical"
+                        android:visibility="visible"
+                        tools:listCount="10"
+                        tools:listitem="@layout/picker_item" />
 
 
-                        <Button
-                            android:id="@+id/btn_sure_change"
-                            android:layout_width="@dimen/dp_80"
-                            android:layout_height="@dimen/dp_38"
-                            android:layout_alignParentBottom="true"
-                            android:layout_centerHorizontal="true"
-                            android:layout_gravity="center_horizontal"
-                            android:layout_marginBottom="@dimen/dp_10"
-                            android:layout_toLeftOf="@+id/view_point"
-                            android:background="@drawable/selector_item_shot"
-                            android:foreground="@null"
-                            android:text="确定切换"
-                            android:textColor="@color/white90"
-                            android:textSize="@dimen/sp_16" />
+                    <Button
+                        android:id="@+id/btn_sure_change"
+                        android:layout_width="@dimen/dp_80"
+                        android:layout_height="@dimen/dp_38"
+                        android:layout_alignParentBottom="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginBottom="@dimen/dp_10"
+                        android:layout_toLeftOf="@+id/view_point"
+                        android:background="@drawable/selector_item_shot"
+                        android:foreground="@null"
+                        android:text="确定切换"
+                        android:textColor="@color/white90"
+                        android:textSize="@dimen/sp_16" />
 
-                    </RelativeLayout>
+                </RelativeLayout>
 
 
-<!--                </com.scwang.smart.refresh.layout.SmartRefreshLayout>-->
+                <!--                </com.scwang.smart.refresh.layout.SmartRefreshLayout>-->
 
             </LinearLayout>
         </RelativeLayout>

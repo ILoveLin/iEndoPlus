@@ -147,10 +147,14 @@ public class Constants {
     public static final String UDP_18 = "18";                              //录像    //录像--->0：查询录像状态 1：开始录像，，(我的命令)2：停止录像，(我的命令)3：正在录像，(后台返回操作)  4：未录像(后台返回操作)
     public static final String UDP_F5 = "F5";                              //查询 设备参数
     public static final String UDP_F6 = "F6";                              //设置 设备参数
-    public static final String UDP_F4 = "F4";                              //语音接入
+    public static final String UDP_41 = "41";                              //语音接入
+    public static final String UDP_42 = "42";                              //语音广播通知命令,监听到重新获取vioceID
+    public static final String UDP_43 = "43";                              //登录命令：0x43
+//    public static final String UDP_F4 = "F4";                              //语音接入
     public static final String UDP_F7 = "F7";                              //通知权限变动    //相同用户名的时候 重新刷新权限
     public static final String UDP_FE = "FE";                              //程序退出命令  -->退出登录的时候发消息
     public static final String UDP_40 = "40";                              //刷新医院信息  -->从新请求数据库刷新界面
+
 
     public static final String UDP_CUSTOM14 = "UDP_CUSTOM14";                           //自定义命令     在图像采集界面,接受到删除病例,需要退到病例列表界面而不是回退病例详情界面
     public static final String UDP_CUSTOM_FINISH = "UDP_CUSTOM_FINISH";                 //自定义命令     结束DetailCaseActivity界面
@@ -158,6 +162,8 @@ public class Constants {
     public static final String UDP_CUSTOM_RESTART = "UDP_CUSTOM_RESTART";               //自定义命令     监听线程异常需要重启
     public static final String UDP_CUSTOM_DOWN_OVER = "UDP_CUSTOM_DOWN_OVER";           //自定义命令     图片下载完成
 
+    public static final String KET_MIC_CURRENT_VOICE_ID = "KET_MIC_CURRENT_VOICE_ID";   //语音通话当前的voiceID,默认255,上位机当前需要播放声音的ID
+    public static final String KET_MIC_VOICE_ID_FOR_ME = "KET_MIC_VOICE_ID_FOR_ME";   //语音通话,上位机分配给我的ID
 
     /**
      * 视频下载状态值标识
@@ -200,7 +206,7 @@ public class Constants {
     public static final String Type_FuKeTable_Password = "root";                             //密码
     public static final String Type_FuKeTable_HttpPort = "7001";                             //HttpPort
     public static final String Type_FuKeTable_LivePort = "7788";                             //LivePort
-    public static final String Type_FuKeTable_SocketPort = "8005";                           //SocketPort
+    public static final String Type_FuKeTable_SocketPort = "7006";                           //SocketPort
     public static final String Type_FuKeTable_MicPort = "7789";                              //MicPort
 
 
@@ -212,7 +218,7 @@ public class Constants {
     public static final String Type_V1_YiTiJi_Password = "root";                             //密码
     public static final String Type_V1_YiTiJi_HttpPort = "7001";                             //HttpPort
     public static final String Type_V1_YiTiJi_LivePort = "7788";                             //LivePort
-    public static final String Type_V1_YiTiJi_SocketPort = "8005";                           //SocketPort
+    public static final String Type_V1_YiTiJi_SocketPort = "7006";                           //SocketPort
     public static final String Type_V1_YiTiJi_MicPort = "7789";                              //MicPort
 
 
@@ -224,7 +230,7 @@ public class Constants {
     public static final String Type_EarNoseTable_Password = "root";                           //密码
     public static final String Type_EarNoseTable_HttpPort = "7001";                           //HttpPort
     public static final String Type_EarNoseTable_LivePort = "7788";                           //LivePort
-    public static final String Type_EarNoseTable_SocketPort = "8005";                         //SocketPort
+    public static final String Type_EarNoseTable_SocketPort = "7006";                         //SocketPort
     public static final String Type_EarNoseTable_MicPort = "7789";                            //MicPort
 
     //泌尿--喉治疗台
@@ -235,7 +241,7 @@ public class Constants {
     public static final String Type_MiNiaoTable_Password = "root";                             //密码
     public static final String Type_MiNiaoTable_HttpPort = "7001";                             //HttpPort
     public static final String Type_MiNiaoTable_LivePort = "7788";                             //LivePort
-    public static final String Type_MiNiaoTable_SocketPort = "8005";                           //SocketPort
+    public static final String Type_MiNiaoTable_SocketPort = "7006";                           //SocketPort
     public static final String Type_MiNiaoTable_MicPort = "7789";                              //MicPort
 
 

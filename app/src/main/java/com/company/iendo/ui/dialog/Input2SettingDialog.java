@@ -8,7 +8,6 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
 
 import com.company.iendo.R;
 import com.company.iendo.aop.SingleClick;
@@ -30,14 +29,16 @@ public final class Input2SettingDialog {
 
         @Nullable
         private OnListener mListener;
-        private final RegexEditText mInput2View;
+        private final RegexEditText mInput2ViewLocal,mInput2ViewServer;
 
         public Builder(Context context) {
             super(context);
             setCustomView(R.layout.input2_setting_dialog);
 
-            mInput2View = findViewById(R.id.tv_input_message2);
-            mInput2View.setOnEditorActionListener(this);
+            mInput2ViewLocal = findViewById(R.id.tv_input_message2_local);
+            mInput2ViewServer = findViewById(R.id.tv_input_message2_server);
+            mInput2ViewLocal.setOnEditorActionListener(this);
+            mInput2ViewServer.setOnEditorActionListener(this);
 
             addOnShowListener(this);
         }
@@ -45,15 +46,15 @@ public final class Input2SettingDialog {
 
 
         public Builder set2Hint(CharSequence text) {
-            mInput2View.setHint(text);
+            mInput2ViewLocal.setHint(text);
             return this;
         }
 
 
 
-        public Builder set2Content(CharSequence text) {
-            mInput2View.setText(text);
-            Editable editable = mInput2View.getText();
+        public Builder set2LocalContent(CharSequence text) {
+            mInput2ViewLocal.setText(text);
+            Editable editable = mInput2ViewLocal.getText();
             if (editable == null) {
                 return this;
             }
@@ -61,15 +62,30 @@ public final class Input2SettingDialog {
             if (index <= 0) {
                 return this;
             }
-            mInput2View.requestFocus();
-            mInput2View.setSelection(index);
+            mInput2ViewLocal.requestFocus();
+            mInput2ViewLocal.setSelection(index);
+            return this;
+        }
+
+        public Builder set2ServerContent(CharSequence text) {
+            mInput2ViewServer.setText(text);
+            Editable editable = mInput2ViewServer.getText();
+            if (editable == null) {
+                return this;
+            }
+            int index = editable.length();
+            if (index <= 0) {
+                return this;
+            }
+            mInput2ViewServer.requestFocus();
+            mInput2ViewServer.setSelection(index);
             return this;
         }
 
 
 
         public Builder setInput2Regex(String regex) {
-            mInput2View.setInputRegex(regex);
+            mInput2ViewLocal.setInputRegex(regex);
             return this;
         }
 
@@ -84,7 +100,7 @@ public final class Input2SettingDialog {
          */
         @Override
         public void onShow(BaseDialog dialog) {
-            postDelayed(() -> showKeyboard(mInput2View), 500);
+            postDelayed(() -> showKeyboard(mInput2ViewLocal), 500);
         }
 
         @SingleClick
@@ -96,8 +112,9 @@ public final class Input2SettingDialog {
                 if (mListener == null) {
                     return;
                 }
-                Editable editable2 = mInput2View.getText();
-                mListener.onConfirm(getDialog(), editable2 != null ? editable2.toString() : "");
+                Editable editable2Local = mInput2ViewLocal.getText();
+                Editable editable2Server = mInput2ViewServer.getText();
+                mListener.onConfirm(getDialog(), editable2Local != null ? editable2Local.toString() : "",editable2Server != null ? editable2Server.toString() : "");
             } else if (viewId == R.id.tv_ui_cancel) {
                 autoDismiss();
                 if (mListener == null) {
@@ -126,7 +143,7 @@ public final class Input2SettingDialog {
         /**
          * 点击确定时回调
          */
-        void onConfirm(BaseDialog dialog,  String content2);
+        void onConfirm(BaseDialog dialog,  String content2Local,String content2Server);
 
         /**
          * 点击取消时回调

@@ -92,6 +92,8 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
         @Override
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
+            LogUtils.e("病例列表=....====mHandler===" + mCaseID);
+
             sendSocketPointMessage(Constants.UDP_F0);
 
         }
@@ -352,7 +354,7 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
             sendRequest(currentChoseDate);
         }
         sendHandLinkMessage();
-        sendSocketPointMessage(Constants.UDP_F0);
+        mHandler.sendEmptyMessageDelayed(1,1000);
     }
 
     /**

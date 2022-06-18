@@ -10,12 +10,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/dp_15"
-        android:text="本地广播发送端口"
+        android:text="本地监听端口"
         android:textColor="@color/black"
         android:textSize="@dimen/sp_14" />
 
     <com.hjq.widget.view.RegexEditText
-        android:id="@+id/tv_input_message2"
+        android:id="@+id/tv_input_message2_local"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/dp_15"
@@ -23,8 +23,29 @@
         android:paddingVertical="@dimen/dp_5"
         android:singleLine="true"
         android:inputType="number"
-        android:text="8008"
+        android:text="7005"
+        android:textColor="@color/black"
+        android:textColorHint="@color/color_B4B5B5"
+        android:textSize="@dimen/sp_14" />
+    <TextView
+        android:layout_marginTop="@dimen/dp_10"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/dp_15"
+        android:text="广播目标端口"
+        android:textColor="@color/black"
+        android:textSize="@dimen/sp_14" />
 
+    <com.hjq.widget.view.RegexEditText
+        android:id="@+id/tv_input_message2_server"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/dp_15"
+        android:paddingHorizontal="@dimen/dp_10"
+        android:paddingVertical="@dimen/dp_5"
+        android:singleLine="true"
+        android:inputType="number"
+        android:text="7006"
         android:textColor="@color/black"
         android:textColorHint="@color/color_B4B5B5"
         android:textSize="@dimen/sp_14" />

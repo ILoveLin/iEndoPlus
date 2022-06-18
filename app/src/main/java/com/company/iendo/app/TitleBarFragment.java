@@ -83,7 +83,7 @@ public abstract class TitleBarFragment<A extends AppActivity> extends AppFragmen
         mCurrentTypeNum = (int) SharePreferenceUtil.get(getAttachActivity(), SharePreferenceUtil.Current_Type_Num, 0x07);
         mCurrentReceiveDeviceCode = (String) SharePreferenceUtil.get(getAttachActivity(), SharePreferenceUtil.Current_DeviceCode, "00000000000000000000000000000000");
         mSocketOrLiveIP = (String) SharePreferenceUtil.get(getAttachActivity(), SharePreferenceUtil.Current_IP, "192.168.132.102");
-        mSocketPort = (String) SharePreferenceUtil.get(getAttachActivity(), SharePreferenceUtil.Current_SocketPort, "8005");
+        mSocketPort = (String) SharePreferenceUtil.get(getAttachActivity(), SharePreferenceUtil.Current_SocketPort, "7006");
         //Wifi状态判断
         WifiManager wifiManager = (WifiManager) getAttachActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         if (wifiManager.isWifiEnabled()) {

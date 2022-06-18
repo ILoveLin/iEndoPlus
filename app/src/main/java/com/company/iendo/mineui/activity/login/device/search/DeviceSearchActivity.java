@@ -170,36 +170,49 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
 
     private void showSettingDialog() {
         int mCurrentServerPort = mMMKVInstace.decodeInt(Constants.KEY_BROADCAST_SERVER_PORT);
+        int mCurrentLocalPort = mMMKVInstace.decodeInt(Constants.KEY_LOCAL_RECEIVE_PORT);
         new Input2SettingDialog.Builder(getActivity())
                 .setTitle("配置信息")
-                .set2Content(mCurrentServerPort + "")
+                .set2LocalContent(mCurrentLocalPort + "")
+                .set2ServerContent(mCurrentServerPort + "")
                 .setCancel("取消")
                 .setConfirm("确定")
                 .setListener(new Input2SettingDialog.OnListener() {
                     @Override
-                    public void onConfirm(BaseDialog dialog, String settingPort) {
+                    public void onConfirm(BaseDialog dialog, String localPort, String serverPort) {
                         ReceiveSocketService receiveSocketService = new ReceiveSocketService();
                         WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
                         if (wifiManager.isWifiEnabled()) {
                             WifiInfo wifiInfo = wifiManager.getConnectionInfo();
                             mAppIP = getIpString(wifiInfo.getIpAddress());
                         }
-                        if ("".equals(settingPort)) {
-                            toast("本地广播发送端口不能为空");
-                            return;
+                        if ("".equals(serverPort)) {
+                            toast("广播目标端口不能为空");
+                        } else if ("".equals(localPort)) {
+                            toast("本地监听端口不能为空");
+
                         } else {
-                            //获取当前开启的接收端口
-                            if (mCurrentServerPort == Integer.parseInt(settingPort)) {//相等,此时不需要开启新的线程
-                                toast("此端口已配置,请勿重复操作!");
+                            //获取当前广播目标端口
+                            if (mCurrentServerPort == Integer.parseInt(serverPort)) {
+                                toast("广播目标端口已配置,请勿重复操作!");
+                            } else {
+                                toast("广播目标端口已配置成功!");
+                                mMMKVInstace.encode(Constants.KEY_BROADCAST_SERVER_PORT, Integer.parseInt(serverPort));
+
+                            }
+                            //获取当前本地监听端口
+                            if (mCurrentLocalPort == Integer.parseInt(localPort)) {
+                                toast("本地监听端口已配置,请勿重复操作!");
                             } else {
                                 mMMKVInstace.encode(Constants.KEY_SOCKET_RECEIVE_FIRST_IN, true);
                                 //服务器端口
-                                mMMKVInstace.encode(Constants.KEY_BROADCAST_SERVER_PORT, Integer.parseInt(settingPort));
+                                mMMKVInstace.encode(Constants.KEY_LOCAL_RECEIVE_PORT, Integer.parseInt(localPort));
                                 receiveSocketService.setSettingReceiveThread(mAppIP, Constants.LOCAL_RECEIVE_PORT, DeviceSearchActivity.this);
+                                toast("本地监听端口已配置成功!");
                                 //再次打开搜索动画
                                 showSearchDialog();
-                            }
 
+                            }
 
                         }
                     }
@@ -811,11 +824,11 @@ public class DeviceSearchActivity extends AppActivity implements StatusAction, B
      */
     public int getDeviceTypeNum(String str) {
         if (Constants.Type_V1_YiTiJi.equals(str)) {
-            return Constants.Type_07 ;
+            return Constants.Type_07;
         } else if (Constants.Type_EarNoseTable.equals(str)) {
-            return Constants.Type_08 ;
+            return Constants.Type_08;
         } else if (Constants.Type_FuKeTable.equals(str)) {
-            return Constants.Type_09 ;
+            return Constants.Type_09;
         } else if (Constants.Type_MiNiaoTable.equals(str)) {
             return Constants.Type_0A;
         }

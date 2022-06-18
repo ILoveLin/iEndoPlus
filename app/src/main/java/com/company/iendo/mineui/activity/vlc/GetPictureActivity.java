@@ -4,9 +4,11 @@ import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -27,15 +29,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.company.iendo.R;
 import com.company.iendo.action.StatusAction;
-import com.company.iendo.aop.SingleClick;
 import com.company.iendo.app.AppActivity;
 import com.company.iendo.bean.CaseDetailBean;
 import com.company.iendo.bean.CaseManageListBean;
+import com.company.iendo.bean.MicVoiceBean;
 import com.company.iendo.bean.UserReloBean;
 import com.company.iendo.bean.event.RefreshCaseMsgEvent;
 import com.company.iendo.bean.event.SocketRefreshEvent;
 import com.company.iendo.bean.socket.HandBean;
-import com.company.iendo.bean.socket.MicRequestBean;
+import com.company.iendo.bean.socket.MicSocketBean;
 import com.company.iendo.bean.socket.RecodeBean;
 import com.company.iendo.bean.socket.getpicture.ShotPictureBean;
 import com.company.iendo.bean.socket.params.DeviceParamsBean;
@@ -134,6 +136,8 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
     private boolean mFlagMicOnLine = false;
     private TextView mRecordMsg;
     private RtmpOnlyAudio rtmpOnlyAudio;
+    private AudioManager mAudiomanager;
+    private int mCurrentVolume;
     private String itemID;
     private String mTypeText = "高清HD";
     private List<CaseManageListBean.DataDTO> mDataLest = new ArrayList<>();      //切换界面的list数据
@@ -178,6 +182,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                     mTopControl.setVisibility(View.INVISIBLE);
                     mRightLiveTypeControl.setVisibility(View.INVISIBLE);
                     mBottomControl.setVisibility(View.INVISIBLE);
+                    mMicStatueView.setVisibility(View.INVISIBLE);
                     break;
                 case Unlock: //解锁
                     mLockScreen.setImageDrawable(getResources().getDrawable(R.drawable.video_lock_open_ic));
@@ -186,6 +191,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                     mTopControl.setVisibility(View.VISIBLE);
                     mRightLiveTypeControl.setVisibility(View.VISIBLE);
                     mBottomControl.setVisibility(View.VISIBLE);
+
                     break;
 //                case Record:
 ////                    0：查询录像状态 1：开始录像，2：停止录像，3：正在录像  4：未录像
@@ -273,6 +279,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
     private Button mBtnSureChange;
     private String itemCaseID;
     private CaseManageListBean.DataDTO itemBean;
+    private TextView mMicStatueView;
 
     /**
      * eventbus 刷新socket数据
@@ -285,6 +292,13 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                 LogUtils.e("握手服务====" + HandService.UDP_HAND_GLOBAL_TAG);
                 mCurrentSocketStatue.setTextColor(getResources().getColor(R.color.color_25A5FF));
                 mCurrentSocketStatue.setText(Constants.SOCKET_STATUE_ONLINE);
+                if (View.VISIBLE == mMicStatueView.getVisibility()) { //表示正在和我通话
+                    mCurrentSocketStatue.setTextColor(getResources().getColor(R.color.color_25A5FF));
+                    mCurrentSocketStatue.setText("远程设备通讯已连接,语音通话状态:已接通");
+                } else {
+                    mCurrentSocketStatue.setTextColor(getResources().getColor(R.color.color_25A5FF));
+                    mCurrentSocketStatue.setText("远程设备通讯已连接,语音通话状态:未接通");
+                }
                 break;
             case Constants.UDP_CUSTOM_TOAST://吐司
                 toast("" + data);
@@ -342,43 +356,164 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                     requestCurrentPermission();
                 }
                 break;
-            case Constants.UDP_F4://语音接入
-                //url
-                micUrl = event.getData();
-                String onLine = event.getIp();//(0：离线 1:上线)
-                Log.e("TAG", "RtmpOnlyAudio===onDisconnectRtmp==micUrl===" + micUrl);
+            case Constants.UDP_42://语音接入,语音广播通知命令,监听到重新获取vioceID
+                getVoiceIDRequest();
+                break;
+            case Constants.UDP_41://语音接入
+                String Operation = event.getIp();
+                String url = event.getData();
+                //Operation
+                //0：表示不做任何事情
+                //1: 请求加入列表（功能开启）
+                //2：请上传音频流到Nginx；
+                //3：请从Nginx拉取音频流
+                //5：通话结束
+                //6：请求从列表中删除（功能关闭）
 
-                if ("1".equals(onLine)) {
-                    if (!"".equals(micUrl) && rtmpOnlyAudio.prepareAudio()) {
-                        //获取当前UI tag
-                        String tag = (String) mTvMicStatus.getTag();
-                        //此时是关闭状态,请求推流的回调
-                        if ("stopStream".equals(tag)) {
-                            setMicStatus("startStream", "状态:已连接");
-                            rtmpOnlyAudio.startStream(micUrl);
-                            toast("开始推流");
-                            Log.e("TAG", "RtmpOnlyAudio===onDisconnectRtmp==开始推流===");
-//                            setMicStatus("startStream", "通话中..");
-                            //此时是开启状态,请求关闭推流的回调
-                        } else if ("startStream".equals(tag)) {
-                            rtmpOnlyAudio.stopStream();
-                            toast("关闭推流");
-                            setMicStatus("stopStream", "语音通话");
-                            Log.e("TAG", "RtmpOnlyAudio===onDisconnectRtmp==关闭推流===");
+                if (Operation.equals("2")) {
+                    upLoadStreamToNginx(url);
 
-//                            setMicStatus("stopStream", "语音通话");
-                        }
-                    }
-                } else {
-                    toast("设备语音服务器未在线，连接失败");
+                } else if (Operation.equals("3")) {
+//                    mTvMicStatus.setTag("startStream");
+//                    mTvMicStatus.setText("关闭麦克风");
+//                    MicSocketBean bean = new MicSocketBean();
+//                    bean.setErrCode("0");
+//                    bean.setOperation("1");
+//                    bean.setVoiceID("");
+//                    bean.setStringParam(SystemUtil.getDeviceBrand() + "_" + SystemUtil.getSystemModel() + "_" + mLoginUserName);
+//                    bean.setUrl("");
+//                    sendSocketPointMicMessage(bean);
+
+                } else if (Operation.equals("5")) {
+                    stopMicSteam();
+
+                } else if (Operation.equals("6")) {
+//                    mTvMicStatus.setTag("stopStream");
+//                    mTvMicStatus.setText("开启麦克风");
+//                    MicSocketBean bean = new MicSocketBean();
+//                    bean.setErrCode("0");
+//                    bean.setOperation("6");
+//                    bean.setVoiceID("");
+//                    bean.setStringParam(SystemUtil.getDeviceBrand() + "_" + SystemUtil.getSystemModel() + "_" + mLoginUserName);
+//                    bean.setUrl("");
+//                    sendSocketPointMicMessage(bean);
+
                 }
                 break;
         }
 
     }
 
+    private void stopMicSteam() {
+        rtmpOnlyAudio.stopStream();
+        mMicStatueView.setVisibility(View.INVISIBLE);
+
+    }
+
     /**
-     * 获取麦克风权限
+     * 上传音频流到Nginx;
+     *
+     * @param url
+     */
+    private void upLoadStreamToNginx(String url) {
+
+//        flase 表示未开启推流
+        if (HandService.UDP_HAND_GLOBAL_TAG) {//握手成功
+            if (!rtmpOnlyAudio.isStreaming()) {//false 表示还未开启推流
+                if (rtmpOnlyAudio.prepareAudio()) {
+                    //握手成功,
+                    if (HandService.UDP_HAND_GLOBAL_TAG) {
+                        rtmpOnlyAudio.startStream(url);
+                    } else {
+                        LogUtils.e(Constants.HAVE_HAND_FAIL_OFFLINE);
+                    }
+
+                } else {
+                    toast("未获取到麦克风权限");
+
+                }
+            } else {
+                if (rtmpOnlyAudio.prepareAudio()) {
+                    //握手成功,
+                    if (HandService.UDP_HAND_GLOBAL_TAG) {
+                        rtmpOnlyAudio.startStream(url);
+                    } else {
+                        LogUtils.e(Constants.HAVE_HAND_FAIL_OFFLINE);
+                    }
+                } else {
+                    toast("未获取到麦克风权限");
+
+                }
+            }
+
+
+        } else {
+            LogUtils.e(Constants.HAVE_HAND_FAIL_OFFLINE);
+        }
+
+
+    }
+
+    /**
+     * 获取当前上位机VoiceID
+     */
+    public void getVoiceIDRequest() {
+        OkHttpUtils.get()
+                .url(mBaseUrl + HttpConstant.UserManager_getVoiceID)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        Log.e("TAG", "RtmpOnlyAudio===onDisconnectRtmp==关闭推流===" + response);
+                        if (!"".equals(response)) {
+                            MicVoiceBean micVoiceBean = mGson.fromJson(response, MicVoiceBean.class);
+                            if (micVoiceBean.getCode() == 0) {
+                                //获取当前上位机分配的当前voiceID
+                                mMMKVInstace.encode(Constants.KET_MIC_CURRENT_VOICE_ID, micVoiceBean.getData().getVoiceStationID() + "");
+                                String currentVoiceID = micVoiceBean.getData().getVoiceStationID() + "";
+                                String string = mMMKVInstace.decodeString(Constants.KET_MIC_VOICE_ID_FOR_ME, "ABC");
+
+                                LogUtils.e("TAG" + "回调形式:--->开启视频声音FOR_ME:" + string);
+                                LogUtils.e("TAG" + "回调形式:--->开启视频声音currentVoiceID:" + currentVoiceID);
+                                LogUtils.e("TAG" + "回调形式:--->关闭---视频声音:" + string);
+                                LogUtils.e("TAG" + "回调形式:--------------------------:");
+
+                                if ("255".equals(currentVoiceID) || string.equals(currentVoiceID)) {//255默认开启
+                                    toast("开启视频声音");
+                                    rootView.setLongClickable(true);  //手势需要--能触摸
+                                    rootView.setOnTouchListener(onTouchVideoListener);
+                                    mAudiomanager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+                                    // 获取当前音量值
+                                    mCurrentVolume = mAudiomanager.getStreamVolume(AudioManager.STREAM_MUSIC);
+                                    int mMaxVolume = mAudiomanager.getStreamMaxVolume(AudioManager.STREAM_MUSIC); // 获取系统最大音量
+                                    mAudiomanager.setStreamVolume(AudioManager.STREAM_MUSIC, mMaxVolume / 2, 0);
+                                } else {
+                                    LogUtils.e("TAG" + "回调形式:--->关闭---视频声音:" + string);
+                                    toast("关闭---视频声音");
+                                    mAudiomanager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+                                    // 获取当前音量值
+                                    mCurrentVolume = mAudiomanager.getStreamVolume(AudioManager.STREAM_MUSIC);
+                                    mAudiomanager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0);
+                                    rootView.setOnTouchListener(null);
+                                    rootView.setLongClickable(false);  //手势不需要需要--不能触摸
+                                }
+                            } else {
+                                toast(micVoiceBean.getMsg());
+                            }
+                        }
+
+                    }
+                });
+    }
+
+
+    /**
+     * 获取麦克风权限,并且请求加入列表（功能开启）
      */
     private void getMicPermission() {
         XXPermissions.with(this)
@@ -387,57 +522,28 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                     @Override
                     public void onGranted(List<String> permissions, boolean all) {
                         if (all) {
-                            //flase 表示未开启推流
-                            if (HandService.UDP_HAND_GLOBAL_TAG) {//握手成功
-                                if (!rtmpOnlyAudio.isStreaming()) {//false 表示还未开启推流
-                                    if (rtmpOnlyAudio.prepareAudio()) {
-                                        //握手成功,
-                                        if (HandService.UDP_HAND_GLOBAL_TAG) {
-                                            //tag为关闭状态(默认是关闭状态)点击的时候如果关闭状态就开启推流
-                                            if ("stopStream".equals(mTvMicStatus.getTag())) {
-                                                sendSocketPointMicMessage("1");
-                                                mTvMicStatus.setText("状态:连接中");
-                                            } else if ("startStream".equals(mTvMicStatus.getTag())) {
-                                                mTvMicStatus.setText("语音通话");
-                                                sendSocketPointMicMessage("0");
-                                            }
-                                        } else {
-                                            LogUtils.e(Constants.HAVE_HAND_FAIL_OFFLINE);
-                                        }
-
-
-                                    } else {
-                                        toast("未获取到麦克风权限");
-
-                                    }
-                                } else {
-                                    if (rtmpOnlyAudio.prepareAudio()) {
-                                        //握手成功,
-                                        if (HandService.UDP_HAND_GLOBAL_TAG) {
-                                            //tag为关闭状态(默认是关闭状态)点击的时候如果关闭状态就开启推流
-                                            if ("stopStream".equals(mTvMicStatus.getTag())) {
-                                                sendSocketPointMicMessage("1");
-                                                mTvMicStatus.setText("状态:连接中");
-                                            } else if ("startStream".equals(mTvMicStatus.getTag())) {
-                                                mTvMicStatus.setText("语音通话");
-                                                sendSocketPointMicMessage("0");
-                                            }
-                                        } else {
-                                            LogUtils.e(Constants.HAVE_HAND_FAIL_OFFLINE);
-                                        }
-
-
-                                    } else {
-                                        toast("未获取到麦克风权限");
-
-                                    }
-                                }
-
-
-                            } else {
-                                LogUtils.e(Constants.HAVE_HAND_FAIL_OFFLINE);
+                            //tag为关闭状态(默认是关闭状态)
+                            if ("stopStream".equals(mTvMicStatus.getTag())) {
+                                mTvMicStatus.setTag("startStream");
+                                mTvMicStatus.setText("关闭麦克风");
+                                MicSocketBean bean = new MicSocketBean();
+                                bean.setErrCode("0");
+                                bean.setOperation("1");
+                                bean.setVoiceID("");
+                                bean.setStringParam(SystemUtil.getDeviceBrand() + "_" + SystemUtil.getSystemModel() + "_" + mLoginUserName);
+                                bean.setUrl("");
+                                sendSocketPointMicMessage(bean);
+                            } else if ("startStream".equals(mTvMicStatus.getTag())) {
+                                mTvMicStatus.setTag("stopStream");
+                                mTvMicStatus.setText("开启麦克风");
+                                MicSocketBean bean = new MicSocketBean();
+                                bean.setErrCode("0");
+                                bean.setOperation("6");
+                                bean.setVoiceID("");
+                                bean.setStringParam(SystemUtil.getDeviceBrand() + "_" + SystemUtil.getSystemModel() + "_" + mLoginUserName);
+                                bean.setUrl("");
+                                sendSocketPointMicMessage(bean);
                             }
-
                         }
                     }
 
@@ -456,10 +562,6 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
 
     }
 
-    private void setMicStatus(String tag, String des) {
-        mTvMicStatus.setTag(tag);
-        mTvMicStatus.setText(des);
-    }
 
     /**
      * 上位机权限变动通知,更新本地权限
@@ -718,19 +820,25 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
 
     /**
      * 发送语音链接
-     *
-     * @param onLineStatus 开关语音标识:(0：离线 1:上线)
+     * MicSocketBean bean
+     * {"ErrCode":"0", "Operation":"1", "voiceID":"22", "StringParam":"MobileName",url:xxxx}
+     * ErrCode 代表错误码，取值解释：
+     * 0：成功，
+     * 1：上传音频流到Nginx失败
+     * 2：Nginx服务未启动
+     * 3：从Nginx取音频流失败
+     * <p>
+     * Operation 表示行为动作， 取值解释：
+     * 0：表示不做任何事情
+     * 1: 请求加入列表（功能开启）
+     * 2：请上传音频流到Nginx；
+     * 3：请从Nginx拉取音频流
+     * 5：通话结束
+     * 6：请求从列表中删除（功能关闭）
      */
-    public void sendSocketPointMicMessage(String onLineStatus) {
-        MicRequestBean micRequestBean = new MicRequestBean();
-        //手机厂商_手机型号_UserName     HUAWEI_SCMR-W09_Admin
-        micRequestBean.setTitle(SystemUtil.getDeviceBrand() + "_" + SystemUtil.getSystemModel() + "_" + mLoginUserName);
-        micRequestBean.setCalltype("rtmp");
-        micRequestBean.setServicemode("1");
-        micRequestBean.setOnline(onLineStatus);
-        byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(micRequestBean), mCurrentTypeNum + "", mCurrentReceiveDeviceCode,
-                Constants.UDP_F4);
-
+    public void sendSocketPointMicMessage(MicSocketBean bean) {
+        byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(bean), mCurrentTypeNum + "", mCurrentReceiveDeviceCode,
+                Constants.UDP_41);
         if (("".equals(mSocketPort))) {
             toast("通讯端口不能为空");
             return;
@@ -1007,7 +1115,6 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
     /**
      * ***************************************************************************通讯模块**************************************************************************
      */
-    @SingleClick
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -1037,7 +1144,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                 sendSocketPointRecodeStatusMessage(Constants.UDP_18, "0");
                 showCloseChangeCaseAnim();
                 //存入MMKV
-                mMMKVInstace.encode(Constants.KEY_CurrentCaseID,mCaseID + "");
+                mMMKVInstace.encode(Constants.KEY_CurrentCaseID, mCaseID + "");
                 //此处还需要给详情界面发送个消息让他刷新界面,不然返回详情界面还是上一个病例的信息
                 EventBus.getDefault().post(new RefreshCaseMsgEvent(mCaseID));
 
@@ -1202,7 +1309,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
 //            case R.id.linear_cold:              //冻结
 //                sendSocketPointMessage(Constants.UDP_F3);
 //                break;
-            case R.id.linear_mic:               //麦克风
+            case R.id.linear_mic:               //麦克风,获取权限
                 getMicPermission();
                 break;
             case R.id.lock_screen:  //锁屏
@@ -1274,11 +1381,16 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                 mStartView.setVisibility(View.VISIBLE);
             }
 
+            @SuppressLint("WrongConstant")
             @Override
             public void eventError(int event, boolean show) {
                 isPlayering = false;
                 mStartView.setVisibility(View.VISIBLE);
                 mLoadingView.setVisibility(View.INVISIBLE);
+                //直播断开,如果正在通话,需要断开连接
+                if (View.VISIBLE == mTvMicStatus.getVisibility()) { //表示正在和我通话
+                    stopMicSteam();
+                }
             }
 
             @Override
@@ -1325,6 +1437,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         mRightLiveTypeControl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+//                stopMicSteam();
                 showSelectedUrlTypeDialog();
             }
 
@@ -1338,7 +1451,24 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                 if (rtmpOnlyAudio.isStreaming()) {
                     rtmpOnlyAudio.stopStream();
                 }
-                setMicStatus("stopStream", "语音通话");
+                mTvMicStatus.setTag("stopStream");
+                mTvMicStatus.setText("开启麦克风");
+                MicSocketBean bean = new MicSocketBean();
+                bean.setErrCode("0");
+                bean.setOperation("6");
+                bean.setVoiceID("");
+                bean.setStringParam(SystemUtil.getDeviceBrand() + "_" + SystemUtil.getSystemModel() + "_" + mLoginUserName);
+                bean.setUrl("");
+                sendSocketPointMicMessage(bean);
+
+                mAudiomanager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+                // 获取当前音量值
+                mCurrentVolume = mAudiomanager.getStreamVolume(AudioManager.STREAM_MUSIC);
+                int mMaxVolume = mAudiomanager.getStreamMaxVolume(AudioManager.STREAM_MUSIC); // 获取系统最大音量
+                mAudiomanager.setStreamVolume(AudioManager.STREAM_MUSIC, mMaxVolume / 2, 0);
+                //重置触摸事件
+                rootView.setLongClickable(true);  //手势需要--能触摸
+                rootView.setOnTouchListener(onTouchVideoListener);
                 finish();
             }
 
@@ -1418,6 +1548,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
      * 不管是锁屏,还是解锁状态下,点击改变控制View的状态显示
      */
     private void changeControlStatus() {
+
         if (mLockScreen.getTag().equals("lock")) {   //当前为-锁屏-状态,需要解锁,默认unlock
             if (lockType) { ////点击界面,显示或者隐藏 控制面板的-标识,默认显示
                 lockType = false;
@@ -1439,6 +1570,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                 mLockScreen.setVisibility(View.VISIBLE);
                 mTopControl.setVisibility(View.VISIBLE);
                 mBottomControl.setVisibility(View.VISIBLE);
+
             }
         }
     }
@@ -1507,6 +1639,8 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         mStartView = findViewById(R.id.control_start_view);
         mImageBack = findViewById(R.id.video_back);
         mRightLiveTypeControl = findViewById(R.id.change_live_type);
+        mMicStatueView = findViewById(R.id.tv_mic_statue);   //语音通话链接成功,才显示状态
+        mMicStatueView.setVisibility(View.INVISIBLE);
 
         //切换病例的界面
         mRelativeChangeAll = findViewById(R.id.relative_change_anim);//整体切换病例界面
@@ -1638,6 +1772,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         super.onResume();
         isFirstIn = true;
         startLive(path);
+        getVoiceIDRequest();
         //握手通讯
         sendRequest(mCaseID);
         //获取当前设备参数
@@ -2004,8 +2139,40 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                toast("语音链接成功");
+//                toast("语音链接成功");
 //                setMicStatus("startStream", "通话中..");
+                /**
+                 * 此处,如果直播流断了,但是上位机呼叫我,我需要重新开启直播,然后连接
+                 */
+
+                if (isPlayering) {
+                    MicSocketBean bean = new MicSocketBean();
+                    bean.setErrCode("0");
+                    bean.setOperation("3");
+                    bean.setVoiceID("");
+                    bean.setStringParam(SystemUtil.getDeviceBrand() + "_" + SystemUtil.getSystemModel() + "_" + mLoginUserName);
+                    bean.setUrl("");
+                    sendSocketPointMicMessage(bean);
+                    mMicStatueView.setVisibility(View.VISIBLE);
+
+                } else {
+                    toast("从新加载视频流!");
+                    startLive(path);
+                    postDelayed(() -> {
+                        MicSocketBean bean = new MicSocketBean();
+                        bean.setErrCode("0");
+                        bean.setOperation("3");
+                        bean.setVoiceID("");
+                        bean.setStringParam(SystemUtil.getDeviceBrand() + "_" + SystemUtil.getSystemModel() + "_" + mLoginUserName);
+                        bean.setUrl("");
+                        sendSocketPointMicMessage(bean);
+                        mMicStatueView.setVisibility(View.VISIBLE);
+                        //再次请求上位机voiceID
+                        getVoiceIDRequest();
+                    }, 1000);
+
+                }
+
 
             }
         });
@@ -2021,9 +2188,19 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
 
                 Log.e("TAG", "RtmpOnlyAudio=====" + reason);
                 toast("语音链接失败: " + reason);
-                mTvMicStatus.setText("状态:未连接");
+//                mTvMicStatus.setText("状态:未连接");
                 rtmpOnlyAudio.stopStream();
-                sendSocketPointMicMessage("0");
+                stopMicSteam();
+//                sendSocketPointMicMessage("0");
+
+                MicSocketBean bean = new MicSocketBean();
+                bean.setErrCode("1");
+                bean.setOperation("3");
+                bean.setVoiceID("");
+                bean.setStringParam(SystemUtil.getDeviceBrand() + "_" + SystemUtil.getSystemModel() + "_" + mLoginUserName);
+                bean.setUrl("");
+                sendSocketPointMicMessage(bean);
+                mMicStatueView.setVisibility(View.INVISIBLE);
 
 
             }
@@ -2044,8 +2221,9 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             public void run() {
                 Log.e("TAG", "RtmpOnlyAudio===onDisconnectRtmp==");
                 toast("语音断开链接 ");
-                setMicStatus("stopStream", "语音通话");
-//                sendSocketPointMicMessage("0");
+//                setMicStatus("stopStream", "语音通话");
+
+
             }
         });
 //        runOnUiThread(new Runnable() {
@@ -2067,7 +2245,15 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             @Override
             public void run() {
                 Log.e("TAG", "RtmpOnlyAudio===onConnectionFailedRtmp==");
-                toast("语音断开链接 ");
+//                toast("语音断开链接 ");
+                MicSocketBean bean = new MicSocketBean();
+                bean.setErrCode("1");
+                bean.setOperation("3");
+                bean.setVoiceID("");
+                bean.setStringParam(SystemUtil.getDeviceBrand() + "_" + SystemUtil.getSystemModel() + "_" + mLoginUserName);
+                bean.setUrl("");
+                sendSocketPointMicMessage(bean);
+                mMicStatueView.setVisibility(View.INVISIBLE);
 
             }
         });
@@ -2076,6 +2262,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
     @Override
     public void onAuthSuccessRtmp() {
         Log.e("TAG", "RtmpOnlyAudio===onAuthSuccessRtmp==");
+
 
     }
 

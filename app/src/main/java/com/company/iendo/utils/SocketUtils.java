@@ -159,7 +159,6 @@ public class SocketUtils {
 
         MMKV mmkv = MMKV.defaultMMKV();
         int mLocalReceivePort= mmkv.decodeInt(Constants.KEY_LOCAL_RECEIVE_PORT);
-
         InetAddress mAddress = null;
         //点对点消息,握手
         try {
