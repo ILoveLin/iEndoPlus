@@ -14,6 +14,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -22,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -386,6 +388,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
 
                 } else if (Operation.equals("5")) {
                     stopMicSteam();
+                    getVoiceIDRequest();
 
                 } else if (Operation.equals("6")) {
 //                    mTvMicStatus.setTag("stopStream");
@@ -454,6 +457,8 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
 
     }
 
+    private boolean mTagCanVoice = false;
+
     /**
      * 获取当前上位机VoiceID
      */
@@ -476,14 +481,14 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                                 //获取当前上位机分配的当前voiceID
                                 mMMKVInstace.encode(Constants.KET_MIC_CURRENT_VOICE_ID, micVoiceBean.getData().getVoiceStationID() + "");
                                 String currentVoiceID = micVoiceBean.getData().getVoiceStationID() + "";
-                                String string = mMMKVInstace.decodeString(Constants.KET_MIC_VOICE_ID_FOR_ME, "ABC");
-
-                                LogUtils.e("TAG" + "回调形式:--->开启视频声音FOR_ME:" + string);
-                                LogUtils.e("TAG" + "回调形式:--->开启视频声音currentVoiceID:" + currentVoiceID);
-                                LogUtils.e("TAG" + "回调形式:--->关闭---视频声音:" + string);
+                                String voiceIDForMe = mMMKVInstace.decodeString(Constants.KET_MIC_VOICE_ID_FOR_ME, "ABC");
+                                LogUtils.e("TAG" + "回调形式:--->加入列表返回的ID:" + voiceIDForMe);
+                                LogUtils.e("TAG" + "回调形式:--->http请求voiceID:" + currentVoiceID);
                                 LogUtils.e("TAG" + "回调形式:--------------------------:");
 
-                                if ("255".equals(currentVoiceID) || string.equals(currentVoiceID)) {//255默认开启
+
+                                if ("255".equals(currentVoiceID) || voiceIDForMe.equals(currentVoiceID)) {//255默认开启
+                                    mTagCanVoice = true;
                                     toast("开启视频声音");
                                     rootView.setLongClickable(true);  //手势需要--能触摸
                                     rootView.setOnTouchListener(onTouchVideoListener);
@@ -491,9 +496,9 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                                     // 获取当前音量值
                                     mCurrentVolume = mAudiomanager.getStreamVolume(AudioManager.STREAM_MUSIC);
                                     int mMaxVolume = mAudiomanager.getStreamMaxVolume(AudioManager.STREAM_MUSIC); // 获取系统最大音量
-                                    mAudiomanager.setStreamVolume(AudioManager.STREAM_MUSIC, mMaxVolume / 2, 0);
+                                    mAudiomanager.setStreamVolume(AudioManager.STREAM_MUSIC, mMaxVolume -2, 0);
                                 } else {
-                                    LogUtils.e("TAG" + "回调形式:--->关闭---视频声音:" + string);
+                                    mTagCanVoice = false;
                                     toast("关闭---视频声音");
                                     mAudiomanager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
                                     // 获取当前音量值
@@ -511,6 +516,53 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                 });
     }
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        int mMaxVolume = mAudiomanager.getStreamMaxVolume(AudioManager.STREAM_MUSIC); // 获取系统最大音量
+        int currentVolume = mAudiomanager.getStreamVolume(AudioManager.STREAM_MUSIC );
+        // 获取手机当前音量值
+        switch (keyCode) {
+            // 音量减小
+            case KeyEvent.KEYCODE_VOLUME_DOWN:
+                // 音量减小时应该执行的功能代码
+                LogUtils.e("aaaa音量减小" + mTagCanVoice);
+                LogUtils.e("aaaa当前音量" + currentVolume);
+                if (mTagCanVoice) {
+                    int setVolume = currentVolume + 1;
+                    if (currentVolume == mMaxVolume) {
+                        mAudiomanager.setStreamVolume(AudioManager.STREAM_MUSIC, mMaxVolume, 0);
+                    } else {
+                        mAudiomanager.setStreamVolume(AudioManager.STREAM_MUSIC, setVolume, 0);
+
+                    }
+
+                } else {
+                    mAudiomanager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0);
+                }
+                return true;
+            // 音量增大
+            case KeyEvent.KEYCODE_VOLUME_UP:
+                // 音量增大时应该执行的功能代码
+                LogUtils.e("aaaa音量增大" + mTagCanVoice);
+                LogUtils.e("aaaa当前音量" + currentVolume);
+                if (mTagCanVoice) {
+                    int setVolume = currentVolume + 1;
+                    if (currentVolume == mMaxVolume) {
+                        mAudiomanager.setStreamVolume(AudioManager.STREAM_MUSIC, mMaxVolume, 0);
+                    } else {
+                        mAudiomanager.setStreamVolume(AudioManager.STREAM_MUSIC, setVolume, 0);
+
+                    }
+                } else {
+                    mAudiomanager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0);
+                }
+
+                return true;
+        }
+        mCurrentVolume = mAudiomanager.getStreamVolume(AudioManager.STREAM_MUSIC);
+        LogUtils.e("aaaa" + mCurrentVolume);
+        return super.onKeyDown(keyCode, event);
+    }
 
     /**
      * 获取麦克风权限,并且请求加入列表（功能开启）
@@ -1450,22 +1502,23 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
             public void onLeftClick(View view) {
                 if (rtmpOnlyAudio.isStreaming()) {
                     rtmpOnlyAudio.stopStream();
+                    MicSocketBean bean = new MicSocketBean();
+                    bean.setErrCode("0");
+                    bean.setOperation("6");
+                    bean.setVoiceID("");
+                    bean.setStringParam(SystemUtil.getDeviceBrand() + "_" + SystemUtil.getSystemModel() + "_" + mLoginUserName);
+                    bean.setUrl("");
+                    sendSocketPointMicMessage(bean);
                 }
                 mTvMicStatus.setTag("stopStream");
                 mTvMicStatus.setText("开启麦克风");
-                MicSocketBean bean = new MicSocketBean();
-                bean.setErrCode("0");
-                bean.setOperation("6");
-                bean.setVoiceID("");
-                bean.setStringParam(SystemUtil.getDeviceBrand() + "_" + SystemUtil.getSystemModel() + "_" + mLoginUserName);
-                bean.setUrl("");
-                sendSocketPointMicMessage(bean);
+
 
                 mAudiomanager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
                 // 获取当前音量值
                 mCurrentVolume = mAudiomanager.getStreamVolume(AudioManager.STREAM_MUSIC);
                 int mMaxVolume = mAudiomanager.getStreamMaxVolume(AudioManager.STREAM_MUSIC); // 获取系统最大音量
-                mAudiomanager.setStreamVolume(AudioManager.STREAM_MUSIC, mMaxVolume / 2, 0);
+                mAudiomanager.setStreamVolume(AudioManager.STREAM_MUSIC, mMaxVolume -2, 0);
                 //重置触摸事件
                 rootView.setLongClickable(true);  //手势需要--能触摸
                 rootView.setOnTouchListener(onTouchVideoListener);
@@ -2153,6 +2206,8 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                     bean.setStringParam(SystemUtil.getDeviceBrand() + "_" + SystemUtil.getSystemModel() + "_" + mLoginUserName);
                     bean.setUrl("");
                     sendSocketPointMicMessage(bean);
+                    //再次请求上位机voiceID
+                    getVoiceIDRequest();
                     mMicStatueView.setVisibility(View.VISIBLE);
 
                 } else {
