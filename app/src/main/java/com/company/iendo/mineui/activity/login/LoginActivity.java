@@ -699,13 +699,14 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
                                 handBean.setHelloPc("");
                                 handBean.setComeFrom("");
                                 byte[] sendByteData = CalculateUtils.getSendByteData(LoginActivity.this, mGson.toJson(handBean), mCurrentTypeNum+"", mCurrentReceiveDeviceCode,
-                                        Constants.UDP_43);
+                                        Constants.UDP_HAND);
 
                                 if (("".equals(mSocketPort))) {
                                     toast("通讯端口不能为空");
                                     return;
                                 }
 
+                                SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), LoginActivity.this);
                                 SocketUtils.startSendHandMessage(sendByteData, mSocketOrLiveIP, Integer.parseInt(mSocketPort), LoginActivity.this);
                                 finish();
                             } else {

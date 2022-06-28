@@ -149,8 +149,6 @@ public class Constants {
     public static final String UDP_F6 = "F6";                              //设置 设备参数
     public static final String UDP_41 = "41";                              //语音接入
     public static final String UDP_42 = "42";                              //语音广播通知命令,监听到重新获取vioceID
-    public static final String UDP_43 = "43";                              //登录命令：0x43
-//    public static final String UDP_F4 = "F4";                              //语音接入
     public static final String UDP_F7 = "F7";                              //通知权限变动    //相同用户名的时候 重新刷新权限
     public static final String UDP_FE = "FE";                              //程序退出命令  -->退出登录的时候发消息
     public static final String UDP_40 = "40";                              //刷新医院信息  -->从新请求数据库刷新界面
@@ -197,6 +195,56 @@ public class Constants {
     public static final String Dialog_Type_Change = "修改类型";                               //修改类型
     public static final String Dialog_Type_Add = "添加类型";                                  //添加类型
 
+
+    //HD3
+    public static final String Type_HD3 = "HD3";                                             //HD3
+    public static final String Type_HD3_Remark = "HD3的备注信息";                             //HD3的备注信息
+    public static final String Type_HD3_ip = "192.168.1.10";                                 //ip
+    public static final String Type_HD3_Account = "admin";                                   //账号
+    public static final String Type_HD3_Password = "12345";                                  //密码
+    public static final String Type_HD3_HttpPort = "7001";                                   //HttpPort
+    public static final String Type_HD3_LivePort = "80";                                     //LivePort
+    public static final String Type_HD3_SocketPort = "";                                     //SocketPort
+    public static final String Type_HD3_MicPort = "";                                        //MicPort
+    public static final String Type_HD3_deviceTypeDesc = "HD3";                              //deviceTypeDesc
+
+    //HD3_4K
+    public static final String Type_HD3_4K = "HD3-4K";                                          //HD3-4K
+    public static final String Type_HD3_4K_Remark = "HD3-4K的备注信息";                          //HD3-4K的备注信息
+    public static final String Type_HD3_4K_ip = "192.168.1.10";                                 //ip
+    public static final String Type_HD3_4K_Account = "admin";                                   //账号
+    public static final String Type_HD3_4K_Password = "12345";                                  //密码
+    public static final String Type_HD3_4K_HttpPort = "7001";                                   //HttpPort
+    public static final String Type_HD3_4K_LivePort = "80";                                     //LivePort
+    public static final String Type_HD3_4K_SocketPort = "";                                     //SocketPort
+    public static final String Type_HD3_4K_MicPort = "";                                        //MicPort
+    public static final String Type_HD3_4K_deviceTypeDesc = "HD3-4K";                           //deviceTypeDesc
+
+
+    //工作站
+    public static final String Type_Work_Station = "工作站";                                           //工作站
+    public static final String Type_Work_Station_Remark = "工作站的备注信息";                           //工作站的备注信息
+    public static final String Type_Work_Station_ip = "192.168.1.200";                                 //ip
+    public static final String Type_Work_Station_Account = "root";                                     //账号
+    public static final String Type_Work_Station_Password = "root";                                    //密码
+    public static final String Type_Work_Station_HttpPort = "7001";                                    //HttpPort
+    public static final String Type_Work_Station_LivePort = "7788";                                    //LivePort
+    public static final String Type_Work_Station_SocketPort = "7006";                                  //SocketPort
+    public static final String Type_Work_Station_MicPort = "7789";                                     //MicPort
+    public static final String Type_Work_Station_deviceTypeDesc = "工作站";                             //deviceTypeDesc
+
+
+    //神州转播
+    public static final String Type_Custom_Url = "神州转播";                                            //神州转播
+    public static final String Type_Custom_Url_Remark = "神州转播的备注信息";                            //神州转播的备注信息
+    public static final String Type_Custom_Url_ip = "";                                                //ip
+    public static final String Type_Custom_Url_Account = "";                                           //账号
+    public static final String Type_Custom_Url_Password = "";                                          //密码
+    public static final String Type_Custom_Url_HttpPort = "";                                          //HttpPort
+    public static final String Type_Custom_Url_LivePort = "";                                          //LivePort
+    public static final String Type_Custom_Url_SocketPort = "";                                        //SocketPort
+    public static final String Type_Custom_Url_MicPort = "";                                           //MicPort
+    public static final String Type_Custom_Url_deviceTypeDesc = "神州转播";                             //deviceTypeDesc
 
     //妇科--治疗台
     public static final String Type_FuKeTable = "妇科治疗台";                                 //妇科治疗台

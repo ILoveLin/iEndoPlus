@@ -385,7 +385,7 @@
     <color name="viewfinder_laser">#ffff0000</color>
     <color name="viewfinder_mask">#60000000</color>
     <color name="possible_result_points">#c0ffff00</color>
-    <color name="result_points">#c000ff00</color>
+    <color name="result_points">#A4DE7A</color>
     <color name="result_down_video">#E89A7B</color>
     <color name="result_A4DE7A">#A4DE7A</color>
     <color name="result_text">#ffffffff</color>

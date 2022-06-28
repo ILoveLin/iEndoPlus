@@ -76,6 +76,7 @@ import com.hjq.widget.view.SwitchButton;
 import com.jaygoo.widget.OnRangeChangedListener;
 import com.jaygoo.widget.RangeSeekBar;
 import com.pedro.rtplibrary.rtmp.RtmpOnlyAudio;
+import com.tencent.bugly.proguard.M;
 import com.tencent.mmkv.MMKV;
 import com.vlc.lib.RecordEvent;
 import com.vlc.lib.VlcVideoView;
@@ -486,7 +487,6 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                                 LogUtils.e("TAG" + "回调形式:--->http请求voiceID:" + currentVoiceID);
                                 LogUtils.e("TAG" + "回调形式:--------------------------:");
 
-
                                 if ("255".equals(currentVoiceID) || voiceIDForMe.equals(currentVoiceID)) {//255默认开启
                                     mTagCanVoice = true;
                                     toast("开启视频声音");
@@ -590,10 +590,12 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                                 mTvMicStatus.setText("开启麦克风");
                                 MicSocketBean bean = new MicSocketBean();
                                 bean.setErrCode("0");
+                                //此处需要主动把加入列表的voiceID重置,不然会出现,每次进来上位机数据库和本地值一样就开启声音了
                                 bean.setOperation("6");
                                 bean.setVoiceID("");
                                 bean.setStringParam(SystemUtil.getDeviceBrand() + "_" + SystemUtil.getSystemModel() + "_" + mLoginUserName);
                                 bean.setUrl("");
+                                mMMKVInstace.encode(Constants.KET_MIC_VOICE_ID_FOR_ME,"default");
                                 sendSocketPointMicMessage(bean);
                             }
                         }
@@ -1504,10 +1506,12 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                     rtmpOnlyAudio.stopStream();
                     MicSocketBean bean = new MicSocketBean();
                     bean.setErrCode("0");
+                    //此处需要主动把加入列表的voiceID重置,不然会出现,每次进来上位机数据库和本地值一样就开启声音了
                     bean.setOperation("6");
                     bean.setVoiceID("");
                     bean.setStringParam(SystemUtil.getDeviceBrand() + "_" + SystemUtil.getSystemModel() + "_" + mLoginUserName);
                     bean.setUrl("");
+                    mMMKVInstace.encode(Constants.KET_MIC_VOICE_ID_FOR_ME,"default");
                     sendSocketPointMicMessage(bean);
                 }
                 mTvMicStatus.setTag("stopStream");

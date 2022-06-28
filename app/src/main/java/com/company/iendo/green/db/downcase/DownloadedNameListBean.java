@@ -5,6 +5,11 @@ package com.company.iendo.green.db.downcase;
  * author： LoveLin
  * time：2021/12/27 8:55
  * desc：记录下载病历时,是谁下载的病历,比如登入用户是admin 则存入admin,张三则新增一个张三bean,如果存在一样的 就不增加下载者的名字
+ * contains判断的时候,必须是本身创建一个
+ * DownloadedNameListBean  tagBean = new DownloadedNameListBean();
+ *         tagBean.setDownloadedByName(mLoginUserName);
+ *
+ *         然后在downloadedNameList.contains(tagBean)来判断,直接传入string值是没有用的
  */
 public class DownloadedNameListBean {
 

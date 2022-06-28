@@ -134,11 +134,7 @@ public class CaseManageOfflineFragment extends TitleBarFragment<MainActivity> im
             CaseDBBean caseDBBean = mDBList.get(i);
             //获取当前这个病例下载者名单列表
             List<DownloadedNameListBean> downloadedNameList = caseDBBean.getDownloadedNameList();
-            for (int i1 = 0; i1 < downloadedNameList.size(); i1++) {
-                String downloadedByName = downloadedNameList.get(i1).getDownloadedByName();
-                String downloadedByName1 = downloadedNameList.get(i1).getDownloadedByName();
 
-            }
             //包含,就存入
             if (downloadedNameList.contains(tagBean)) {
                 mCurrentLoginData.add(caseDBBean);
