@@ -14,6 +14,7 @@
     <color name="common_button_disable_color">#BBBBBB</color>
     <!-- 分割线的颜色 -->
     <color name="common_line_color">#ECECEC</color>
+    <color name="case_model_parent">#DEE0E2</color>
 
     <!-- 矢量图标的颜色 -->
     <color name="common_icon_color">#7C7C7C</color>
@@ -426,6 +427,7 @@
     <color name="black_000000">#000000</color>
     <color name="color_9A9A9A">#9A9A9A</color>
     <color name="color_F6F6F6">#F6F6F6</color>
+    <color name="color_8A000000">#8A000000</color>
     <color name="black90">#EE000000</color>
     <color name="black80">#CC000000</color>
     <color name="black70">#BB000000</color>

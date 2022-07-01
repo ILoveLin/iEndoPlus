@@ -30,6 +30,7 @@ import com.company.iendo.bean.DialogItemBean;
 import com.company.iendo.bean.ListDialogDateBean;
 import com.company.iendo.bean.event.RefreshCaseMsgEvent;
 import com.company.iendo.bean.event.SocketRefreshEvent;
+import com.company.iendo.bean.model.LocalDialogCaseModelBean;
 import com.company.iendo.bean.socket.HandBean;
 import com.company.iendo.bean.socket.UpdateCaseBean;
 import com.company.iendo.green.db.CaseDBUtils;
@@ -37,7 +38,6 @@ import com.company.iendo.green.db.UserDBBean;
 import com.company.iendo.green.db.UserDBUtils;
 import com.company.iendo.green.db.downcase.CaseDBBean;
 import com.company.iendo.green.db.downcase.CaseImageListBean;
-import com.company.iendo.green.db.downcase.CaseVideoListBean;
 import com.company.iendo.green.db.downcase.DownloadedNameListBean;
 import com.company.iendo.manager.ActivityManager;
 import com.company.iendo.mineui.activity.MainActivity;
@@ -215,7 +215,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         mUserName = mLoginUserName;
         currentItemCaseID = getCurrentItemID();
         initLayoutViewDate();
-        setEditStatus();
+        setEditStatus(DetailCaseActivity.mModelView);
         responseListener();
         //请求界面数据
         sendRequest(getCurrentItemID());
@@ -410,7 +410,7 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
         return mStatusLayout;
     }
 
-    private void setEditStatus() {
+    private void setEditStatus(AppCompatTextView mModelView) {
         if (null != mEditList && !mEditList.isEmpty()) {
             for (int i = 0; i < mEditList.size(); i++) {
                 if (mEditStatus) {
@@ -450,11 +450,14 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
             for (int i = 0; i < mImageViewList.size(); i++) {
                 ImageView imageView = mImageViewList.get(i);
                 imageView.setVisibility(View.VISIBLE);
+                mModelView.setVisibility(View.VISIBLE);
             }
         } else {
             for (int i = 0; i < mImageViewList.size(); i++) {
                 ImageView imageView = mImageViewList.get(i);
                 imageView.setVisibility(View.GONE);
+                mModelView.setVisibility(View.GONE);
+
             }
         }
 
@@ -506,14 +509,34 @@ public class DetailFragment extends TitleBarFragment<MainActivity> implements St
 
     /**
      * EditText 和  弹窗是否可以用的标识
+     * 以及导入病例模板  mModelConfirm 导入模板的View
      *
      * @param status
      */
     @Override
-    public void onEditStatus(boolean status, boolean isFatherExit) {
+    public void onEditStatus(boolean status, boolean isFatherExit,AppCompatTextView mModelView) {
         this.mEditStatus = status;
         this.isFatherExit = isFatherExit;
-        setEditStatus();
+        setEditStatus(mModelView);
+    }
+
+    /**
+     * 病例模板选中之后,回调的数据
+     *
+     * @param mBean
+     */
+    @Override
+    public void onClickModel(LocalDialogCaseModelBean mBean) {
+        //把把三个参数置空,在设置新的数据,其他不变
+        et_02_mirror_see.setText("");
+        et_02_mirror_result.setText("");
+        et_02_advice.setText("");
+        et_02_mirror_see.setText(""+mBean.getMirrorSee());
+        et_02_mirror_result.setText(""+mBean.getMirrorDiagnostics());
+        et_02_advice.setText(""+mBean.getAdvice());
+        et_02_mirror_result.setFocusableInTouchMode(true);
+        et_02_mirror_result.setFocusable(true);
+        et_02_mirror_result.requestFocus();
     }
 
     @Override

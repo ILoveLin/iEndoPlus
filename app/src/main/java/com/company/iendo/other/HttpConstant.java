@@ -99,11 +99,7 @@ public class HttpConstant {
      */
     public static final String CaseManager_CaseUpdateHospitalInfo = "/case/updateHospitalInfo";
 
-    /**
-     * 2.0  获取当前语音通话的voiceID    255或者加入设备列表之后返回的voiceID一致,开启视频流声音
-     * voiceID 表示分配给移动端拨号号码，由设备分配，移动端需保存
-     */
-    public static final String UserManager_getVoiceID = "/case/serverStatus";
+
     /**
      * 2.2 上传医院徽标
      * post uploadHospitalLogo
@@ -120,6 +116,18 @@ public class HttpConstant {
      */
     public static final String CaseManager_Report_Exists = "/report/reportExists";
 
+    /**
+     * 2.6 查询直播流是否静音
+     * <p>
+     * 获取当前语音通话的voiceID    255或者加入设备列表之后返回的voiceID一致,开启视频流声音
+     * voiceID 表示分配给移动端拨号号码，由设备分配，移动端需保存
+     */
+    public static final String UserManager_getVoiceID = "/case/serverStatus";
+    /**
+     * 2.7 查询病例模板
+     * get
+     */
+    public static final String UserManager_caseTemplate = "/case/caseTemplate";
 
     /**=======================================================================================*/
 

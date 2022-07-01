@@ -6,6 +6,7 @@ import android.annotation.SuppressLint;
 import android.text.InputFilter;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -18,11 +19,13 @@ import com.company.iendo.bean.AddCaseBean;
 import com.company.iendo.bean.DialogItemBean;
 import com.company.iendo.bean.ListDialogDateBean;
 import com.company.iendo.bean.event.SocketRefreshEvent;
+import com.company.iendo.bean.model.LocalDialogCaseModelBean;
 import com.company.iendo.bean.socket.HandBean;
 import com.company.iendo.manager.ActivityManager;
 import com.company.iendo.other.Constants;
 import com.company.iendo.other.HttpConstant;
 import com.company.iendo.service.HandService;
+import com.company.iendo.ui.dialog.CaseModelDialog;
 import com.company.iendo.ui.dialog.MenuDialog;
 import com.company.iendo.utils.CalculateUtils;
 import com.company.iendo.utils.SharePreferenceUtil;
@@ -94,6 +97,7 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
     private ImageView iv_01_sex_type;
     private NestedScrollView mScrollView;
     private ArrayList<ClearEditText> mEditList = new ArrayList<>();
+    private RelativeLayout mRelativeConfirm;
 
     @Override
     protected int getLayoutId() {
@@ -105,8 +109,12 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
         EventBus.getDefault().register(this);
         mStatusLayout = findViewById(R.id.status_hint);
         mTitleBar = findViewById(R.id.titlebar);
+        mRelativeConfirm = findViewById(R.id.relative_confirm);
         mScrollView = findViewById(R.id.add_nestedsv);
+        //获取模板数据
         initLayoutViewDate();
+        sendRequest2getModelDialogData();
+
         responseListener();
 
 
@@ -117,7 +125,7 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
 
 
         //年纪类别的List数据本地写:岁,月,天,
-        setOnClickListener(R.id.iv_01_sex_type, R.id.iv_01_age_type, R.id.iv_01_jop, R.id.tv_01_get_check_doctor,
+        setOnClickListener(R.id.relative_confirm, R.id.iv_01_sex_type, R.id.iv_01_age_type, R.id.iv_01_jop, R.id.tv_01_get_check_doctor,
                 R.id.iv_02_mirror_see, R.id.iv_02_mirror_result, R.id.iv_02_live_check, R.id.iv_02_cytology, R.id.iv_02_test, R.id.iv_02_pathology,
                 R.id.iv_02_advice, R.id.iv_02_check_doctor, R.id.iv_03_section, R.id.iv_03_device, R.id.iv_03_ming_zu, R.id.iv_03_is_married);
 
@@ -214,9 +222,54 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
 
             @Override
             public void onRightClick(View view) {
-                checkDataAndRequest();
+                showModelDialog();
             }
         });
+    }
+
+    //显示模板导入dialog
+    private void showModelDialog() {
+        //模板导入
+        if (null== mModelDataList){
+            toast("模板加载中...请稍后再试!");
+            return;
+        }
+        new CaseModelDialog.Builder(getActivity(), mModelDataList).setBackgroundDimEnabled(true)
+                .setAnimStyle(BaseDialog.ANIM_SCALE)
+                .addOnDismissListener(new BaseDialog.OnDismissListener() {
+                    @Override
+                    public void onDismiss(BaseDialog dialog) {
+
+                    }
+                })
+                .setListener(new CaseModelDialog.OnListener<String>() {
+
+
+                    @Override
+                    public void onConfirm(LocalDialogCaseModelBean mBean) {
+                        if (null != mBean) {
+                            //把把三个参数置空,在设置新的数据,其他不变
+                            et_02_mirror_see.setText("");
+                            et_02_mirror_result.setText("");
+                            et_02_advice.setText("");
+                            et_02_mirror_see.setText(""+mBean.getMirrorSee());
+                            et_02_mirror_result.setText(""+mBean.getMirrorDiagnostics());
+                            et_02_advice.setText(""+mBean.getAdvice());
+                            et_02_mirror_result.setFocusableInTouchMode(true);
+                            et_02_mirror_result.setFocusable(true);
+                            et_02_mirror_result.requestFocus();
+                        } else {
+                            toast("模板数据为空!");
+                        }
+
+                    }
+
+                    @Override
+                    public void onCancel(BaseDialog dialog) {
+
+                    }
+                })
+                .show();
     }
 
     private void checkDataAndRequest() {
@@ -271,7 +324,7 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
 //        String LastCheckUserID = et_03_tel.getText().toString().trim();       //最后一个来查房的医生  ???
 //        String DOB = et_.getText().toString().trim();       //生日                                  ???
         String PatientAge = et_01_age.getText().toString().trim();       //患者年龄
-        if (Integer.parseInt(PatientAge)>=255){
+        if (Integer.parseInt(PatientAge) >= 255) {
             toast("年龄不能超过255");
             return;
         }
@@ -399,7 +452,6 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
      */
 
 
-
     /**
      * 发送点对点消息,必须握手成功
      *
@@ -410,7 +462,7 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
             HandBean handBean = new HandBean();
             handBean.setHelloPc("");
             handBean.setComeFrom("");
-            byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(handBean), mCurrentTypeNum+"", mCurrentReceiveDeviceCode,
+            byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(handBean), mCurrentTypeNum + "", mCurrentReceiveDeviceCode,
                     CMDCode);
             if (("".equals(mSocketPort))) {
                 toast("通讯端口不能为空");
@@ -423,7 +475,6 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
         }
 
     }
-
 
 
     /**
@@ -571,6 +622,9 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.relative_confirm: //完成
+                checkDataAndRequest();
+                break;
             case R.id.iv_01_sex_type:  //性别
                 startDialogIconAnim(true, iv_01_sex_type);
 

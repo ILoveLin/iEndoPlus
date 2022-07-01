@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -12,13 +12,14 @@
         android:id="@+id/titlebar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:rightTitle="完成"
+        app:rightTitle="模板导入"
         app:title="添加病例" />
 
     <com.company.iendo.widget.StatusLayout
         android:id="@+id/status_hint"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_below="@+id/titlebar">
 
         <androidx.core.widget.NestedScrollView
             android:id="@+id/add_nestedsv"
@@ -36,4 +37,31 @@
         </androidx.core.widget.NestedScrollView>
 
     </com.company.iendo.widget.StatusLayout>
-</LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/relative_confirm"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_40"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom"
+        android:layout_marginLeft="@dimen/dp_10"
+        android:layout_marginRight="@dimen/dp_10"
+        android:layout_marginBottom="@dimen/dp_10"
+        android:background="@drawable/shape_dialog_bg_case_confirm">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_ui_confirm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="@dimen/dp_5"
+            android:background="@drawable/shape_dialog_bg_case_confirm"
+            android:focusable="true"
+            android:gravity="center"
+
+            android:text="完成"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sp_13" />
+    </RelativeLayout>
+</RelativeLayout>

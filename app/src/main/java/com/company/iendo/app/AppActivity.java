@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -18,9 +19,12 @@ import androidx.annotation.StringRes;
 
 import com.company.iendo.bean.RefreshEvent;
 import com.company.iendo.bean.event.SocketRefreshEvent;
+import com.company.iendo.bean.model.CaseModelBean;
+import com.company.iendo.bean.model.Province;
 import com.company.iendo.bean.socket.HandBean;
 import com.company.iendo.mineui.activity.vlc.GetPictureActivity;
 import com.company.iendo.other.Constants;
+import com.company.iendo.other.HttpConstant;
 import com.company.iendo.service.HandService;
 import com.company.iendo.utils.CalculateUtils;
 import com.company.iendo.utils.SharePreferenceUtil;
@@ -39,9 +43,14 @@ import com.company.iendo.ui.dialog.WaitDialog;
 import com.hjq.gson.factory.GsonFactory;
 import com.hjq.http.listener.OnHttpListener;
 import com.tencent.mmkv.MMKV;
+import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.callback.StringCallback;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.Call;
 
@@ -88,6 +97,7 @@ public abstract class AppActivity extends BaseActivity
     public String mBaseUrlPort;
     public String mLoginUserName;
     public MMKV mMMKVInstace;
+    public ArrayList mModelDataList;
 
     /**
      * 当前加载对话框是否在显示中
@@ -212,6 +222,74 @@ public abstract class AppActivity extends BaseActivity
             WifiInfo wifiInfo = wifiManager.getConnectionInfo();
             mAppIP = getIpString(wifiInfo.getIpAddress());
         }
+    }
+
+    /**
+     * 获取病例模板数据
+     */
+    public void sendRequest2getModelDialogData() {
+        OkHttpUtils.get()
+                .addParams("EndoType", endoType)
+                .url(mBaseUrl + HttpConstant.UserManager_caseTemplate)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        Log.e("TAG", "病例模板==onError==" + e);
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        if (!"".equals(response)) {
+                            CaseModelBean modelBean = mGson.fromJson(response, CaseModelBean.class);
+                            Log.e("TAG", "病例模板==modelBean==" + modelBean.toString());
+                            getDialogBeanList(modelBean);
+
+                        }
+
+                    }
+                });
+    }
+    private void getDialogBeanList(CaseModelBean modelBean) {
+        List<CaseModelBean.DataDTO> data = modelBean.getData();
+        mModelDataList = new ArrayList<>();
+        //存入数据Bean
+        if (data.size() != 0) {
+            for (int i = 0; i < data.size(); i++) {
+                CaseModelBean.DataDTO bean = data.get(i);
+                //获取父节点
+                String iParentId = bean.getIParentId();
+                if (iParentId.equals("0")) {
+                    String fatherKeyName = bean.getSzName();
+                    String id = bean.getID();
+                    Province province = new Province();
+                    province.setProvinceName(fatherKeyName);
+                    ArrayList<Province.City> dataList = new ArrayList<>();
+
+                    for (int i1 = 0; i1 < data.size(); i1++) {
+                        CaseModelBean.DataDTO dataDTO = data.get(i1);
+                        //父类id相同,归为第二类子节点
+                        if (id.equals(dataDTO.getIParentId())) {
+                            Province.City mBean = new Province.City();
+                            mBean.setiD(dataDTO.getID() + "");
+                            mBean.setiParentId(dataDTO.getIParentId() + "");
+                            mBean.setCityName(dataDTO.getSzName() + "");
+                            mBean.setSzName(dataDTO.getSzName() + "");
+                            mBean.setSzEndoDesc(dataDTO.getSzEndoDesc() + "");
+                            mBean.setSzResult(dataDTO.getSzResult() + "");
+                            mBean.setSzTherapy(dataDTO.getSzTherapy() + "");
+                            mBean.setEndoType(dataDTO.getEndoType() + "");
+                            dataList.add(mBean);
+                        }
+                    }
+                    province.setCities(dataList);
+                    mModelDataList.add(province);
+                }
+
+            }
+
+        }
+
 
     }
 

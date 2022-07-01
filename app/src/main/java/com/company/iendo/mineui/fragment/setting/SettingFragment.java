@@ -1,18 +1,17 @@
 package com.company.iendo.mineui.fragment.setting;
 
-import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import com.company.iendo.R;
+import com.company.iendo.bean.model.LocalDialogCaseModelBean;
+import com.company.iendo.bean.model.CaseModelBean;
+import com.company.iendo.bean.model.Province;
 import com.company.iendo.mineui.activity.usermanage.UserManagerListActivity;
 import com.company.iendo.service.HandService;
-import com.company.iendo.service.ReceiveSocketService;
 import com.company.iendo.app.TitleBarFragment;
 import com.company.iendo.bean.UserDeletedBean;
 import com.company.iendo.bean.socket.HandBean;
@@ -21,6 +20,7 @@ import com.company.iendo.mineui.activity.login.LoginActivity;
 import com.company.iendo.mineui.activity.setting.HospitalActivity;
 import com.company.iendo.other.Constants;
 import com.company.iendo.other.HttpConstant;
+import com.company.iendo.ui.dialog.CaseModelDialog;
 import com.company.iendo.ui.dialog.Input2Dialog;
 import com.company.iendo.ui.dialog.MessageAboutDialog;
 import com.company.iendo.ui.dialog.MessageDialog;
@@ -28,7 +28,6 @@ import com.company.iendo.ui.dialog.TipsDialog;
 import com.company.iendo.ui.dialog.WaitDialog;
 import com.company.iendo.utils.CalculateUtils;
 import com.company.iendo.utils.FileUtil;
-import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.MD5ChangeUtil;
 import com.company.iendo.utils.SharePreferenceUtil;
 import com.company.iendo.utils.SocketUtils;
@@ -39,7 +38,11 @@ import com.tencent.mmkv.MMKV;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
+import org.json.JSONArray;
+
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import okhttp3.Call;
 
@@ -60,6 +63,13 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
     private TextView mUserName;
     private TextView mRelo;
     private String mAppIP;
+    private JSONArray firstArray;
+    private JSONArray array;
+    private ArrayList mModelDataList;
+    private CaseModelDialog.Builder builder;
+    private TextView mMirrorSeeView;
+    private TextView mMirrorDiagnosticsView;
+    private TextView mAdviceView;
 
     public static SettingFragment newInstance() {
         return new SettingFragment();
@@ -139,6 +149,12 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
                 break;
 
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
     }
 
     private void showAboutDialog() {
@@ -223,7 +239,7 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
         HandBean handBean = new HandBean();
         handBean.setHelloPc("");
         handBean.setComeFrom("");
-        byte[] sendByteData = CalculateUtils.getSendByteData(getAttachActivity(), mGson.toJson(handBean), mCurrentTypeNum+"", mCurrentReceiveDeviceCode,
+        byte[] sendByteData = CalculateUtils.getSendByteData(getAttachActivity(), mGson.toJson(handBean), mCurrentTypeNum + "", mCurrentReceiveDeviceCode,
                 Constants.UDP_FE);
 
         if (("".equals(mSocketPort))) {

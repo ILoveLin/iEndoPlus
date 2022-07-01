@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
@@ -23,6 +24,7 @@ import com.company.iendo.bean.ReportExistBean;
 import com.company.iendo.bean.UserReloBean;
 import com.company.iendo.bean.event.RefreshCaseMsgEvent;
 import com.company.iendo.bean.event.SocketRefreshEvent;
+import com.company.iendo.bean.model.LocalDialogCaseModelBean;
 import com.company.iendo.bean.socket.getpicture.ShotPictureBean;
 import com.company.iendo.manager.ActivityManager;
 import com.company.iendo.mineui.activity.casemanage.fragment.DetailFragment;
@@ -33,6 +35,7 @@ import com.company.iendo.other.Constants;
 import com.company.iendo.other.HttpConstant;
 import com.company.iendo.service.HandService;
 import com.company.iendo.ui.adapter.TabAdapter;
+import com.company.iendo.ui.dialog.CaseModelDialog;
 import com.company.iendo.ui.dialog.MessageDialog;
 import com.company.iendo.ui.dialog.SelectDialog;
 import com.company.iendo.utils.CalculateUtils;
@@ -55,8 +58,6 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.HashMap;
 
 import okhttp3.Call;
-
-import static com.company.iendo.mineui.activity.MainActivity.getCurrentItemID;
 
 /**
  * company：江西神州医疗设备有限公司
@@ -89,6 +90,7 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
     private TextView mCaseDownVideo;
     private TextView mCurrentCheckPatientInfo;
     private TextView mCurrentSocketStatue;
+    public static AppCompatTextView mModelView;
 
     @Override
     protected int getLayoutId() {
@@ -141,6 +143,8 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
         mCaseDown = findViewById(R.id.case_down);
         mCaseDownVideo = findViewById(R.id.case_down_video);
         mDelete = findViewById(R.id.case_delete);
+        mModelView = findViewById(R.id.tv_ui_model_confirm);
+        //模板导入
         mCurrentCheckPatientInfo = findViewById(R.id.current_patient_info);
         mCurrentSocketStatue = findViewById(R.id.current_socket_statue);
         mFatherExit = false;
@@ -155,7 +159,8 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
 
         mTabAdapter = new TabAdapter(this);
         mTabView.setAdapter(mTabAdapter);
-
+        //获取模板数据
+        sendRequest2getModelDialogData();
 
     }
 
@@ -200,7 +205,7 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
                 if (mMMKVInstace.decodeBool(Constants.KEY_CanEdit)) {
                     //退出界面的时候必须保存数据
                     if (null != mOnEditStatusListener) {
-                        mOnEditStatusListener.onEditStatus(true, true);
+                        mOnEditStatusListener.onEditStatus(true, true, mModelView);
 //                        mOnEditStatusListener.onEditStatus(true, true);
                     }
 
@@ -285,12 +290,60 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
                 }
             }
         });
+
+        /**
+         * 病例模板
+         */
+        mModelView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //说明是编辑状态
+                if (View.VISIBLE == mModelView.getVisibility()) {
+                    if (null == mModelDataList) {
+                        toast("模板加载中...请稍后再试!");
+                        return;
+                    }
+                    new CaseModelDialog.Builder(getActivity(), mModelDataList).setBackgroundDimEnabled(true)
+                            .setAnimStyle(BaseDialog.ANIM_SCALE)
+                            .addOnDismissListener(new BaseDialog.OnDismissListener() {
+                                @Override
+                                public void onDismiss(BaseDialog dialog) {
+
+                                }
+                            })
+                            .setListener(new CaseModelDialog.OnListener<String>() {
+
+
+                                @Override
+                                public void onConfirm(LocalDialogCaseModelBean mBean) {
+                                    if (null != mBean) {
+                                        mOnEditStatusListener.onClickModel(mBean);
+                                    } else {
+                                        toast("mBean.toString()为null");
+
+                                    }
+
+                                }
+
+                                @Override
+                                public void onCancel(BaseDialog dialog) {
+
+                                }
+                            })
+                            .show();
+
+                }
+
+
+            }
+        });
+
     }
 
     private void clickEidtListener() {
         if (mTitlebar.getRightTitle().equals("编辑")) {
             if (null != mOnEditStatusListener) {
-                mOnEditStatusListener.onEditStatus(true, false);
+                mOnEditStatusListener.onEditStatus(true, false, mModelView);
             }
             mTitlebar.setRightTitle("保存");
             mTitlebar.setRightTitleColor(getResources().getColor(R.color.red));
@@ -298,7 +351,7 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
             mTitlebar.setRightTitle("编辑");
             mTitlebar.setRightTitleColor(getResources().getColor(R.color.black));
             if (null != mOnEditStatusListener) {
-                mOnEditStatusListener.onEditStatus(false, false);
+                mOnEditStatusListener.onEditStatus(false, false, mModelView);
             }
         }
     }
@@ -671,6 +724,7 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
 
     }
 
+
     /**
      * 查询服务端是否已经生成报告
      */
@@ -816,7 +870,9 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
 
     public interface OnEditStatusListener {
         //activity制作发送的提示,具体操作全部在DetailFragment里面实现
-        void onEditStatus(boolean status, boolean isFatherExit);
+        void onEditStatus(boolean status, boolean isFatherExit, AppCompatTextView mModelConfirm);
+
+        void onClickModel(LocalDialogCaseModelBean mBean);
 
         //下载用户数据
         void onDown(boolean userInfo, boolean userPicture);
