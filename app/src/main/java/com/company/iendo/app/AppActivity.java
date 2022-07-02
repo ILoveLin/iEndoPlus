@@ -20,16 +20,11 @@ import androidx.annotation.StringRes;
 import com.company.iendo.bean.RefreshEvent;
 import com.company.iendo.bean.event.SocketRefreshEvent;
 import com.company.iendo.bean.model.CaseModelBean;
-import com.company.iendo.bean.model.Province;
-import com.company.iendo.bean.socket.HandBean;
-import com.company.iendo.mineui.activity.vlc.GetPictureActivity;
+import com.company.iendo.bean.model.ModelBean;
 import com.company.iendo.other.Constants;
 import com.company.iendo.other.HttpConstant;
 import com.company.iendo.service.HandService;
-import com.company.iendo.utils.CalculateUtils;
 import com.company.iendo.utils.SharePreferenceUtil;
-import com.company.iendo.utils.SocketUtils;
-import com.didichuxing.doraemonkit.util.LogUtils;
 import com.google.gson.Gson;
 import com.gyf.immersionbar.ImmersionBar;
 import com.hjq.bar.TitleBar;
@@ -50,6 +45,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import okhttp3.Call;
@@ -97,7 +93,11 @@ public abstract class AppActivity extends BaseActivity
     public String mBaseUrlPort;
     public String mLoginUserName;
     public MMKV mMMKVInstace;
-    public ArrayList mModelDataList;
+    //病例模板使用到的数据
+    public static ArrayList<String> mTitleList;
+    public static LinkedHashMap mBeanHashMap;
+    public static  LinkedHashMap<String, ArrayList<String>> mStringHashMap;
+    public static String[][] items;
 
     /**
      * 当前加载对话框是否在显示中
@@ -243,55 +243,87 @@ public abstract class AppActivity extends BaseActivity
                         if (!"".equals(response)) {
                             CaseModelBean modelBean = mGson.fromJson(response, CaseModelBean.class);
                             Log.e("TAG", "病例模板==modelBean==" + modelBean.toString());
-                            getDialogBeanList(modelBean);
+//                            getDialogBeanList(modelBean);
+                            getDialogBeanList02(modelBean);
+
 
                         }
 
                     }
                 });
     }
-    private void getDialogBeanList(CaseModelBean modelBean) {
+
+    private void getDialogBeanList02(CaseModelBean modelBean) {
+
+        //LinkedHashMap 确保存入和遍历的顺序一致性
+        //recycleView 展示的map
+        mStringHashMap = new LinkedHashMap<>();
+        //点击recycleView 获取到String,之后需要查询数据bean的map
+        mBeanHashMap = new LinkedHashMap<>();
+        //分类标题的list
+        mTitleList = new ArrayList<String>();
+
         List<CaseModelBean.DataDTO> data = modelBean.getData();
-        mModelDataList = new ArrayList<>();
-        //存入数据Bean
         if (data.size() != 0) {
+//                                for (int i = data.size() - 1; i >= 0; i--) {
             for (int i = 0; i < data.size(); i++) {
                 CaseModelBean.DataDTO bean = data.get(i);
                 //获取父节点
-                String iParentId = bean.getIParentId();
-                if (iParentId.equals("0")) {
+                if (bean.getIParentId().equals("0")) {
                     String fatherKeyName = bean.getSzName();
-                    String id = bean.getID();
-                    Province province = new Province();
-                    province.setProvinceName(fatherKeyName);
-                    ArrayList<Province.City> dataList = new ArrayList<>();
-
+                    String titleId = bean.getID();
+                    ModelBean sonBean = new ModelBean();
+                    sonBean.setSzName(fatherKeyName);
+                    ArrayList<ModelBean> dataList = new ArrayList<>();
+                    ArrayList<String> dataStringList = new ArrayList<>();
+                    dataStringList.add(fatherKeyName);
+                    mTitleList.add(fatherKeyName+"");
                     for (int i1 = 0; i1 < data.size(); i1++) {
                         CaseModelBean.DataDTO dataDTO = data.get(i1);
-                        //父类id相同,归为第二类子节点
-                        if (id.equals(dataDTO.getIParentId())) {
-                            Province.City mBean = new Province.City();
+                        if (titleId.equals(dataDTO.getIParentId())) {
+                            ModelBean mBean = new ModelBean();
                             mBean.setiD(dataDTO.getID() + "");
                             mBean.setiParentId(dataDTO.getIParentId() + "");
-                            mBean.setCityName(dataDTO.getSzName() + "");
                             mBean.setSzName(dataDTO.getSzName() + "");
                             mBean.setSzEndoDesc(dataDTO.getSzEndoDesc() + "");
                             mBean.setSzResult(dataDTO.getSzResult() + "");
                             mBean.setSzTherapy(dataDTO.getSzTherapy() + "");
                             mBean.setEndoType(dataDTO.getEndoType() + "");
+                            dataStringList.add(dataDTO.getSzName() + "");
                             dataList.add(mBean);
                         }
                     }
-                    province.setCities(dataList);
-                    mModelDataList.add(province);
+                    mStringHashMap.put(fatherKeyName, dataStringList);
+                    mBeanHashMap.put(fatherKeyName, dataList);
                 }
+            }
+        }
+
+        int size1 = mStringHashMap.keySet().size();
+
+        items = new String[size1][];
+        ArrayList<String[]> mList = new ArrayList<>();
+        for (String key : mStringHashMap.keySet()) {
+            ArrayList<String> StringList = mStringHashMap.get(key);
+            int size = StringList.size();
+            String[] strings = new String[size];
+
+            for (int i = 0; i < StringList.size(); i++) {
+                String s = StringList.get(i);
+                strings[i] = s;
 
             }
+            mList.add(strings);
+        }
+        for (int i = 0; i < size1; i++) {
+            //给外围数组,赋值一整个 数组
+            items[i] = mList.get(i);
 
         }
 
 
     }
+
 
     @Nullable
     @Override

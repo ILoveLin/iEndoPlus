@@ -23,7 +23,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -71,12 +70,10 @@ import com.hjq.gson.factory.GsonFactory;
 import com.hjq.permissions.OnPermissionCallback;
 import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
-import com.hjq.widget.layout.WrapRecyclerView;
 import com.hjq.widget.view.SwitchButton;
 import com.jaygoo.widget.OnRangeChangedListener;
 import com.jaygoo.widget.RangeSeekBar;
 import com.pedro.rtplibrary.rtmp.RtmpOnlyAudio;
-import com.tencent.bugly.proguard.M;
 import com.tencent.mmkv.MMKV;
 import com.vlc.lib.RecordEvent;
 import com.vlc.lib.VlcVideoView;
@@ -276,7 +273,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
     private ImageView mChangeAnimImage;
     private DateDialog.Builder mDateDialog;
     private CaseManageAdapter mAdapter;
-    private WrapRecyclerView mRecyclerView;
+    private RecyclerView mRecyclerView;
     private TextView mRecycleEmpty;
     private TextView mChangeTitleData;
     private Button mBtnSureChange;
@@ -496,7 +493,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                                     // 获取当前音量值
                                     mCurrentVolume = mAudiomanager.getStreamVolume(AudioManager.STREAM_MUSIC);
                                     int mMaxVolume = mAudiomanager.getStreamMaxVolume(AudioManager.STREAM_MUSIC); // 获取系统最大音量
-                                    mAudiomanager.setStreamVolume(AudioManager.STREAM_MUSIC, mMaxVolume -2, 0);
+                                    mAudiomanager.setStreamVolume(AudioManager.STREAM_MUSIC, mMaxVolume - 2, 0);
                                 } else {
                                     mTagCanVoice = false;
                                     toast("关闭---视频声音");
@@ -519,7 +516,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         int mMaxVolume = mAudiomanager.getStreamMaxVolume(AudioManager.STREAM_MUSIC); // 获取系统最大音量
-        int currentVolume = mAudiomanager.getStreamVolume(AudioManager.STREAM_MUSIC );
+        int currentVolume = mAudiomanager.getStreamVolume(AudioManager.STREAM_MUSIC);
         // 获取手机当前音量值
         switch (keyCode) {
             // 音量减小
@@ -595,7 +592,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                                 bean.setVoiceID("");
                                 bean.setStringParam(SystemUtil.getDeviceBrand() + "_" + SystemUtil.getSystemModel() + "_" + mLoginUserName);
                                 bean.setUrl("");
-                                mMMKVInstace.encode(Constants.KET_MIC_VOICE_ID_FOR_ME,"default");
+                                mMMKVInstace.encode(Constants.KET_MIC_VOICE_ID_FOR_ME, "default");
                                 sendSocketPointMicMessage(bean);
                             }
                         }
@@ -1511,7 +1508,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                     bean.setVoiceID("");
                     bean.setStringParam(SystemUtil.getDeviceBrand() + "_" + SystemUtil.getSystemModel() + "_" + mLoginUserName);
                     bean.setUrl("");
-                    mMMKVInstace.encode(Constants.KET_MIC_VOICE_ID_FOR_ME,"default");
+                    mMMKVInstace.encode(Constants.KET_MIC_VOICE_ID_FOR_ME, "default");
                     sendSocketPointMicMessage(bean);
                 }
                 mTvMicStatus.setTag("stopStream");
@@ -1522,7 +1519,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                 // 获取当前音量值
                 mCurrentVolume = mAudiomanager.getStreamVolume(AudioManager.STREAM_MUSIC);
                 int mMaxVolume = mAudiomanager.getStreamMaxVolume(AudioManager.STREAM_MUSIC); // 获取系统最大音量
-                mAudiomanager.setStreamVolume(AudioManager.STREAM_MUSIC, mMaxVolume -2, 0);
+                mAudiomanager.setStreamVolume(AudioManager.STREAM_MUSIC, mMaxVolume - 2, 0);
                 //重置触摸事件
                 rootView.setLongClickable(true);  //手势需要--能触摸
                 rootView.setOnTouchListener(onTouchVideoListener);

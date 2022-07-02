@@ -8,6 +8,7 @@ package com.company.iendo.other;
  */
 public class Constants {
     //引导页
+    public static final String FOOTER_SUFFIX = " • footer";
     public static final String SP_IS_FIRST_IN = "sp_is_first_in";                                 //是否第一次登入
     public static final String Sp_UserAgreement_Tag = "sp_useragreement_tag";                     //用户是否同意了----用户协议的标识,默认flase
     public static final String Is_Logined = "is_logined";                                         //是否已经登入   false  未登录

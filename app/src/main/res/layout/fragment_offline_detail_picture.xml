@@ -19,7 +19,7 @@
 <!--            android:layout_height="match_parent"-->
 <!--            app:srlEnablePreviewInEditMode="false">-->
 
-            <com.hjq.widget.layout.WrapRecyclerView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_pic_list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

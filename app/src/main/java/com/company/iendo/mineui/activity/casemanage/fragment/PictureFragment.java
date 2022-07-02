@@ -19,7 +19,6 @@ import com.company.iendo.ui.activity.ImagePreviewActivity;
 import com.company.iendo.utils.SharePreferenceUtil;
 import com.company.iendo.widget.StatusLayout;
 import com.hjq.base.BaseAdapter;
-import com.hjq.widget.layout.WrapRecyclerView;
 import com.scwang.smart.refresh.layout.SmartRefreshLayout;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
@@ -41,7 +40,7 @@ import okhttp3.Call;
  */
 public class PictureFragment extends TitleBarFragment<MainActivity> implements StatusAction, BaseAdapter.OnItemClickListener {
     private SmartRefreshLayout mRefreshLayout;
-    private WrapRecyclerView mRecyclerView;
+    private RecyclerView mRecyclerView;
     private StatusLayout mStatusLayout;
     private List<DetailPictureBean.DataDTO> mDataLest = new ArrayList<>();
     private PictureAdapter mAdapter;
@@ -87,7 +86,7 @@ public class PictureFragment extends TitleBarFragment<MainActivity> implements S
     /**
      * eventbus 刷新socket数据
      */
-    @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void SocketRefreshEvent(SocketRefreshEvent event) {
         String data = event.getData();
         switch (event.getUdpCmd()) {

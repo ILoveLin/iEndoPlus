@@ -21,6 +21,9 @@ import java.util.List;
  *    github : https://github.com/getActivity/AndroidProject
  *    time   : 2019/09/21
  *    desc   : 支持添加头部和底部的 RecyclerView
+ *
+ *
+ *    弃用这个recycleview  因为和病例模板导入那个库一起使用  点击事件不响应
  */
 @SuppressWarnings("rawtypes")
 public final class WrapRecyclerView extends RecyclerView {

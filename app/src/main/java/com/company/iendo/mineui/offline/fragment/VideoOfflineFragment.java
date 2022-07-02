@@ -19,7 +19,6 @@ import com.company.iendo.utils.SharePreferenceUtil;
 import com.company.iendo.widget.MyItemDecoration;
 import com.company.iendo.widget.StatusLayout;
 import com.hjq.base.BaseAdapter;
-import com.hjq.widget.layout.WrapRecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +30,7 @@ import java.util.List;
  * desc：离线模式的--视频fragment
  */
 public class VideoOfflineFragment extends TitleBarFragment<MainActivity> implements StatusAction, BaseAdapter.OnItemClickListener {
-    private WrapRecyclerView mRecyclerView;
+    private RecyclerView mRecyclerView;
     private StatusLayout mStatusLayout;
     private List<OfflineVideoBean> mDataLest = new ArrayList<>();
     private VideoOfflineAdapter mAdapter;
@@ -57,7 +56,7 @@ public class VideoOfflineFragment extends TitleBarFragment<MainActivity> impleme
         CaseDBBean currentItemClickDBBean = CaseManageOfflineFragment.currentItemClickDBBean;
 
         String mDeviceCode = currentItemClickDBBean.getDeviceCaseID();//当前设备码
-        String  currentItemCaseID= currentItemClickDBBean.getOthers();//当前病例ID
+        String currentItemCaseID = currentItemClickDBBean.getOthers();//当前病例ID
 
 //        0000000000000000546017FE6BC28949
 //        1195
@@ -80,7 +79,7 @@ public class VideoOfflineFragment extends TitleBarFragment<MainActivity> impleme
 
                 }
                 DetailCaseOfflineActivity.mTabAdapter.setItem(2, "视频(" + mDataLest.size() + ")");
-            }else {
+            } else {
                 DetailCaseOfflineActivity.mTabAdapter.setItem(2, "视频(" + 0 + ")");
             }
         } else {
@@ -103,10 +102,6 @@ public class VideoOfflineFragment extends TitleBarFragment<MainActivity> impleme
 //            showEmpty();
 //            DetailCaseOfflineActivity.mTabAdapter.setItem(2, "视频(" + 0 + ")");
 //        }
-
-
-
-
 
 
         mAdapter.setData(mDataLest);

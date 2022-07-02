@@ -7,9 +7,6 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.company.iendo.R;
-import com.company.iendo.bean.model.LocalDialogCaseModelBean;
-import com.company.iendo.bean.model.CaseModelBean;
-import com.company.iendo.bean.model.Province;
 import com.company.iendo.mineui.activity.usermanage.UserManagerListActivity;
 import com.company.iendo.service.HandService;
 import com.company.iendo.app.TitleBarFragment;
@@ -20,7 +17,6 @@ import com.company.iendo.mineui.activity.login.LoginActivity;
 import com.company.iendo.mineui.activity.setting.HospitalActivity;
 import com.company.iendo.other.Constants;
 import com.company.iendo.other.HttpConstant;
-import com.company.iendo.ui.dialog.CaseModelDialog;
 import com.company.iendo.ui.dialog.Input2Dialog;
 import com.company.iendo.ui.dialog.MessageAboutDialog;
 import com.company.iendo.ui.dialog.MessageDialog;
@@ -42,7 +38,6 @@ import org.json.JSONArray;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
 import okhttp3.Call;
 
@@ -65,11 +60,6 @@ public class SettingFragment extends TitleBarFragment<MainActivity> {
     private String mAppIP;
     private JSONArray firstArray;
     private JSONArray array;
-    private ArrayList mModelDataList;
-    private CaseModelDialog.Builder builder;
-    private TextView mMirrorSeeView;
-    private TextView mMirrorDiagnosticsView;
-    private TextView mAdviceView;
 
     public static SettingFragment newInstance() {
         return new SettingFragment();

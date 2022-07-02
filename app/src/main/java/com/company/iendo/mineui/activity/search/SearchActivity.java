@@ -10,10 +10,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.company.iendo.R;
 import com.company.iendo.action.StatusAction;
 import com.company.iendo.app.AppActivity;
-import com.company.iendo.bean.CaseManageListBean;
 import com.company.iendo.bean.SearchListBean;
 import com.company.iendo.bean.event.RefreshItemIdEvent;
-import com.company.iendo.mineui.activity.MainActivity;
 import com.company.iendo.mineui.activity.casemanage.DetailCaseActivity;
 import com.company.iendo.mineui.activity.search.adapter.SearchAdapter;
 import com.company.iendo.other.Constants;
@@ -23,7 +21,6 @@ import com.company.iendo.widget.MyItemDecoration;
 import com.company.iendo.widget.StatusLayout;
 import com.gyf.immersionbar.ImmersionBar;
 import com.hjq.base.BaseAdapter;
-import com.hjq.widget.layout.WrapRecyclerView;
 import com.scwang.smart.refresh.layout.SmartRefreshLayout;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
@@ -32,9 +29,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import okhttp3.Call;
 
@@ -47,7 +42,7 @@ import okhttp3.Call;
 public class SearchActivity extends AppActivity implements StatusAction, BaseAdapter.OnItemClickListener {
     private List<SearchListBean.DataDTO> mDataLest = new ArrayList<>();
     private SmartRefreshLayout mRefreshLayout;
-    private WrapRecyclerView mRecyclerView;
+    private RecyclerView mRecyclerView;
     private SearchAdapter mAdapter;
     private StatusLayout mStatusLayout;
     private HashMap parmasMap;
@@ -156,7 +151,7 @@ public class SearchActivity extends AppActivity implements StatusAction, BaseAda
         mMMKVInstace.encode(Constants.KEY_CurrentCaseID, item.getID() + "");
         Intent intent = new Intent(getActivity(), DetailCaseActivity.class);
         RefreshItemIdEvent refreshItemIdEvent = new RefreshItemIdEvent(true);
-        refreshItemIdEvent.setId(item.getID()+"");
+        refreshItemIdEvent.setId(item.getID() + "");
         EventBus.getDefault().post(refreshItemIdEvent);
         intent.putExtra("Name", item.getName() + "");
         intent.putExtra("itemID", item.getID() + "");

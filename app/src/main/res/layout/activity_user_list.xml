@@ -31,7 +31,7 @@
                 android:layout_height="@dimen/sp_20"/>
 
 
-            <com.hjq.widget.layout.WrapRecyclerView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_userlist_recyclerview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

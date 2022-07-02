@@ -158,8 +158,9 @@
             android:layout_height="match_parent"
             app:srlEnablePureScrollMode="true">
 
-            <com.hjq.widget.layout.WrapRecyclerView
-                android:id="@+id/rv_b_recyclerview"
+<!--            <com.hjq.widget.layout.WrapRecyclerView-->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_b_recyclerview_manager"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/white"

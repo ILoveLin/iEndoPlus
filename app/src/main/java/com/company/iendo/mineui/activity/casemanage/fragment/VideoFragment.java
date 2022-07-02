@@ -19,7 +19,6 @@ import com.company.iendo.utils.SharePreferenceUtil;
 import com.company.iendo.widget.MyItemDecoration;
 import com.company.iendo.widget.StatusLayout;
 import com.hjq.base.BaseAdapter;
-import com.hjq.widget.layout.WrapRecyclerView;
 import com.scwang.smart.refresh.layout.SmartRefreshLayout;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
@@ -41,7 +40,7 @@ import okhttp3.Call;
  */
 public class VideoFragment extends TitleBarFragment<MainActivity> implements StatusAction, BaseAdapter.OnItemClickListener {
     private SmartRefreshLayout mRefreshLayout;
-    private WrapRecyclerView mRecyclerView;
+    private RecyclerView mRecyclerView;
     private StatusLayout mStatusLayout;
     private List<DetailVideoBean.DataDTO> mDataLest = new ArrayList<>();
     private VideoAdapter mAdapter;
@@ -76,7 +75,7 @@ public class VideoFragment extends TitleBarFragment<MainActivity> implements Sta
     /**
      * eventbus 刷新socket数据
      */
-    @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void SocketRefreshEvent(SocketRefreshEvent event) {
         switch (event.getUdpCmd()) {
             case Constants.UDP_18://录像--->0：查询录像状态 1：开始录像，，(我的命令)2：停止录像，(我的命令)3：正在录像，(后台返回操作)  4：未录像(后台返回操作)

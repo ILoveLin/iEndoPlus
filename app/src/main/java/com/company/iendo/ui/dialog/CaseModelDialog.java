@@ -1,5 +1,6 @@
 package com.company.iendo.ui.dialog;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.text.method.ScrollingMovementMethod;
@@ -10,28 +11,27 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
-import androidx.appcompat.view.menu.MenuAdapter;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.company.iendo.R;
 import com.company.iendo.aop.SingleClick;
-import com.company.iendo.app.AppAdapter;
+import com.company.iendo.app.AppActivity;
 import com.company.iendo.bean.model.LocalDialogCaseModelBean;
-import com.company.iendo.bean.model.Province;
-import com.company.iendo.widget.casemodel.ExpandableAdapterView;
-import com.company.iendo.widget.casemodel.FloatItemDecoration;
-import com.company.iendo.widget.casemodel.OnItemViewClickListener;
-import com.hjq.base.BaseAdapter;
+import com.company.iendo.bean.model.ModelBean;
+import com.company.iendo.mineui.activity.casemanage.AddCaseActivity;
+import com.company.iendo.widget.casemodel.ExpandCollapseGroupAdapter;
+import com.gyf.immersionbar.ImmersionBar;
 import com.hjq.base.BaseDialog;
 import com.hjq.widget.view.SmartTextView;
+import com.sunfusheng.StickyHeaderDecoration;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -45,25 +45,32 @@ public final class CaseModelDialog {
     public static final class Builder
             extends BaseDialog.Builder<Builder>
             implements
-            View.OnLayoutChangeListener, Runnable, OnItemViewClickListener {
-
+            View.OnLayoutChangeListener, Runnable {
         @SuppressWarnings("rawtypes")
         @Nullable
         private OnListener mListener;
         private boolean mAutoDismiss = true;
         private Context mContext;
-
         private final RecyclerView mRecyclerView;
         private final SmartTextView mCancelView;
         private final AppCompatTextView mConfirmView;
 
         private final TextView mMirrorSee, mMirrorDiagnostics, mAdvice;
         private LocalDialogCaseModelBean mBean;
-        private final ExpandableAdapterView mAdapter;
+//        private final ExpandableAdapterView mAdapter;
+        public static ArrayList<String> mTitleList;
+        public static LinkedHashMap<String, ArrayList<ModelBean>> mBeanHashMap;
+        public static LinkedHashMap<String, ArrayList<String>> mStringHashMap;
+        public static String[][] mItems;
 
-        public Builder(Context context, ArrayList mDataList) {
+        public Builder(Context context, ArrayList<String> mTitleList, LinkedHashMap<String, ArrayList<ModelBean>> mBeanHashMap, LinkedHashMap<String, ArrayList<String>> mStringHashMap
+                , String[][] items) {
             super(context);
             this.mContext = context;
+            this.mTitleList = mTitleList;
+            this.mBeanHashMap = mBeanHashMap;
+            this.mStringHashMap = mStringHashMap;
+            this.mItems = items;
             setContentView(R.layout.dialog_case_modle);
             setAnimStyle(BaseDialog.ANIM_BOTTOM);
 
@@ -79,21 +86,55 @@ public final class CaseModelDialog {
             mAdvice.setMovementMethod(ScrollingMovementMethod.getInstance());
 
             setOnClickListener(mCancelView, mConfirmView);
-
-            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext);
-            mRecyclerView.setLayoutManager(linearLayoutManager);
-            //模拟数据
-            mAdapter = new ExpandableAdapterView(mDataList);
-//            ExpandableAdapterView expandableListAdapter = new ExpandableAdapterView(mDataList);
-            mRecyclerView.setAdapter(mAdapter);
-            //分割线
-//            FloatItemDecoration floatItemDecoration = new FloatItemDecoration(mAdapter.getObjects(), mContext);
-//            mRecyclerView.addItemDecoration(floatItemDecoration);
-            //监听
-            mAdapter.setOnItemViewClickListener(this);
-//            mAdapter.setOnUIChangeListener(floatItemDecoration);
-
             mBean = new LocalDialogCaseModelBean();
+
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
+            mRecyclerView.addItemDecoration(new StickyHeaderDecoration());
+            ExpandCollapseGroupAdapter expandableAdapter = new ExpandCollapseGroupAdapter(mContext, mItems);
+            mRecyclerView.setAdapter(expandableAdapter);
+            //主动关闭所有父节点
+            for (int i = 0; i < mTitleList.size(); i++) {
+                expandableAdapter.collapseGroup(i, true);
+            }
+            expandableAdapter.setOnItemClickListener((adapter, data, groupPosition, childPosition) -> {
+                if (adapter.isHeader(groupPosition, childPosition)) {
+                    if (expandableAdapter.isExpand(groupPosition)) {
+                        expandableAdapter.collapseGroup(groupPosition, true);
+                    } else {
+                        expandableAdapter.expandGroup(groupPosition, true);
+                    }
+                    if (true) {
+                        expandableAdapter.updateItem(groupPosition, childPosition, expandableAdapter.getItem(groupPosition, childPosition));
+                    }
+                }
+
+                //不是标题被点击
+                if (!mTitleList.contains(data) || childPosition != 0) {
+                    //获取子Bean
+                    String s = mTitleList.get(groupPosition);
+                    ArrayList<ModelBean> itemBeanList = mBeanHashMap.get(s);
+                    ModelBean itemBean = itemBeanList.get(childPosition - 1);//因为包含了分类,所以减1
+
+                    mMirrorSee.setText("" + itemBean.getSzEndoDesc());
+                    mMirrorDiagnostics.setText("" + itemBean.getSzResult());
+                    mAdvice.setText("" + itemBean.getSzTherapy());
+                    mBean.setMirrorSee(itemBean.getSzEndoDesc() + "");
+                    mBean.setMirrorDiagnostics(itemBean.getSzResult() + "");
+                    mBean.setAdvice("" + itemBean.getSzTherapy());
+                }
+
+
+            });
+
+            expandableAdapter.setOnItemLongClickListener((adapter, data, groupPosition, childPosition) -> {
+            });
+            ImmersionBar.with((AddCaseActivity) mContext)
+                    // 默认状态栏字体颜色为黑色
+                    .statusBarDarkFont(true)
+                    // 指定导航栏背景颜色
+                    .navigationBarColor(R.color.white)
+                    // 状态栏字体和导航栏内容自动变色，必须指定状态栏颜色和导航栏颜色才可以自动变色
+                    .autoDarkModeEnable(true, 0.2f);
         }
 
         @Override
@@ -217,16 +258,7 @@ public final class CaseModelDialog {
             return outMetrics.heightPixels;
         }
 
-        @Override
-        public void setOnViewClickListener(View view, int position, Province.City city) {
 
-            mMirrorSee.setText("" + city.getSzEndoDesc());
-            mMirrorDiagnostics.setText("" + city.getSzResult());
-            mAdvice.setText("" + city.getSzTherapy());
-            mBean.setMirrorSee(city.getSzEndoDesc()+"");
-            mBean.setMirrorDiagnostics( city.getSzResult()+"");
-            mBean.setAdvice("" + city.getSzTherapy());
-        }
     }
 
 

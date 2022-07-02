@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatCheckBox;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.company.iendo.R;
 import com.company.iendo.action.StatusAction;
@@ -30,7 +31,6 @@ import com.gyf.immersionbar.ImmersionBar;
 import com.hjq.bar.OnTitleBarListener;
 import com.hjq.bar.TitleBar;
 import com.hjq.base.BaseDialog;
-import com.hjq.widget.layout.WrapRecyclerView;
 import com.hjq.widget.view.ClearEditText;
 import com.scwang.smart.refresh.layout.SmartRefreshLayout;
 import com.tencent.mmkv.MMKV;
@@ -52,7 +52,7 @@ import okhttp3.Call;
  */
 public final class ChangeUserActivity extends AppActivity implements StatusAction, CompoundButton.OnCheckedChangeListener {
     private StatusLayout mStatusLayout;
-    private WrapRecyclerView mRecyclerView;
+    private RecyclerView mRecyclerView;
     private SmartRefreshLayout mSmartRefreshLayout;
     private TitleBar mTitleBar;
     private ClearEditText mReloType;
@@ -523,7 +523,7 @@ public final class ChangeUserActivity extends AppActivity implements StatusActio
         //是否激活
         if (mRadioOpen.isChecked()) {
             CanUSE = "1";
-        }else if (mRadioClose.isChecked()){
+        } else if (mRadioClose.isChecked()) {
             CanUSE = "0";
         }
 
@@ -695,12 +695,12 @@ public final class ChangeUserActivity extends AppActivity implements StatusActio
                             if ("" != response) {
 
                                 UserDeletedBean mBean = mGson.fromJson(response, UserDeletedBean.class);
-                                LogUtils.e("用户管理===编辑="+mBean.toString());
+                                LogUtils.e("用户管理===编辑=" + mBean.toString());
                                 if (mBean.getCode().equals("0")) {
                                     String typeRelo = mReloType.getText().toString();
-                                    if ("超级管理员".equals(typeRelo)){
+                                    if ("超级管理员".equals(typeRelo)) {
                                         toast("超级管理员不能被修改");
-                                    }else {
+                                    } else {
                                         toast("修改成功");
                                     }
                                 } else {
@@ -764,7 +764,7 @@ public final class ChangeUserActivity extends AppActivity implements StatusActio
         mIVReloType.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startDialogIconAnim(true,mIVReloType);
+                startDialogIconAnim(true, mIVReloType);
                 // 单选对话框
                 new SelectDialog.Builder(ChangeUserActivity.this)
                         .setTitle("请选择")//0:管理员,1:操作员,2:普通用户,3:自定义
@@ -783,7 +783,7 @@ public final class ChangeUserActivity extends AppActivity implements StatusActio
                                 Role = position;
                                 mReloType.setText(str + "");
                                 setDefaultReloData(str);
-                                startDialogIconAnim(false,mIVReloType);
+                                startDialogIconAnim(false, mIVReloType);
 
                             }
 
@@ -956,7 +956,7 @@ public final class ChangeUserActivity extends AppActivity implements StatusActio
                         if ("" != response) {
                             UserDetailBean mBean = mGson.fromJson(response, UserDetailBean.class);
 
-                            LogUtils.e("用户管理===获取详情="+mBean.toString());
+                            LogUtils.e("用户管理===获取详情=" + mBean.toString());
                             String code = mBean.getCode() + "";
                             if (code.equals("0")) {
                                 setLayoutData(mBean);
@@ -1043,7 +1043,6 @@ public final class ChangeUserActivity extends AppActivity implements StatusActio
 
     /**
      * 删除对话框
-     *
      */
     private void showDeleteDialog() {
         new MessageDialog.Builder(this)
@@ -1066,13 +1065,12 @@ public final class ChangeUserActivity extends AppActivity implements StatusActio
 
     /**
      * 删除请求
-     *
      */
     private void sendDeleteRequest() {
         showLoading();
         OkHttpUtils.post()
                 .url(mBaseUrl + HttpConstant.UserManager_Delete)
-                .addParams("DeleteUserID",cUserID)//被删除用户的ID
+                .addParams("DeleteUserID", cUserID)//被删除用户的ID
                 .addParams("CurrentUserID", mUserID)//当前用户ID
                 .addParams("CurrentRelo", mLoginRole + "")//当前用户权限
                 .build()
@@ -1096,8 +1094,8 @@ public final class ChangeUserActivity extends AppActivity implements StatusActio
                                 toast("删除成功");
                                 EventBus.getDefault().post(new RefreshUserListEvent(true));
                                 finish();
-                            }else {
-                                toast(""+mBean.getMsg());
+                            } else {
+                                toast("" + mBean.getMsg());
                             }
 
                         } else {
@@ -1110,6 +1108,7 @@ public final class ChangeUserActivity extends AppActivity implements StatusActio
 
 
     }
+
     @Override
     public StatusLayout getStatusLayout() {
         return mStatusLayout;

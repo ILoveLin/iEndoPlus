@@ -25,7 +25,6 @@ import com.hjq.bar.OnTitleBarListener;
 import com.hjq.bar.TitleBar;
 import com.hjq.base.BaseAdapter;
 import com.hjq.base.BaseDialog;
-import com.hjq.widget.layout.WrapRecyclerView;
 import com.hjq.widget.view.ClearEditText;
 import com.scwang.smart.refresh.layout.SmartRefreshLayout;
 import com.tencent.mmkv.MMKV;
@@ -47,14 +46,13 @@ import okhttp3.Call;
  * author： LoveLin
  * time：2021/11/18 14:39
  * desc：已经废弃  不使用了
- *
  */
 public class UserListActivity extends AppActivity implements StatusAction, BaseAdapter.OnItemClickListener, BaseAdapter.OnChildClickListener {
     private List<UserListBean.DataDTO> mDataLest = new ArrayList<>();
     private List<UserListBean.DataDTO> mUserListData;
     private StatusLayout mStatusLayout;
     private SmartRefreshLayout mSmartRefreshLayout;
-    private WrapRecyclerView mRecyclerView;
+    private RecyclerView mRecyclerView;
     private UserListAdapter mAdapter;
     private String mLoginRole;
     private String mLoginUserID;
@@ -64,7 +62,7 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
     private int mAddCurrentCode = 0;//管理员
     private String mAddCurrentString = "管理员";//管理员
 
-//    @Override
+    //    @Override
 //    protected int getLayoutId() {
 //        return R.layout.activity_user_add;
 //    }
@@ -72,6 +70,7 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
     protected int getLayoutId() {
         return R.layout.activity_user_list;
     }
+
     @Override
     protected void initView() {
         EventBus.getDefault().register(this);
@@ -98,9 +97,8 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
     }
 
 
-
-    @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
-    public void RefreshUserListEvent(RefreshUserListEvent event){
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    public void RefreshUserListEvent(RefreshUserListEvent event) {
         sendRequest();
     }
 
@@ -197,7 +195,7 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
                 .addParams("CurrentRelo", mLoginRole)    //当前用户权限
                 .addParams("CreateRelo", mAddCurrentCode + "")     //新用户的权限
                 .addParams("UserName", userName)    //新用户的名字
-                .addParams("Password",MD5ChangeUtil.Md5_32(passwrod) )    //新用户的密码
+                .addParams("Password", MD5ChangeUtil.Md5_32(passwrod))    //新用户的密码
                 .addParams("Des", mAddCurrentString)    //新用户的描述
                 .addParams("CanSUE", "1")    //新用户是否激活1激活，0是未激活
                 .addParams("UserID", UserID)    //用户ID
@@ -236,7 +234,7 @@ public class UserListActivity extends AppActivity implements StatusAction, BaseA
     private void sendRequest() {
         OkHttpUtils.get()
                 .url(mBaseUrl + HttpConstant.UserManager_List)
-                .addParams("type","manager")
+                .addParams("type", "manager")
                 .build()
                 .execute(new StringCallback() {
                     @Override

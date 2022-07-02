@@ -38,8 +38,9 @@
     </RelativeLayout>
 
     <LinearLayout
+        android:paddingLeft="@dimen/dp_5"
         android:id="@+id/linear_left"
-        android:layout_width="@dimen/dp_120"
+        android:layout_width="@dimen/dp_130"
         android:layout_height="match_parent"
         android:layout_below="@+id/titlebar_relative"
         android:orientation="vertical">
@@ -89,7 +90,7 @@
         android:layout_marginRight="@dimen/dp_10"
         android:layout_toRightOf="@+id/linear_left"
         android:orientation="vertical"
-        android:paddingLeft="@dimen/dp_10">
+        android:paddingLeft="@dimen/dp_5">
 
 
         <LinearLayout

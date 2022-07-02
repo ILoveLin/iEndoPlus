@@ -4,10 +4,12 @@ import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.text.InputFilter;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.widget.NestedScrollView;
@@ -20,6 +22,7 @@ import com.company.iendo.bean.DialogItemBean;
 import com.company.iendo.bean.ListDialogDateBean;
 import com.company.iendo.bean.event.SocketRefreshEvent;
 import com.company.iendo.bean.model.LocalDialogCaseModelBean;
+import com.company.iendo.bean.model.ModelBean;
 import com.company.iendo.bean.socket.HandBean;
 import com.company.iendo.manager.ActivityManager;
 import com.company.iendo.other.Constants;
@@ -230,12 +233,14 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
     //显示模板导入dialog
     private void showModelDialog() {
         //模板导入
-        if (null== mModelDataList){
+        if (null == mTitleList || null == mBeanHashMap || null == mStringHashMap || null == items) {
             toast("模板加载中...请稍后再试!");
             return;
         }
-        new CaseModelDialog.Builder(getActivity(), mModelDataList).setBackgroundDimEnabled(true)
-                .setAnimStyle(BaseDialog.ANIM_SCALE)
+
+        new CaseModelDialog.Builder(getActivity(), mTitleList, mBeanHashMap, mStringHashMap, items).setBackgroundDimEnabled(true)
+                .setAnimStyle(BaseDialog.ANIM_BOTTOM)
+//                .setAnimStyle(BaseDialog.ANIM_SCALE)
                 .addOnDismissListener(new BaseDialog.OnDismissListener() {
                     @Override
                     public void onDismiss(BaseDialog dialog) {
@@ -244,7 +249,6 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
                 })
                 .setListener(new CaseModelDialog.OnListener<String>() {
 
-
                     @Override
                     public void onConfirm(LocalDialogCaseModelBean mBean) {
                         if (null != mBean) {
@@ -252,9 +256,9 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
                             et_02_mirror_see.setText("");
                             et_02_mirror_result.setText("");
                             et_02_advice.setText("");
-                            et_02_mirror_see.setText(""+mBean.getMirrorSee());
-                            et_02_mirror_result.setText(""+mBean.getMirrorDiagnostics());
-                            et_02_advice.setText(""+mBean.getAdvice());
+                            et_02_mirror_see.setText("" + mBean.getMirrorSee());
+                            et_02_mirror_result.setText("" + mBean.getMirrorDiagnostics());
+                            et_02_advice.setText("" + mBean.getAdvice());
                             et_02_mirror_result.setFocusableInTouchMode(true);
                             et_02_mirror_result.setFocusable(true);
                             et_02_mirror_result.requestFocus();
@@ -270,6 +274,8 @@ public final class AddCaseActivity extends AppActivity implements StatusAction {
                     }
                 })
                 .show();
+
+
     }
 
     private void checkDataAndRequest() {

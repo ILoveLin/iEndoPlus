@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatCheckBox;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.company.iendo.R;
 import com.company.iendo.action.StatusAction;
@@ -26,7 +27,6 @@ import com.gyf.immersionbar.ImmersionBar;
 import com.hjq.bar.OnTitleBarListener;
 import com.hjq.bar.TitleBar;
 import com.hjq.base.BaseDialog;
-import com.hjq.widget.layout.WrapRecyclerView;
 import com.hjq.widget.view.ClearEditText;
 import com.hjq.widget.view.PasswordEditText;
 import com.scwang.smart.refresh.layout.SmartRefreshLayout;
@@ -48,7 +48,7 @@ import okhttp3.Call;
  */
 public final class AddUserActivity extends AppActivity implements StatusAction, CompoundButton.OnCheckedChangeListener {
     private StatusLayout mStatusLayout;
-    private WrapRecyclerView mRecyclerView;
+    private RecyclerView mRecyclerView;
     private SmartRefreshLayout mSmartRefreshLayout;
     private TitleBar mTitleBar;
     private ClearEditText mAccount;
@@ -277,11 +277,11 @@ public final class AddUserActivity extends AppActivity implements StatusAction, 
         //冲洗设置
         //其他
         //设备设置
-        if(mCurrentTypeDes.equals(Constants.Type_EarNoseTable)){
+        if (mCurrentTypeDes.equals(Constants.Type_EarNoseTable)) {
             mPenXiSetting.setText("喷吸吹设置");
-        }else if (mCurrentTypeDes.equals(Constants.Type_MiNiaoTable)||mCurrentTypeDes.equals(Constants.Type_FuKeTable)){
+        } else if (mCurrentTypeDes.equals(Constants.Type_MiNiaoTable) || mCurrentTypeDes.equals(Constants.Type_FuKeTable)) {
             mPenXiSetting.setText("冲洗设置");
-        }else {
+        } else {
             mPenXiSetting.setText("设备设置");
         }
 

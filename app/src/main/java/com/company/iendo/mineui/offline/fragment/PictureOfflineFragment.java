@@ -10,13 +10,11 @@ import com.company.iendo.action.StatusAction;
 import com.company.iendo.app.TitleBarFragment;
 import com.company.iendo.green.db.downcase.CaseImageListBean;
 import com.company.iendo.mineui.activity.MainActivity;
-import com.company.iendo.mineui.activity.casemanage.DetailCaseActivity;
 import com.company.iendo.mineui.offline.activity.DetailCaseOfflineActivity;
 import com.company.iendo.other.GridSpaceDecoration;
 import com.company.iendo.ui.activity.ImagePreviewActivity;
 import com.company.iendo.widget.StatusLayout;
 import com.hjq.base.BaseAdapter;
-import com.hjq.widget.layout.WrapRecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +26,7 @@ import java.util.List;
  * desc：离线模式的--图片fragment
  */
 public class PictureOfflineFragment extends TitleBarFragment<MainActivity> implements StatusAction, BaseAdapter.OnItemClickListener {
-    private WrapRecyclerView mRecyclerView;
+    private RecyclerView mRecyclerView;
     private StatusLayout mStatusLayout;
     private List<String> mDataLest = new ArrayList<>();
     private PictureOfflineAdapter mAdapter;

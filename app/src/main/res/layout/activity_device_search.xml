@@ -92,7 +92,10 @@
             android:layout_height="match_parent"
             app:srlEnablePureScrollMode="true">
 
-            <com.hjq.widget.layout.WrapRecyclerView
+<!--            <com.hjq.widget.layout.WrapRecyclerView-->
+            <androidx.recyclerview.widget.RecyclerView
+                android:clickable="true"
+                android:focusable="true"
                 android:id="@+id/rv_device_search_recyclerview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

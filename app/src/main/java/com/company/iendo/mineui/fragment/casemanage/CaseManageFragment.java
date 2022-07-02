@@ -26,14 +26,12 @@ import com.company.iendo.mineui.activity.MainActivity;
 import com.company.iendo.mineui.activity.casemanage.AddCaseActivity;
 import com.company.iendo.mineui.activity.casemanage.DetailCaseActivity;
 import com.company.iendo.mineui.activity.search.SearchSelectedActivity;
-import com.company.iendo.mineui.activity.vlc.GetPictureActivity;
 import com.company.iendo.mineui.fragment.casemanage.adapter.CaseManageAdapter;
 import com.company.iendo.other.Constants;
 import com.company.iendo.other.HttpConstant;
 import com.company.iendo.service.HandService;
 import com.company.iendo.ui.dialog.DateDialog;
 import com.company.iendo.utils.CalculateUtils;
-import com.company.iendo.utils.CommonUtil;
 import com.company.iendo.utils.DateUtil;
 import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.SharePreferenceUtil;
@@ -43,9 +41,7 @@ import com.gyf.immersionbar.ImmersionBar;
 import com.hjq.base.BaseAdapter;
 import com.hjq.base.BaseDialog;
 import com.hjq.gson.factory.GsonFactory;
-import com.hjq.widget.layout.WrapRecyclerView;
 import com.scwang.smart.refresh.layout.SmartRefreshLayout;
-import com.tencent.bugly.proguard.H;
 import com.tencent.mmkv.MMKV;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
@@ -70,7 +66,7 @@ import okhttp3.Call;
  */
 public class CaseManageFragment extends TitleBarFragment<MainActivity> implements StatusAction, BaseAdapter.OnItemClickListener {
     private SmartRefreshLayout mRefreshLayout;
-    private WrapRecyclerView mRecyclerView;
+    private RecyclerView mRecyclerView;
     private CaseManageAdapter mAdapter;
     private DateDialog.Builder mDateDialog;
     private String mChoiceDate;
@@ -113,7 +109,7 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
         EventBus.getDefault().register(this);
         endoType = (String) SharePreferenceUtil.get(getActivity(), SharePreferenceUtil.Current_EndoType, "3");
         mRefreshLayout = findViewById(R.id.rl_b_refresh);
-        mRecyclerView = findViewById(R.id.rv_b_recyclerview);
+        mRecyclerView = findViewById(R.id.rv_b_recyclerview_manager);
         mTitle = findViewById(R.id.tv_title);
         mAnim = findViewById(R.id.iv_tag_anim);
         statusBarView = findViewById(R.id.viewtop);
@@ -354,7 +350,7 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
             sendRequest(currentChoseDate);
         }
         sendHandLinkMessage();
-        mHandler.sendEmptyMessageDelayed(1,1000);
+        mHandler.sendEmptyMessageDelayed(1, 1000);
     }
 
     /**
@@ -368,7 +364,7 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
             HandBean handBean = new HandBean();
             handBean.setHelloPc("");
             handBean.setComeFrom("");
-            byte[] sendByteData = CalculateUtils.getSendByteData(getAttachActivity(), mGson.toJson(handBean), mCurrentTypeNum+"", mCurrentReceiveDeviceCode,
+            byte[] sendByteData = CalculateUtils.getSendByteData(getAttachActivity(), mGson.toJson(handBean), mCurrentTypeNum + "", mCurrentReceiveDeviceCode,
                     CMDCode);
             if (("".equals(mSocketPort))) {
                 toast("通讯端口不能为空");
@@ -391,7 +387,7 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
         handBean.setHelloPc("");
         handBean.setComeFrom("");
 
-        byte[] sendByteData = CalculateUtils.getSendByteData(getAttachActivity(), mGson.toJson(handBean), mCurrentTypeNum+"", mCurrentReceiveDeviceCode,
+        byte[] sendByteData = CalculateUtils.getSendByteData(getAttachActivity(), mGson.toJson(handBean), mCurrentTypeNum + "", mCurrentReceiveDeviceCode,
                 Constants.UDP_HAND);
 
         if (("".equals(mSocketPort))) {
@@ -498,7 +494,7 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
         LogUtils.e("病例列表=....====mCaseID===" + mCaseID);
         LogUtils.e("病例列表=....====mCaseID===" + mCaseID);
 
-        if ("0".equals(mCaseID)){
+        if ("0".equals(mCaseID)) {
             mCurrentCheckPatientInfo.setText("无");
             return;
         }
@@ -520,10 +516,10 @@ public class CaseManageFragment extends TitleBarFragment<MainActivity> implement
                             LogUtils.e("病例列表=....====结果===" + mBean.toString());
                             if (0 == mBean.getCode()) {  //成功
                                 String longSeeCase = MMKV.defaultMMKV().decodeString(Constants.KEY_CurrentLongSeeCaseID);
-                                if (longSeeCase.equals("0")){
+                                if (longSeeCase.equals("0")) {
                                     mCurrentCheckPatientInfo.setText("无");
-                                }else {
-                                    mCurrentCheckPatientInfo.setText(data.getCaseNo() + " | " + data.getName() + " |"+data.getSex());
+                                } else {
+                                    mCurrentCheckPatientInfo.setText(data.getCaseNo() + " | " + data.getName() + " |" + data.getSex());
                                 }
 
                             } else {

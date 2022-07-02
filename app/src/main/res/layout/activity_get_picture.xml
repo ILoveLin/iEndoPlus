@@ -559,7 +559,7 @@
                         android:textSize="@dimen/sp_14"
                         android:visibility="invisible" />
 
-                    <com.hjq.widget.layout.WrapRecyclerView
+                    <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rv_b_recyclerview"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"

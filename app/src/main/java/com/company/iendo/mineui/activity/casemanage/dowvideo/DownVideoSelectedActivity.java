@@ -15,7 +15,6 @@ import com.company.iendo.action.StatusAction;
 import com.company.iendo.aop.SingleClick;
 import com.company.iendo.app.AppActivity;
 import com.company.iendo.bean.DetailDownVideoBean;
-import com.company.iendo.bean.RefreshEvent;
 import com.company.iendo.bean.event.downevent.DownEndEvent;
 import com.company.iendo.bean.event.downevent.DownLoadingEvent;
 import com.company.iendo.bean.event.downevent.DownStartEvent;
@@ -34,7 +33,6 @@ import com.hjq.base.BaseAdapter;
 import com.hjq.permissions.OnPermissionCallback;
 import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
-import com.hjq.widget.layout.WrapRecyclerView;
 import com.liulishuo.okdownload.DownloadContext;
 import com.liulishuo.okdownload.core.listener.DownloadListener4WithSpeed;
 import com.xdandroid.hellodaemon.DaemonEnv;
@@ -62,7 +60,7 @@ import okhttp3.Call;
 public final class DownVideoSelectedActivity extends AppActivity implements StatusAction, BaseAdapter.OnItemClickListener, BaseAdapter.OnChildClickListener {
 
     private StatusLayout mStatusLayout;
-    private WrapRecyclerView mRecyclerView;
+    private RecyclerView mRecyclerView;
     private DownVideoSelectedAdapter mAdapter;
     private ArrayList<DetailDownVideoBean.DataDTO> mDataLest = new ArrayList<>();
     private String currentItemCaseID;
@@ -165,7 +163,7 @@ public final class DownVideoSelectedActivity extends AppActivity implements Stat
                                         DownVideoService downVideoService = new DownVideoService();
                                         downVideoService.startDownVideoThread(dataDTO, DownVideoSelectedActivity.this, localFolderName, mDeviceCode, currentItemCaseID);
                                     }
-                                }else {
+                                } else {
                                     toast("下载队列正在下载请勿重复开启下载");
                                 }
 

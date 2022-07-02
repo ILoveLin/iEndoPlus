@@ -35,7 +35,6 @@ import com.hjq.base.action.AnimAction;
 import com.hjq.permissions.OnPermissionCallback;
 import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
-import com.hjq.widget.layout.WrapRecyclerView;
 import com.hjq.widget.view.ClearEditText;
 import com.scwang.smart.refresh.layout.SmartRefreshLayout;
 
@@ -59,7 +58,7 @@ import java.util.List;
  */
 public class DeviceActivity extends AppActivity implements StatusAction, BaseAdapter.OnItemClickListener, BaseAdapter.OnChildClickListener, BaseAdapter.OnChildLongClickListener {
     private SmartRefreshLayout mRefreshLayout;
-    private WrapRecyclerView mRecyclerView;
+    private RecyclerView mRecyclerView;
     private StatusLayout mStatusLayout;
     private List<DeviceDBBean> mDataLest = new ArrayList<>();
     private DeviceAdapter mAdapter;
@@ -921,7 +920,7 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
             mMMKVInstace.encode(Constants.KEY_Device_Ip, mDBBean.getIp());
             LogUtils.e(TAG + "轮询中:------>接收,上位机数据");
 
-            LogUtils.e(TAG+"当前选中的设备数据-->"+mDBBean.toString());
+            LogUtils.e(TAG + "当前选中的设备数据-->" + mDBBean.toString());
             SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_Type_Msg, mDBBean.getMsg());
             SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_IP, mDBBean.getIp());
             SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_HttpPort, mDBBean.getHttpPort());
@@ -954,13 +953,13 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
         if (Constants.Type_FuKeTable.equals(str)) {
             return Constants.Type_09;
         } else if (Constants.Type_V1_YiTiJi.equals(str)) {
-            return  Constants.Type_07;
+            return Constants.Type_07;
 
         } else if (Constants.Type_EarNoseTable.equals(str)) {
             return Constants.Type_08;
 
         } else if (Constants.Type_MiNiaoTable.equals(str)) {
-            return  Constants.Type_0A;
+            return Constants.Type_0A;
 
         } else if (Constants.Type_FuKeTable.equals(str)) {
             return Constants.Type_09;

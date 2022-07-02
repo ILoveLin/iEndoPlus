@@ -41,7 +41,7 @@
                 app:shape_strokeWidth="1dp" />
 
 
-            <com.hjq.widget.layout.WrapRecyclerView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_video_list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

@@ -299,12 +299,13 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
             public void onClick(View v) {
                 //说明是编辑状态
                 if (View.VISIBLE == mModelView.getVisibility()) {
-                    if (null == mModelDataList) {
+                    //模板导入
+                    if (null == mTitleList || null == mBeanHashMap || null == mStringHashMap || null == items) {
                         toast("模板加载中...请稍后再试!");
                         return;
                     }
-                    new CaseModelDialog.Builder(getActivity(), mModelDataList).setBackgroundDimEnabled(true)
-                            .setAnimStyle(BaseDialog.ANIM_SCALE)
+                    new CaseModelDialog.Builder(getActivity(), mTitleList, mBeanHashMap, mStringHashMap, items).setBackgroundDimEnabled(true)
+                            .setAnimStyle(BaseDialog.ANIM_BOTTOM)
                             .addOnDismissListener(new BaseDialog.OnDismissListener() {
                                 @Override
                                 public void onDismiss(BaseDialog dialog) {

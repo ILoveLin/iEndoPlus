@@ -23,7 +23,6 @@ import com.gyf.immersionbar.ImmersionBar;
 import com.hjq.bar.OnTitleBarListener;
 import com.hjq.bar.TitleBar;
 import com.hjq.base.BaseAdapter;
-import com.hjq.widget.layout.WrapRecyclerView;
 import com.scwang.smart.refresh.layout.SmartRefreshLayout;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
@@ -46,7 +45,7 @@ import okhttp3.Call;
 public final class UserManagerListActivity extends AppActivity implements StatusAction, BaseAdapter.OnItemClickListener {
     private List<UserManagerListBean.DataDTO> mDataLest = new ArrayList<>();
     private StatusLayout mStatusLayout;
-    private WrapRecyclerView mRecyclerView;
+    private RecyclerView mRecyclerView;
     private SmartRefreshLayout mSmartRefreshLayout;
     private TitleBar mTitleBar;
     private String mLoginUserID;
