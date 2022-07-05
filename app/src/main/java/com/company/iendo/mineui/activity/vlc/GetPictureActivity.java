@@ -1766,6 +1766,9 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         onTouchVideoListener = mPlayer.getOnTouchVideoListener();
         mVLCView = mPlayer.findViewById(R.id.vlc_video_view);
 
+        mAudiomanager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+
+
     }
 
 

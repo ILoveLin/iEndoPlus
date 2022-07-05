@@ -105,6 +105,10 @@ public class SocketUtils {
 //        WifiManager.MulticastLock lock = manager.createMulticastLock("test wifi");
 //        lock.acquire();    //申请开启
 
+        if (!CommonUtil.isCorrectIp2(ip)) {
+            LogUtils.e(TAG+"startSendHandMessage---Error:ip不规则");
+            return;
+        }
         MMKV mmkv = MMKV.defaultMMKV();
         int mLocalReceivePort= mmkv.decodeInt(Constants.KEY_LOCAL_RECEIVE_PORT);
         InetAddress mAddress = null;
@@ -156,7 +160,10 @@ public class SocketUtils {
 //        WifiManager.MulticastLock lock = manager.createMulticastLock("test wifi");
 //        申请开启
 //        lock.acquire();
-
+        if (!CommonUtil.isCorrectIp2(ip)) {
+            LogUtils.e(TAG+"startSendPointMessage---Error:ip不规则");
+            return;
+        }
         MMKV mmkv = MMKV.defaultMMKV();
         int mLocalReceivePort= mmkv.decodeInt(Constants.KEY_LOCAL_RECEIVE_PORT);
         InetAddress mAddress = null;
