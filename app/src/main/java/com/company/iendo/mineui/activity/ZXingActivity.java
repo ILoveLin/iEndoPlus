@@ -162,7 +162,7 @@ public final class ZXingActivity extends AppActivity implements QRCodeView.Deleg
         Type type = new TypeToken<ZXBean>() {
         }.getType();
         ZXBean mBean = gson.fromJson(result, type);
-//            VideoDBBean01 videoDBBean = new VideoDBBean01();
+//            deviceDBBean01 deviceDBBean = new deviceDBBean01();
 
         DeviceDBBean deviceDBBean = new DeviceDBBean();
 
@@ -183,8 +183,46 @@ public final class ZXingActivity extends AppActivity implements QRCodeView.Deleg
         deviceDBBean.setSocketPort("" + mBean.getSocketPort());//
         deviceDBBean.setTitle("" + mBean.getTitle());//
         deviceDBBean.setUsername("" + mBean.getUsername());//
-        deviceDBBean.setMSelected(false);//
+        switch (mBean.getDeviceType()+"") {
+            case "00": //工作站
+            case "0": //工作站
+                deviceDBBean.setType(Constants.Type_Work_Station);
+                deviceDBBean.setDeviceName(Constants.Type_Work_Station);
+                break;
+            case "01": //HD3摄像机
+                deviceDBBean.setType(Constants.Type_HD3);
+                deviceDBBean.setDeviceName(Constants.Type_HD3);
+                break;
+            case "05": //4K摄像机(HD3-4K)
+                deviceDBBean.setType(Constants.Type_HD3_4K);
+                deviceDBBean.setDeviceName(Constants.Type_HD3_4K);
+                break;
+            case "07": //一代一体机
+                deviceDBBean.setType(Constants.Type_V1_YiTiJi);
+                deviceDBBean.setDeviceName(Constants.Type_V1_YiTiJi);
+                break;
+            case "8": //耳鼻喉治疗台
+                deviceDBBean.setType(Constants.Type_EarNoseTable);
+                deviceDBBean.setDeviceName(Constants.Type_EarNoseTable);
+                break;
+            case "9": //妇科治疗台
+            case "09": //妇科治疗台
+                deviceDBBean.setType(Constants.Type_FuKeTable);
+                deviceDBBean.setDeviceName(Constants.Type_FuKeTable);
+                break;
+            case "10": //泌尿治疗台
+                deviceDBBean.setType(Constants.Type_MiNiaoTable);
+                deviceDBBean.setDeviceName(Constants.Type_MiNiaoTable);
+                break;
+            case "FF": //神州转播
+                deviceDBBean.setType(Constants.Type_Custom_Url);
+                deviceDBBean.setDeviceName(Constants.Type_Custom_Url);
+                break;
 
+        }
+        deviceDBBean.setMSelected(false);//
+        //设置唯一标识key:deviceOnlyCode16 + bean.getType()
+        deviceDBBean.setAcceptAndInsertDB(mBean.getEndoType()+mBean.getDeviceID()+deviceTypeString);
         DeviceDBUtils.insertOrReplace(ZXingActivity.this, deviceDBBean);
 
         EventBus.getDefault().post(new RefreshEvent("refresh"));

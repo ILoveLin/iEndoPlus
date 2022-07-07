@@ -257,6 +257,7 @@ public class Constants {
     public static final String Type_FuKeTable_LivePort = "7788";                             //LivePort
     public static final String Type_FuKeTable_SocketPort = "7006";                           //SocketPort
     public static final String Type_FuKeTable_MicPort = "7789";                              //MicPort
+    public static final String Type_FuKeTable_Default_Endotype = "4";                      //endoType新增默认值MicPort
 
 
     //一代一体机
@@ -269,6 +270,7 @@ public class Constants {
     public static final String Type_V1_YiTiJi_LivePort = "7788";                             //LivePort
     public static final String Type_V1_YiTiJi_SocketPort = "7006";                           //SocketPort
     public static final String Type_V1_YiTiJi_MicPort = "7789";                              //MicPort
+    public static final String Type_V1_YiTiJi_Default_Endotype = "3";                      //endoType新增默认值MicPort
 
 
     //耳鼻--喉治疗台
@@ -281,6 +283,7 @@ public class Constants {
     public static final String Type_EarNoseTable_LivePort = "7788";                           //LivePort
     public static final String Type_EarNoseTable_SocketPort = "7006";                         //SocketPort
     public static final String Type_EarNoseTable_MicPort = "7789";                            //MicPort
+    public static final String Type_EarNoseTable_Default_Endotype = "3";                      //endoType新增默认值MicPort
 
     //泌尿--喉治疗台
     public static final String Type_MiNiaoTable = "泌尿治疗台";                                 //泌尿治疗台
@@ -292,6 +295,7 @@ public class Constants {
     public static final String Type_MiNiaoTable_LivePort = "7788";                             //LivePort
     public static final String Type_MiNiaoTable_SocketPort = "7006";                           //SocketPort
     public static final String Type_MiNiaoTable_MicPort = "7789";                              //MicPort
+    public static final String Type_MiNiaoTable_Default_Endotype = "6";                      //endoType新增默认值MicPort
 
 
     /**

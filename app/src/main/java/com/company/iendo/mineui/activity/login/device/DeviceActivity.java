@@ -26,6 +26,7 @@ import com.company.iendo.ui.dialog.ModifyDeviceDialog;
 import com.company.iendo.ui.dialog.SelectDialog;
 import com.company.iendo.ui.dialog.SelectModifyTypeDialog;
 import com.company.iendo.ui.popup.ListSearchPopup;
+import com.company.iendo.utils.CommonUtil;
 import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.SharePreferenceUtil;
 import com.company.iendo.widget.StatusLayout;
@@ -320,6 +321,8 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                                 deviceDBBean.setMicPort(mMicPort);     //语音端口
                                 deviceDBBean.setType(mDeviceType);     //设备类型
                                 deviceDBBean.setType_num(getTypeNum(mDeviceType)); //设备类型数字
+                                deviceDBBean.setEndoType(getEndoTypeData(mDeviceType)); //设置endoType默认值
+                                deviceDBBean.setAcceptAndInsertDB(deviceDBBean.getEndoType() + mDeviceCode + mDeviceType);
                                 deviceDBBean.setMSelected(false);
                                 DeviceDBUtils.insertOrReplaceInTx(DeviceActivity.this, deviceDBBean);
                                 refreshRecycleViewData();
@@ -390,7 +393,8 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                                 deviceDBBean.setMicPort(mMicPort);     //语音端口
                                 deviceDBBean.setType(mDeviceType);     //设备类型
                                 deviceDBBean.setType_num(getTypeNum(mDeviceType)); //设备类型数字
-
+                                deviceDBBean.setEndoType(getEndoTypeData(mDeviceType)); //设置endoType默认值
+                                deviceDBBean.setAcceptAndInsertDB(deviceDBBean.getEndoType() + mDeviceCode + mDeviceType);
                                 deviceDBBean.setMSelected(false);
 
                                 DeviceDBUtils.insertOrReplaceInTx(DeviceActivity.this, deviceDBBean);
@@ -456,7 +460,8 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                                 deviceDBBean.setMicPort(mMicPort);     //语音端口
                                 deviceDBBean.setType(mDeviceType);     //设备类型
                                 deviceDBBean.setType_num(getTypeNum(mDeviceType)); //设备类型数字
-
+                                deviceDBBean.setEndoType(getEndoTypeData(mDeviceType)); //设置endoType默认值
+                                deviceDBBean.setAcceptAndInsertDB(deviceDBBean.getEndoType() + mDeviceCode + mDeviceType);
                                 deviceDBBean.setMSelected(false);
                                 DeviceDBUtils.insertOrReplaceInTx(DeviceActivity.this, deviceDBBean);
                                 refreshRecycleViewData();
@@ -523,7 +528,8 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
                                 deviceDBBean.setMicPort(mMicPort);     //语音端口
                                 deviceDBBean.setType(mDeviceType);     //设备类型
                                 deviceDBBean.setType_num(getTypeNum(mDeviceType)); //设备类型数字
-
+                                deviceDBBean.setEndoType(getEndoTypeData(mDeviceType)); //设置endoType默认值
+                                deviceDBBean.setAcceptAndInsertDB(deviceDBBean.getEndoType() + mDeviceCode + mDeviceType);
                                 deviceDBBean.setMSelected(false);
                                 DeviceDBUtils.insertOrReplaceInTx(DeviceActivity.this, deviceDBBean);
                                 refreshRecycleViewData();
@@ -933,10 +939,12 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
             SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_DeviceName, mDBBean.getDeviceName());
             SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_DeviceCode, null != mDBBean.getDeviceCode() ? mDBBean.getDeviceCode() : "code码为空");
             SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_MSelected, mDBBean.getMSelected());
-
+            if (!CommonUtil.isCorrectIp2(mDBBean.getIp())) {
+                SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_BaseUrl, "http://192.168.64.42:" + mDBBean.getHttpPort());
+            } else {
+                SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_BaseUrl, "http://" + mDBBean.getIp() + ":" + mDBBean.getHttpPort());
+            }
             //http://192.168.66.42:8008
-            SharePreferenceUtil.put(DeviceActivity.this, SharePreferenceUtil.Current_BaseUrl, "http://" + mDBBean.getIp() + ":" + mDBBean.getHttpPort());
-            String mBaseUrl = (String) SharePreferenceUtil.get(DeviceActivity.this, SharePreferenceUtil.Current_BaseUrl, "111");
             EventBus.getDefault().post(new RefreshEvent("refresh"));
 
         }
@@ -954,19 +962,35 @@ public class DeviceActivity extends AppActivity implements StatusAction, BaseAda
             return Constants.Type_09;
         } else if (Constants.Type_V1_YiTiJi.equals(str)) {
             return Constants.Type_07;
-
         } else if (Constants.Type_EarNoseTable.equals(str)) {
             return Constants.Type_08;
-
         } else if (Constants.Type_MiNiaoTable.equals(str)) {
             return Constants.Type_0A;
-
-        } else if (Constants.Type_FuKeTable.equals(str)) {
-            return Constants.Type_09;
-
         }
         return Constants.Type_07;
     }
+
+
+    /**
+     * 根据设备类型,获取默认的EndoType值
+     * 3=智能一体机,3=耳鼻喉治疗台,4=妇科治疗台,6=泌尿治疗台,
+     */
+    public String getEndoTypeData(String str) {
+        if (Constants.Type_FuKeTable.equals(str)) {
+            return Constants.Type_FuKeTable_Default_Endotype;
+        } else if (Constants.Type_V1_YiTiJi.equals(str)) {
+            return Constants.Type_FuKeTable_Default_Endotype;
+
+        } else if (Constants.Type_EarNoseTable.equals(str)) {
+            return Constants.Type_EarNoseTable_Default_Endotype;
+
+        } else if (Constants.Type_MiNiaoTable.equals(str)) {
+            return Constants.Type_MiNiaoTable_Default_Endotype;
+
+        }
+        return Constants.Type_EarNoseTable_Default_Endotype;
+    }
+
 
     /**
      * 刷新列表数据

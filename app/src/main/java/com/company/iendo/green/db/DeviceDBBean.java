@@ -68,6 +68,10 @@ import org.greenrobot.greendao.annotation.Unique;
  * 00-工作站， 01-HD3摄像机，02-冷光源，03-气腹机，04-冲洗机，05-4K摄像机，06-耳鼻喉控制板，
  * 07-一代一体机，8-耳鼻喉治疗台，9-妇科治疗台，10-泌尿治疗台
  * A0-iOS，A1-Android，FF-所有设备
+ *
+ *
+ * 备注:在填一填或者扫一扫的时候新增设备需要,设置默认的endoType和acceptAndInsertDB(getEndotype() + getDeviceCode() + getDeviceType();)
+ * 确保扫一扫的时候出来的结果,是否是添加过
  */
 
 @Entity
@@ -127,7 +131,7 @@ public class DeviceDBBean {
      * A0-iOS，A1-Android，FF-所有设备
      */
     private int type_num;  //!!!!此处是设备中文说明对应的数字,比如type=一代一体机  数字对应07   备注:type和endotype不是相等的
-    //工作站类型
+    //工作站类型,默认分配值:3=智能一体机,3=耳鼻喉治疗台,4=妇科治疗台,6=泌尿治疗台,
     private String endoType;//
     ////mDeviceCode  这个是智能搜索之后返回过来的设备码
     private String deviceName;  //设备名字:一代一体机
@@ -138,7 +142,9 @@ public class DeviceDBBean {
     //是否被选中
     private Boolean mSelected;    //是否被选中  默认未选中  :0未选中,1被选中
     //是否被选中
-    private String acceptAndInsertDB;   //授权接入是否存入DB的标识---->存入之后把bean.toString()字符串存入这个字段之中----PutInDeviceMsgBean的数据bean,标识数据在数据库的唯一性
+    //授权接入是否存入DB的标识---->存入之后把bean.toString()字符串存入这个字段之中----PutInDeviceMsgBean的数据bean,标识数据在数据库的唯一性
+    //bean.getEndotype()+deviceOnlyCode16 + bean.getType()//3 ad308a342498b329 耳鼻喉治疗台
+    private String acceptAndInsertDB;
 
     @Generated(hash = 1426691525)
     public DeviceDBBean(Long id, String deviceID, String deviceCode, String ip, String LiveIp, String httpPort, String socketPort, String livePort, String micPort,
