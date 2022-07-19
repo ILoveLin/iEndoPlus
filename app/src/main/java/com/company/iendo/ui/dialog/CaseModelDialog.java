@@ -128,13 +128,7 @@ public final class CaseModelDialog {
 
             expandableAdapter.setOnItemLongClickListener((adapter, data, groupPosition, childPosition) -> {
             });
-            ImmersionBar.with((AddCaseActivity) mContext)
-                    // 默认状态栏字体颜色为黑色
-                    .statusBarDarkFont(true)
-                    // 指定导航栏背景颜色
-                    .navigationBarColor(R.color.white)
-                    // 状态栏字体和导航栏内容自动变色，必须指定状态栏颜色和导航栏颜色才可以自动变色
-                    .autoDarkModeEnable(true, 0.2f);
+
         }
 
         @Override

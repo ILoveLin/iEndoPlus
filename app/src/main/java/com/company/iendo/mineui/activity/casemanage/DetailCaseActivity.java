@@ -975,9 +975,14 @@ public class DetailCaseActivity extends AppActivity implements TabAdapter.OnTabL
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mViewPager.setAdapter(null);
+        mCaseDown = null;
+        mModelView = null;
+        mPicture=null;
+        mTitlebar=null;
         mViewPager.removeOnPageChangeListener(this);
+        mViewPager.setAdapter(null);
         mTabAdapter.setOnTabListener(null);
+        mTabAdapter=null;
         EventBus.getDefault().unregister(this);
 
     }

@@ -1,5 +1,6 @@
 package com.company.iendo.mineui.activity.casemanage.dowvideo;
 
+import android.content.Context;
 import android.content.Intent;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
@@ -43,6 +44,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -85,7 +87,8 @@ public final class DownVideoSelectedActivity extends AppActivity implements Stat
 
         //开启下载任务
         //初始化
-        DaemonEnv.initialize(this, DownVideoService.class, DaemonEnv.DEFAULT_WAKE_UP_INTERVAL);
+        WeakReference<Context> mWeakContext = new WeakReference<>(this);
+        DaemonEnv.initialize(mWeakContext.get(), DownVideoService.class, DaemonEnv.DEFAULT_WAKE_UP_INTERVAL);
         //是否 任务完成, 不再需要服务运行?
         DownVideoService.sShouldStopService = true;
         //开启服务

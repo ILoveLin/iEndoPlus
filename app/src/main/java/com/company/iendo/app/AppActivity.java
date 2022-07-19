@@ -235,14 +235,14 @@ public abstract class AppActivity extends BaseActivity
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
-                        Log.e("TAG", "病例模板==onError==" + e);
+                        Log.e("TAG", "病例模板=AppActivity=onError==" + e);
                     }
 
                     @Override
                     public void onResponse(String response, int id) {
                         if (!"".equals(response)) {
                             CaseModelBean modelBean = mGson.fromJson(response, CaseModelBean.class);
-                            Log.e("TAG", "病例模板==modelBean==" + modelBean.toString());
+//                            Log.e("TAG", "病例模板=AppActivity=modelBean==" + modelBean.toString());
 //                            getDialogBeanList(modelBean);
                             getDialogBeanList02(modelBean);
 

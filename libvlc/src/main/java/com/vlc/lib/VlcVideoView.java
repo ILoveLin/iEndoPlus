@@ -54,6 +54,7 @@ public class VlcVideoView extends TextureView implements MediaPlayerControl, Vid
     //这里改为子类继承   方便修改libVLC参数
     public void initPlayer(Context context) {
 
+
 //        videoMediaLogic = new VlcPlayer(VLCInstance.get(context));
 //        videoMediaLogic.setVideoSizeChange(this);
 
@@ -505,6 +506,12 @@ public class VlcVideoView extends TextureView implements MediaPlayerControl, Vid
     public int heightSurface = 0;
 
     private TextureView.SurfaceTextureListener videoSurfaceListener = new TextureView.SurfaceTextureListener() {
+        /**
+         * TextureView准备好了回调
+         * @param surface 内部画布渲染surface
+         * @param width TextureView布局宽
+         * @param height TextureView布局高
+         */
         @Override
         public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
             widthSurface = width;
@@ -524,6 +531,10 @@ public class VlcVideoView extends TextureView implements MediaPlayerControl, Vid
             return true;//回收掉Surface
         }
 
+        /**
+         * TextureView刷新时回调
+         * @param surface 内部surface
+         */
         @Override
         public void onSurfaceTextureUpdated(SurfaceTexture surface) {
 

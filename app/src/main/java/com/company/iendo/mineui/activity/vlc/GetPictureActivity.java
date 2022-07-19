@@ -373,6 +373,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
                 if (Operation.equals("2")) {
                     upLoadStreamToNginx(url);
 
+
                 } else if (Operation.equals("3")) {
 //                    mTvMicStatus.setTag("startStream");
 //                    mTvMicStatus.setText("关闭麦克风");
@@ -417,7 +418,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
      * @param url
      */
     private void upLoadStreamToNginx(String url) {
-
+        LogUtils.e("Nginx推流地址=" + url);
 //        flase 表示未开启推流
         if (HandService.UDP_HAND_GLOBAL_TAG) {//握手成功
             if (!rtmpOnlyAudio.isStreaming()) {//false 表示还未开启推流
@@ -2196,6 +2197,7 @@ public final class GetPictureActivity extends AppActivity implements StatusActio
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                toast("语音推流成功 ");
 //                toast("语音链接成功");
 //                setMicStatus("startStream", "通话中..");
                 /**

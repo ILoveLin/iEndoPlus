@@ -77,6 +77,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -728,7 +729,8 @@ public final class LoginActivity extends AppActivity implements UmengLogin.OnLog
     private void initHandService() {
 
         //初始化
-        DaemonEnv.initialize(this, HandService.class, DaemonEnv.DEFAULT_WAKE_UP_INTERVAL);
+        WeakReference<Context> mWeakContext = new WeakReference<>(this);
+        DaemonEnv.initialize(mWeakContext.get(), HandService.class, DaemonEnv.DEFAULT_WAKE_UP_INTERVAL);
         //是否 任务完成, 不再需要服务运行?
         HandService.sShouldStopService = false;
         //开启服务

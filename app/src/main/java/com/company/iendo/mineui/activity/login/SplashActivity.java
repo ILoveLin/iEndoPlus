@@ -1,5 +1,6 @@
 package com.company.iendo.mineui.activity.login;
 
+import android.content.Context;
 import android.content.Intent;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
@@ -15,6 +16,8 @@ import com.company.iendo.utils.SharePreferenceUtil;
 import com.google.gson.Gson;
 import com.tencent.mmkv.MMKV;
 import com.xdandroid.hellodaemon.DaemonEnv;
+
+import java.lang.ref.WeakReference;
 
 import static java.lang.Thread.sleep;
 
@@ -86,7 +89,8 @@ public class SplashActivity extends AppActivity {
     private void initHandService() {
 
         //初始化
-        DaemonEnv.initialize(this, HandService.class, DaemonEnv.DEFAULT_WAKE_UP_INTERVAL);
+        WeakReference<Context> mWeakContext = new WeakReference<>(this);
+        DaemonEnv.initialize(mWeakContext.get(), HandService.class, DaemonEnv.DEFAULT_WAKE_UP_INTERVAL);
         //是否 任务完成, 不再需要服务运行?
         HandService.sShouldStopService = false;
         //开启服务

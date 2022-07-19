@@ -21,6 +21,7 @@ import com.company.iendo.bean.socket.getpicture.LookReportBean;
 import com.company.iendo.bean.socket.getpicture.PrintReportBean;
 import com.company.iendo.bean.socket.getpicture.ShotPictureCallBlackBean;
 import com.company.iendo.bean.socket.getpicture.UserIDBean;
+import com.company.iendo.mineui.activity.MainActivity;
 import com.company.iendo.other.Constants;
 import com.company.iendo.utils.CalculateUtils;
 import com.company.iendo.utils.LogUtils;
@@ -33,6 +34,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.lang.ref.WeakReference;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
@@ -67,7 +69,10 @@ public class ReceiveSocketService extends AbsWorkService {
         //我们现在不再需要服务运行了, 将标志位置为 true
         sShouldStopService = true;
         //取消对任务的订阅
-        if (sDisposable != null) sDisposable.dispose();
+        if (sDisposable != null) {
+            sDisposable.dispose();
+            sDisposable = null;
+        }
         //取消 Job / Alarm / Subscription
         cancelJobAlarmSub();
 
@@ -169,14 +174,15 @@ public class ReceiveSocketService extends AbsWorkService {
         private int mLocalReceivePort;
         private int count = 0;
         private String AppIP;
-        private Context context;
+        //        private Context context;
+        private WeakReference<Context> mWeakReference;
         DatagramSocket mSettingDataSocket = null;
         DatagramPacket mSettingDataPacket = null;
 
         public ReceiveThread(String ip, int port, Context context) {
             this.mLocalReceivePort = port;
             this.AppIP = ip;
-            this.context = context;
+            this.mWeakReference = new WeakReference<>(context);
             mGson = GsonFactory.getSingletonGson();
         }
 
@@ -234,6 +240,7 @@ public class ReceiveSocketService extends AbsWorkService {
                                 SocketRefreshEvent event = new SocketRefreshEvent();
                                 //设置接收端口
                                 event.setReceivePort(mLocalReceivePort + "");
+                                Context context = mWeakReference.get();
                                 Boolean dataIfForMe = CalculateUtils.getDataIfForMe(resultData, context);
                                 String dataString = CalculateUtils.getReceiveDataString(resultData);
                                 String appName = getAppName(context);
@@ -516,7 +523,7 @@ public class ReceiveSocketService extends AbsWorkService {
                                             try {
                                                 LogUtils.e(TAG + "回调形式:--->语音接入:" + str);
                                                 MicSocketResponseBean micSocketResponseBean = mGson.fromJson(str, MicSocketResponseBean.class);
-                                                mmkv.encode(Constants.KET_MIC_VOICE_ID_FOR_ME, micSocketResponseBean.getVoiceID()+"");
+                                                mmkv.encode(Constants.KET_MIC_VOICE_ID_FOR_ME, micSocketResponseBean.getVoiceID() + "");
                                                 event.setTga(true);
                                                 event.setData(micSocketResponseBean.getUrl());
                                                 event.setIp(micSocketResponseBean.getOperation());
@@ -726,6 +733,7 @@ public class ReceiveSocketService extends AbsWorkService {
     @Override
     public void onDestroy() {
         isFirstIn = false;
+        sDisposable = null;
         EventBus.getDefault().unregister(this);
         super.onDestroy();
 

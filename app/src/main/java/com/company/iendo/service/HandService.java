@@ -75,7 +75,6 @@ public class HandService extends AbsWorkService {
     }
 
 
-    private volatile static boolean isRuning = true;
     private String mAppIP;
     private SimpleDateFormat format;
 
@@ -212,7 +211,7 @@ public class HandService extends AbsWorkService {
             handBean.setHelloPc("");
             handBean.setComeFrom("");
             if (!"".equals(mCurrentTypeNum + "") && !"".equals(mCurrentReceiveDeviceCode) && !("".equals(mSocketPort))) {
-                byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(handBean), mCurrentTypeNum+"", mCurrentReceiveDeviceCode,
+                byte[] sendByteData = CalculateUtils.getSendByteData(this, mGson.toJson(handBean), mCurrentTypeNum + "", mCurrentReceiveDeviceCode,
                         Constants.UDP_HAND);
                 startTime = System.currentTimeMillis();
                 if (null != sendByteData) {
@@ -279,7 +278,6 @@ public class HandService extends AbsWorkService {
     public void onCreate() {
         super.onCreate();
         EventBus.getDefault().register(this);
-        isRuning = true;
     }
 
     @Override
@@ -287,6 +285,22 @@ public class HandService extends AbsWorkService {
         isFirstIn = false;
         super.onDestroy();
         EventBus.getDefault().unregister(this);
+        //我们现在不再需要服务运行了, 将标志位置为 true
+        sShouldStopService = true;
+        //取消对任务的订阅
+        if (sDisposable10s != null) {
+            sDisposable10s.dispose();
+            sDisposable10s = null;
+        }
+        if (sDisposable60s != null) {
+            sDisposable60s.dispose();
+            sDisposable60s = null;
+        }
+        //取消 Job / Alarm / Subscription
+        cancelJobAlarmSub();
+
+//        EventBus.getDefault().unregister(this);
+
 
     }
 

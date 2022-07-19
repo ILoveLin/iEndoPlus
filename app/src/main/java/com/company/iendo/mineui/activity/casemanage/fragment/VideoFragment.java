@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.company.iendo.R;
 import com.company.iendo.action.StatusAction;
+import com.company.iendo.aop.Log;
 import com.company.iendo.app.TitleBarFragment;
 import com.company.iendo.bean.DetailVideoBean;
 import com.company.iendo.bean.event.SocketRefreshEvent;
@@ -15,6 +16,7 @@ import com.company.iendo.mineui.activity.casemanage.fragment.adapter.VideoAdapte
 import com.company.iendo.mineui.activity.vlc.VideoActivity;
 import com.company.iendo.other.Constants;
 import com.company.iendo.other.HttpConstant;
+import com.company.iendo.utils.LogUtils;
 import com.company.iendo.utils.SharePreferenceUtil;
 import com.company.iendo.widget.MyItemDecoration;
 import com.company.iendo.widget.StatusLayout;
@@ -116,6 +118,7 @@ public class VideoFragment extends TitleBarFragment<MainActivity> implements Sta
                         if ("" != response) {
                             DetailVideoBean mBean = mGson.fromJson(response, DetailVideoBean.class);
                             List<DetailVideoBean.DataDTO> data = mBean.getData();
+                            LogUtils.e("视频==response=="+response);
                             if (0 == mBean.getCode()) {  //成功
                                 showComplete();
                                 if (mBean.getData().size() != 0) {

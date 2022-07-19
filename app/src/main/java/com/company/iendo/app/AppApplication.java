@@ -49,6 +49,7 @@ import com.zhy.http.okhttp.cookie.CookieJarImpl;
 import com.zhy.http.okhttp.cookie.store.MemoryCookieStore;
 import com.zhy.http.okhttp.https.HttpsUtils;
 
+import java.lang.ref.WeakReference;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.HostnameVerifier;
@@ -100,7 +101,8 @@ public final class AppApplication extends Application {
      */
     private void initLiveService() {
         //初始化
-        DaemonEnv.initialize(this, ReceiveSocketService.class, DaemonEnv.DEFAULT_WAKE_UP_INTERVAL);
+        WeakReference<Context> mWeakContext = new WeakReference<>(this);
+        DaemonEnv.initialize(mWeakContext.get(), ReceiveSocketService.class, DaemonEnv.DEFAULT_WAKE_UP_INTERVAL);
         //是否 任务完成, 不再需要服务运行?
         ReceiveSocketService.sShouldStopService = false;
         //开启服务

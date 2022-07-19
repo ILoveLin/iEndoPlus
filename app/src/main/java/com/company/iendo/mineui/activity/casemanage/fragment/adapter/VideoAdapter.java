@@ -3,6 +3,7 @@ package com.company.iendo.mineui.activity.casemanage.fragment.adapter;
 import android.content.Context;
 import android.util.Log;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
@@ -38,11 +39,12 @@ public class VideoAdapter extends AppAdapter<DetailVideoBean.DataDTO> {
     private final class ViewHolder extends AppAdapter<?>.ViewHolder {
 
 
-        private final AppCompatTextView mTextView;
+        private final TextView mTextView,mSize;
 
         private ViewHolder() {
-            super(R.layout.item_video);
+            super(R.layout.item_video_all);
             mTextView = findViewById(R.id.tv_video_text);
+            mSize = findViewById(R.id.tv_video_size);
         }
 
         @Override
@@ -50,8 +52,9 @@ public class VideoAdapter extends AppAdapter<DetailVideoBean.DataDTO> {
             DetailVideoBean.DataDTO item = getItem(position);
 //            http://192.168.64.28:7001/ID/FilePath
             Log.e("adapter", "" + "Path:" + item.getFilePath());
-
+            //sizeFormat
             mTextView.setText("" + item.getFilePath());
+            mSize.setText("" + item.getFilePath());
 
         }
     }
